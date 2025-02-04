@@ -52,7 +52,7 @@ message GardenerDataResult {
 }
 
 message GardenerDataCollectorProperties {
+  reserved 3; // was disable_failing_ci_tests
   bool disable_chrome_uprev_commits = 1;
   bool disable_lkgm_uprev_commits = 2;
-  bool disable_failing_ci_tests = 3;
 }

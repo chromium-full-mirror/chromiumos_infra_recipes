@@ -823,14 +823,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "Check pre-uprev results.set failed test builder ids as output properties",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@failed_builds@[]@@@"
-    ]
-  },
-  {
     "name": "$result",
     "summaryMarkdown": "Pre-uprev testing passed. \n\nDetails: \n\n- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n"
   }

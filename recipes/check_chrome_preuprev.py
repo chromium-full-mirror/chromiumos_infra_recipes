@@ -241,10 +241,6 @@ def CheckPreUprevs(
         task_step.step_summary_text = ToBuildersLinkMd([builder],
                                                        include_details=True)
 
-    api.easy.set_properties_step(
-        'set failed test builder ids as output properties',
-        failed_builds=[int(builder.id) for builder in failed_builds])
-
     return builders, failed_builds
 
 
@@ -524,7 +520,6 @@ def GenTests(api: RecipeTestApi):
           '- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n'
           '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n'
       )),
-      api.post_check(post_process.PropertyEquals, 'failed_builds', []),
       api.post_check(post_process.DoesNotRun,
                      'Wait chrome-best-revision-continuous'),
       cq=True,
@@ -546,7 +541,6 @@ def GenTests(api: RecipeTestApi):
           '- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n'
           '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n'
       )),
-      api.post_check(post_process.PropertyEquals, 'failed_builds', []),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
       cq=True,
@@ -575,7 +569,6 @@ def GenTests(api: RecipeTestApi):
           'This usually catches up in less than 2 hours, check '
           'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
           ' and try again. You can also just wait for next uprev.')),
-      api.post_check(post_process.PropertyEquals, 'failed_builds', []),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
       cq=True,
@@ -701,7 +694,6 @@ def GenTests(api: RecipeTestApi):
            'Please check the test failures, fix the failures (land a fix or revert culprit on Chromium) '
            'and wait for next pre-uprev.'),
       ),
-      api.post_check(post_process.PropertyEquals, 'failed_builds', [102114593]),
       api.post_check(post_process.DoesNotRun,
                      'Wait chrome-best-revision-continuous'),
       cq=True,

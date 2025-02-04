@@ -7,22 +7,15 @@
 For a gardener dashboard with up-to-date chrome uprev and LKGM commits status.
 """
 
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 import re
 import base64
-from google.protobuf import json_format, timestamp_pb2, struct_pb2
+from google.protobuf import json_format
 from google.protobuf.message import Message
 
 from PB.recipes.chromeos.gardener_data_collector import (
     GardenerDataResult, GardenerDataCollectorProperties)
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1 import test_metadata as test_metadata_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from RECIPE_MODULES.chromeos.gerrit.api import ChangeInfo
 
 from recipe_engine import recipe_api
@@ -180,97 +173,6 @@ def CollectLkgmUprevCommit(
     return [parse_lkgm_change_info(api, x) for x in results]
 
 
-def to_chrome_revision(
-    b: build_pb2.Build) -> Optional[GardenerDataResult.ChromeRevision]:
-  if 'got_revision' in b.output.properties and 'got_revision_cp' in b.output.properties:
-    return GardenerDataResult.ChromeRevision(
-        commit_hash=b.output.properties['got_revision'],
-        commit_position=int(b.output.properties['got_revision_cp'].removeprefix(
-            'refs/heads/main@{#').removesuffix('}')),
-    )
-  return None  # pragma: nocover
-
-
-def CollectFailingCiTests(
-    api: recipe_api.RecipeApi) -> List[GardenerDataResult.FailingTest]:
-  with api.step.nest('find last 7-day CI test results'):
-    failing_ci_tests = []
-    for board in INTERNAL_BOARDS:
-      builds = api.buildbucket.search(
-          builds_service_pb2.BuildPredicate(
-              builder={
-                  'project': 'chrome',
-                  'bucket': 'ci',
-                  'builder': f'chromeos-{board}-chrome-tests',
-              }, status=common_pb2.ENDED_MASK, create_time=common_pb2.TimeRange(
-                  start_time=timestamp_pb2.Timestamp(
-                      seconds=int(api.time.time()) - 60 * 60 * 24 * 7,
-                  ))),
-          fields=BUILD_FIELDS_TO_RETRIEVE,
-      )
-      # Some builds may INFRA_FAILURE early and didn't produce any correct
-      # output. Skip those builds. e.g. go/bbid/8726098126512135153
-      builds = [
-          b for b in builds if b.status != common_pb2.INFRA_FAILURE or
-          to_chrome_revision(b) is not None
-      ]
-      if not builds:
-        continue
-      if builds[0].status == common_pb2.SUCCESS:
-        continue
-
-      rdb = api.resultdb.query([
-          b.infra.resultdb.invocation.removeprefix('invocations/')
-          for b in builds
-      ], variants_with_unexpected_results=True, tr_fields=[
-          'testId',
-          'status',
-          'expected',
-          'name',
-          'testMetadata',
-      ])
-      active_failures = {}
-      for tr in rdb[builds[0].infra.resultdb.invocation.removeprefix(
-          'invocations/')].test_results:
-        if tr.test_id.endswith('/tast'):
-          continue
-        if tr.expected:
-          active_failures[tr.test_id] = None
-        if not tr.expected and tr.test_id not in active_failures:
-          active_failures[tr.test_id] = GardenerDataResult.FailingTest(
-              test_id=tr.test_id,
-              test_name=tr.test_metadata.name
-              if tr.test_metadata.name else tr.test_id,
-              builder=builds[0].builder.builder,
-              bad=to_chrome_revision(builds[0]),
-              first_failure_build_id=builds[0].id,
-          )
-      for k, v in list(active_failures.items()):
-        if v is None:
-          del active_failures[k]
-      for exoneration in rdb[builds[0].infra.resultdb.invocation.removeprefix(
-          'invocations/')].test_exonerations:
-        active_failures[exoneration.test_id].exonerated = True
-
-      for b in builds[1:]:
-        result = rdb[b.infra.resultdb.invocation.removeprefix('invocations/')]
-        for k, v in active_failures.items():
-          if k in [x.test_id for x in result.test_results if not x.expected]:
-            v.good.Clear()
-            v.first_failure_build_id = b.id
-            continue
-          if not v.good.commit_hash:
-            v.good.CopyFrom(to_chrome_revision(b))
-
-      for k, v in list(active_failures.items()):
-        if v.exonerated:
-          del active_failures[k]
-
-      failing_ci_tests.extend(active_failures.values())
-
-    return failing_ci_tests
-
-
 def ToListDict(v: List[Message]) -> List[Dict]:
   return list(
       map(
@@ -286,14 +188,10 @@ def RunSteps(api: recipe_api.RecipeApi,
   lkgm_commits = CollectLkgmUprevCommit(
       api) if not properties.disable_lkgm_uprev_commits else []
 
-  failing_ci_tests = CollectFailingCiTests(
-      api) if not properties.disable_failing_ci_tests else []
-
   api.easy.set_properties_step(
       'set output properties',
       chrome_uprev_commits=ToListDict(chrome_uprev_commits),
-      lkgm_commits=ToListDict(lkgm_commits),
-      failing_ci_tests=ToListDict(failing_ci_tests))
+      lkgm_commits=ToListDict(lkgm_commits))
 
 
 def GenTests(api: recipe_api.RecipeApi):
@@ -521,78 +419,10 @@ def GenTests(api: recipe_api.RecipeApi):
       },
   }
 
-  def ci_builds(name: str, *kwargs:
-                List[common_pb2.Status]) -> List[build_pb2.Build]:
-    return [
-        build_pb2.Build(
-            id=x,
-            builder=builder_common_pb2.BuilderID(project='chrome', bucket='ci',
-                                                 builder=name),
-            status=kwargs[x], infra=build_pb2.BuildInfra(
-                resultdb=build_pb2.BuildInfra.ResultDB(
-                    invocation=f'invocations/build-{x}',
-                )), output=build_pb2.Build.Output(
-                    properties=struct_pb2.Struct(
-                        fields={
-                            'got_revision':
-                                struct_pb2.Value(string_value=f'deadbeef{x}'),
-                            'got_revision_cp':
-                                struct_pb2.Value(
-                                    string_value='refs/heads/main@{#%d}' %
-                                    (100000 - 100 * x)),
-                        },
-                    ))) for x in range(len(kwargs))
-    ]
-
-  def rdb_results(
-      exonerated: List[str], *failed_tests: List[List[str]],
-      add_expected_runs: Optional[List[str]] = None
-  ) -> Dict[str, api.resultdb.Invocation]:
-    add_expected_runs = add_expected_runs or []
-    return dict((
-        f'build-{x}',
-        api.resultdb.Invocation(
-            proto=invocation_pb2.Invocation(
-                state=invocation_pb2.Invocation.FINALIZED,
-            ),
-            test_results=[
-                # Failed Runs
-                test_result_pb2.TestResult(
-                    test_id="ninja://chrome_all_tast_tests/" +
-                    failed_tests[x][y],
-                    expected=False,
-                    status=test_result_pb2.FAIL,
-                    test_metadata=test_metadata_pb2.TestMetadata(
-                        name=failed_tests[x][y],
-                    ),
-                    name="build-{x}/ninja-{failed_tests[x][y]}-{y}",
-                ) for y in range(len(failed_tests[x]))
-            ] + ([
-                # Failed root tast wrapper if there are failed tests.
-                test_result_pb2
-                .TestResult(test_id="ninja://chrome_all_tast_tests/tast",
-                            expected=False, status=test_result_pb2.FAIL)
-            ] if failed_tests[x] else []) + [
-                # Passed Runs
-                test_result_pb2.TestResult(
-                    test_id="ninja://chrome_all_tast_tests/" + y,
-                    expected=True,
-                    status=test_result_pb2.PASS,
-                    name="build-{x}/ninja-{y}-9999",
-                ) for y in add_expected_runs if y in failed_tests[x]
-            ],
-            test_exonerations=[
-                test_result_pb2.TestExoneration(
-                    test_id="ninja://chrome_all_tast_tests/" +
-                    y) for y in exonerated if y in failed_tests[x]
-            ],
-        )) for x in range(len(failed_tests)))
-
   yield api.test(
       'chrome-uprevs',
       api.properties(
-          GardenerDataCollectorProperties(disable_lkgm_uprev_commits=True,
-                                          disable_failing_ci_tests=True)),
+          GardenerDataCollectorProperties(disable_lkgm_uprev_commits=True)),
       api.gerrit.set_query_changes_response(
           'find last 7-day Chrome uprev (chromeos-base/chromeos-chrome) CLs', [
               chrome_uprev_gerrit_change_info_good,
@@ -636,8 +466,7 @@ def GenTests(api: recipe_api.RecipeApi):
   yield api.test(
       'lkgm-uprevs',
       api.properties(
-          GardenerDataCollectorProperties(disable_chrome_uprev_commits=True,
-                                          disable_failing_ci_tests=True)),
+          GardenerDataCollectorProperties(disable_chrome_uprev_commits=True)),
       api.gerrit.set_query_changes_response(
           'find last 7-day LKGM CLs', [lkgm_gerrit_change_info_good],
           'https://chromium-review.googlesource.com'),
@@ -651,72 +480,6 @@ def GenTests(api: recipe_api.RecipeApi):
           'status': 'MERGED',
           'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
           'submitted': '2024-11-27 03:27:44.000000000',
-      }]),
-      status='SUCCESS',
-  )
-
-  yield api.test(
-      'failing-ci-tests',
-      api.properties(
-          GardenerDataCollectorProperties(disable_chrome_uprev_commits=True,
-                                          disable_lkgm_uprev_commits=True)),
-      api.buildbucket.simulated_search_results(
-          ci_builds(
-              'chromeos-betty-chrome-tests',
-              # status of each build, from newer to older.
-              common_pb2.FAILURE,
-              common_pb2.FAILURE,
-              common_pb2.SUCCESS,
-              common_pb2.SUCCESS,
-              common_pb2.SUCCESS),
-          step_name='find last 7-day CI test results.buildbucket.search'),
-      api.resultdb.query(
-          rdb_results(
-              # Exonerated tests
-              ['tast.example.Failed.non_critical'],
-              # Failed tests of each run, from newer to older.
-              [
-                  'tast.example.Failed.critical', 'tast.example.Flaky.critical',
-                  'tast.example.Failed.non_critical'
-              ],
-              [
-                  'tast.example.Failed.critical',
-                  'tast.example.Failed.non_critical'
-              ],
-              [
-                  'tast.example.Fixed.critical',
-                  'tast.example.Failed.non_critical'
-              ],
-              [],
-              ['tast.example.Failed.non_critical'],
-              add_expected_runs=['tast.example.Flaky.critical'],
-          ),
-          step_name='find last 7-day CI test results.rdb query'),
-      api.buildbucket.simulated_search_results(
-          ci_builds(
-              'chromeos-betty-cfi-thin-lto-chrome-tests',
-              # status of each build, from newer to older.
-              common_pb2.SUCCESS,
-              common_pb2.SUCCESS,
-              common_pb2.SUCCESS),
-          step_name='find last 7-day CI test results.buildbucket.search (2)'),
-      api.post_process(post_process.PropertyEquals, 'failing_ci_tests', [{
-          'bad': {
-              'commit_hash': 'deadbeef0',
-              'commit_position': '100000'
-          },
-          'builder':
-              'chromeos-betty-chrome-tests',
-          'first_failure_build_id':
-              '1',
-          'good': {
-              'commit_hash': 'deadbeef2',
-              'commit_position': '99800'
-          },
-          'test_id':
-              'ninja://chrome_all_tast_tests/tast.example.Failed.critical',
-          'test_name':
-              'tast.example.Failed.critical'
       }]),
       status='SUCCESS',
   )

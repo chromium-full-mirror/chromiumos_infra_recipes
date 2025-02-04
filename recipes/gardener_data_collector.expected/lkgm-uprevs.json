@@ -161,7 +161,6 @@
     "name": "set output properties",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@chrome_uprev_commits@[]@@@",
-      "@@@SET_BUILD_PROPERTY@failing_ci_tests@[]@@@",
       "@@@SET_BUILD_PROPERTY@lkgm_commits@[{\"branch\": \"main\", \"cq_tries\": \"1\", \"created\": \"2024-11-27 00:20:00.000000000\", \"new_version\": \"1065034\", \"number\": \"6052367\", \"old_version\": \"1065024\", \"status\": \"MERGED\", \"subject\": \"Automated Commit: LKGM 16110.0.0-1065034 for chromeos.\", \"submitted\": \"2024-11-27 03:27:44.000000000\"}]@@@"
     ]
   },

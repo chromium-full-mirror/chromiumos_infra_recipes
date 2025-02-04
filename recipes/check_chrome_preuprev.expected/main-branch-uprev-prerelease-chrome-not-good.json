@@ -824,14 +824,6 @@
   },
   {
     "cmd": [],
-    "name": "Check pre-uprev results.set failed test builder ids as output properties",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@failed_builds@[]@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "Wait chrome-best-revision-continuous",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@Best revision at 1100000 but want 1122332@@@",
