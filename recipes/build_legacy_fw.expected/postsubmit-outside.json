@@ -4315,7 +4315,10 @@
   },
   {
     "cmd": [],
-    "name": "push per device FW"
+    "name": "push per device FW",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-board-9999.B/15236.0.0@@@"
+    ]
   },
   {
     "cmd": [],

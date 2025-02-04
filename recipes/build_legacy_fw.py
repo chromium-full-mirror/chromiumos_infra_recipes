@@ -647,7 +647,7 @@ class FirmwareBuilder():
        build_target: Name of the build target
        branch: Branch name for the firmware branch
     """
-    with self.m.step.nest('push per device FW'):
+    with self.m.step.nest('push per device FW') as presentation:
       self._ensure_chromite_main()
       board = build_target.name
       staging = self._is_staging
@@ -671,6 +671,9 @@ class FirmwareBuilder():
       tar_list = self.m.file.listdir(
           'list files', temp_dir, recursive=True,
           test_data=['foo/ec-private/fingerprint/bar', 'bar/file'])
+
+      presentation.links[
+          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{bucket.removeprefix("gs://")}/{branch}/{self._bcs_version.platform_version}'
 
       for source in tar_list:
         file_name = self.m.path.basename(source)

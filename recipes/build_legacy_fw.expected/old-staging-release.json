@@ -5249,7 +5249,10 @@
   },
   {
     "cmd": [],
-    "name": "push per device FW"
+    "name": "push per device FW",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throw-away-bucket/firmware-board-9999.B/6301.202.4@@@"
+    ]
   },
   {
     "cmd": [],

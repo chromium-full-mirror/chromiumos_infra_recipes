@@ -5168,7 +5168,8 @@
     "cmd": [],
     "name": "board2.push per device FW",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-board-9999.B/15236.0.0@@@"
     ]
   },
   {
