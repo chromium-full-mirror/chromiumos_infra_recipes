@@ -13,6 +13,7 @@ from typing import List, Optional, Tuple
 import json
 import re
 import hashlib
+import base64
 
 from google.protobuf import timestamp_pb2, json_format, struct_pb2
 
@@ -39,7 +40,12 @@ DEPS = [
     'gerrit',
     'test_util',
     'git_footers',
+    'gitiles',
 ]
+
+CHROMIUM_SRC_HOST = 'chromium.googlesource.com'
+CHROMIUM_SRC_PROJECT = 'chromium/src'
+CHROMIUM_VERSION_FILE = 'chrome/VERSION'
 
 FETCH_BEST_CHROME_REVISION_INTERVAL = 600
 FETCH_BEST_CHROME_REVISION_TIMES = 30
@@ -72,12 +78,19 @@ REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY = (
 CHROME_CI_NOT_GOOD = (
     # Error notice
     'Chrome best revision is currently at {}, want >={}\n'
-    'All ChromeOS preuprev has passed but on other platforms '
+    'ChromeOS preuprev may have passed but on other platforms '
     'Chrome best revision is behind current version.\n'
     # Possible action items
     'This usually catches up in less than 2 hours, check '
     'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
     ' and try again. You can also just wait for next uprev.')
+CHROME_BRANCHED_DURING_UPREV = (
+    # Error notice
+    'Chrome created the beta branch candidate during uprev\n'
+    'Submitting this CL may cause newer Chrome have smaller version number.\n'
+    # Possible action items
+    'Abandon this uprev CL and wait for the next one.\n')
+
 
 
 NO_CL_FOUND = RawResult(status=common_pb2.INFRA_FAILURE,
@@ -273,11 +286,15 @@ def RunSteps(api: RecipeApi):
     return NOT_AN_UPREV_CL
 
   target_chrome_revision = None
+  target_chrome_milestone = None
   with api.step.nest('Extract target Chrome revision') as step:
     for f in patch_sets[0].file_infos:
-      m = re.match(r'.*/chromeos-chrome-.*_pre([0-9]+).*\.ebuild$', f)
+      m = re.match(
+          r'.*/chromeos-chrome-(?P<milestone>[0-9]+)\..*_pre(?P<revision>[0-9]+).*\.ebuild$',
+          f)
       if m:
-        target_chrome_revision = int(m.group(1))
+        target_chrome_milestone = int(m.group('milestone'))
+        target_chrome_revision = int(m.group('revision'))
   with api.step.nest('Search Chrome builders matching buildset') as step:
     pupr_version = api.git_footers.from_gerrit_change(cl,
                                                       UPREV_VERSION_LABEL)[0]
@@ -336,6 +353,24 @@ def RunSteps(api: RecipeApi):
       error_do_no_chump = True
       errors.append(
           CHROME_CI_NOT_GOOD.format(best_revision, target_chrome_revision))
+    else:
+      mock_version = '\n'.join(
+          ['MAJOR=130', 'MINOR=0', 'BUILD=6699', 'PATCH=0'])
+      mock_result = base64.b64encode(mock_version.encode())
+      tot_version = api.gitiles.get_file(
+          CHROMIUM_SRC_HOST,
+          CHROMIUM_SRC_PROJECT,
+          CHROMIUM_VERSION_FILE,
+          ref='refs/heads/main',
+          step_name='Fetch ToT version',
+          test_output_data=mock_result,
+      ).decode()
+
+      assert tot_version.startswith('MAJOR=')
+      tot_milestone = int(tot_version.split('\n')[0].split('=')[1])
+      if tot_milestone != target_chrome_milestone:
+        error_do_no_chump = True
+        errors.append(CHROME_BRANCHED_DURING_UPREV)
 
   if errors:
     return RawResult(
@@ -371,7 +406,7 @@ def GenTests(api: RecipeTestApi):
     if newid not in _name_id_mapping.values():
       _name_id_mapping[name] = newid
       return newid
-    raise Exception('hash collision')  # pragma: nocover
+    assert False  # pragma: nocover
 
   def build(name, status):
     return build_pb2.Build(
@@ -545,6 +580,7 @@ def GenTests(api: RecipeTestApi):
       )),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
+      api.post_check(post_process.MustRun, 'Fetch ToT version'),
       cq=True,
       status='SUCCESS',
   )
@@ -567,13 +603,40 @@ def GenTests(api: RecipeTestApi):
           "g/chromeos-chrome-build, instead of CI oncall.\n\n"
           '1 errors checking Chrome uprev criteria:\n\n\n\n'
           'Chrome best revision is currently at 1100000, want >=1122332\n'
-          'All ChromeOS preuprev has passed but on other platforms '
+          'ChromeOS preuprev may have passed but on other platforms '
           'Chrome best revision is behind current version.\n'
           'This usually catches up in less than 2 hours, check '
           'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
           ' and try again. You can also just wait for next uprev.')),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
+      api.post_check(post_process.DoesNotRun, 'Fetch ToT version'),
+      cq=True,
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'main-branch-uprev-prerelease-chrome-branched',
+      try_build_with_cl('129.0.6698.0_pre1122332'),
+      pre_uprev_started(
+          api, 'Search Chrome builders matching buildset.buildbucket.search'),
+      pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
+      chrome_best_revision(api, [1100000, 1122332]),
+      api.post_check(post_process.SummaryMarkdown, (
+          'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
+          "To disable a failed tests at this builder, disable at "
+          "[chromium/src/chromeos/tast_control.gni]"
+          "(https://source.chromium.org/chromium/chromium/src/+/main:"
+          "chromeos/tast_control.gni) instead.\n\n"
+          "Questions to this builder goes to g/chromeos-velocity or "
+          "g/chromeos-chrome-build, instead of CI oncall.\n\n"
+          '1 errors checking Chrome uprev criteria:\n\n\n\n'
+          'Chrome created the beta branch candidate during uprev\n'
+          'Submitting this CL may cause newer Chrome have smaller version number.\n'
+          'Abandon this uprev CL and wait for the next one.\n')),
+      api.post_check(post_process.MustRun,
+                     'Wait chrome-best-revision-continuous'),
+      api.post_check(post_process.MustRun, 'Fetch ToT version'),
       cq=True,
       status='FAILURE',
   )

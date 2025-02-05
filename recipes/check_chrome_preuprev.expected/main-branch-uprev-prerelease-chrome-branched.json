@@ -202,10 +202,10 @@
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 7,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"chromeos-chrome: Automatic uprev to 130.0.6699.0_pre1122332.\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"chromeos-chrome: Automatic uprev to 129.0.6698.0_pre1122332.\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"chromeos-base/chromeos-chrome/chromeos-chrome-130.0.6699.0_pre1122332_rc-r1.ebuild\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"chromeos-base/chromeos-chrome/chromeos-chrome-129.0.6698.0_pre1122332_rc-r1.ebuild\": {}@@@",
       "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -1027,7 +1027,10 @@
     ]
   },
   {
-    "name": "$result",
-    "summaryMarkdown": "Pre-uprev testing passed. \n\nDetails: \n\n- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n"
+    "failure": {
+      "failure": {},
+      "humanReason": "ABSOLUTELY DO NOT CHUMP THIS CL\n\nTo disable a failed tests at this builder, disable at [chromium/src/chromeos/tast_control.gni](https://source.chromium.org/chromium/chromium/src/+/main:chromeos/tast_control.gni) instead.\n\nQuestions to this builder goes to g/chromeos-velocity or g/chromeos-chrome-build, instead of CI oncall.\n\n1 errors checking Chrome uprev criteria:\n\n\n\nChrome created the beta branch candidate during uprev\nSubmitting this CL may cause newer Chrome have smaller version number.\nAbandon this uprev CL and wait for the next one.\n"
+    },
+    "name": "$result"
   }
 ]
