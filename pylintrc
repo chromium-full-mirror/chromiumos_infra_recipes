@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-[MASTER]
+[MAIN]
 
 # Specify a configuration file.
 #rcfile=
@@ -22,8 +22,11 @@ init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe
 #persistent=yes
 
 # List of plugins (as comma separated values of python modules names) to load,
-# usually to register additional checkers.
+# usually to register additional checkers.  Newer pylint versions have been
+# using extensions a lot more, so check the list when updating:
+# $ ./scripts/pylint --list-extensions
 load-plugins=
+    pylint.extensions.bad_builtin,
 
 
 [MESSAGES CONTROL]
@@ -49,6 +52,8 @@ load-plugins=
 #   line-too-long
 #   consider-using-f-string <-- new as of pylint-2.13
 #   ...and more based on case by case and workload.
+# possibly-used-before-assignment: Too many false positives.  There is a
+#   separate "used-before-assignment" which is a higher quality signal.
 disable=
     attribute-defined-outside-init,
     consider-using-f-string,
@@ -60,11 +65,12 @@ disable=
     missing-class-docstring,
     missing-function-docstring,
     no-member,
-    no-self-use,
+    possibly-used-before-assignment,
     too-few-public-methods,
     too-many-arguments,
     too-many-boolean-expressions,
     too-many-branches,
+    too-many-function-args,
     too-many-instance-attributes,
     too-many-lines,
     too-many-locals,
@@ -72,6 +78,7 @@ disable=
     too-many-public-methods,
     too-many-return-statements,
     too-many-statements,
+    unnecessary-lambda-assignment,
 
 
 [REPORTS]
