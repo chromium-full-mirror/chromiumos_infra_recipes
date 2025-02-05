@@ -77,8 +77,17 @@ def craft_commit_message(api: RecipeApi, version: str, bbid: str) -> List[str]:
   return commit
 
 
-def upload_firmware_prebuilts(api: RecipeTestApi, shellball_path: Path,
-                              target: str, version: str,
+def create_or_update_symlink(api: RecipeApi, directory: Path, file: str,
+                             symlink: str):
+  with api.context(cwd=directory):
+    if api.path.exists(directory / symlink):
+      api.file.remove('remove existing symlink', directory / symlink)
+    api.step('create symlink', ['ln', '-s', file, symlink])
+
+
+def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
+                              shellball_path: Path, target: str, version: str,
+                              keyset_is_mp: bool,
                               abandon: bool = True) -> result_pb2.RawResult:
   """Uploads the firmware prebuilts to the android repo."""
   # Check out the android codebase.
@@ -87,10 +96,27 @@ def upload_firmware_prebuilts(api: RecipeTestApi, shellball_path: Path,
     api.git.clone(
         f'https://googleplex-android.googlesource.com/device/google/desktop/{target}-prebuilts',
         depth=1)
-    # Copy the shellball into the firmware prebuild repo.
+    # Copy the unsigned shellball into the firmware prebuild repo.
+    api.file.ensure_directory('make sure dev-signed exists',
+                              api.path.join(checkout, 'firmware', 'dev-signed'))
     api.file.copy(
-        'copy shellball to repo', shellball_path,
-        api.path.join(checkout, 'firmware', 'chromeos-firmwareupdate'))
+        'copy unsigned shellball to repo', unsigned_shellball_path,
+        api.path.join(checkout, 'firmware', 'dev-signed',
+                      f'chromeos-firmwareupdate_{version}'))
+    create_or_update_symlink(api, checkout / 'firmware/dev-signed',
+                             f'chromeos-firmwareupdate_{version}',
+                             'chromeos-firmwareupdate_LATEST')
+    # Copy the signed shellball into the firmware prebuild repo.
+    directory = 'mp-signed' if keyset_is_mp else 'premp-signed'
+    api.file.ensure_directory(f'make sure {directory} exists',
+                              api.path.join(checkout, 'firmware', directory))
+    api.file.copy(
+        'copy signed shellball to repo', shellball_path,
+        api.path.join(checkout, 'firmware', directory,
+                      f'chromeos-firmwareupdate_{version}'))
+    create_or_update_symlink(api, checkout / f'firmware/{directory}',
+                             f'chromeos-firmwareupdate_{version}',
+                             'chromeos-firmwareupdate_LATEST')
 
     # Check to make sure there was actually a change.
     diff_lines = api.git.get_working_dir_diff_files()
@@ -122,6 +148,12 @@ def get_shellball_path(api: RecipeApi, response: SignImageResponse) -> Path:
   [only_signed] = only_artifact.signed_artifacts
 
   return api.path.join(local_artifact_dir, only_signed.signed_artifact_name)
+
+
+def get_keyset_is_mp(response: SignImageResponse) -> bool:
+  [only_artifact] = response.signed_artifacts.archive_artifacts
+
+  return only_artifact.keyset_is_mp
 
 
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
@@ -183,12 +215,17 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
       shellball_path = get_shellball_path(api, signed_image_response)
       pres.logs['signed builds'] = shellball_path
 
-    # Advance LATEST-SHELLBALL for each channel.
-    api.signing.upload_shellball_latest_files(new_shellball_versions)
+    # Assume we only ever have a single channel and get that version.
+    [only_version] = new_shellball_versions.values()
+    # Advance LATEST-SHELLBALL for each version.
+    api.signing.upload_shellball_latest_file(only_version)
 
     # Open a cl with the new firmware prebuilts.
-    return upload_firmware_prebuilts(api, shellball_path, base_target_name,
-                                     new_shellball_versions,
+    return upload_firmware_prebuilts(api,
+                                     output_artifact_dir / output_artifact_name,
+                                     shellball_path, base_target_name,
+                                     only_version,
+                                     get_keyset_is_mp(signed_image_response),
                                      abandon=api.cros_infra_config.is_staging)
 
 
@@ -259,6 +296,61 @@ def GenTests(api: RecipeTestApi):
           'gsutil cp', [
               'gs://signed-firmware/canary-channel/kukui/4.0/',
           ]),
+      api.post_check(post_process.DoesNotRun, 'remove existing symlink'),
+      api.post_check(post_process.MustRun, 'create symlink'),
+      api.post_check(post_process.DoesNotRun, 'remove existing symlink (2)'),
+      api.post_check(post_process.MustRun, 'create symlink (2)'),
+      api.post_check(post_process.MustRun, 'git commit'),
+      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='firmware-packager-android-kukui-main',
+  )
+
+  yield api.build_menu.test(
+      'symlink-exists',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_CANARY],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware'))
+          }),
+      api.cros_build_api.set_api_return(
+          'sign firmware shellball.sign artifacts.call BAPI',
+          'ImageService/SignImage', MessageToJson(sample_response)),
+      api.step_data(
+          'get latest shellball version by channel.gsutil reading LATEST-SHELLBALL version for canary-channel',
+          stdout=api.raw_io.output('3.0')),
+      api.path.exists(
+          api.path.cleanup_dir /
+          'tmp_tmp_1/firmware/dev-signed/chromeos-firmwareupdate_LATEST',
+          api.path.cleanup_dir /
+          'tmp_tmp_1/firmware/premp-signed/chromeos-firmwareupdate_LATEST'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
+          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
+      ),
+      api.post_check(post_process.MustRun, 'pack firmware'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
+          [re.compile('.*"imageType": 20.*')]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign firmware shellball.sign artifacts.upload signed artifacts to '
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY.'
+          'gsutil cp', [
+              'gs://signed-firmware/canary-channel/kukui/4.0/',
+          ]),
+      api.post_check(post_process.MustRun, 'remove existing symlink'),
+      api.post_check(post_process.MustRun, 'create symlink'),
+      api.post_check(post_process.MustRun, 'remove existing symlink (2)'),
+      api.post_check(post_process.MustRun, 'create symlink (2)'),
       api.post_check(post_process.MustRun, 'git commit'),
       api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
       api.post_process(post_process.DropExpectation),

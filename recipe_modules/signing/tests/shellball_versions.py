@@ -26,7 +26,8 @@ def RunSteps(api: RecipeApi):
       'canary-channel': '1.0',
   }
   api.assertions.assertEqual(expected_versions, shellball_versions)
-  api.signing.upload_shellball_latest_files(shellball_versions)
+  api.signing.upload_shellball_latest_file(shellball_versions['canary-channel'])
+  api.signing.upload_shellball_latest_file(shellball_versions['dev-channel'])
 
 
 def GenTests(api: RecipeTestApi):

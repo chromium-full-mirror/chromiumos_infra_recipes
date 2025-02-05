@@ -323,8 +323,9 @@ class SigningApi(recipe_api.RecipeApi):
       raise StepFailure(
           f'could not find signing config for build target "{build_target}"')
 
-  def _set_fields_for_config(self, config: SigningConfig,
-                             channel: common_pb2.Channel) -> SigningConfig:
+  def _set_fields_for_config(  # pylint: disable=no-self-use
+      self, config: SigningConfig,
+      channel: common_pb2.Channel) -> SigningConfig:
     config = copy.deepcopy(config)
     config.channel = channel
     # Always set recovery_zip to be true.
@@ -967,17 +968,15 @@ class SigningApi(recipe_api.RecipeApi):
     return self.m.signing_utils.increment_shellball_major_versions(
         current_shellball_versions)
 
-  def upload_shellball_latest_files(self,
-                                    shellball_versions: Dict[str, str]) -> None:
-    """Upload LATEST-SHELLBALL files per channel."""
+  def upload_shellball_latest_file(self, version: str) -> None:
+    """Upload LATEST-SHELLBALL file."""
     latest_filename = 'LATEST-SHELLBALL'
-    for channel_str, shellball_version in shellball_versions.items():
-      local_version_file_path = self.m.path.cleanup_dir / f'{channel_str}-{latest_filename}'
-      self.m.file.write_text(f'write latest file for {channel_str}',
-                             local_version_file_path, shellball_version)
+    local_version_file_path = self.m.path.cleanup_dir / f'{latest_filename}'
+    self.m.file.write_text(f'write latest file for version {version}',
+                           local_version_file_path, version)
 
-      remote_version_file_bucket = f'{self.gs_upload_bucket}/{channel_str}/{self.m.build_menu.build_target.name}'
-      self.m.gsutil.upload(local_version_file_path, remote_version_file_bucket,
-                           latest_filename,
-                           name='upload {}'.format(latest_filename))
-    self.m.easy.set_properties_step(**{latest_filename: shellball_versions})
+    remote_version_file_bucket = f'{self.gs_upload_bucket}/{self.m.build_menu.build_target.name}'
+    self.m.gsutil.upload(local_version_file_path, remote_version_file_bucket,
+                         latest_filename,
+                         name='upload {}'.format(latest_filename))
+    self.m.easy.set_properties_step(latest_filename=version)
