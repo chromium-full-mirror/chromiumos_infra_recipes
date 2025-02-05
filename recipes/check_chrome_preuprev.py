@@ -212,8 +212,9 @@ def BestChromeRevision(api: RecipeApi) -> Optional[int]:
     output = json_format.MessageToDict(build.output, struct_pb2.Struct)
     revision = output.get('properties', {}).get('best_revision_info',
                                                 {}).get('commit_pos')
-    best_revision = max(best_revision,
-                        int(revision)) if best_revision else int(revision)
+    if revision:
+      best_revision = max(best_revision,
+                          int(revision)) if best_revision else int(revision)
   return best_revision
 
 
@@ -428,9 +429,10 @@ def GenTests(api: RecipeTestApi):
 
     def _build(idx, position):
       output = build_pb2.Build.Output()
-      output.properties['best_revision_info'] = {
-          'commit_pos': position,
-      }
+      if position:
+        output.properties['best_revision_info'] = {
+            'commit_pos': position,
+        }
       return build_pb2.Build(
           id=13219283712312 + idx,
           builder=builder_common_pb2.BuilderID(
@@ -553,7 +555,8 @@ def GenTests(api: RecipeTestApi):
       pre_uprev_started(
           api, 'Search Chrome builders matching buildset.buildbucket.search'),
       pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
-      chrome_best_revision(api, [1100000] * FETCH_BEST_CHROME_REVISION_TIMES),
+      chrome_best_revision(api, [None] + [1100000] *
+                           (FETCH_BEST_CHROME_REVISION_TIMES - 1)),
       api.post_check(post_process.SummaryMarkdown, (
           'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
           "To disable a failed tests at this builder, disable at "
