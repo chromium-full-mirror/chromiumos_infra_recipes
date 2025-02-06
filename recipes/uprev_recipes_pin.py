@@ -83,11 +83,11 @@ def _get_signing_docker_pin(api: RecipeApi,
         # TODO: b/375522150 - Remove container from chromeos-bot registry.
         api.step('docker tag', [
             'docker', 'tag', f'{image_with_tag}',
-            f'us-docker.pkg.dev/chromeos-bot/signing/{image_with_tag}'
+            f'us-docker.pkg.dev/chromeos-release-bot/signing/{image_with_tag}'
         ])
         api.step('docker tag', [
             'docker', 'tag', 'signing:latest',
-            'us-docker.pkg.dev/chromeos-bot/signing/signing:latest'
+            'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest'
         ])
 
         # Upload the docker image to the container registry.
@@ -104,7 +104,8 @@ def _get_signing_docker_pin(api: RecipeApi,
           # TODO: b/375522150 - Stop pushing container to chromeos-bot registry.
           api.step('docker push', [
               'docker', 'push',
-              'us-docker.pkg.dev/chromeos-bot/signing/signing', '--all-tags'
+              'us-docker.pkg.dev/chromeos-release-bot/signing/signing',
+              '--all-tags'
           ])
           # Push the container to chromeos-release-bot, where it will eventually
           # be pulled from, once transition is complete.
@@ -116,7 +117,7 @@ def _get_signing_docker_pin(api: RecipeApi,
         else:
           with api.step.nest(
               'skipping pushing image (not in push mode)') as pres:
-            pres.step_text = 'would have ran `docker push us-docker.pkg.dev/chromeos-bot/signing/signing --all-tags`'
+            pres.step_text = 'would have ran `docker push us-docker.pkg.dev/chromeos-release-bot/signing/signing --all-tags`'
         return image_with_tag
 
 
@@ -330,7 +331,7 @@ def GenTests(api: RecipeTestApi) -> Generator:
           'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag (2)',
           [
               'docker', 'tag', 'signing:latest',
-              'us-docker.pkg.dev/chromeos-bot/signing/signing:latest'
+              'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest'
           ]),
       api.post_check(
           post_process.StepCommandContains,
@@ -344,7 +345,8 @@ def GenTests(api: RecipeTestApi) -> Generator:
           'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker push',
           [
               'docker', 'push',
-              'us-docker.pkg.dev/chromeos-bot/signing/signing', '--all-tags'
+              'us-docker.pkg.dev/chromeos-release-bot/signing/signing',
+              '--all-tags'
           ]),
       api.post_check(
           post_process.StepCommandContains,

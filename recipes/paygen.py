@@ -706,7 +706,7 @@ def GenTests(api: RecipeTestApi):
                       verify=True,
                       dryrun=True,
                       use_local_signing=True,
-                      docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
+                      docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
                   ),
           }]),
       ),
@@ -719,9 +719,11 @@ def GenTests(api: RecipeTestApi):
               }
           }]),
       api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(
-          post_process.StepCommandContains, 'doing paygen.docker pull',
-          ['docker', 'pull', 'us-docker.pkg.dev/chromeos-bot/signing/foo']),
+      api.post_check(post_process.StepCommandContains,
+                     'doing paygen.docker pull', [
+                         'docker', 'pull',
+                         'us-docker.pkg.dev/chromeos-release-bot/signing/foo'
+                     ]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -988,7 +990,7 @@ def GenTests(api: RecipeTestApi):
                           verify=True,
                           dryrun=True,
                           use_local_signing=True,
-                          docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
+                          docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
                       ),
               }], use_split_paygen=True),
       ),
@@ -1016,9 +1018,11 @@ def GenTests(api: RecipeTestApi):
               }
           }]),
       api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(
-          post_process.StepCommandContains, 'doing paygen.docker pull',
-          ['docker', 'pull', 'us-docker.pkg.dev/chromeos-bot/signing/foo']),
+      api.post_check(post_process.StepCommandContains,
+                     'doing paygen.docker pull', [
+                         'docker', 'pull',
+                         'us-docker.pkg.dev/chromeos-release-bot/signing/foo'
+                     ]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -1043,7 +1047,7 @@ def GenTests(api: RecipeTestApi):
                           verify=True,
                           dryrun=True,
                           use_local_signing=True,
-                          docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
+                          docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
                       ),
               }], use_split_paygen=True),
       ),
@@ -1091,8 +1095,10 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           'doing paygen.running paygen operations in parallel.clean up payload inputs.removing input archive /tmp/local/path/to/input/archive'
       ),
-      api.post_check(
-          post_process.StepCommandContains, 'doing paygen.docker pull',
-          ['docker', 'pull', 'us-docker.pkg.dev/chromeos-bot/signing/foo']),
+      api.post_check(post_process.StepCommandContains,
+                     'doing paygen.docker pull', [
+                         'docker', 'pull',
+                         'us-docker.pkg.dev/chromeos-release-bot/signing/foo'
+                     ]),
       api.post_process(post_process.DropExpectation),
   )
