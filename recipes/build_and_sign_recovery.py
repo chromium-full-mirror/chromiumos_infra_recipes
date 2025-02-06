@@ -20,6 +20,7 @@ from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
@@ -142,13 +143,16 @@ def RunSteps(api: RecipeApi):
 
     # Sign recovery kernel image and upload to GS.
     if api._test_data.enabled:  # pylint: disable=protected-access
-      api.signing.test_api.signing_config_test_data = TEST_SIGNING_CONFIG
+      api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
+          'signing_config', TEST_SIGNING_CONFIG)
     api.cros_release.validate_sign_types()
     with api.step.nest('sign recovery kernel image') as pres:
       signed_image_response = api.signing.sign_artifacts(
           sign_types=[common_pb2.IMAGE_TYPE_RECOVERY_KERNEL],
           channels=api.cros_release.channels, include_paygen=False,
           local_artifact_dir=recovery_dir, upload_unsigned=False)
+      if not signed_image_response:
+        raise StepFailure('Empty signing config for build target')
       recovery_path = get_recovery_path(api, signed_image_response)
       pres.logs['signed builds'] = recovery_path
 
@@ -217,6 +221,36 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='recovery-android-kukui-main',
+  )
+
+  yield api.build_menu.test(
+      'signing-skipped',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_CANARY],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware'))
+          }),
+      api.post_process(post_process.StepCommandContains, 'git clone', [
+          'https://googleplex-android.googlesource.com/device/google/desktop/kukui-kernels/6.6'
+      ]),
+      api.recipe_test_data(signing_config="""build_target_signing_configs {
+  build_target: "kukui"
+}"""),
+      api.post_check(post_process.MustRun,
+                     'copy prebuild recovery image into temp dir'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'sign recovery kernel image.sign artifacts.upload signed artifacts to '
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY.'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='recovery-android-kukui-main',
+      status='FAILURE',
   )
 
   yield api.build_menu.test(

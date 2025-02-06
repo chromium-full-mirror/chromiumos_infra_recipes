@@ -350,6 +350,9 @@ class SigningApi(recipe_api.RecipeApi):
     """
     build_target_config = self.get_config()
 
+    if not build_target_config.signing_configs:
+      return None, None
+
     self._paygen_keyset = build_target_config.keyset
 
     relevant_configs = []
@@ -628,9 +631,12 @@ class SigningApi(recipe_api.RecipeApi):
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
 
-    with self.m.step.nest('sign artifacts'):
+    with self.m.step.nest('sign artifacts') as pres:
       build_target_config, archive_dir = self.setup_signing(
           sign_types, channels)
+      if not build_target_config and not archive_dir:
+        pres.step_text = 'Skipping signing for this board due to empty signing config. See go/cros-signing-help for onboarding instructions.'
+        return None
       config = BuildTargetSigningConfigs(
           build_target_signing_configs=[build_target_config])
 

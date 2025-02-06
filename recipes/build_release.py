@@ -275,9 +275,10 @@ def DoRunSteps(api, config, properties):
         sign_types=release_sign_types, channels=channels,
         attestation_eligible=api.cros_infra_config.config.artifacts
         .attestation_eligible)
-    signed_build_list = api.signing_utils.signing_response_to_metadata(
-        signed_image_response)
-    api.build_reporting.publish_signed_build_metadata(signed_build_list)
+    if signed_image_response:
+      signed_build_list = api.signing_utils.signing_response_to_metadata(
+          signed_image_response)
+      api.build_reporting.publish_signed_build_metadata(signed_build_list)
 
   gs_image_dir = None
   instructions = None
@@ -327,8 +328,7 @@ def DoRunSteps(api, config, properties):
         # Add EBUILD_TESTS status to the retry_summary. b/265306388 for context.
         api.checkpoint.update_summary(RetryStep.EBUILD_TESTS, STATUS_FAILED)
         raise
-      else:
-        api.checkpoint.update_summary(RetryStep.EBUILD_TESTS, STATUS_SUCCESS)
+      api.checkpoint.update_summary(RetryStep.EBUILD_TESTS, STATUS_SUCCESS)
       return results
 
   # TODO(b/262388770): Properly support ebuild tests within checkpoint.

@@ -23,6 +23,7 @@ from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
@@ -203,13 +204,16 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
 
     # Sign shellball.
     if api._test_data.enabled:  # pylint: disable=protected-access
-      api.signing.test_api.signing_config_test_data = TEST_SIGNING_CONFIG
+      api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
+          'signing_config', TEST_SIGNING_CONFIG)
     api.cros_release.validate_sign_types()
     with api.step.nest('sign firmware shellball') as pres:
       signed_image_response = api.signing.sign_artifacts(
           sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
           channels=[common_pb2.CHANNEL_AGNOSTIC], include_paygen=False,
           local_artifact_dir=output_artifact_dir, upload_unsigned=False)
+      if not signed_image_response:
+        raise StepFailure('Empty signing config for build target')
       shellball_path = get_shellball_path(api, signed_image_response)
       pres.logs['signed builds'] = shellball_path
 
@@ -301,6 +305,52 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='firmware-packager-android-kukui-main',
+  )
+
+  yield api.build_menu.test(
+      'signing-skipped',
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(
+              id='123',
+              gitiles=triggers_pb2.GitilesTrigger(
+                  repo='https://chromium.googlesource.com/chromium/src',
+                  ref='refs/tags/79.0.3945.20',
+                  revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
+              ),
+          ),
+          triggers_pb2.Trigger(id='123', noop=triggers_pb2.NoopTrigger(
+              data='foo')),
+      ]),
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_CANARY],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware'))
+          }),
+      api.recipe_test_data(signing_config="""build_target_signing_configs {
+  build_target: "kukui"
+}"""),
+      api.step_data(
+          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
+          stdout=api.raw_io.output('3.0')),
+      api.post_check(
+          post_process.DoesNotRun,
+          'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
+          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
+      ),
+      api.post_check(post_process.MustRun, 'pack firmware'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'sign firmware shellball.sign artifacts.docker prune',
+      ),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='firmware-packager-android-kukui-main',
+      status='FAILURE',
   )
 
   yield api.build_menu.test(
