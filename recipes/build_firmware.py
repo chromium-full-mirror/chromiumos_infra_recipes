@@ -147,7 +147,7 @@ def RunSteps(api, properties):
       if api.cros_infra_config.config.artifacts.attestation_eligible:
         api.bcid_reporter.report_stage('compile')
     firmware_targets = [
-        FirmwareTarget(Name=bt.name) for bt in properties.build_targets
+        FirmwareTarget(name=bt.name) for bt in properties.build_targets
     ]
     response = service.BuildAllFirmware(
         BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
