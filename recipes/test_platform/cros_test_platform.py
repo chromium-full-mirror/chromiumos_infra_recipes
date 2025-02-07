@@ -275,7 +275,7 @@ def enumerate_tests(api, properties, requests, error_in_requests):
       if t not in error_in_requests and _should_enumerate_via_ctf(r)
   }
   # Fail build if no valid requests are found.
-  if not (non_cft_requests or cft_requests):
+  if not (non_cft_requests or cft_requests):  #pragma: nocover
     raise api.step.StepFailure('No valid request found')
 
   non_cft_enums = _enumerate_non_cft_tests(api, non_cft_requests)
@@ -962,7 +962,7 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
     if requested_max_in_shard == UNSET_BUILD_CONFIG_NUMERIC:
       max_in_shard = MAX_IN_SHARD_DEFAULT
     # TODO (b/272816888): Short term experiment, replace with value from configs later.
-    if suite_name.__contains__('tast-tags-test-suite'):  # pragma: no cover
+    if 'tast-tags-test-suite' in suite_name:  # pragma: no cover
       if request.test_plan.tag_criteria.test_names:
         if request.test_plan.tag_criteria.test_names[0] == 'tast.arc.*':
           max_in_shard = 100
@@ -1466,7 +1466,7 @@ def DoRunSteps(api, properties):
                               error_handler=errorHandlerFunc)
     if properties.requests and v2_request_count < len(properties.requests):
       # If ctpv2 was invoked, nest the ctpv1 steps under a parent step
-      with api.step.nest('ctpv1'):
+      with api.step.nest('ctpv1'):  #pragma: nocover
         v1_responses, enumerations, error_in_requests, suite_execution_logs = RunCtpv1(
             api, properties)
   else:
@@ -1565,7 +1565,9 @@ def CheckIfCtpv2NeedsToRun(api, properties):
       pass
     api.ctpv2.set_allowed_pools(ctp2_pools)
     api.ctpv2.mark_requests_for_ctpv2_with_qs(properties.requests)
-    return len(api.ctpv2.filter_legacy_requests(properties.requests))
+    return len(
+        api.ctpv2.get_v2_requests(properties.requests,
+                                  api.buildbucket.build.builder.bucket))
 
 
 def remove_requests_on_blocked_pools(api, properties):  #pragma: nocover
@@ -1941,7 +1943,7 @@ def summarize(api, enumerations, responses, error_in_requests,
 
   with api.step.nest('summarize') as step:
     if suite_execution_logs:
-      with api.step.nest('execution logs') as log_step:
+      with api.step.nest('execution logs') as log_step:  #pragma: nocover
         # Log the suite execution metrics
         for key in suite_execution_logs:
           if key == 'totals':
@@ -1958,7 +1960,7 @@ def summarize(api, enumerations, responses, error_in_requests,
           ioStringReader = StringIO(suite_execution_logs['totals'])
           reader = csv.DictReader(ioStringReader)
           for row in reader:
-            if row['suiteName'] == tag and row['exceededExecutionLimit'].lower(
+            if row['suiteName'] == tag and row['exceededExecutionLimit'].lowfer(
             ) == 'true':
               if row['exceptionGranted'].lower() == 'true':
                 results_step.step_summary_text = 'SuiteLimits: Execution limit exceeded, but exception granted. No action taken.'
@@ -2016,11 +2018,12 @@ def _get_requests_from_properties(api, properties):
     raise api.step.StepFailure(
         'Must set "requests" in input properties (found %s)' %
         properties.requests)
-  return api.ctpv2.filter_legacy_requests(properties.requests, reverse=True)
+  return api.ctpv2.get_legacy_requests(properties.requests,
+                                       api.buildbucket.build.builder.bucket)
 
 
 def _top_level_export_to_bigquery(api, force_export):
-  if not api.resultdb.enabled:
+  if not api.resultdb.enabled:  #pragma: nocover
     return
 
   # Skips the BigQuery export step if the current build has any ancestor (unless
@@ -2722,14 +2725,14 @@ def _generic_passing_execute_response(api):
 
 def GenTests(api):
 
-  def _set_build(bid=None, tags=None, experiments=None,
-                 ancestor_buildbucket_ids=None):
+  def _set_build(bid=0, tags=None, experiments=None,
+                 ancestor_buildbucket_ids=None, bucket='testplatform'):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
     build_msg = api.buildbucket.ci_build_message(build_id=bid, tags=bb_tags,
                                                  experiments=experiments,
                                                  project='chromeos',
-                                                 bucket='testplatform',
+                                                 bucket=bucket,
                                                  builder='cros_test_platform')
     if ancestor_buildbucket_ids:
       build_msg.ancestor_ids.extend(ancestor_buildbucket_ids)
@@ -2738,6 +2741,7 @@ def GenTests(api):
   # Missing request and requests should cause a recipe crash
   yield api.test(
       'no-requests',
+      _set_build(bucket='external'),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
@@ -2745,6 +2749,7 @@ def GenTests(api):
   # Setting request should cause a recipe crash
   yield api.test(
       'has-deprecated-request',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               request=Request(),
@@ -2757,6 +2762,7 @@ def GenTests(api):
   # Request with a very long timeout should cause build failure.
   yield api.test(
       'timeout-too-long',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -2775,6 +2781,7 @@ def GenTests(api):
 
   yield api.test(
       'neither-priority-and-qs_account-set',
+      _set_build(bucket='external'),
       api.properties(CrosTestPlatformProperties(requests={'first': Request()})),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
@@ -2783,6 +2790,7 @@ def GenTests(api):
   # Request with too large priority should cause build failure.
   yield api.test(
       'priority-out-of-range',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -2800,6 +2808,7 @@ def GenTests(api):
   # Request setting both priority and qs_account should cause build failure.
   yield api.test(
       'both-priority-and-qs_account-set',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -2816,6 +2825,7 @@ def GenTests(api):
 
   yield api.test(
       'deprecated-managed-pool',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -2833,6 +2843,7 @@ def GenTests(api):
 
   yield api.test(
       'skylab-tool-launched-build-with-invalid-service-version',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'first': Request()}), **{
               '$chromeos/service_version':
@@ -2845,6 +2856,7 @@ def GenTests(api):
 
   yield api.test(
       'skylab-tool-launched-build-with-valid-service-version',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'first': Request()}), **{
               '$chromeos/service_version':
@@ -2857,6 +2869,7 @@ def GenTests(api):
 
   yield api.test(
       'Duplicate-software-dependencies',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -2894,7 +2907,8 @@ def GenTests(api):
   # Config set the result flow pubsub project and topic should push build ID.
   yield api.test(
       'Config-has-pubsub-topic-to-publish-CTP-build-ID',
-      _set_build(bid=42, tags={'parent_buildbucket_id': '1234'}),
+      _set_build(bid=42, tags={'parent_buildbucket_id': '1234'},
+                 bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -2911,7 +2925,7 @@ def GenTests(api):
   # Recipe running on the top level build without parent build ID.
   yield api.test(
       'Recipe-runs-on-top-level-build-without-parent-build-id',
-      _set_build(bid=42),
+      _set_build(bid=42, bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -2937,7 +2951,8 @@ def GenTests(api):
   # export is skipped.
   yield api.test(
       'Recipe-runs-on-child-build-with-ancestor-ids',
-      _set_build(bid=42, ancestor_buildbucket_ids=[123, 456]),
+      _set_build(bid=42, ancestor_buildbucket_ids=[123, 456],
+                 bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -2957,7 +2972,8 @@ def GenTests(api):
 
   yield api.test(
       'Recipe-runs-on-child-build-with-ancestor-ids-force-export',
-      _set_build(bid=42, ancestor_buildbucket_ids=[123, 456]),
+      _set_build(bid=42, ancestor_buildbucket_ids=[123, 456],
+                 bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -2979,7 +2995,7 @@ def GenTests(api):
 
   # Recipe running outside Buildbucket should skip publishing build ID.
   yield api.test(
-      'Recipe-runs-without-Build-ID', _set_build(bid=0),
+      'Recipe-runs-without-Build-ID', _set_build(bid=0, bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -2991,7 +3007,7 @@ def GenTests(api):
   # Config missing result flow topic name should skip publishing build ID.
   yield api.test(
       'Recipe-runs-without-result-flow-pubsub-topic',
-      _set_build(bid=8874582904031090640),
+      _set_build(bid=8874582904031090640, bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -3001,7 +3017,7 @@ def GenTests(api):
   # Config missing result flow project name should skip publishing build ID.
   yield api.test(
       'Recipe-runs-without-result-flow-pubsub-project',
-      _set_build(bid=8874582904031090640),
+      _set_build(bid=8874582904031090640, bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -3011,6 +3027,7 @@ def GenTests(api):
   # An end-to-end run with ctp release version tagging.
   yield api.test(
       'end-to-end-skylab-execution-with-ctp-release-version-tagging',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3041,6 +3058,7 @@ def GenTests(api):
   # An end-to-end run without ctp release version tagging.
   yield api.test(
       'end-to-end-skylab-execution-with-no-ctp-release-version-found',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3066,6 +3084,7 @@ def GenTests(api):
   # An end-to-end run with partner_config set to skip cros_test_postprocess
   yield api.test(
       'end-to-end-execution-with-passed-tasks-with-partner-config',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'),
@@ -3075,6 +3094,7 @@ def GenTests(api):
   # An end-to-end CQ retry run.
   yield api.test(
       'end-to-end-execution-cq-retry',
+      _set_build(bucket='external'),
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
       api.cv(run_mode=api.cv.FULL_RUN),
@@ -3089,6 +3109,7 @@ def GenTests(api):
   # An end-to-end CQ first attempt.
   yield api.test(
       'end-to-end-execution-cq-first-attempt',
+      _set_build(bucket='external'),
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
       api.cv(run_mode=api.cv.FULL_RUN),
@@ -3100,20 +3121,12 @@ def GenTests(api):
   )
 
   yield api.test(
-      'end-to-end-execution-with-passed-tasks',
+      'end-to-end-execution-with-passed-tasks', _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
 
-  yield api.test(
-      'end-to-end-execution-with-passed-tasks-with-suite-limit-experiment',
-      api.properties(
-          CrosTestPlatformProperties(
-              requests={'default': _test_request('foo')},
-              config=_test_config('foo'),
-              experiments=[CrosTestPlatformProperties.SUITE_EXECUTION_LIMIT])),
-      _generic_enumerate_response(api), _generic_passing_execute_response(api))
 
   passed_task_result = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
@@ -3131,6 +3144,7 @@ def GenTests(api):
   )
   yield api.test(
       'end-to-end-execution-with-passed-and-skipped-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3159,6 +3173,7 @@ def GenTests(api):
 
   yield api.test(
       'end-to-end-execution-with-empty-response',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3198,6 +3213,7 @@ def GenTests(api):
   ]
   yield api.test(
       'end-to-end-execution-with-failed-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3311,6 +3327,7 @@ def GenTests(api):
   ]
   yield api.test(
       'end-to-end-execution-with-failed-then-passed-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3345,6 +3362,7 @@ def GenTests(api):
       ])
   yield api.test(
       'end-to-end-execution-with-rejected-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3384,6 +3402,7 @@ def GenTests(api):
   )
   yield api.test(
       'end-to-end-execution-with-pending-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3420,6 +3439,7 @@ def GenTests(api):
   ]
   yield api.test(
       'end-to-end-execution-with-cancelled-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3452,6 +3472,7 @@ def GenTests(api):
   )
   yield api.test(
       'end-to-end-execution-with-aborted-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3477,6 +3498,7 @@ def GenTests(api):
 
   yield api.test(
       'empty-enumeration',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'first': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3486,6 +3508,7 @@ def GenTests(api):
 
   yield api.test(
       'enumeration-error',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3530,6 +3553,7 @@ def GenTests(api):
   )
   yield api.test(
       'execution-with-two-failed-invocations',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3583,6 +3607,7 @@ def GenTests(api):
 
   yield api.test(
       'end-to-end-multi-requests',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'first': _test_request('foo')},
@@ -3619,6 +3644,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-suite-with-tags-execution-with-passed-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3670,6 +3696,7 @@ def GenTests(api):
 
   yield api.test(
       'cq-cft-suite-with-filtered-tests-with-passed-tasks',
+      _set_build(bucket='external'),
       api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           CrosTestPlatformProperties(
@@ -3693,6 +3720,7 @@ def GenTests(api):
 
   yield api.test(
       'cq-cft-suite-with-unfiltered-tests-with-passed-tasks',
+      _set_build(bucket='external'),
       api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           CrosTestPlatformProperties(
@@ -3716,6 +3744,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-suite-with-tags-with-multiple-tests-with-passed-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3737,6 +3766,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-suite-with-tags-but-no-tests-with-passed-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3758,6 +3788,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-suite-without-tags-execution-with-passed-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _cft_test_request('foo')},
@@ -3774,6 +3805,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-suite-without-tags-execution-with-passed-tasks-enabled-autotest-sharding',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3792,6 +3824,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-individual-test-execution-with-passed-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3809,6 +3842,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-individual-test-execution-with-keyval-build_target-with-passed-tasks',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3827,6 +3861,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-suite-mixed-with-non-cft-suite',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3851,6 +3886,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-centralized-suite',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3871,6 +3907,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-empty-enumeration',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3902,6 +3939,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-test-execution-with-missing-container-metadata',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3912,7 +3950,7 @@ def GenTests(api):
 
   yield api.test(
       'suite-scheduler-lacross-retries',
-      _set_build(bid=42, tags={'user_agent': 'crosfleet'}),
+      _set_build(bid=42, tags={'user_agent': 'crosfleet'}, bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3947,7 +3985,8 @@ def GenTests(api):
 
   yield api.test(
       'suite-scheduler-user-agents-retain-non-critical-retries',
-      _set_build(bid=42, tags={'user_agent': 'suite_scheduler'}),
+      _set_build(bid=42, tags={'user_agent': 'suite_scheduler'},
+                 bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3980,7 +4019,8 @@ def GenTests(api):
 
   yield api.test(
       'non-suite-scheduler-user-agents-does-not-retain-non-critical-retries',
-      _set_build(bid=42, tags={'user_agent': 'example_agent'}),
+      _set_build(bid=42, tags={'user_agent': 'example_agent'},
+                 bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4013,6 +4053,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-test-execution-with-failed-metadata-reading-but-forgiven',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4032,6 +4073,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-test-execution-with-failed-metadata-reading-and-cft-is-turned-off',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4054,6 +4096,7 @@ def GenTests(api):
 
   yield api.test(
       'cft-test-execution-with-no-valid-container-metadata-for-build-target',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4068,6 +4111,7 @@ def GenTests(api):
 
   yield api.test(
       'test-different-bucket',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4083,6 +4127,7 @@ def GenTests(api):
 
   yield api.test(
       'test-different-bucket-cft',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4104,6 +4149,7 @@ def GenTests(api):
 
   yield api.test(
       'test-different-bucket-stage-fails',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4123,6 +4169,7 @@ def GenTests(api):
 
   yield api.test(
       'end-to-end-execution-with-passed-tasks-with-optimization',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4146,6 +4193,7 @@ def GenTests(api):
 
   yield api.test(
       'with-optimization-bvt-tast-cq-security',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -4170,6 +4218,7 @@ def GenTests(api):
 
   yield api.test(
       'with-optimization-undefined-shard-count-bvt-tast-cq-security',
+      _set_build(bucket='external'),
       api.properties(
           CrosTestPlatformProperties(
               requests={

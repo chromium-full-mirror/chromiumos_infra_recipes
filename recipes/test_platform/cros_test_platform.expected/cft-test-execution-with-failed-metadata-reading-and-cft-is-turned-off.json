@@ -14,6 +14,18 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:external"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:0",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get ctp release version tag.cipd describe chromiumos/infra/cros_test_platform/${platform}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -84,6 +96,18 @@
       "--format",
       "text"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:external"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:0",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "remove requests for blocked pools.get blocked pools.fetch HEAD:testingconfig/blocked_pools.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -115,9 +139,69 @@
       "--format",
       "text"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:external"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:0",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "check if Ctpv2 needs to run.get allowed pools for ctpv2.fetch HEAD:testingconfig/ctp2_pools.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure resultdb bigquery export"
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "UpdateInvocation",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:external"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:0",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "configure resultdb bigquery export.mark resultdb invocation for bigquery export",
+    "stdin": "{\"invocation\": {\"bigqueryExports\": [{\"dataset\": \"resultdb\", \"project\": \"cros-test-analytics\", \"table\": \"test_results\", \"testResults\": {}}], \"name\": \"invocations/build:0\"}, \"updateMask\": \"bigqueryExports\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"bigqueryExports\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@      {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"dataset\": \"resultdb\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"project\": \"cros-test-analytics\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"table\": \"test_results\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testResults\": {}@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    ],@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"name\": \"invocations/build:0\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  },@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"updateMask\": \"bigqueryExports\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
     ]
   },
   {
@@ -204,6 +288,18 @@
       "gs://foo-container-metadata-url"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:external"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:0",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -269,6 +365,18 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:external"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:0",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "enumerate tests.call binary.ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -337,6 +445,18 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:external"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:0",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "enumerate tests.call binary.enumerate",
     "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    },\n    \"cft-default\": {\n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
@@ -358,8 +478,20 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:external"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:0",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "set build cost.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output,status\"}, \"predicate\": {\"builder\": {}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}]}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output,status\"}, \"predicate\": {\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -378,7 +510,9 @@
       "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": {},@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@            {@@@",
       "@@@STEP_LOG_LINE@request@              \"key\": \"parent_buildbucket_id\",@@@",

@@ -12,6 +12,7 @@ from PB.recipes.chromeos.test_platform.cros_test_platform import (
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/step',
     'ctpv2',
@@ -29,8 +30,8 @@ def RunSteps(api, properties):
     api.ctpv2.ensure_ctpv2()
     if properties.requests:
       api.ctpv2.set_allowed_pools({'test-pool'})
-      api.ctpv2.filter_legacy_requests(properties.requests, True)
-      api.ctpv2.filter_legacy_requests(properties.requests, False)
+      api.ctpv2.get_legacy_requests(properties.requests, 'testplatform')
+      api.ctpv2.get_legacy_requests(properties.requests, 'testplatform')
 
 
 def GenTests(api):

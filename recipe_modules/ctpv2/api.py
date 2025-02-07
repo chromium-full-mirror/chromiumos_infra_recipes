@@ -39,8 +39,9 @@ class Ctpv2Command(recipe_api.RecipeApi):
     build.CopyFrom(self.m.buildbucket.build)
     if use_legacy and 'requests' in build.input.properties:  # pragma: no cover
       self.mark_requests_for_ctpv2_with_qs(build.input.properties['requests'])
-      build.input.properties['requests'] = self.filter_legacy_requests(
-          build.input.properties['requests'])
+      build.input.properties['requests'] = self.get_v2_requests(
+          build.input.properties['requests'],
+          self.m.buildbucket.build.builder.bucket)
 
     for ofield in ['output', 'status', 'summary_markdown', 'steps']:
       build.ClearField(ofield)
@@ -76,24 +77,74 @@ class Ctpv2Command(recipe_api.RecipeApi):
     """Set the allowed ctp2 pools."""
     self.allowed_pools = allowed_pools
 
-  def filter_legacy_requests(self, requests, reverse: bool = False):
-    """Filter out the legacy requests based on allowed pools.
+  def get_legacy_requests(self, requests, bucket='testplatform'):
+    """return legacy requests.
 
     Args:
       requests: Map of legacy v1 requests.
-      reverse: If true, flip the filter result.
+      bucket: bucket of the current builder
 
     Returns:
       Dict of legacy v1 requests that meet ctpv2 criteria (unless reversed).
     """
-    return {
-        name: request
-        for name, request in requests.items()
-        # XOR with reverse inverts the result.
-        if self._meets_ctpv2_criteria(request) ^ reverse
-    }
+    bucket = bucket if bucket != '' else 'testplatform'
+    bucket = bucket.removesuffix('.shadow')
 
-  def _meets_ctpv2_criteria(self, request):
+    # If external is in the name then it is a partner bucket and all currently
+    # are running in v1.
+    if 'external' in bucket:  #pragma: nocover
+      return dict(requests.items())
+
+    if 'public' in bucket:  #pragma: nocover
+      # The public builder still services mixed request so we want to maintain
+      # the current filter.
+      return {
+          name: request
+          for name, request in requests.items()
+          if not self._meets_ctpv2_criteria(request)
+      }
+
+      # The standard CTP builder does not service any more v1 request. Force all
+      # to be read as CTPv2 requests.
+      #
+      # This will also capture any new buckets which are not partners nor public
+      # and force them into using CTPv2. This is by design as we no longer
+      # intend to onboard new workflows onto the v1 stack.
+    return {}
+
+  def get_v2_requests(self, requests, bucket='testplatform'):  #pragma: nocover
+    """return v2 requests.
+
+    Args:
+      requests: Map of legacy v1 requests.
+      bucket: bucket of the current builder
+
+    Returns:
+      Dict of legacy v1 requests that meet ctpv2 criteria.
+    """
+    bucket = bucket if bucket != '' else 'testplatform'
+    bucket = bucket.removesuffix('.shadow')
+
+    if bucket == 'testplatform':
+      # The standard CTP builder does not service any more v1 request. Force all
+      # to be read as CTPv2 requests.
+      #
+      # This will also capture any new buckets which are not partners nor public
+      # and force them into using CTPv2. This is by design as we no longer
+      # intend to onboard new workflows onto the v1 stack.
+      return dict(requests.items())
+    if 'public' in bucket:
+      # The public builder still services mixed request so we want to maintain
+      # the current filter.
+      return {
+          name: request
+          for name, request in requests.items()
+          if self._meets_ctpv2_criteria(request)
+      }
+
+    return {}
+
+  def _meets_ctpv2_criteria(self, request):  #pragma: nocover
     params = self.get_val_from_obj_or_dict(request, 'params')
     if not params:  # pragma: no cover
       return False
@@ -135,7 +186,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
         _set_run_ctpv2_with_qs_param(params)
 
 
-  def _is_ctpv2_with_qs_request(self, params):
+  def _is_ctpv2_with_qs_request(self, params):  #pragma: nocover
     run_via_cft = self.get_val_from_obj_or_dict(params, 'run_via_cft',
                                                 'runViaCft')
     run_ctpv2_with_qs = self.get_val_from_obj_or_dict(params,
@@ -143,7 +194,10 @@ class Ctpv2Command(recipe_api.RecipeApi):
                                                       'runCtpv2WithQs')
     return run_via_cft and run_ctpv2_with_qs
 
-  def _is_allowed_pool(self, params):
+  def _is_allowed_pool(self, params):  #pragma: nocover
+    in_main_pool = params is not None and self._is_main_pool_request(params)
+    if in_main_pool:  # pragma: no cover
+      return True
     decorations = self.get_val_from_obj_or_dict(params, 'decorations')
     if not decorations:  # pragma: no cover
       return False

@@ -16,7 +16,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -105,7 +105,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -148,7 +148,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -178,7 +178,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -257,7 +257,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -294,7 +294,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -410,7 +410,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -476,7 +476,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -554,7 +554,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -647,7 +647,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -658,7 +658,7 @@
       }
     },
     "name": "execute.call binary.launch luciexe",
-    "stdin": "\b*\u0012,\n\bchromeos\u0012\ftestplatform\u001a\u0012cros_test_platform\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002zb\u0012`\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\u001c\u0012\u0002 \u001e*\u0016\u0012\u0014invocations/build:42\ufffd\u0001\u001d\n\u0015parent_buildbucket_id\u0012\u00041234",
+    "stdin": "\b*\u0012(\n\bchromeos\u0012\bexternal\u001a\u0012cros_test_platform\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002zb\u0012`\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\u001c\u0012\u0002 \u001e*\u0016\u0012\u0014invocations/build:42\ufffd\u0001\u001d\n\u0015parent_buildbucket_id\u0012\u00041234",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",
@@ -681,7 +681,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -767,7 +767,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -804,7 +804,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
@@ -1008,7 +1008,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:testplatform"
+        "name": "chromeos:external"
       },
       "resultdb": {
         "current_invocation": {
