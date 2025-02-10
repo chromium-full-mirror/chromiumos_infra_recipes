@@ -50,7 +50,9 @@ CHROMIUM_VERSION_FILE = 'chrome/VERSION'
 FETCH_BEST_CHROME_REVISION_INTERVAL = 600
 FETCH_BEST_CHROME_REVISION_TIMES = 30
 WAIT_PREUPREV_TIMEOUT_SEC = 3600 * 6  # 6 hour
-UPREV_CL_TOPICS = ['chromeos-base/lacros-ash-atomic', 'staging/chrome-main']
+UPREV_CL_TOPICS = [
+    'chromeos-base/lacros-ash-atomic', 'staging/chrome-main', 'chrome-main'
+]
 INVOCATION_PREFIX = 'invocations/'
 
 NO_CL_FOUND_SUMMARY = 'No CL found.'

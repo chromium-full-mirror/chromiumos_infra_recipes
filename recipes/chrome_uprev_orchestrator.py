@@ -243,7 +243,7 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
         common_pb2.GitilesCommit(host=buildset.host, project=buildset.project,
                                  id=buildset.id, ref=buildset.ref,
                                  position=position))
-    puprs.append('staging-chrome-main')
+    puprs.append('chrome-main')
     summary_markdown = 'Testing on main'
     run_preuprevs = True
   elif IsVersionOnReleaseBranches(api, chrome_version):
@@ -377,7 +377,7 @@ def GenTests(api: RecipeTestApi):
     if newid not in _name_id_mapping.values():
       _name_id_mapping[name] = newid
       return newid
-    raise Exception('hash collision')  # pragma: nocover
+    assert False  # pragma: nocover
 
   def build(name, status):
     return build_pb2.Build(
@@ -496,7 +496,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(
           post_process.LogContains, 'trigger puprs.buildbucket.schedule',
           'request', [
-              '"builder": "staging-chrome-main-pupr-generator"',
+              '"builder": "chrome-main-pupr-generator"',
               '"ref": "refs/heads/main"',
               '"revision": "8302b1a80de0995f146605740417cdf78e381157"',
           ]),
