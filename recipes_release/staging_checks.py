@@ -170,12 +170,10 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
                    [autoreleaser_no_releasable_changes_exemption],
                    num_builds=1),
     StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
-    StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
     StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
     StagingReCheck('chromeos', 'staging', r'staging-(?!.*llfg).*-incremental$',
                    [image_builder_exemption, sdk_update_exemption],
                    num_builds=2),
-    StagingReCheck('chromeos', 'staging', r'staging-brancher', num_builds=3),
 )
 
 RELEASE_BUNDLE_STAGING_CHECKS_RE = (
@@ -206,4 +204,6 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
                    num_builds=3),
     # TODO: b/278066948 - When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
+    StagingReCheck('chromeos', 'staging', r'staging-brancher', num_builds=3),
 )
