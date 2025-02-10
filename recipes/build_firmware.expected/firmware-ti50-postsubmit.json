@@ -4847,7 +4847,7 @@
     "cmd": [],
     "name": "schedule signing build",
     "~followup_annotations": [
-      "@@@STEP_TEXT@builder_name=firmware-ti50-postsubmit<br/>signing_allowed_builder_names=['staging-firmware-ti50-postsubmit', 'firmware-ti50-postsubmit', 'firmware-ti50-guc-14778.B-postsubmit', 'firmware-ti50-prepvt-15974.B-branch', 'firmware-ti50-mp-15980.B-branch']<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['dt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['dt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]})@@@"
+      "@@@STEP_TEXT@builder_name=firmware-ti50-postsubmit<br/>signing_allowed_builder_names=['staging-firmware-ti50-postsubmit', 'firmware-ti50-postsubmit']<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['dt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['dt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]})@@@"
     ]
   },
   {

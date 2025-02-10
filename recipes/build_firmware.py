@@ -196,6 +196,7 @@ def RunSteps(api, properties):
         api.bcid_reporter.report_stage('upload-complete')
 
     # Invoke signing if applies.
+    signing_scheduled = False
     with api.step.nest('schedule signing build') as pres:
       pres.step_text = '\n'.join([
           f'builder_name={build.builder.builder}',
@@ -223,6 +224,7 @@ def RunSteps(api, properties):
                                                properties=sign_image_props))
 
         api.buildbucket.schedule(requests)
+        signing_scheduled = True
 
     # Publish tar files to pubsub.
     if not api.cv.active:
@@ -301,16 +303,19 @@ def RunSteps(api, properties):
 
     CreateContainers(api, config)
 
-    CreateTi50TastArtifacts(api, location, config)
+    # Tast artifacts are only required by ToT builders since those are the only
+    # builders that generate signed outputs.
+    # Ideally we would have an ArtifactType and key off of that.
+    if location == common_pb2.PLATFORM_TI50 and signing_scheduled:
+      CreateTi50TastArtifacts(api, config)
 
     api.easy.set_properties_step(
         suite_scheduling=str(properties.set_suite_scheduling and
                              not is_staging))
 
-def CreateTi50TastArtifacts(api, location, config):
+
+def CreateTi50TastArtifacts(api, config):
   """Create directories and files of artifacts needed by Ti50 Tast tests."""
-  if location != common_pb2.PLATFORM_TI50:
-    return
   with api.step.nest('Create Ti50 Tast artifacts'):
 
     artifacts_gs_bucket = config.artifacts.artifacts_gs_bucket
@@ -755,21 +760,18 @@ def GenTests(api):
                       tarball_info=FirmwareArtifactInfo.TarballInfo(
                           board=['betty'], publish_to_goldeneye=True,
                           type='GSC')),
-              ]))), builder='firmware-ti50-postsubmit',
-      input_properties={
-          'firmware_location':
-              common_pb2.PLATFORM_TI50,
-          'chromiumos_sdk_pin_file':
-              sdk_pin_path,
-          'set_suite_scheduling':
-              True,
-          'signing_allowed_builder_names': [
-              'staging-firmware-ti50-postsubmit', 'firmware-ti50-postsubmit',
-              'firmware-ti50-guc-14778.B-postsubmit',
-              'firmware-ti50-prepvt-15974.B-branch',
-              'firmware-ti50-mp-15980.B-branch'
-          ],
-      })
+              ]))), builder='firmware-ti50-postsubmit', input_properties={
+                  'firmware_location':
+                      common_pb2.PLATFORM_TI50,
+                  'chromiumos_sdk_pin_file':
+                      sdk_pin_path,
+                  'set_suite_scheduling':
+                      True,
+                  'signing_allowed_builder_names': [
+                      'staging-firmware-ti50-postsubmit',
+                      'firmware-ti50-postsubmit',
+                  ],
+              })
 
   yield test(
       'upload-fail',
@@ -890,35 +892,39 @@ def GenTests(api):
           'Create Ti50 Tast artifacts.gsutil list (2)',
           stdout=api.raw_io.output_text(
               'gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin'
-          )), builder='amd64-generic-snapshot', input_properties={
+          )), builder='firmware-ti50-postsubmit', input_properties={
               '$chromeos/build_menu': {
-                  'build_target': {
-                      'name': 'amd64-generic',
-                  },
                   'container_version_format':
                       '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
               },
               '$chromeos/cros_relevance': {
                   'force_postsubmit_relevance': True
               },
-              'firmware_location': common_pb2.PLATFORM_TI50
+              'firmware_location':
+                  common_pb2.PLATFORM_TI50,
+              'signing_allowed_builder_names': [
+                  'staging-firmware-ti50-postsubmit',
+                  'firmware-ti50-postsubmit',
+              ],
           })
 
   yield test(
       'create tast artifacts missing tar files',
       api.step_data('Create Ti50 Tast artifacts.gsutil list', retcode=1),
-      builder='amd64-generic-snapshot', input_properties={
+      builder='firmware-ti50-postsubmit', input_properties={
           '$chromeos/build_menu': {
-              'build_target': {
-                  'name': 'amd64-generic',
-              },
               'container_version_format':
                   '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           },
-          'firmware_location': common_pb2.PLATFORM_TI50
+          'firmware_location':
+              common_pb2.PLATFORM_TI50,
+          'signing_allowed_builder_names': [
+              'staging-firmware-ti50-postsubmit',
+              'firmware-ti50-postsubmit',
+          ],
       })
 
   yield test(
@@ -933,17 +939,19 @@ def GenTests(api):
               'gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin'
           )),
       api.step_data('Create Ti50 Tast artifacts.Extract archive.untar',
-                    retcode=2), builder='amd64-generic-snapshot',
+                    retcode=2), builder='firmware-ti50-postsubmit',
       input_properties={
           '$chromeos/build_menu': {
-              'build_target': {
-                  'name': 'amd64-generic',
-              },
               'container_version_format':
                   '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           },
-          'firmware_location': common_pb2.PLATFORM_TI50
+          'firmware_location':
+              common_pb2.PLATFORM_TI50,
+          'signing_allowed_builder_names': [
+              'staging-firmware-ti50-postsubmit',
+              'firmware-ti50-postsubmit',
+          ],
       })

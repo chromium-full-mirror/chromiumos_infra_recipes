@@ -5438,41 +5438,6 @@
   },
   {
     "cmd": [],
-    "name": "Create Ti50 Tast artifacts"
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "ls",
-      "-r",
-      "gs://chromeos-image-archive/firmware-ti50-cq/R99-1234.56.0-101-8945511751514863184/**/*.tar.bz2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Create Ti50 Tast artifacts.gsutil list",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set suite_scheduling",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@suite_scheduling@\"False\"@@@"
