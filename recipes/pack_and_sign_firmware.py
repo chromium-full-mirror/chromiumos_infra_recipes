@@ -152,7 +152,6 @@ def get_shellball_path(api: RecipeApi, response: SignImageResponse) -> Path:
 
 def get_keyset_is_mp(response: SignImageResponse) -> bool:
   [only_artifact] = response.signed_artifacts.archive_artifacts
-
   return only_artifact.keyset_is_mp
 
 
@@ -198,10 +197,9 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
         ]
         api.step('call pack_firmware', pack_fw_cmd)
 
-    # Get shellball version by channel.
-    new_shellball_versions = api.signing.get_shellball_versions(
-        api.cros_release.channels)
-    api.signing_utils.custom_artifact_versions = new_shellball_versions
+    # Get shellball version for target.
+    new_shellball_version = api.signing.get_shellball_version()
+    api.signing_utils.custom_artifact_version = new_shellball_version
 
     # Sign shellball.
     if api._test_data.enabled:  # pylint: disable=protected-access
@@ -210,21 +208,19 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
     with api.step.nest('sign firmware shellball') as pres:
       signed_image_response = api.signing.sign_artifacts(
           sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
-          channels=api.cros_release.channels, include_paygen=False,
+          channels=[common_pb2.CHANNEL_AGNOSTIC], include_paygen=False,
           local_artifact_dir=output_artifact_dir, upload_unsigned=False)
       shellball_path = get_shellball_path(api, signed_image_response)
       pres.logs['signed builds'] = shellball_path
 
-    # Assume we only ever have a single channel and get that version.
-    [only_version] = new_shellball_versions.values()
     # Advance LATEST-SHELLBALL for each version.
-    api.signing.upload_shellball_latest_file(only_version)
+    api.signing.upload_shellball_latest_file(new_shellball_version)
 
     # Open a cl with the new firmware prebuilts.
     return upload_firmware_prebuilts(api,
                                      output_artifact_dir / output_artifact_name,
                                      shellball_path, base_target_name,
-                                     only_version,
+                                     new_shellball_version,
                                      get_keyset_is_mp(signed_image_response),
                                      abandon=api.cros_infra_config.is_staging)
 
@@ -239,7 +235,7 @@ sample_response = SignImageResponse(
             image_type=common_pb2.IMAGE_TYPE_SHELLBALL,
             signed_artifacts=[
                 signing_pb2.SignedArtifact(
-                    signed_artifact_name='signed_firmware.sh',
+                    signed_artifact_name='signed_firmware.bin',
                 ),
             ],
             signing_status=build_report_pb2.BuildReport.SignedBuildMetadata
@@ -277,7 +273,7 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response)),
       api.step_data(
-          'get latest shellball version by channel.gsutil reading LATEST-SHELLBALL version for canary-channel',
+          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
       api.post_check(
           post_process.DoesNotRun,
@@ -294,7 +290,7 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.upload signed artifacts to '
           'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY.'
           'gsutil cp', [
-              'gs://signed-firmware/canary-channel/kukui/4.0/',
+              'gs://signed-firmware/kukui/4.0/',
           ]),
       api.post_check(post_process.DoesNotRun, 'remove existing symlink'),
       api.post_check(post_process.MustRun, 'create symlink'),
@@ -323,7 +319,7 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response)),
       api.step_data(
-          'get latest shellball version by channel.gsutil reading LATEST-SHELLBALL version for canary-channel',
+          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
       api.path.exists(
           api.path.cleanup_dir /
@@ -345,7 +341,7 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.upload signed artifacts to '
           'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY.'
           'gsutil cp', [
-              'gs://signed-firmware/canary-channel/kukui/4.0/',
+              'gs://signed-firmware/kukui/4.0/',
           ]),
       api.post_check(post_process.MustRun, 'remove existing symlink'),
       api.post_check(post_process.MustRun, 'create symlink'),
@@ -372,7 +368,7 @@ def GenTests(api: RecipeTestApi):
                                         use_dev_keys=True)),
           }),
       api.step_data(
-          'get latest shellball version by channel.gsutil reading LATEST-SHELLBALL version for canary-channel',
+          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
           retcode=1),
       api.step_data('git status', stdout=api.raw_io.output('')),
       api.post_check(
@@ -401,7 +397,7 @@ def GenTests(api: RecipeTestApi):
                                         use_dev_keys=True)),
           }),
       api.step_data(
-          'get latest shellball version by channel.gsutil reading LATEST-SHELLBALL version for canary-channel',
+          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
           retcode=1),
       api.post_check(
           post_process.LogContains,

@@ -323,9 +323,8 @@ class SigningApi(recipe_api.RecipeApi):
       raise StepFailure(
           f'could not find signing config for build target "{build_target}"')
 
-  def _set_fields_for_config(  # pylint: disable=no-self-use
-      self, config: SigningConfig,
-      channel: common_pb2.Channel) -> SigningConfig:
+  def _set_fields_for_config(self, config: SigningConfig,
+                             channel: common_pb2.Channel) -> SigningConfig:
     config = copy.deepcopy(config)
     config.channel = channel
     # Always set recovery_zip to be true.
@@ -955,18 +954,17 @@ class SigningApi(recipe_api.RecipeApi):
       if ex:
         raise ex
 
-  def get_shellball_versions(
-      self, channels: List[common_pb2.Channel]) -> Dict[str, str]:
-    """Returns mapping of channel -> shellball version.
+  def get_shellball_version(self) -> str:
+    """Returns shellball version.
 
-    Fetch LATEST-SHELLBALL per-channel from GS and increment to return the new
-    version. Shellball versions are separate from platform version since they
-    are based on pinned config.
+    Fetch LATEST-SHELLBALL from GS and increment to return the new version.
+    Shellball versions are separate from platform version since they are based
+    on pinned config.
     """
-    current_shellball_versions = self.m.signing_utils.get_current_shellball_versions(
-        channels, self.gs_upload_bucket)
-    return self.m.signing_utils.increment_shellball_major_versions(
-        current_shellball_versions)
+    current_shellball_version = self.m.signing_utils.get_current_shellball_version(
+        self.gs_upload_bucket)
+    return self.m.signing_utils.increment_shellball_major_version(
+        current_shellball_version)
 
   def upload_shellball_latest_file(self, version: str) -> None:
     """Upload LATEST-SHELLBALL file."""

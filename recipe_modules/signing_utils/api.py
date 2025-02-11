@@ -49,7 +49,7 @@ class SigningUtilsApi(recipe_api.RecipeApi):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     # Custom versions to use in artifact names instead of platform version.
-    self._custom_artifact_versions = None
+    self._custom_artifact_version = None
 
   # TODO(b/315495109): Remove instructions methods with legacy signing.
   @staticmethod
@@ -128,12 +128,12 @@ class SigningUtilsApi(recipe_api.RecipeApi):
     return False
 
   @property
-  def custom_artifact_versions(self) -> str:
-    return self._custom_artifact_versions
+  def custom_artifact_version(self) -> str:
+    return self._custom_artifact_version
 
-  @custom_artifact_versions.setter
-  def custom_artifact_versions(self, val: dict):
-    self._custom_artifact_versions = val
+  @custom_artifact_version.setter
+  def custom_artifact_version(self, val: str):
+    self._custom_artifact_version = val
 
   def get_platform_version(self) -> Version:
     return Version(kind=VERSION_KIND_PLATFORM,
@@ -165,8 +165,8 @@ class SigningUtilsApi(recipe_api.RecipeApi):
     channel = self.m.cros_release_util.channel_to_long_string(channel)
     build_target = self.m.build_menu.build_target.name
     version = self.m.cros_version.version.platform_version
-    if self.custom_artifact_versions:
-      version = self.custom_artifact_versions.get(channel)
+    if self.custom_artifact_version:
+      return f'{build_target}/{self.custom_artifact_version}'
     return f'{channel}/{build_target}/{version}'
 
   def signing_response_to_metadata(
@@ -224,44 +224,36 @@ class SigningUtilsApi(recipe_api.RecipeApi):
 
       return signed_builds
 
-  def get_current_shellball_versions(self, channels: List[common_pb2.Channel],
-                                     gs_bucket: str) -> Dict[str, str]:
-    """Return the current LATEST-SHELLBALL version per-channel.
+  def get_current_shellball_version(self, gs_bucket: str) -> str:
+    """Return the current LATEST-SHELLBALL version.
 
     Starting counting from 1.0 (after increment) if not found.
     """
-    versions = {}
-    with self.m.step.nest('get latest shellball version by channel') as pres:
-      for channel in channels:
-        channel_str = self.m.cros_release_util.channel_to_long_string(channel)
-        latest_filename = 'LATEST-SHELLBALL'
-        result = self.m.gsutil.cat(
-            f'gs://{gs_bucket}/{channel_str}/{self.m.build_menu.build_target.name}/{latest_filename}',
-            name=f'reading {latest_filename} version for {channel_str}',
-            stdout=self.m.raw_io.output(),
-            ok_ret='any',
-        )
-        if result.retcode != 0:
-          pres.step_text = f'could not fetch {latest_filename}, starting a new version'
-          pres.status = self.m.step.FAILURE
-          latest = '0.0'
-        else:
-          latest = result.stdout.decode('utf-8')
-          pres.logs[f'latest {channel_str} version'] = latest
+    target_name = self.m.build_menu.build_target.name
+    with self.m.step.nest(
+        f'get latest shellball version for {target_name}') as pres:
+      latest_filename = 'LATEST-SHELLBALL'
+      result = self.m.gsutil.cat(
+          f'gs://{gs_bucket}/{target_name}/{latest_filename}',
+          name=f'reading {latest_filename} version',
+          stdout=self.m.raw_io.output(),
+          ok_ret='any',
+      )
+      if result.retcode != 0:
+        pres.step_text = f'could not fetch {latest_filename}, starting a new version'
+        pres.status = self.m.step.FAILURE
+        latest = '0.0'
+      else:
+        latest = result.stdout.decode('utf-8')
+        pres.logs['latest version'] = latest
 
-        versions[channel_str] = latest
+    return latest
 
-    return versions
-
-  def increment_shellball_major_versions(
-      self, shellball_versions: Dict[str, str]) -> Dict[str, str]:
-    """Increment the major atom of shellball versions for each channel.
+  def increment_shellball_major_version(self, shellball_version: str) -> str:
+    """Increment the major atom of a shellball version.
 
     e.g. 1.0 -> 2.0. The major atom denotes a new shellball. The minor atom is
     currently unused but created for extensibility."""
-    new_shellball_versions = {}
-    for channel, shellball_version in shellball_versions.items():
-      shellball_version_parts = shellball_version.split('.')
-      shellball_version_parts[0] = str(int(shellball_version_parts[0]) + 1)
-      new_shellball_versions[channel] = '.'.join(shellball_version_parts)
-    return new_shellball_versions
+    shellball_version_parts = shellball_version.split('.')
+    shellball_version_parts[0] = str(int(shellball_version_parts[0]) + 1)
+    return '.'.join(shellball_version_parts)
