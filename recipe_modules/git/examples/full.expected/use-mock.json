@@ -1,0 +1,627 @@
+[
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--reference",
+      "[CLEANUP]/tmp_tmp_1",
+      "--dissociate",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--branch",
+      "release",
+      "--single-branch",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--single-branch",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone (4)"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://mygithost.google.com/somerepo",
+      ".",
+      "-v",
+      "--progress"
+    ],
+    "infra_step": true,
+    "name": "git clone (5)"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--depth",
+      "1",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone (6)"
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "branch",
+      "cros/branch"
+    ],
+    "infra_step": true,
+    "name": "git branch"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote"
+    ],
+    "infra_step": true,
+    "name": "git fetch"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "remote",
+      "refs/heads/branch:"
+    ],
+    "infra_step": true,
+    "name": "git fetch (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "infra_step": true,
+    "name": "sync branches"
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "main"
+    ],
+    "infra_step": true,
+    "name": "git checkout"
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "--symref",
+      "https://mygithost.google.com/somerepo",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git ls-remote"
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "--symref",
+      "https://mygithost.google.com/somerepo",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git ls-remote (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge",
+      "branch",
+      "-m",
+      "yeet"
+    ],
+    "infra_step": true,
+    "name": "git merge"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge",
+      "--abort"
+    ],
+    "infra_step": true,
+    "name": "git merge --abort"
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "branch"
+    ],
+    "infra_step": true,
+    "name": "git cherry-pick"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Updated README\n\nMuch better now.",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "write commit message",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Updated README@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Much better now.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1",
+      "--author",
+      "John Doe <john.doe@example.com>",
+      "--",
+      "README.md"
+    ],
+    "infra_step": true,
+    "name": "git commit"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Updating README\n\nMuch better now.",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "write commit message (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Updating README@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Much better now.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--amend",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "git commit (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "stash"
+    ],
+    "infra_step": true,
+    "name": "git stash"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "get-url",
+      "origin"
+    ],
+    "infra_step": true,
+    "name": "git remote"
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--dry-run",
+      "--force",
+      "--porcelain",
+      "origin",
+      "HEAD:main"
+    ],
+    "name": "git push",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check diffs"
+  },
+  {
+    "cmd": [],
+    "name": "check diffs.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "some/file/path"
+    ],
+    "infra_step": true,
+    "name": "check diffs.diff check.git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "some/file/path"
+    ],
+    "infra_step": true,
+    "name": "check diffs.diff check.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1F%B%x00",
+      "START_REF...END_REF",
+      "-30",
+      "--",
+      "file*"
+    ],
+    "infra_step": true,
+    "name": "git log",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001fmessage\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "some/file/path",
+      "some/other/path"
+    ],
+    "infra_step": true,
+    "name": "git add"
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "-A"
+    ],
+    "infra_step": true,
+    "name": "git add (2)"
+  },
+  {
+    "cmd": [],
+    "name": "log command",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@running git with args: ['merge-base', '--is-ancestor', 'deadbeef', 'HEAD']@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "deadbeef",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@commit is reachable@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "deadbeef:some/path"
+    ],
+    "infra_step": true,
+    "name": "git show"
+  },
+  {
+    "cmd": [
+      "git",
+      "bundle",
+      "create",
+      "[START_DIR]/bundle",
+      "HEAD^..HEAD"
+    ],
+    "infra_step": true,
+    "name": "git bundle"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "main",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git diff"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "main"
+    ],
+    "infra_step": true,
+    "name": "git diff (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only"
+    ],
+    "infra_step": true,
+    "name": "git diff (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only"
+    ],
+    "infra_step": true,
+    "name": "git diff (4)"
+  },
+  {
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "infra_step": true,
+    "name": "git status"
+  },
+  {
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain",
+      "some_dir/"
+    ],
+    "infra_step": true,
+    "name": "git status (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "commit1",
+      "commit2"
+    ],
+    "infra_step": true,
+    "name": "git merge-base (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "commit1",
+      "commit2"
+    ],
+    "infra_step": true,
+    "name": "git merge-base (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "main"
+    ],
+    "infra_step": true,
+    "name": "git checkout (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      ".",
+      "snapshot",
+      "foo"
+    ],
+    "infra_step": true,
+    "name": "git ls-remote (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "infra_step": true,
+    "name": "git rebase"
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase",
+      "feature-branch"
+    ],
+    "infra_step": true,
+    "name": "git rebase (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--strategy-option",
+      "strategy-option"
+    ],
+    "infra_step": true,
+    "name": "git rebase (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "upstream.hammer-branch",
+      "1"
+    ],
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "infra_step": true,
+    "name": "git remote (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "get-url",
+      "cros-internal"
+    ],
+    "infra_step": true,
+    "name": "git remote (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git symbolic-ref (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "infra_step": true,
+    "name": "git log (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--format=%aE",
+      "-n",
+      "-1",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git log (3)"
+  },
+  {
+    "name": "$result"
+  }
+]

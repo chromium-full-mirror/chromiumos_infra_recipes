@@ -130,6 +130,16 @@ def GenTests(api):
   )
 
   yield api.test(
+      'use-mock',
+      api.git.use_mock(True),
+  )
+
+  yield api.test(
+      'get-working-dir-diff-files',
+      api.git.get_working_dir_diff_files('M bundle_url_config.json\n'),
+  )
+
+  yield api.test(
       'log-yields-no-output',
       api.step_data('git log', stdout=api.raw_io.output('')),
   )

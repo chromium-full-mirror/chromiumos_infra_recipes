@@ -31,3 +31,13 @@ class GitTestApi(recipe_test_api.RecipeTestApi):
   @staticmethod
   def is_reachable(value):
     return value
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def use_mock(value):
+    return value
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def get_working_dir_diff_files(value):
+    return value

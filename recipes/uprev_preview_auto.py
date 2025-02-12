@@ -11,6 +11,8 @@ then run generate_controlfiles.py to generate updated controlfiles.
 """
 from typing import Generator
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
+
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -100,6 +102,10 @@ def DoRunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> None:
       current_preview_version = load_dict['preview_version_name']
 
     if modified_files:
+      send_to_cq = 1
+      if len(modified_files) == 1 and modified_files[0].endswith(
+          'bundle_url_config.json'):
+        send_to_cq = 2
       with api.step.nest('commit and generate CL'):
         commit_lines = [
             'cheets_CTS_{}: Uprev to {}.'.format(android_major_version,
@@ -111,13 +117,19 @@ def DoRunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> None:
         ]
         commit_message = '\n'.join(commit_lines) + '\n'
         with api.context(cwd=overlay_path):
-          api.git.add(list(modified_files))
+          api.git.add(modified_files)
           api.git.commit(commit_message)
 
         # Create a CL, and submit if needed.
         change = api.gerrit.create_change(
             info.path, reviewers=['ruki@google.com', 'shaochuan@chromium.org'],
             hashtags=[])
+
+        with api.step.nest('send to CQ'):
+          api.gerrit.set_change_labels(change, {
+              Label.BOT_COMMIT: 1,
+              Label.COMMIT_QUEUE: send_to_cq,
+          })
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -155,3 +167,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'run uprev preview'),
       api.post_check(post_process.MustRun, 'read preview version'),
       api.post_check(post_process.MustRun, 'commit and generate CL'))
+
+  yield api.build_menu.test(
+      'generate_gerrit_cl_bundle_url_config_change_only',
+      config_read_preview_step_data(api), api.git.diff_check(True),
+      api.git.use_mock(True),
+      api.git.get_working_dir_diff_files('M bundle_url_config.json\n'),
+      api.post_check(post_process.MustRun, 'create branch and sync overlay'),
+      api.post_check(post_process.MustRun, 'set up adb and aapt env'),
+      api.post_check(post_process.MustRun, 'run uprev preview'),
+      api.post_check(post_process.MustRun, 'read preview version'),
+      api.post_check(post_process.MustRun, 'commit and generate CL'),
+      api.post_check(post_process.MustRun, 'commit and generate CL.send to CQ'))

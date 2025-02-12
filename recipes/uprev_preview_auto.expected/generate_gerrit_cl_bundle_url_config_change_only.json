@@ -2410,9 +2410,7 @@
     "cmd": [
       "git",
       "add",
-      "changed.txt",
-      "deleted.txt",
-      "new.txt"
+      "bundle_url_config.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/autotest/files",
     "infra_step": true,
@@ -2668,7 +2666,7 @@
     "name": "commit and generate CL.send to CQ.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+1@@@",
+      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/[CLEANUP]/chromiumos_workspace/src/third_party/autotest/files/+/1@@@"
     ]
@@ -2741,7 +2739,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+1"
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/third_party/autotest/files",
     "infra_step": true,

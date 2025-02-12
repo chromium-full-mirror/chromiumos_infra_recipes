@@ -162,11 +162,16 @@ class GitApi(recipe_api.RecipeApi):
    D deleted.txt
   ?? new.txt
   '''
+    if self._test_data.enabled and self._test_data.get('use_mock'):
+      test_stdout = self._test_data.get('get_working_dir_diff_files',
+                                        test_stdout)
+
     cmd = ['status', '--porcelain']
     if pathspec:
       cmd.append(pathspec)
     step_data = self._step(cmd, stdout=self.m.raw_io.output_text(),
                            test_stdout=test_stdout)
+
     lines = step_data.stdout.strip().splitlines()
     return [line.strip().split()[1] for line in lines]
 
