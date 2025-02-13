@@ -97,12 +97,11 @@ class Ctpv2Command(recipe_api.RecipeApi):
     params = self.get_val_from_obj_or_dict(request, 'params')
     if not params:  # pragma: no cover
       return False
-    if self._is_ctpv2_with_qs_request(params) \
-      or self._has_ctpv2_allowed_prefix(params):
+    if self._is_ctpv2_with_qs_request(params):
       return True
     return self._is_allowed_pool(params)
 
-  def _has_ctpv2_allowed_prefix(self, params):
+  def _has_ctpv2_allowed_prefix(self, params):  # pragma: no cover
     decorations = self.get_val_from_obj_or_dict(params, 'decorations')
     if not decorations:  # pragma: no cover
       return False
@@ -118,57 +117,23 @@ class Ctpv2Command(recipe_api.RecipeApi):
     return False
 
   def mark_requests_for_ctpv2_with_qs(self, requests):
-    """Marks requests for CTPv2 execution with QS if (1) the CTPv2 with QS
-    experiment is enabled and the request is intended for the main pool, or (2)
-    the request has a CTPv2-allowed prefix but is not intended for the Scheduke
-    pools allowlist.
+    """Marks requests for CTPv2 execution with QS if (1) pool is outside allowed pool
+    list and has AL. prefix
+
 
     Args:
         requests: A dictionary of legacy V1 requests.
 
     Returns:
         A dictionary/Struct of legacy V1 requests, with the `runCtpv2WithQs`
-        field set to True for requests that meet either (1) the criteria of
-        being targeted for the main pool and part of the enabled experiment, or
-        (2) having a CTPv2-allowed prefix but not being in the Scheduke pools
-        allowlist
+        field set to True
     """
     for request in requests.values():  # pragma: no cover
       params = self.get_val_from_obj_or_dict(request, 'params')
-      ctp2_exp_enabled = 'chromeos.cros_infra_config.ctpv2_main_pool' in self.m.cros_infra_config.experiments
-      ctpv2_outside_of_pool_allowlist = (
-          self._has_ctpv2_allowed_prefix(params) and
-          not self._is_allowed_pool(params))
-      if ctp2_exp_enabled and ctpv2_outside_of_pool_allowlist:
+      if self._has_ctpv2_allowed_prefix(
+          params) and not self._is_allowed_pool(params):
         _set_run_ctpv2_with_qs_param(params)
 
-  def _is_main_pool_request(self, params):  # pragma: no cover
-    # get scheduling info from params
-    scheduling = self.get_val_from_obj_or_dict(params, 'scheduling')
-    if scheduling is not None:
-      # get managed_pool info from scheduling object
-      managed_pool = self.get_val_from_obj_or_dict(scheduling, 'managed_pool',
-                                                   'managedPool')
-
-      # get unmanaged_pool info from scheduling object
-      unmanaged_pool = self.get_val_from_obj_or_dict(scheduling,
-                                                     'unmanaged_pool',
-                                                     'unmanagedPool')
-
-      # Check if the managed pool is one of the expected values
-      if managed_pool is not None:
-        if isinstance(managed_pool,
-                      str) and managed_pool == 'MANAGED_POOL_QUOTA':
-          return True
-        if isinstance(managed_pool, int) and managed_pool == 8:  #enum int value
-          return True
-
-      if unmanaged_pool is not None:
-        if isinstance(unmanaged_pool,
-                      str) and unmanaged_pool in ('DUT_POOL_QUOTA', 'quota'):
-          return True
-
-    return False
 
   def _is_ctpv2_with_qs_request(self, params):
     run_via_cft = self.get_val_from_obj_or_dict(params, 'run_via_cft',
@@ -179,9 +144,6 @@ class Ctpv2Command(recipe_api.RecipeApi):
     return run_via_cft and run_ctpv2_with_qs
 
   def _is_allowed_pool(self, params):
-    in_main_pool = params is not None and self._is_main_pool_request(params)
-    if in_main_pool:  # pragma: no cover
-      return True
     decorations = self.get_val_from_obj_or_dict(params, 'decorations')
     if not decorations:  # pragma: no cover
       return False
@@ -199,7 +161,8 @@ class Ctpv2Command(recipe_api.RecipeApi):
         return True
     return False
 
-  def get_val_from_obj_or_dict(self, obj_or_dict, field,
+  @staticmethod
+  def get_val_from_obj_or_dict(obj_or_dict, field,
                                key=None):  # pragma: no cover
     """Retrieve the value from the obj/dict using the field/key.
 
