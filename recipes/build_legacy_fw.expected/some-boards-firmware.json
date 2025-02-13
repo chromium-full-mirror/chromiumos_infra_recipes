@@ -3009,6 +3009,10 @@
   },
   {
     "cmd": [],
+    "name": "Check supported branch version"
+  },
+  {
+    "cmd": [],
     "name": "board1",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
