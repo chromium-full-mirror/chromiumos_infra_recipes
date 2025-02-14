@@ -361,13 +361,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
       }):
         # generate the import-only config (no merging with config.jsonproto)
         path_imported_config = path_generated / 'imported.jsonproto'
-        api.step('Generate imported configuration', [
-            'vpython3',
-            '-vpython-spec',
-            path_cros_repo.joinpath(PATH_CROS_CONFIG, '.vpython'),
-            '-vpython-log-level',
-            'info',
-        ] + cmd + [
+        api.step('Generate imported configuration', cmd + [
             '--import-only',
             '--output',
             path_imported_config,
@@ -376,13 +370,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
 
         # generate joined config (with merging)
         path_merged_config = path_generated / 'joined.jsonproto'
-        api.step('Generate joined configuration', [
-            'vpython3',
-            '-vpython-spec',
-            path_cros_repo.joinpath(PATH_CROS_CONFIG, '.vpython'),
-            '-vpython-log-level',
-            'info',
-        ] + cmd + [
+        api.step('Generate joined configuration', cmd + [
             '--output',
             path_merged_config,
         ])

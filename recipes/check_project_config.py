@@ -132,17 +132,9 @@ def RunSteps(api, properties):
           '--program', program_path, '--project', project_path, '--factory_dir',
           factory_dir
       ]
-      vpython_spec_path = api.context.cwd / chromiumos_config_path / '.vpython'
       api.step(
           'check constraints',
-          [
-              'vpython3',
-              '-vpython-spec',
-              vpython_spec_path,
-              '-vpython-log-level',
-              'info',
-              checker_path,
-          ] + checker_args,
+          [checker_path] + checker_args,
           stdout=api.raw_io.output(add_output_log=True),
       )
 
