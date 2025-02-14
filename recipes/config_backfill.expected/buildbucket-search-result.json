@@ -2409,11 +2409,6 @@
   },
   {
     "cmd": [
-      "vpython3",
-      "-vpython-spec",
-      "[CLEANUP]/chromiumos_workspace/src/config/.vpython",
-      "-vpython-log-level",
-      "info",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
       "--log",
       "DEBUG",
@@ -2482,11 +2477,6 @@
   },
   {
     "cmd": [
-      "vpython3",
-      "-vpython-spec",
-      "[CLEANUP]/chromiumos_workspace/src/config/.vpython",
-      "-vpython-log-level",
-      "info",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
       "--log",
       "DEBUG",
