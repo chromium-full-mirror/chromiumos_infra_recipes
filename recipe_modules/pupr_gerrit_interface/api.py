@@ -121,8 +121,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     return len(abandoned_cls) < len(open_changes)
 
   def handle_repeatedly_failing_changes(
-      self, open_changes: List[GerritChange],
-      max_cq_retry: int) -> List[GerritChange]:
+      self, open_changes: List[GerritChange], max_cq_retry: int,
+      should_count_dry_run: bool) -> List[GerritChange]:
     """Abandon unpinned uprev CLs that have failed too many times and return the
     remaining open CLs.
 
@@ -131,6 +131,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       max_cq_retry: The maximum number of times an unpinned uprev CL is allowed
         to fail full CQ before abandoning it. Negative number indicates no CL
         should be abandoned no matter how many times it has failed.
+      should_count_dry_run: Boolean flag to indicate whether dry run CQ+1
+        should be counted.
     """
     # Do not abandon any CL.
     if max_cq_retry < 0:
@@ -150,8 +152,10 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       failing_patchsets = []
       remaining_open_cls = []
       for i, ps in enumerate(open_patch_sets):
-        if (self.m.pupr.is_cl_pinned(ps) or
-            self.m.pupr.num_full_cq_failures(ps) <= max_cq_retry):
+        retry_count = (
+            self.m.pupr.num_dry_run_cq_failures(ps)
+            if should_count_dry_run else self.m.pupr.num_full_cq_failures(ps))
+        if (self.m.pupr.is_cl_pinned(ps) or retry_count <= max_cq_retry):
           remaining_open_cls.append(open_changes[i])
         else:
           failing_patchsets.append(ps)

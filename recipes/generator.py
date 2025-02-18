@@ -263,7 +263,9 @@ class GeneratorRun:
           self._projects_by_remote, self.topic)
       open_changes = (
           self.m.pupr_gerrit_interface.handle_repeatedly_failing_changes(
-              open_changes, self.policy.max_cq_retry))
+              open_changes, self.policy.max_cq_retry,
+              self.policy.no_existing_cls_policy
+              in [generator_pb2.DRY_RUN, generator_pb2.DRY_RUN_NOT_APPROVED]))
       most_recent_uprev = (
           self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
               self._projects_by_remote, self.topic) if open_changes else None)

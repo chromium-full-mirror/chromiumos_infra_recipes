@@ -167,6 +167,13 @@ class PuprApi(recipe_api.RecipeApi):
                if ('tag' in m and FULL_RUN_TAG_RE.match(m['tag']) and
                    FAILED_RE.match(m['message'])))
 
+  @staticmethod
+  def num_dry_run_cq_failures(cl) -> int:
+    """Return the number of times the CL (PatchSet) has failed dry-run CQ."""
+    return sum(1 for m in cl.messages
+               if ('tag' in m and DRY_RUN_TAG_RE.match(m['tag']) and
+                   FAILED_RE.match(m['message'])))
+
   def identify_retry(self, retry_policy, no_existing_cls_policy, open_cls):
     """Identify the CL to be retried based on retry_policy.
 
