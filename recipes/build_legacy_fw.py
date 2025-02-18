@@ -96,9 +96,6 @@ class NoFilesToUploadFailure(recipe_api.StepFailure):
   """Error class for when there are no files to upload as a FirmwareArchive."""
 
 
-class BuildLegacyRecipeDeprecated(recipe_api.StepFailure):
-  """Error class for using this recipe after a specific ChromeOS version."""
-
 # The age of the branches is such that we do not even have a Build API for the
 # most part.
 class FirmwareBuilder():
@@ -766,13 +763,6 @@ class FirmwareBuilder():
         self.m.bcid_reporter.report_stage('compile')
 
     with self._setup():
-      # build_firmware recipe should be used for recent firmware builds
-      with self.m.step.nest('Check supported branch version') as pres:
-        if self._is_after('16184.0.0'):
-          return result_pb2.RawResult(
-              status=common.FAILURE,
-              summary_markdown='Please use build_firmware.py recipe instead.')
-
       self.m.build_reporting.set_build_type(
           BuildReport.BUILD_TYPE_FIRMWARE,
           self.properties.build_targets[0].name)
@@ -1136,12 +1126,6 @@ def GenTests(api):
                      'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun, 'push image'),
       version='R115-15460.22.0',
-  )
-
-  yield test(
-      'recipe-is-deprecated',
-      version='R135-16185.0.0',
-      status='FAILURE',
   )
 
   yield test('chroot-exists', exists('chroot'))

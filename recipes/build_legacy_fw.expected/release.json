@@ -4819,10 +4819,6 @@
   },
   {
     "cmd": [],
-    "name": "Check supported branch version"
-  },
-  {
-    "cmd": [],
     "name": "build target"
   },
   {
