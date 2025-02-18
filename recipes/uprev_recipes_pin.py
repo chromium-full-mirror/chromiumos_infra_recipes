@@ -199,11 +199,14 @@ def RunSteps(api: RecipeApi, properties: UprevRecipesPinProperties) -> None:
     change = api.gerrit.create_change('chromiumos/infra/recipes',
                                       ref=api.git.get_branch_ref('main'),
                                       project_path=checkout)
-    labels = {
-        Label.BOT_COMMIT: 1,
-    }
-    api.gerrit.set_change_labels_remote(change, labels)
     if properties.push:
+      # Only apply labels in production when we intend to submit the CL.
+      # Applying labels all the time requires staging accounts to be granted
+      # the Bot-Commit permission in Gerrit.
+      labels = {
+          Label.BOT_COMMIT: 1,
+      }
+      api.gerrit.set_change_labels_remote(change, labels)
       # In production mode, we submit the cl.
       api.gerrit.submit_change(change, project_path=checkout, retries=3)
     else:
@@ -239,7 +242,7 @@ def GenTests(api: RecipeTestApi) -> Generator:
       api.post_check(post_process.MustRun, 'git commit'),
       api.post_check(post_process.MustRun,
                      'create gerrit change for chromiumos/infra/recipes'),
-      api.post_check(post_process.MustRun, 'set labels on CL 1'),
+      api.post_check(post_process.DoesNotRun, 'set labels on CL 1'),
       api.post_check(post_process.MustRun, 'abandon CL 1'),
       api.post_process(post_process.DropExpectation),
   )
