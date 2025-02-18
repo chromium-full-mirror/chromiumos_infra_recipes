@@ -7,10 +7,13 @@
 
 import json
 
+from google.protobuf.json_format import MessageToDict
+
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
 from PB.recipe_modules.chromeos.cros_artifacts.tests.upload_attestations import \
     UploadAttestationsProperties
 from recipe_engine import post_process
@@ -174,19 +177,36 @@ def GenTests(api):
           post_process.StepCommandContains,
           'upload artifacts.generate provenance.snoop: report_gcs (6)',
           ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake4/dlc.img"]),
-  )
+      status='SUCCESS')
 
   yield api.test(
-      'provenance-failure',
-      api.cros_build_api.set_api_return(
-          'upload artifacts.bundle IMAGE_ARCHIVES for upload',
-          'ArtifactsService/BundleImageArchives',
-          json.dumps({
-              'artifacts': [{
-                  'path': 'chromiumos_base_image.tar.xz',
-              }],
-          }, sort_keys=True)),
+      'provenance-failure-with-enforcement',
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  MessageToDict(
+                      CrosArtifactsProperties(bcid_enforcement={
+                          'upload_artifact_prov_generation_fatal': True
+                      })),
+          }),
+      api.step_data(
+          'upload artifacts.Find DLCs.list local DLCs',
+          api.file.listdir([
+              'fake/dlc.img', 'fake2/dlc.img', 'fake3/dlc.img', 'fake4/dlc.img'
+          ]),
+      ),
+      # We do 3 retries, and all 3 must fail in order for the step to fail.
       api.step_data(
           'upload artifacts.generate provenance.snoop: report_gcs',
           retcode=1,
-      ), api.post_process(post_process.DropExpectation))
+      ),
+      api.step_data(
+          'upload artifacts.generate provenance.snoop: report_gcs (2)',
+          retcode=1,
+      ),
+      api.step_data(
+          'upload artifacts.generate provenance.snoop: report_gcs (3)',
+          retcode=1,
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE')

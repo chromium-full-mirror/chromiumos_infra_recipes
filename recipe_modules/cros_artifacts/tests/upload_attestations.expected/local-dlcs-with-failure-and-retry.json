@@ -941,7 +941,7 @@
     "name": "upload artifacts.generate provenance",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@Unable to generate all DLC provenance@@@",
+      "@@@STEP_SUMMARY_TEXT@Unable to generate all BCID provenance@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

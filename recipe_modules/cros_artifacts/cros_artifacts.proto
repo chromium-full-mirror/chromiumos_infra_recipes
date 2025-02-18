@@ -6,6 +6,12 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_artifacts;
 
+message BcidEnforcement {
+  // Defines whether a failure to generate BCID provenance for an artifact we've
+  // built and are about to upload should be fatal. Defaults to false.
+  bool upload_artifact_prov_generation_fatal = 1;
+}
+
 message CrosArtifactsProperties {
   // The maximum number of Build API calls to make when bundling artifacts.
   int32 max_concurrent_bundling_requests = 1;
@@ -16,4 +22,7 @@ message CrosArtifactsProperties {
 
   // If True, skip copying artifacts to canonical location.
   bool skip_publish = 3;
+
+  // Sets BCID enforcement properties used when handling CrOS artifacts.
+  BcidEnforcement bcid_enforcement = 4;
 }

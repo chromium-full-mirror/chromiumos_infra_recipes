@@ -125,6 +125,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     self._gs_upload_path = props.gs_upload_path
     self._skip_publish = props.skip_publish
     self._timestamp_micros = int(time.time() * 1000)
+    self._upload_artifact_prov_generation_fatal = (
+        props.bcid_enforcement.upload_artifact_prov_generation_fatal or False)
 
   @property
   def timestamp_micros(self):
@@ -145,6 +147,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
   def artifacts_by_image_type(self):
     """Return a map from image type to artifact name."""
     return ARTIFACTS_BY_IMAGE_TYPE
+
+  @property
+  def upload_artifact_prov_generation_fatal(self) -> bool:
+    return self._upload_artifact_prov_generation_fatal
 
   def _get_legacy_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
@@ -930,8 +936,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         }
 
         # Also generate provenance for all DLCs placed locally by BAPI.
-        # TODO: b/391732530 - Add a config option which enables us to make a
-        # failure to generate DLC provenance fatal to a build.
         self.m.dlc_utils.artifacts_local_path = str(outpath)
         dlc_local_paths = self.m.dlc_utils.get_dlcs_in_path(
             outpath, use_local_path=True)
@@ -951,16 +955,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                     file_hash, '{uri}/{item}'.format(uri=upload_uri,
                                                      item=basepath))
                 break
-              except recipe_api.StepFailure:
+              except recipe_api.StepFailure as exp:
                 if bcid_retries < 2:
                   continue
 
-                # TODO: b/391732530 - Raise the exception if the config
-                # specifies that failures should be fatal. We should also figure
-                # out how to update the bcid output properties to add failed DLC
-                # provenance from here.
                 prov_gen.status = self.m.step.FAILURE
-                prov_gen.step_summary_text = 'Unable to generate all DLC provenance'
+                prov_gen.step_summary_text = 'Unable to generate all BCID provenance'
+
+                if self.upload_artifact_prov_generation_fatal:
+                  raise exp
 
       for retries in range(3):
         try:
