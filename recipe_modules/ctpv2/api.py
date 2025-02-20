@@ -195,9 +195,6 @@ class Ctpv2Command(recipe_api.RecipeApi):
     return run_via_cft and run_ctpv2_with_qs
 
   def _is_allowed_pool(self, params):  #pragma: nocover
-    in_main_pool = params is not None and self._is_main_pool_request(params)
-    if in_main_pool:  # pragma: no cover
-      return True
     decorations = self.get_val_from_obj_or_dict(params, 'decorations')
     if not decorations:  # pragma: no cover
       return False
@@ -211,7 +208,8 @@ class Ctpv2Command(recipe_api.RecipeApi):
         tag = tag.removeprefix('pool:')
       else:
         continue
-      if tag in self.allowed_pools:
+      if tag in ['DUT_POOL_QUOTA', 'MANAGED_POOL_QUOTA'
+                ] or tag in self.allowed_pools:
         return True
     return False
 
