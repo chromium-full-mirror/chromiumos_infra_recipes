@@ -116,6 +116,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
 
   cwd = api.context.cwd
   merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
+  vpython_spec = cwd / 'src/config/.vpython'
   program_join_script = cwd / 'src/config/payload_utils/join_programs.py'
 
   joined_config = 'generated/joined.jsonproto'
@@ -136,6 +137,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
   program_configs_path = api.path.mkstemp()
   # yapf: disable
   api.step('aggregating program configs', [
+    'vpython3', '-vpython-spec', vpython_spec,
     merge_script,
     '-m', 'chromiumos.config.payload.ConfigBundle',
     '-a', 'chromiumos.config.payload.ConfigBundleList',
@@ -181,7 +183,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
 
       result = api.step(
           'generate flat payload',
-          cmd,
+          ['vpython3', '-vpython-spec', vpython_spec] + cmd,
           stdout=api.raw_io.output_text(),
       )
 
@@ -213,6 +215,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
   # now merge and import into config-internal
   cwd = api.context.cwd
   merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
+  vpython_spec = cwd / 'src/config/.vpython'
   config_internal = cwd / 'src/config-internal'
   output_path = config_internal / 'hw_design' / flat_config
   binary_output_path = config_internal / 'hw_design' / binary_flat_config
@@ -231,11 +234,13 @@ def _flatten_configs(api, properties, project_infos, dry_run):
     ] + flat_files
     # yapf: enable
 
-    api.step('generate flattened configs', cmd)
+    api.step('generate flattened configs',
+             ['vpython3', '-vpython-spec', vpython_spec] + cmd)
 
     # join with program definitions
     # yapf: disable
     api.step('joining program and project configs', [
+      'vpython3', '-vpython-spec', vpython_spec,
       program_join_script,
       '-l', 'debug',
       '-o', output_path,
@@ -268,6 +273,7 @@ def _aggregate_configs(api, properties, repo_project_infos, dry_run):
 
   cwd = api.context.cwd
   merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
+  vpython_spec = cwd / 'src/config/.vpython'
   config_internal = cwd / 'src/config-internal'
 
   def _merge_configs():
@@ -299,7 +305,8 @@ def _aggregate_configs(api, properties, repo_project_infos, dry_run):
     api.step(
         'merge ConfigBundles to config-internal',
         [
-            merge_script, '-m', 'chromiumos.config.payload.ConfigBundle', '-a',
+            'vpython3', '-vpython-spec', vpython_spec, merge_script, '-m',
+            'chromiumos.config.payload.ConfigBundle', '-a',
             'chromiumos.config.payload.ConfigBundleList', '-o', output_path
         ] + files,
     )
@@ -328,6 +335,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 
   config_to_ufs_datastore = (
       cwd / 'src/config/payload_utils/config_to_datastore.py')
+  vpython_spec = cwd / 'src/config/.vpython'
 
   ufs_env = properties.ufs_env or 'prod'
 
@@ -336,6 +344,9 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
        api.step.nest('upload configs to ufs'):
 
     api.step('upload generated configs to UFS datastore', [
+        'vpython3',
+        '-vpython-spec',
+        vpython_spec,
         config_to_ufs_datastore,
         '--env',
         ufs_env,
