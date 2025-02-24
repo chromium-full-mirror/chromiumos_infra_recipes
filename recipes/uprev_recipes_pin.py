@@ -79,36 +79,20 @@ def _get_signing_docker_pin(api: RecipeApi,
         api.step('docker build',
                  ['./setup.py', '-d', f'-t {image_with_tag} -t signing:latest'])
 
-        # Upload the docker image to the container registry.
-        # TODO: b/375522150 - Remove container from chromeos-bot registry.
-        api.step('docker tag', [
+        # Tag the docker image with the new pin version.
+        api.step('docker tag with pin', [
             'docker', 'tag', f'{image_with_tag}',
             f'us-docker.pkg.dev/chromeos-release-bot/signing/{image_with_tag}'
         ])
-        api.step('docker tag', [
+
+        # Tag the docker image with the 'latest' tag.
+        api.step('docker tag with "latest"', [
             'docker', 'tag', 'signing:latest',
             'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest'
         ])
 
         # Upload the docker image to the container registry.
-        api.step('docker tag', [
-            'docker', 'tag', f'{image_with_tag}',
-            f'us-docker.pkg.dev/chromeos-release-bot/signing/{image_with_tag}'
-        ])
-        api.step('docker tag', [
-            'docker', 'tag', 'signing:latest',
-            'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest'
-        ])
-
         if properties.push:
-          # TODO: b/375522150 - Stop pushing container to chromeos-bot registry.
-          api.step('docker push', [
-              'docker', 'push',
-              'us-docker.pkg.dev/chromeos-release-bot/signing/signing',
-              '--all-tags'
-          ])
-          # Push the container to chromeos-release-bot, where it will eventually
-          # be pulled from, once transition is complete.
           api.step('docker push', [
               'docker', 'push',
               'us-docker.pkg.dev/chromeos-release-bot/signing/signing',
@@ -304,7 +288,7 @@ def GenTests(api: RecipeTestApi) -> Generator:
       ),
       api.post_check(
           post_process.MustRun,
-          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag'
+          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag with pin'
       ),
       api.post_check(
           post_process.DoesNotRun,
@@ -330,15 +314,12 @@ def GenTests(api: RecipeTestApi) -> Generator:
           'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker build'
       ),
       api.post_check(
-          post_process.StepCommandContains,
-          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag (2)',
-          [
-              'docker', 'tag', 'signing:latest',
-              'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest'
-          ]),
+          post_process.MustRun,
+          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag with pin'
+      ),
       api.post_check(
           post_process.StepCommandContains,
-          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag (4)',
+          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag with "latest"',
           [
               'docker', 'tag', 'signing:latest',
               'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest'
@@ -346,14 +327,6 @@ def GenTests(api: RecipeTestApi) -> Generator:
       api.post_check(
           post_process.StepCommandContains,
           'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker push',
-          [
-              'docker', 'push',
-              'us-docker.pkg.dev/chromeos-release-bot/signing/signing',
-              '--all-tags'
-          ]),
-      api.post_check(
-          post_process.StepCommandContains,
-          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker push (2)',
           [
               'docker', 'push',
               'us-docker.pkg.dev/chromeos-release-bot/signing/signing',
