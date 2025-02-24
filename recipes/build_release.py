@@ -269,6 +269,9 @@ def DoRunSteps(api, config, properties):
   # do it here. We do it before `PUSH_IMAGES` below because that is tightly
   # coupled with `COLLECT_SIGNING` below it as far as checkpoints is concerned.
   if api.signing.local_signing:
+    if api._test_data.enabled:  # pylint: disable=protected-access
+      api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
+          'signing_config', api.signing.test_api.signing_config_test_data)
     release_sign_types = api.cros_release.sign_types
     channels = api.cros_release.channels
     signed_image_response = api.signing.sign_artifacts(
@@ -376,8 +379,9 @@ def DoRunSteps(api, config, properties):
       if run_step:
         # With signing complete, we can start payload generation (only if there were
         # signed images generated). We _do_ want this in staging.
+        signed_with_local_signing = api.signing.local_signing and signed_image_response
         if not properties.skip_paygen and (instructions or
-                                           api.signing.local_signing):
+                                           signed_with_local_signing):
           api.cros_release.run_payload_generation(
               use_split_paygen=properties.use_split_paygen)
         else:
@@ -627,6 +631,94 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
               RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS',
               RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
           }),
+      api.post_check(
+          post_process.PropertyEquals,
+          'upload_size',
+          [
+              {
+                  'gs_path':
+                      'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101',
+                  'gb':
+                      1337.0,
+              },
+              # TODO(b/323200728): Update this to include the signing buckets when
+              # this test actually pushes.
+          ]),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
+  # Normal release build with local signing enabled but skipped.
+  yield api.build_menu.test(
+      'release-build-local-signing-skip-paygen',
+      api.properties(
+          **{
+              'latest_files_gs_bucket':
+                  'chromeos-image-archive',
+              'latest_files_gs_path':
+                  '{target}-release',
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-release.{cros-version}',
+              },
+              '$chromeos/checkpoint': {
+                  'force_retry_summary': True,
+              },
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_release': {
+                  'sign_types': [common_pb2.IMAGE_TYPE_BASE],
+              },
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/debug_symbols': {
+                  'worker_count': 200,
+                  'retry_quota': 1000,
+                  'dryrun': False
+              },
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(local_signing=True))
+          }),
+      api.recipe_test_data(signing_config="""build_target_signing_configs {
+  build_target: "kukui"
+}"""),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun,
+                     'determine build and model metadata'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-1234.56.0'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-main'
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload build report to GS.gsutil write build_report.json to GS',
+          [
+              'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json'
+          ],
+      ),
+      api.post_process(post_process.PropertyEquals, 'critical', '1'),
+      api.post_process(
+          post_process.PropertyEquals, 'artifact_link',
+          'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101'),
+      api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
+      api.post_check(post_process.DoesNotRun, 'generate payloads'),
       api.post_check(
           post_process.PropertyEquals,
           'upload_size',
