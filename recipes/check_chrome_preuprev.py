@@ -163,7 +163,7 @@ def CheckPreUprevsFromOrchestrator(api: RecipeApi, chrome_commit: str):
         [orchestrator.id], fields=ORCHESTRATOR_BUILD_FIELDS_TO_RETRIEVE,
         timeout=WAIT_ORCHESTRATOR_TIMEOUT_SEC)[orchestrator.id]
     step.step_summary_text = (
-        f'[Orchestrator](go/bbid/{orchestrator.id}/overview)\n\n' +
+        f'[Orchestrator](http://go/bbid/{orchestrator.id}/overview)\n\n' +
         orchestrator.summary_markdown)
     return orchestrator
 
@@ -229,7 +229,7 @@ def RunSteps(api: RecipeApi):
   if orchestrator.status != common_pb2.SUCCESS:
     errors.append(
         FAILED_PRE_UPREVS_SUMMARY.format(
-            f'[Orchestrator](go/bbid/{orchestrator.id}/overview)\n\n' +
+            f'[Orchestrator](http://go/bbid/{orchestrator.id}/overview)\n\n' +
             orchestrator.summary_markdown))
 
   if target_chrome_revision:
@@ -500,7 +500,7 @@ def GenTests(api: RecipeTestApi):
            "g/chromeos-chrome-build, instead of CI oncall.\n\n"
            '1 errors checking Chrome uprev criteria:\n\n\n\n'
            'Pre-uprev testing not passed, details:\n\n'
-           '[Orchestrator](go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.\n\n'
+           '[Orchestrator](http://go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.\n\n'
            'Please check the test failures, fix the failures (land a fix or revert culprit on Chromium) '
            'and wait for next pre-uprev.'),
       ),

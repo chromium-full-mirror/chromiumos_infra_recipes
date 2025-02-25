@@ -458,7 +458,7 @@
     "cmd": [],
     "name": "Wait chrome-uprev-orchestrator",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@[Orchestrator](go/bbid/1231231919/overview)\n\nAll pre-uprev tests passed.@@@"
+      "@@@STEP_SUMMARY_TEXT@[Orchestrator](http://go/bbid/1231231919/overview)\n\nAll pre-uprev tests passed.@@@"
     ]
   },
   {
