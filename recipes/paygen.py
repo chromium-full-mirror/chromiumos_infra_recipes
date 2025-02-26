@@ -5,6 +5,7 @@
 
 """Recipe for generating ChromeOS payloads (AU deltas etc)."""
 
+import copy
 import datetime
 import hashlib
 import json
@@ -589,22 +590,25 @@ def GenTests(api: RecipeTestApi):
   "is_delta": true
 }'''
 
+  # Commonly used payload response test data for a versioned artifact outside the chroot.
+  delta_outside_chroot = {
+      'local_path': '/tmp/aohiwdadoi/delta.bin',
+      'file_path': {
+          'path': '/path/to/cros_chroot/out/tmp/delta.bin',
+          'location': 2
+      }
+  }
   yield api.test(
       'dryrun',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
                   api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
           }])),
-      generate_payload_response(
-          api, versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
-          }]),
+      generate_payload_response(api,
+                                versioned_artifacts=[delta_outside_chroot]),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
@@ -613,7 +617,7 @@ def GenTests(api: RecipeTestApi):
 
   def test_builder(**kwargs) -> TestData:
     """Generate a test build."""
-    kwargs.setdefault('builder', 'staging-paygen')
+    kwargs.setdefault('builder', 'staging-paygen-mpa')
     kwargs.setdefault('bucket', 'staging')
     kwargs.setdefault('cq', 'true')
     kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
@@ -641,14 +645,8 @@ def GenTests(api: RecipeTestApi):
           stdout=api.raw_io.output_text(
               'chromiumos/third_party/kernel|src/third_party/kernel|cros|refs/heads/main|refs/heads/main'
           )),
-      generate_payload_response(
-          api, versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
-          }]),
+      generate_payload_response(api,
+                                versioned_artifacts=[delta_outside_chroot]),
       api.post_check(post_process.LogContains, 'initialization.apply changes',
                      'irrelevant changes', ['234']),
       api.post_check(post_process.MustRun,
@@ -661,7 +659,8 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'dryrun-legacy',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
       api.properties(
           PaygenProperties(requests=[
               {
@@ -746,31 +745,28 @@ def GenTests(api: RecipeTestApi):
       # api.post_process(post_process.DropExpectation),
   )
 
+  # Commonly used payload request test data for DLC delta with local signing.
+  delta_dlc_local_signing_req = GenerationRequest(
+      full_update=True,
+      tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
+      bucket='b',
+      verify=True,
+      dryrun=True,
+      use_local_signing=True,
+      docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
+  )
+
   yield api.test(
       'local-signing',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
       api.properties(
           PaygenProperties(requests=[{
-              'generation_request':
-                  GenerationRequest(
-                      full_update=True,
-                      tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
-                      bucket='b',
-                      verify=True,
-                      dryrun=True,
-                      use_local_signing=True,
-                      docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
-                  ),
+              'generation_request': delta_dlc_local_signing_req
           }]),
       ),
-      generate_payload_response(
-          api, versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
-          }]),
+      generate_payload_response(api,
+                                versioned_artifacts=[delta_outside_chroot]),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.StepCommandContains,
                      'doing paygen.docker pull', [
@@ -796,14 +792,8 @@ def GenTests(api: RecipeTestApi):
                           .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
                   },
               ], max_concurrent_requests=1)),
-      generate_payload_response(
-          api, versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              },
-          }]),
+      generate_payload_response(api,
+                                versioned_artifacts=[delta_outside_chroot]),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
@@ -913,7 +903,8 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'fail-attest-path-inside-chroot',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
@@ -967,45 +958,44 @@ def GenTests(api: RecipeTestApi):
   # TODO(b/299105459): Move all tests to use split paygen flow / test data
   # once the property is removed.
 
+  # Commonly used payload request test data for DLC delta.
+  delta_dlc_req = GenerationRequest(
+      full_update=True,
+      tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
+      bucket='b',
+      verify=True,
+      dryrun=True,
+  )
+  # Commonly used payload response test data for a delta.
+  delta_payload_resp = {
+      'version':
+          1,
+      'payload_file_path': {
+          'path': '/tmp/aohiwdadoi/delta.bin',
+          'location': 1,
+      },
+      'partition_names': ['foo-root', 'foo-kernel'],
+      'tgt_partitions': [{
+          'path': '/tmp/aohiwdadoi/tgt_root.bin',
+          'location': 1,
+      }, {
+          'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
+          'location': 1,
+      }],
+  }
+
   yield api.test(
       'split-paygen',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
       api.properties(
-          PaygenProperties(
-              requests=[{
-                  'generation_request':
-                      GenerationRequest(
-                          full_update=True,
-                          tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
-                          bucket='b',
-                          verify=True,
-                          dryrun=True,
-                      ),
-              }], use_split_paygen=True),
+          PaygenProperties(requests=[{
+              'generation_request': delta_dlc_req
+          }], use_split_paygen=True),
       ),
       *generate_split_payload_response(
-          api, payloads=[{
-              'version':
-                  1,
-              'payload_file_path': {
-                  'path': '/tmp/aohiwdadoi/delta.bin',
-                  'location': 1,
-              },
-              'partition_names': ['foo-root', 'foo-kernel'],
-              'tgt_partitions': [{
-                  'path': '/tmp/aohiwdadoi/tgt_root.bin',
-                  'location': 1,
-              }, {
-                  'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
-                  'location': 1,
-              }]
-          }], versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
-          }]),
+          api, payloads=[delta_payload_resp],
+          versioned_artifacts=[delta_outside_chroot]),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_process(post_process.DropExpectation),
   )
@@ -1031,45 +1021,17 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'split-paygen-local-signing',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
       api.properties(
           PaygenProperties(
               requests=[{
-                  'generation_request':
-                      GenerationRequest(
-                          full_update=True,
-                          tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
-                          bucket='b',
-                          verify=True,
-                          dryrun=True,
-                          use_local_signing=True,
-                          docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
-                      ),
+                  'generation_request': delta_dlc_local_signing_req
               }], use_split_paygen=True),
       ),
       *generate_split_payload_response(
-          api, payloads=[{
-              'version':
-                  1,
-              'payload_file_path': {
-                  'path': '/tmp/aohiwdadoi/delta.bin',
-                  'location': 1,
-              },
-              'partition_names': ['foo-root', 'foo-kernel'],
-              'tgt_partitions': [{
-                  'path': '/tmp/aohiwdadoi/tgt_root.bin',
-                  'location': 1,
-              }, {
-                  'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
-                  'location': 1,
-              }]
-          }], versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
-          }]),
+          api, payloads=[delta_payload_resp],
+          versioned_artifacts=[delta_outside_chroot]),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.StepCommandContains,
                      'doing paygen.docker pull', [
@@ -1086,63 +1048,37 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation),
   )
 
+  # Commonly used payload response test data for a delta with inputs.
+  delta_payload_resp_with_inputs = copy.deepcopy(delta_payload_resp)
+  delta_payload_resp_with_inputs['payload_inputs'] = [{
+      'gs_path': 'gs://path-to-input',
+      'path': {
+          'path': '[CLEANUP]/local/path/to/input'
+      },
+      'is_archive': False
+  }, {
+      'gs_path': 'gs://path-to-input-archive',
+      'path': {
+          'path': '[CLEANUP]/local/path/to/input/archive'
+      },
+      'is_archive': True
+  }]
   yield api.test(
       'paygen-inputs',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
       api.path.files_exist(
           api.path.cleanup_dir / 'local/path/to/input.intoto.jsonl',
           api.path.cleanup_dir / 'local/path/to/input/archive.intoto.jsonl'),
       api.properties(
           PaygenProperties(
               requests=[{
-                  'generation_request':
-                      GenerationRequest(
-                          full_update=True,
-                          tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
-                          bucket='b',
-                          verify=True,
-                          dryrun=True,
-                          use_local_signing=True,
-                          docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
-                      ),
+                  'generation_request': delta_dlc_local_signing_req
               }], use_split_paygen=True),
       ),
       *generate_split_payload_response(
-          api, payloads=[{
-              'version':
-                  1,
-              'payload_file_path': {
-                  'path': '/tmp/aohiwdadoi/delta.bin',
-                  'location': 1,
-              },
-              'partition_names': ['foo-root', 'foo-kernel'],
-              'tgt_partitions': [{
-                  'path': '/tmp/aohiwdadoi/tgt_root.bin',
-                  'location': 1,
-              }, {
-                  'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
-                  'location': 1,
-              }],
-              'payload_inputs': [{
-                  'gs_path': 'gs://path-to-input',
-                  'path': {
-                      'path': '[CLEANUP]/local/path/to/input'
-                  },
-                  'is_archive': False
-              }, {
-                  'gs_path': 'gs://path-to-input-archive',
-                  'path': {
-                      'path': '[CLEANUP]/local/path/to/input/archive'
-                  },
-                  'is_archive': True
-              }]
-          }], versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
-          }]),
+          api, payloads=[delta_payload_resp_with_inputs],
+          versioned_artifacts=[delta_outside_chroot]),
       api.post_check(
           post_process.DoesNotRun,
           'doing paygen.running paygen operations in parallel.clean up payload input archives.removing input archive [CLEANUP]/local/path/to/input'
@@ -1176,62 +1112,21 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'paygen-inputs-attestation-download-fails',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
       api.path.files_exist(
           api.path.cleanup_dir / 'local/path/to/input.intoto.jsonl',
           api.path.cleanup_dir / 'local/path/to/input/archive.intoto.jsonl'),
       api.properties(
           PaygenProperties(
               requests=[{
-                  'generation_request':
-                      GenerationRequest(
-                          full_update=True,
-                          tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
-                          bucket='b',
-                          verify=True,
-                          dryrun=True,
-                          use_local_signing=True,
-                          docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
-                      ),
+                  'generation_request': delta_dlc_local_signing_req
               }], use_split_paygen=True),
       ),
       *generate_split_payload_response(
-          api, payloads=[{
-              'version':
-                  1,
-              'payload_file_path': {
-                  'path': '/tmp/aohiwdadoi/delta.bin',
-                  'location': 1,
-              },
-              'partition_names': ['foo-root', 'foo-kernel'],
-              'tgt_partitions': [{
-                  'path': '/tmp/aohiwdadoi/tgt_root.bin',
-                  'location': 1,
-              }, {
-                  'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
-                  'location': 1,
-              }],
-              'payload_inputs': [{
-                  'gs_path': 'gs://path-to-input',
-                  'path': {
-                      'path': '[CLEANUP]/local/path/to/input'
-                  },
-                  'is_archive': False
-              }, {
-                  'gs_path': 'gs://path-to-input-archive',
-                  'path': {
-                      'path': '[CLEANUP]/local/path/to/input/archive'
-                  },
-                  'is_archive': True
-              }]
-          }], versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
-          }]),
-      # All retries for downloading "input" attesation must fail.
+          api, payloads=[delta_payload_resp_with_inputs],
+          versioned_artifacts=[delta_outside_chroot]),
+      # All retries for downloading "input" attestation must fail.
       api.step_data(
           'doing paygen.running paygen operations in parallel.download attestation for input.download GS file',
           retcode=1),
