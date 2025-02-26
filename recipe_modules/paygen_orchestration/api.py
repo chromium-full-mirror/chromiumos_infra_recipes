@@ -630,7 +630,6 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     if self.m.led.led_build:
       bucket = self.m.led.shadowed_bucket
     builder = 'staging-paygen' if is_staging else 'paygen'
-    # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
     if paygen_mpa:
       builder = 'staging-paygen-mpa' if is_staging else 'paygen-mpa'
     props = {'requests': paygen_requests}

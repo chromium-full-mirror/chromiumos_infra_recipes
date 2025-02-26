@@ -53,7 +53,7 @@ message PaygenOrchestratorProperties {
   // i.e. "signing:1234".
   string docker_image = 17;
 
-  // TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+  // Whether to run paygen on MPA bots.
   bool paygen_mpa = 18;
 
   // If set, will use new GenerateUnsignedPayload and FinalizePayload

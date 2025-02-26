@@ -663,7 +663,6 @@ def GenTests(api: RecipeTestApi):
           [paygen_child_data(x) for x in range(5)], 'running children.collect'),
   )
 
-  # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
   yield api.test(
       'paygen-mpa',
       get_props(paygen_mpa=True),

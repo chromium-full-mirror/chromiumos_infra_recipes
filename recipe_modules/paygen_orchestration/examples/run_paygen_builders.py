@@ -123,7 +123,6 @@ def GenTests(api: RecipeTestApi):
           step_name='running children'),
       api.post_process(post_process.DropExpectation))
 
-  # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
   yield api.test(
       'mpa', api.properties(paygen_mpa=True),
       api.buildbucket.build(

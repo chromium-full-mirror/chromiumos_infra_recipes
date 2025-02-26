@@ -241,7 +241,6 @@ def GenTests(api):
       bucket='release',
   )
 
-  # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
   yield api.build_menu.test(
       'mpa',
       api.properties(

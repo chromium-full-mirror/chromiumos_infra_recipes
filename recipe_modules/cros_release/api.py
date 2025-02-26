@@ -449,7 +449,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'dryrun': self._paygen_dryrun,
           'minios': not self._minios_unsupported,
       }
-      # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
       if self._paygen_mpa:
         paygen_properties['paygen_mpa'] = True
         pg_orch_builder = ('staging-paygen-orchestrator-mpa'

@@ -1325,8 +1325,6 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       builder='kukui-release-main',
       bucket='release',
   )
-
-  # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
   yield api.build_menu.test(
       'release-mpa',
       api.properties(
