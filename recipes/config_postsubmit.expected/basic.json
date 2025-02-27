@@ -2527,6 +2527,7 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/config_to_datastore.py",
+      "--debug",
       "--env",
       "prod"
     ],

@@ -337,6 +337,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 
     api.step('upload generated configs to UFS datastore', [
         config_to_ufs_datastore,
+        '--debug',
         '--env',
         ufs_env,
     ])
