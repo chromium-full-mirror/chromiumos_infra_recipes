@@ -90,14 +90,10 @@ class Ctpv2Command(recipe_api.RecipeApi):
     bucket = bucket if bucket != '' else 'testplatform'
     bucket = bucket.removesuffix('.shadow')
 
-    # If external is in the name then it is a partner bucket and all currently
-    # are running in v1.
-    if 'external' in bucket:  #pragma: nocover
-      return dict(requests.items())
 
-    if 'public' in bucket:  #pragma: nocover
-      # The public builder still services mixed request so we want to maintain
-      # the current filter.
+    if 'public' in bucket or 'external' in bucket:  #pragma: nocover
+      # The public and external builder(AL traffic should ctpv2) still services
+      # mixed request so we want to maintain the current filter.
       return {
           name: request
           for name, request in requests.items()
@@ -133,9 +129,9 @@ class Ctpv2Command(recipe_api.RecipeApi):
       # and force them into using CTPv2. This is by design as we no longer
       # intend to onboard new workflows onto the v1 stack.
       return dict(requests.items())
-    if 'public' in bucket:
-      # The public builder still services mixed request so we want to maintain
-      # the current filter.
+    if 'public' in bucket or 'external' in bucket:
+      # The public and external builder(AL traffic should be ctpv2) still
+      # services mixed request so we want to maintain the current filter.
       return {
           name: request
           for name, request in requests.items()
