@@ -65,4 +65,7 @@ message PaygenOrchestratorProperties {
   // The keyset to sign payloads with. If unspecified, will fall back to the
   // legacy `update_signer` keyset.
   string keyset = 20;
+
+  // Whether verification of paygen input provenance is fatal.
+  bool paygen_input_provenance_verification_fatal = 21;
 }

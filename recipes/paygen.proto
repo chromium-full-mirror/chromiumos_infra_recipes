@@ -40,4 +40,7 @@ message PaygenProperties {
   // TODO(b/299105459): Remove when all active builders have been switched
   // over (won't be for a while, since we have long living stabilize branches).
   bool use_split_paygen = 6;
+
+  // Whether verification of paygen input provenance is fatal.
+  bool paygen_input_provenance_verification_fatal = 7;
 }

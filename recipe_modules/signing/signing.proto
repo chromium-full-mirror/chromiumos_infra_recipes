@@ -18,6 +18,10 @@ message BcidEnforcement {
 
   // The name of the BCID Policy to provide to provide to Software Verifier.
   string bcid_policy = 3;
+
+  // Whether a failure to verify the provenance of paygen inputs should be
+  // fatal. Defaults to false.
+  bool paygen_input_provenance_verification_fatal = 4;
 }
 
 message SigningProperties {

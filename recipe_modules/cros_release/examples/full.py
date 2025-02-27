@@ -257,6 +257,9 @@ def GenTests(api):
                   CrosReleaseProperties(paygen_mpa=True),
               '$chromeos/signing': {
                   'local_signing': True,
+                  'bcid_enforcement': {
+                      'paygen_input_provenance_verification_fatal': True
+                  },
               },
           }),
       api.buildbucket.simulated_collect_output(

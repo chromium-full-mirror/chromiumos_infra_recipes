@@ -35,10 +35,13 @@ def RunSteps(api: RecipeApi):
   ]
 
   paygen_mpa = api.properties.thaw()['paygen_mpa']
-  api.paygen_orchestration.run_paygen_builders(paygen_requests,
-                                               paygen_mpa=paygen_mpa,
-                                               use_split_paygen=True,
-                                               max_bb_elements=2)
+  paygen_input_provenance_verification_fatal = api.properties.thaw(
+  )['paygen_input_provenance_verification_fatal']
+  api.paygen_orchestration.run_paygen_builders(
+      paygen_requests, paygen_mpa=paygen_mpa, use_split_paygen=True,
+      max_bb_elements=2,
+      paygen_input_provenance_verification_fatal=paygen_input_provenance_verification_fatal
+  )
 
 
 test_bbids = [str(8922054662172514000 + i) for i in range(8)]
@@ -47,7 +50,9 @@ test_bbids = [str(8922054662172514000 + i) for i in range(8)]
 def GenTests(api: RecipeTestApi):
 
   yield api.test(
-      'basic', api.properties(paygen_mpa=False),
+      'basic',
+      api.properties(paygen_mpa=False,
+                     paygen_input_provenance_verification_fatal=False),
       api.post_check(post_process.LogContains, 'running children.schedule',
                      'request', ['"use_split_paygen": true']),
       api.buildbucket.build(
@@ -58,7 +63,9 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'basic-try-build', api.properties(paygen_mpa=False),
+      'basic-try-build',
+      api.properties(paygen_mpa=False,
+                     paygen_input_provenance_verification_fatal=False),
       api.buildbucket.build(
           api.buildbucket.ci_build_message(project='chromeos', bucket='try-dev',
                                            builder='paygen-orchestrator')),
@@ -72,7 +79,8 @@ def GenTests(api: RecipeTestApi):
   ]
   yield api.test(
       'basic-led-real-build',
-      api.properties(paygen_mpa=False),
+      api.properties(paygen_mpa=False,
+                     paygen_input_provenance_verification_fatal=False),
       api.buildbucket.build(
           api.buildbucket.ci_build_message(project='chromeos',
                                            bucket='staging.shadow',
@@ -91,7 +99,9 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'conductor-no-retries', api.properties(paygen_mpa=False),
+      'conductor-no-retries',
+      api.properties(paygen_mpa=False,
+                     paygen_input_provenance_verification_fatal=False),
       api.properties(
           **{
               '$chromeos/conductor': {
@@ -107,7 +117,8 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'conductor-retries',
-      api.properties(paygen_mpa=False),
+      api.properties(paygen_mpa=False,
+                     paygen_input_provenance_verification_fatal=False),
       api.properties(
           **{
               '$chromeos/conductor': {
@@ -124,10 +135,24 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'mpa', api.properties(paygen_mpa=True),
+      'mpa',
+      api.properties(paygen_mpa=True,
+                     paygen_input_provenance_verification_fatal=False),
       api.buildbucket.build(
           api.buildbucket.ci_build_message(project='chromeos', bucket='release',
                                            builder='paygen-orchestrator-mpa')),
       api.post_check(post_process.LogContains, 'running children.schedule',
                      'request', ['"builder": "paygen-mpa"']),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'bcid-fatal',
+      api.properties(paygen_mpa=True,
+                     paygen_input_provenance_verification_fatal=True),
+      api.buildbucket.build(
+          api.buildbucket.ci_build_message(project='chromeos', bucket='release',
+                                           builder='paygen-orchestrator-mpa')),
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'request',
+                     ['"paygen_input_provenance_verification_fatal": true']),
       api.post_process(post_process.DropExpectation))

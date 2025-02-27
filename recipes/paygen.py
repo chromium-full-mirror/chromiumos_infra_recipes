@@ -100,7 +100,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
     with api.failures.ignore_exceptions():
       api.bcid_reporter.report_stage('compile')
 
-    failed_unsigned_artifact_verification = set()
+    failed_paygen_input_artifact_verification = set()
 
     # Get max number of concurrent requests - None is number of cores.
     max_concurrent_requests = properties.max_concurrent_requests or api.bot_scaling.get_num_cores(
@@ -185,8 +185,10 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
             if get_failure_reason(resp):
               return resp
             # Verify bcid provenance.
-            failed_unsigned_artifact_verification.update(
-                download_and_verify_paygen_inputs(api, resp.unsigned_payloads))
+            failed_paygen_input_artifact_verification.update(
+                download_and_verify_paygen_inputs(
+                    api, resp.unsigned_payloads,
+                    properties.paygen_input_provenance_verification_fatal))
 
             finalize_req.payloads.extend(resp.unsigned_payloads)
             return api.cros_build_api.PayloadService.FinalizePayload(
@@ -267,8 +269,8 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
     api.easy.set_properties_step(
         **{
             'bcid': {
-                'failed_unsigned_prov_verification':
-                    list(failed_unsigned_artifact_verification)
+                'failed_payload_input_prov_verification':
+                    list(sorted(failed_paygen_input_artifact_verification))
             }
         })
 
@@ -439,18 +441,20 @@ def report_paygen_success_to_snoopy(api: RecipeApi,
         )
 
 
-def download_and_verify_paygen_inputs(api: RecipeApi,
-                                      unsigned_payloads: List[UnsignedPayload]):
+def download_and_verify_paygen_inputs(
+    api: RecipeApi, unsigned_payloads: List[UnsignedPayload],
+    paygen_input_provenance_verification_fatal: bool = False):
   """Download attestations for inputs to paygen and call BCID verifier.
 
   Args:
     api: api object to use.
     unsigned_payloads: list of unsigned payloads, including their inputs.
+    paygen_input_provenance_verification_fatal: Whether BCID verification of paygen inputs is fatal.
 
   Returns:
     Set of artifacts which failed download or verification.
   """
-  failed_unsigned_artifact_verification = set()
+  failed_artifact_verification = set()
   for unsigned_payload in unsigned_payloads:
     artifacts_to_verify = []
     # Download attestations for input artifacts.
@@ -466,18 +470,19 @@ def download_and_verify_paygen_inputs(api: RecipeApi,
           api.gcloud.download_file(attestation_path_remote,
                                    attestation_path_local)
           artifacts_to_verify.append(artifact_path)
-        except StepFailure:
-          # TODO(b/383845609): Pipe through fatality property from the release builder.
-          pres.status = api.step.FAILURE
+        except StepFailure as step_failure:
           pres.step_summary_text = 'attestation download failed'
-
-          failed_unsigned_artifact_verification.add(artifact_name)
+          failed_artifact_verification.add(artifact_name)
+          if paygen_input_provenance_verification_fatal:
+            pres.status = api.step.FAILURE
+            raise step_failure
           # No attestation, cannot continue with verification
           continue
 
-      failed_unsigned_artifact_verification.update(
-          api.signing.verify_bcid_attestations_for_unsigned_artifacts(
-              artifacts_to_verify, True))
+      failed_artifact_verification.update(
+          api.signing.verify_bcid_attestations_for_artifacts(
+              artifacts_to_verify, True,
+              paygen_input_provenance_verification_fatal))
     with api.step.nest('clean up payload input archives'):
       for payload_input in unsigned_payload.payload_inputs:
         # If reporting inputs, delete archives which have been extracted.
@@ -485,7 +490,7 @@ def download_and_verify_paygen_inputs(api: RecipeApi,
           api.file.remove(f'removing input archive {payload_input.path.path}',
                           payload_input.path.path)
 
-  return failed_unsigned_artifact_verification
+  return failed_artifact_verification
 
 
 # TODO(crbug.com/1157719): Improve testing mock data. There is a disconnect
@@ -928,7 +933,8 @@ def GenTests(api: RecipeTestApi):
       api: RecipeTestApi, payloads: List[Dict[str, Any]] = None,
       versioned_artifacts: List[Dict[str, Any]] = None,
       failure_reason: GenerateUnsignedPayloadResponse.FailureReason = None,
-      retcode: int = 0, retry: int = 0) -> TestData:
+      retcode: int = 0, retry: int = 0,
+      fatal_bcid_failure: bool = False) -> TestData:
     suffix = '' if not retry else ' retry ({})'.format(retry)
 
     unsigned_payload_data = json.dumps({
@@ -946,8 +952,8 @@ def GenTests(api: RecipeTestApi):
             data=unsigned_payload_data, retcode=retcode),
     ]
     # Only add data for the FinalizePayload call if we don't have a failure
-    # reason -- if we do, we'll exit before making this call.
-    if not failure_reason:
+    # reason or fatal BCID failure -- if we do, we'll exit before making this call.
+    if not failure_reason and not fatal_bcid_failure:
       ret.append(
           api.cros_build_api.set_api_return(
               parent_step_name='doing paygen.running paygen operations in parallel',
@@ -1105,13 +1111,13 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(
           post_process.MustRun,
-          'doing paygen.running paygen operations in parallel.verify provenance for unsigned artifacts.verifying provenance for input.bcid_verifier: verify provenance'
+          'doing paygen.running paygen operations in parallel.verify provenance.verifying provenance for input.bcid_verifier: verify provenance'
       ),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
-      'paygen-inputs-attestation-download-fails',
+      'paygen-inputs-attestation-download-verification-fails-nonfatal',
       api.buildbucket.generic_build(builder='staging-paygen-mpa',
                                     bucket='staging'),
       api.path.files_exist(
@@ -1121,12 +1127,13 @@ def GenTests(api: RecipeTestApi):
           PaygenProperties(
               requests=[{
                   'generation_request': delta_dlc_local_signing_req
-              }], use_split_paygen=True),
+              }], use_split_paygen=True,
+              paygen_input_provenance_verification_fatal=False),
       ),
       *generate_split_payload_response(
           api, payloads=[delta_payload_resp_with_inputs],
           versioned_artifacts=[delta_outside_chroot]),
-      # All retries for downloading "input" attestation must fail.
+      # All retries for downloading "input" attestation fail.
       api.step_data(
           'doing paygen.running paygen operations in parallel.download attestation for input.download GS file',
           retcode=1),
@@ -1138,15 +1145,111 @@ def GenTests(api: RecipeTestApi):
           retcode=1),
       api.post_check(
           post_process.DoesNotRun,
-          'doing paygen.running paygen operations in parallel.verify provenance for unsigned artifacts.verifying provenance for input'
+          'doing paygen.running paygen operations in parallel.verify provenance.verifying provenance for input'
       ),
-      # "archive" attestation is downloaded and provenance is verified.
+      # Verification of "archive" attestation fails.
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.verify provenance.verifying provenance for archive.bcid_verifier: verify provenance',
+          retcode=1),
+      # Output property captures failures, but build succeeds.
+      api.post_check(
+          post_process.PropertyEquals, 'bcid',
+          {"failed_payload_input_prov_verification": ["archive", "input"]}),
       api.post_check(
           post_process.MustRun,
-          'doing paygen.running paygen operations in parallel.verify provenance for unsigned artifacts.verifying provenance for archive'
+          'doing paygen.running paygen operations in parallel.finalizing single payload'
       ),
-      # Output property captures failure, but build succeeds.
-      api.post_check(post_process.PropertyEquals, 'bcid',
-                     {"failed_unsigned_prov_verification": ["input"]}),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'paygen-inputs-attestation-download-fails-fatal',
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
+      api.path.files_exist(
+          api.path.cleanup_dir / 'local/path/to/input.intoto.jsonl',
+          api.path.cleanup_dir / 'local/path/to/input/archive.intoto.jsonl'),
+      api.properties(
+          PaygenProperties(
+              requests=[{
+                  'generation_request': delta_dlc_local_signing_req
+              }], use_split_paygen=True,
+              paygen_input_provenance_verification_fatal=True),
+      ),
+      # Both tries will fail BCID verification.
+      *generate_split_payload_response(
+          api, payloads=[delta_payload_resp_with_inputs],
+          versioned_artifacts=[delta_outside_chroot], fatal_bcid_failure=True),
+      *generate_split_payload_response(
+          api, payloads=[delta_payload_resp_with_inputs],
+          versioned_artifacts=[delta_outside_chroot], fatal_bcid_failure=True,
+          retry=1),
+      # All retries for downloading "input" attestation fail.
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input.download GS file',
+          retcode=1),
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input.download GS file (2)',
+          retcode=1),
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input.download GS file (3)',
+          retcode=1),
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input (2).download GS file',
+          retcode=1),
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input (2).download GS file (2)',
+          retcode=1),
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input (2).download GS file (3)',
+          retcode=1),
+      # Payload is not finalized and signed, and the build fails.
+      api.post_check(
+          post_process.DoesNotRun,
+          'doing paygen.running paygen operations in parallel.verify provenance.verifying provenance for input'
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'doing paygen.running paygen operations in parallel.finalizing single payload'
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'paygen-inputs-attestation-verification-fails-fatal',
+      api.buildbucket.generic_build(builder='staging-paygen-mpa',
+                                    bucket='staging'),
+      api.path.files_exist(
+          api.path.cleanup_dir / 'local/path/to/input.intoto.jsonl',
+          api.path.cleanup_dir / 'local/path/to/input/archive.intoto.jsonl'),
+      api.properties(
+          PaygenProperties(
+              requests=[{
+                  'generation_request': delta_dlc_local_signing_req
+              }], use_split_paygen=True,
+              paygen_input_provenance_verification_fatal=True),
+      ),
+      # Both tries will fail BCID verification.
+      *generate_split_payload_response(
+          api, payloads=[delta_payload_resp_with_inputs],
+          versioned_artifacts=[delta_outside_chroot], fatal_bcid_failure=True),
+      *generate_split_payload_response(
+          api, payloads=[delta_payload_resp_with_inputs],
+          versioned_artifacts=[delta_outside_chroot], fatal_bcid_failure=True,
+          retry=1),
+      # All retries for "input" verification fail.
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.verify provenance.verifying provenance for input.bcid_verifier: verify provenance',
+          retcode=1),
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.verify provenance (2).verifying provenance for input.bcid_verifier: verify provenance',
+          retcode=1),
+      # Payload is not finalized and signed, and the build fails.
+      api.post_check(
+          post_process.DoesNotRun,
+          'doing paygen.running paygen operations in parallel.finalizing single payload'
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )

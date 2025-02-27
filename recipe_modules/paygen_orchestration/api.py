@@ -390,11 +390,11 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
             ))
     return reqs
 
-  def run_paygen_builders(self,
-                          paygen_reqs: List[PaygenProperties.PaygenRequest],
-                          paygen_mpa: Optional[bool] = False,
-                          use_split_paygen: bool = False,
-                          max_bb_elements: int = 200) -> List[Build]:
+  def run_paygen_builders(
+      self, paygen_reqs: List[PaygenProperties.PaygenRequest],
+      paygen_mpa: Optional[bool] = False, use_split_paygen: bool = False,
+      max_bb_elements: int = 200,
+      paygen_input_provenance_verification_fatal: bool = False) -> List[Build]:
     """Launch paygen builders to generate payloads and run configured tests.
 
     Args:
@@ -403,6 +403,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       use_split_paygen: Whether to use the new split paygen flow.
       max_bb_elements: number of elements per buildbucket call. Default is 200
         but for testing we can use a smaller number.
+      paygen_input_provenance_verification_fatal: Whether BCID verification of paygen inputs is fatal.
 
     Returns:
       A list of completed builds.
@@ -413,9 +414,10 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     ]
     batches = self._batch_paygen_request_dicts(paygen_request_dicts)
     schedule_requests = [
-        self._create_bb_schedule_request(batch, paygen_mpa=paygen_mpa,
-                                         use_split_paygen=use_split_paygen)
-        for batch in batches
+        self._create_bb_schedule_request(
+            batch, paygen_mpa=paygen_mpa, use_split_paygen=use_split_paygen,
+            paygen_input_provenance_verification_fatal=paygen_input_provenance_verification_fatal
+        ) for batch in batches
     ]
 
     # Define a function to split requests into chunks.
@@ -612,6 +614,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       paygen_requests: List[PaygenProperties.PaygenRequest],
       paygen_mpa: Optional[bool] = False,
       use_split_paygen: Optional[bool] = False,
+      paygen_input_provenance_verification_fatal: Optional[bool] = False,
   ) -> ScheduleBuildRequest:
     """Create a ScheduleBuildRequest for list of paygen requests.
 
@@ -619,6 +622,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       paygen_requests: Requests to generate the desired payload.
       paygen_mpa: Use the MPA bot pool builder.
       use_split_paygen: Whether to use the new split paygen flow.
+      paygen_input_provenance_verification_fatal: Whether BCID verification of paygen inputs is fatal.
 
     Returns:
       A ScheduleBuildRequest for a Paygen builder.
@@ -635,6 +639,9 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     props = {'requests': paygen_requests}
     if use_split_paygen:
       props['use_split_paygen'] = use_split_paygen
+    if paygen_input_provenance_verification_fatal:
+      props[
+          'paygen_input_provenance_verification_fatal'] = paygen_input_provenance_verification_fatal
     return self.m.buildbucket.schedule_request(
         bucket=bucket,
         builder=builder,

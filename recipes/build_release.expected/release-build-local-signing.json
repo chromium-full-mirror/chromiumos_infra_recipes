@@ -16308,7 +16308,7 @@
   },
   {
     "cmd": [],
-    "name": "sign artifacts.verify provenance for unsigned artifacts",
+    "name": "sign artifacts.verify provenance",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

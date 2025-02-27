@@ -3087,7 +3087,7 @@
     "name": "doing paygen.set bcid",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_unsigned_prov_verification\": []}@@@"
+      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_payload_input_prov_verification\": []}@@@"
     ]
   },
   {

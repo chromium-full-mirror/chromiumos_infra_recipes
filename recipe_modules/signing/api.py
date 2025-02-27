@@ -85,6 +85,7 @@ class SigningApi(recipe_api.RecipeApi):
     self._bcid_policy = properties.bcid_enforcement.bcid_policy or 'chromeosimage://'
     self._signed_prov_generation_fatal = properties.bcid_enforcement.signed_provenance_generation_fatal or False
     self._unsigned_provenance_verification_fatal = properties.bcid_enforcement.unsigned_provenance_verification_fatal or False
+    self._paygen_input_provenance_verification_fatal = properties.bcid_enforcement.paygen_input_provenance_verification_fatal or False
 
   def initialize(self) -> None:
     """Initialize method for setup that needs the modules instantiated."""
@@ -122,6 +123,10 @@ class SigningApi(recipe_api.RecipeApi):
   @property
   def unsigned_provenance_verification_fatal(self) -> bool:
     return self._unsigned_provenance_verification_fatal
+
+  @property
+  def paygen_input_provenance_verification_fatal(self) -> bool:
+    return self._paygen_input_provenance_verification_fatal  # pragma: nocover
 
   @property
   def get_bcid_policy(self) -> str:
@@ -552,8 +557,9 @@ class SigningApi(recipe_api.RecipeApi):
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
       return gs_dirs
 
-  def verify_bcid_attestations_for_unsigned_artifacts(
-      self, artifacts: List[Path], attestation_eligible: bool = False) -> set:
+  def verify_bcid_attestations_for_artifacts(
+      self, artifacts: List[Path], attestation_eligible: bool = False,
+      provenance_verification_fatal: bool = False) -> set:
     """
     Takes a list of artifacts we plan to use for signing or paygen,and attempts to
     find their matching attestation files, which should have been downloaded
@@ -569,7 +575,7 @@ class SigningApi(recipe_api.RecipeApi):
     if not attestation_eligible:
       return failed_verifications
 
-    with self.m.step.nest('verify provenance for unsigned artifacts'):
+    with self.m.step.nest('verify provenance'):
       for artifact_path in artifacts:
         artifact_name = self.m.path.basename(artifact_path)
         artifact_dir = self.m.path.dirname(artifact_path)
@@ -585,7 +591,7 @@ class SigningApi(recipe_api.RecipeApi):
 
             verify_step.step_summary_text = 'unable to verify. attestation file did not exist in {} for {}. looked at path: {}'.format(
                 artifact_dir, artifact_name, attestation_path)
-            if self.unsigned_provenance_verification_fatal:
+            if provenance_verification_fatal:
               verify_step.status = self.m.step.FAILURE
 
             # No attestation, cannot continue with verification
@@ -603,7 +609,7 @@ class SigningApi(recipe_api.RecipeApi):
             verify_step.status = self.m.step.FAILURE
             verify_step.step_summary_text = 'attestation verification failed'
 
-            if self.unsigned_provenance_verification_fatal:
+            if provenance_verification_fatal:
               raise step_failure
 
     return failed_verifications
@@ -684,8 +690,9 @@ class SigningApi(recipe_api.RecipeApi):
         artifacts.append(
             self.m.path.join(archive_dir, signing_config.archive_path))
 
-      failed_unsigned_verifications = self.verify_bcid_attestations_for_unsigned_artifacts(
-          artifacts, attestation_eligible)
+      failed_unsigned_verifications = self.verify_bcid_attestations_for_artifacts(
+          artifacts, attestation_eligible,
+          self.unsigned_provenance_verification_fatal)
 
       gs_dirs = set()
       if include_paygen:

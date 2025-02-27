@@ -207,7 +207,7 @@ def GenTests(api: RecipeTestApi):
                                         'ImageService/SignImage',
                                         MessageToJson(sample_response)),
       api.override_step_data(
-          'sign artifacts.verify provenance for unsigned artifacts.verifying provenance for recovery_image.tar.xz.bcid_verifier: verify provenance',
+          'sign artifacts.verify provenance.verifying provenance for recovery_image.tar.xz.bcid_verifier: verify provenance',
           retcode=1),
       api.override_step_data(
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.Compute file hash',
@@ -244,7 +244,7 @@ def GenTests(api: RecipeTestApi):
           'sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz from chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184'
       ),
       api.override_step_data(
-          'sign artifacts.verify provenance for unsigned artifacts.verifying provenance for recovery_image.tar.xz.bcid_verifier: verify provenance',
+          'sign artifacts.verify provenance.verifying provenance for recovery_image.tar.xz.bcid_verifier: verify provenance',
           retcode=1),
       api.post_check(
           post_process.DoesNotRun,

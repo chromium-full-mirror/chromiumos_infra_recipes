@@ -58,6 +58,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   # Parse all properties, defaulting the values if not set.
   delta_types = properties.delta_types or api.paygen_orchestration.default_delta_types
   paygen_mpa = properties.paygen_mpa or False
+  paygen_input_provenance_verification_fatal = properties.paygen_input_provenance_verification_fatal or False
   minios = properties.minios
   keyset = properties.keyset
 
@@ -179,7 +180,9 @@ def DoRunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   # Schedule child builders, and wait for them to finish.
   res = api.paygen_orchestration.run_paygen_builders(
       paygen_reqs, paygen_mpa=paygen_mpa,
-      use_split_paygen=properties.use_split_paygen)
+      use_split_paygen=properties.use_split_paygen,
+      paygen_input_provenance_verification_fatal=paygen_input_provenance_verification_fatal
+  )
 
   # Present results.
   with api.step.nest('results') as pres:
@@ -249,15 +252,18 @@ def GenTests(api: RecipeTestApi):
       local_signing: bool = False,
       docker_image: str = None,
       paygen_mpa: bool = False,
+      paygen_input_provenance_verification_fatal: bool = False,
   ) -> Callable[[PaygenOrchestratorProperties], TestData]:
     delta_types = delta_types or ['OMAHA']
     channels = channels or ['CHANNEL_DEV', 'CHANNEL_BETA']
-    return api.properties(delta_types=delta_types, builder_name=builder_name,
-                          target_chromeos_version=target_chromeos_version,
-                          channels=channels, publish_to_pubsub=pubsub,
-                          override_qs_account=override_qs_account,
-                          local_signing=local_signing,
-                          docker_image=docker_image, paygen_mpa=paygen_mpa)
+    return api.properties(
+        delta_types=delta_types, builder_name=builder_name,
+        target_chromeos_version=target_chromeos_version, channels=channels,
+        publish_to_pubsub=pubsub, override_qs_account=override_qs_account,
+        local_signing=local_signing, docker_image=docker_image,
+        paygen_mpa=paygen_mpa,
+        paygen_input_provenance_verification_fatal=paygen_input_provenance_verification_fatal
+    )
 
   good_paygen_cfg = api.paygen_orchestration.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',
