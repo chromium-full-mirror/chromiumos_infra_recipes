@@ -334,6 +334,7 @@ def RunPreUprev(api: RecipeApi, builder: str,
       build = RunChromeBuild(api, builder, buildset, PRE_UPREV_TEST_TIMEOUT)
     if build.status != common_pb2.SUCCESS:
       step.status = api.step.FAILURE
+      step.step_summary_text = build.summary_markdown
     return build
 
 

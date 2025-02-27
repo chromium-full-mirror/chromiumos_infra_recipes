@@ -261,6 +261,7 @@
     "cmd": [],
     "name": "Run preuprev chromeos-betty-chrome-preuprev",
     "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Test FAILURE@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
