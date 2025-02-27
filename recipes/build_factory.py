@@ -61,7 +61,7 @@ def RunSteps(api, properties: BuildFactoryProperties):
 
           api.build_menu.bootstrap_sysroot(config)
           api.build_menu.install_packages(config, env_info.packages,
-                                          timeout_sec=60 * 60 * 15)
+                                          timeout_sec=60 * 60 * 18)
           api.build_menu.build_and_test_images(
               config, include_version=True, is_official=True,
               build_images_timeout_sec=properties.build_images_timeout_sec)
