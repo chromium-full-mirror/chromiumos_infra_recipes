@@ -927,6 +927,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         artifacts_to_report = [
             ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_BASE],
             ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_RECOVERY],
+            ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_TEST],
         ]
 
         paths_to_hash = {
