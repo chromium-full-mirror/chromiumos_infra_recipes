@@ -8,7 +8,7 @@
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
-from typing import Optional
+from typing import Optional, List, Tuple
 import json
 import re
 import base64
@@ -165,7 +165,35 @@ def CheckPreUprevsFromOrchestrator(api: RecipeApi, chrome_commit: str):
     step.step_summary_text = (
         f'[Orchestrator](http://go/bbid/{orchestrator.id}/overview)\n\n' +
         orchestrator.summary_markdown)
-    return orchestrator
+  try:  # Ensure any errors on this step does not block uprev.
+    with api.step.nest('Checking preuprev builder details') as step:
+      if orchestrator.status != common_pb2.SUCCESS:
+        step.step_summary_text = (
+            "Retrying chrome-uprev-cq does NOT retry these tests\n\n"
+            "CTP retries flaky tests and chrome-uprev-orchestrator retries INFRA_FAILURE once\n\n"
+            "Please wait for next uprev\n\n")
+      preuprevs = api.buildbucket.search(
+          builds_service_pb2.BuildPredicate(
+              builder={
+                  'project': 'chrome',
+                  'bucket': 'ci',
+              }, child_of=orchestrator.id))
+      for preuprev in preuprevs[::-1]:
+        with api.step.nest(preuprev.builder.builder) as build:
+          if preuprev.status == common_pb2.FAILURE:
+            build.status = api.step.FAILURE
+          elif preuprev.status != common_pb2.SUCCESS:
+            build.status = api.step.EXCEPTION
+          build.step_summary_text = (f"[go/bbid/{preuprev.id}]"
+                                     f"(http://go/bbid/{preuprev.id})\n\n")
+          if preuprev.status != common_pb2.SUCCESS:
+            build.step_summary_text += preuprev.summary_markdown
+  except Exception as e:  # pragma: nocover # pylint: disable=broad-except
+    with api.step.nest('Something failed checking preuprev details') as step:
+      step.status = common_pb2.EXCEPTION
+      step.step_summary_text = str(e)
+
+  return orchestrator
 
 
 def WaitChromeBestRevision(api: RecipeApi,
@@ -277,21 +305,31 @@ def GenTests(api: RecipeTestApi):
   CHANGE_NUMBER = 123456
   PATCHSET = 7
 
-  def orchestrator(api: RecipeTestApi, status, summary: str):
+  def orchestrator(api: RecipeTestApi, status, summary: str,
+                   preuprevs: List[Tuple[str, common_pb2.Status]]):
 
-    def _build(status, summary):
+    def _build(status, summary, builder):
       return build_pb2.Build(
-          id=1231231919, status=status, summary_markdown=summary,
-          infra=build_pb2.BuildInfra(
+          builder=builder, id=1231231919, status=status,
+          summary_markdown=summary, infra=build_pb2.BuildInfra(
               resultdb=build_pb2.BuildInfra.ResultDB(
                   invocation='invocations/build-1231231919-rdb')))
 
+    orchestrator_builder_id = builder_common_pb2.BuilderID(
+        project='chromeos', bucket='infra', builder='chrome-uprev-orchestrator')
     return api.buildbucket.simulated_search_results(
-        [_build(common_pb2.SCHEDULED, "")],
+        [_build(common_pb2.SCHEDULED, "", orchestrator_builder_id)],
         step_name='Find chrome-uprev-orchestrator.buildbucket.search'
     ) + api.buildbucket.simulated_collect_output(
-        [_build(status, summary)],
-        step_name='Wait chrome-uprev-orchestrator.buildbucket.collect')
+        [_build(status, summary, orchestrator_builder_id)],
+        step_name='Wait chrome-uprev-orchestrator.buildbucket.collect'
+    ) + api.buildbucket.simulated_search_results([
+        _build(
+            status, f'{name} result {common_pb2.Status.Name(status)}',
+            builder_common_pb2.BuilderID(project='chrome', bucket='ci',
+                                         builder=name))
+        for name, status in preuprevs[::-1]
+    ], step_name='Checking preuprev builder details.buildbucket.search')
 
   def chrome_best_revision(api, positions):
 
@@ -378,7 +416,9 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'success',
       try_build_with_cl('130.0.6699.0'),
-      orchestrator(api, common_pb2.SUCCESS, "All pre-uprev tests passed."),
+      orchestrator(api, common_pb2.SUCCESS, "All pre-uprev tests passed.",
+                   [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+                    ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
       api.post_check(post_process.SummaryMarkdown, (
           'Pre-uprev testing passed. \n\nDetails: \n\nAll pre-uprev tests passed.\n'
       )),
@@ -391,7 +431,9 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'main-branch-uprev-prerelease',
       try_build_with_cl('130.0.6699.0_pre1122332'),
-      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.'),
+      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
+                   [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+                    ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
       chrome_best_revision(api, [1100000, 1122332]),
       api.post_check(post_process.SummaryMarkdown, (
           'Pre-uprev testing passed. \n\nDetails: \n\nAll pre-uprev tests passed.\n'
@@ -406,7 +448,9 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'main-branch-uprev-prerelease-chrome-not-good',
       try_build_with_cl('130.0.6699.0_pre1122332'),
-      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.'),
+      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
+                   [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+                    ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
       chrome_best_revision(api, [None] + [1100000] *
                            (FETCH_BEST_CHROME_REVISION_TIMES - 1)),
       api.post_check(post_process.SummaryMarkdown, (
@@ -434,7 +478,9 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'main-branch-uprev-prerelease-chrome-branched',
       try_build_with_cl('129.0.6698.0_pre1122332'),
-      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.'),
+      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
+                   [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+                    ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
       chrome_best_revision(api, [1100000, 1122332]),
       api.post_check(post_process.SummaryMarkdown, (
           'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
@@ -489,7 +535,11 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'pre-uprev-failed',
       try_build_with_cl('130.0.6699.0'),
-      orchestrator(api, common_pb2.FAILURE, 'Some pre-uprev builder failed.'),
+      orchestrator(
+          api, common_pb2.FAILURE, 'Some pre-uprev builder failed.',
+          [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+           ('chromeos-jacuzzi-chrome-preuprev', common_pb2.INFRA_FAILURE),
+           ('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)]),
       api.post_check(
           post_process.SummaryMarkdown,
           ("To disable a failed tests at this builder, disable at "
