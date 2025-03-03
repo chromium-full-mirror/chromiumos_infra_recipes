@@ -343,6 +343,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
   def _bundle_firmware(self, chroot: common_pb2.Chroot, path: config_types.Path,
                        artifact_info: ArtifactsByService.Firmware,
+                       build_targets: List[str],
                        semaphore) -> Dict[str, List[str]]:
     """Bundle toolchain artifacts.
 
@@ -353,6 +354,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot: The sysroot to use.
       path: Path to write bundled artifacts to.
       artifact_info: Firmware artifact info.
+      build_targets: List of build targets to consider.
       semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
           artifact bundling calls.
 
@@ -365,7 +367,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           self.m.cros_build_api.FirmwareService, 'BundleFirmwareArtifacts'):
         req = firmware.BundleFirmwareArtifactsRequest(
             chroot=chroot, result_path=self._result_path(path),
-            artifacts=artifact_info)
+            artifacts=artifact_info, firmware_targets=build_targets)
         req.bcs_version_info.version_string = str(self.m.cros_version.version)
         resp = self.m.cros_build_api.FirmwareService.BundleFirmwareArtifacts(
             req, infra_step=True)
@@ -377,9 +379,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       return ret
 
   def _bundle_artifacts(
-      self, chroot: common_pb2.Chroot, sysroot: ArtifactsByService.Sysroot,
-      artifacts_info: ArtifactsByService, outpath: config_types.Path,
-      test_data: Optional[str] = None
+      self,
+      chroot: common_pb2.Chroot,
+      sysroot: ArtifactsByService.Sysroot,
+      artifacts_info: ArtifactsByService,
+      outpath: config_types.Path,
+      test_data: Optional[str] = None,
+      build_targets: List[str] = None,
   ) -> Tuple[Dict[str, List[str]], List[str]]:
     """Defer to the build API to bundle the given artifact.
 
@@ -404,7 +410,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     futures.extend(
         self._bundle_artifacts_individually(chroot, sysroot, artifacts_info,
-                                            outpath, semaphore))
+                                            outpath, semaphore, build_targets))
 
     # Artifacts which are under the Get endpoint
     futures.append(
@@ -497,7 +503,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         return files_by_artifact, failed_artifacts
 
   def _bundle_artifacts_individually(self, chroot, sysroot, artifacts_info,
-                                     outpath, semaphore):
+                                     outpath, semaphore, build_targets):
     """Create Futures to call the per-artifact_type bundle functions.
 
     These are transitioning to ArtifactsService/BundleArtifacts (and
@@ -511,6 +517,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       outpath (Path): Path to output artifact bundles.
       semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
           artifact bundling calls.
+      build_targets (list): Build targets to process.
 
     Returns:
       futures (list[Future]): A list of futures that call the per-artifact_type
@@ -530,7 +537,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             artifacts_info.firmware.output_artifacts):
           futures.append(
               self.m.futures.spawn(self._bundle_firmware, chroot, outpath,
-                                   artifacts_info.firmware, semaphore))
+                                   artifacts_info.firmware, build_targets,
+                                   semaphore))
         if service.DESCRIPTOR.name == 'Toolchain':
           futures.append(
               self.m.futures.spawn(self._bundle_toolchain, chroot, sysroot,
@@ -819,7 +827,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       private_bundle_func=None, report_to_spike=False,
       attestation_eligible=False, upload_coverage=True,
       previously_uploaded_artifacts=None,
-      ignore_breakpad_symbol_generation_errors=False, use_file_paths=False
+      ignore_breakpad_symbol_generation_errors=False, use_file_paths=False,
+      build_targets=None
   ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
     """Bundle and upload the given artifacts for the given build target.
 
@@ -861,6 +870,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         generation.
       use_file_paths (bool): Use the directory path of the artifact in the
           publish url.  Defaults to False.
+      build_targets (list): List of board targets that should be processed
+          (to be passed to the BAPI).
 
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
@@ -883,7 +894,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       try:
         files_by_artifact = {}
         failed_artifacts = []
-        result = func(chroot, sysroot, artifacts_info, outpath, test_data)
+        result = func(chroot, sysroot, artifacts_info, outpath, test_data,
+                      build_targets)
         files_by_artifact = result
         # _bundle_artifacts is the only function that returns failed artifacts.
         if func.__name__ == '_bundle_artifacts':

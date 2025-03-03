@@ -585,7 +585,7 @@ class FirmwareBuilder():
       return tarball
 
   def _bundle_firmware(self, _chroot, sysroot, _artifacts_info, outpath,
-                       _test_data):
+                       _test_data, _build_targets):
     """Returns a dictionary of files by artifact_type."""
     # This is called from beneath cros_artifacts.upload_artifacts as a private
     # bundler.

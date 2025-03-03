@@ -958,6 +958,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       ignore_breakpad_symbol_generation_errors=False,
       use_file_paths=False,
       artifacts_info=None,
+      build_targets=None,
   ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
     """Upload artifacts from the build.
 
@@ -981,6 +982,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       use_file_paths (bool): Use the directory path of the artifact in the
           publish url.  Defaults to False.
       artifacts_info (ArtifactsByService): Artifacts to fetch.
+      build_targets (list): List of board name targets
 
     Returns:
       (Option[UploadedArtifacts]) information about uploaded artifacts, if any
@@ -1012,6 +1014,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           previously_uploaded_artifacts=previously_uploaded_artifacts,
           ignore_breakpad_symbol_generation_errors=ignore_breakpad_symbol_generation_errors,
           use_file_paths=use_file_paths,
+          build_targets=build_targets,
       )
     return (None, None)
 

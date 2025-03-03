@@ -181,7 +181,8 @@ def RunSteps(api, properties):
     try:
       service.TestAllFirmware(
           TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                 code_coverage=properties.code_coverage),
+                                 code_coverage=properties.code_coverage,
+                                 firmware_targets=firmware_targets),
           name='test firmware')
     except StepFailure as ex:
       UploadTestResults(api, location, build.builder.builder)
@@ -189,7 +190,8 @@ def RunSteps(api, properties):
 
     uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
         config=config, report_to_spike=api.cros_infra_config.config.artifacts
-        .attestation_eligible, use_file_paths=True)
+        .attestation_eligible, use_file_paths=True,
+        build_targets=firmware_targets)
 
     with api.failures.ignore_exceptions():
       if api.cros_infra_config.config.artifacts.attestation_eligible:
