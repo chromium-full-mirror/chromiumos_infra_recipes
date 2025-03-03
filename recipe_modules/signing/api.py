@@ -444,6 +444,8 @@ class SigningApi(recipe_api.RecipeApi):
     to_download = [
         'image.zip',
         'chromiumos_test_image.tar.xz',
+        self.get_bcid_attestation_pattern.format(
+            artifact='chromiumos_test_image.tar.xz'),
         'debug.tgz',
         f'chromeos-hwqual-{build_target}-{version}.tar.bz2',
         'stateful.tgz',
