@@ -2591,8 +2591,8 @@
       "--force",
       "--reviewers",
       "ruki@google.com",
-      "--reviewers",
-      "shaochuan@chromium.org",
+      "--cc",
+      "arc-cts-eng@google.com",
       "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/third_party/autotest/files",

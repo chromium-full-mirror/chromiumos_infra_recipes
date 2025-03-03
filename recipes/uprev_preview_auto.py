@@ -57,13 +57,17 @@ _DEP_EXECUTABLES = [
 
 _ANDROID_MAJOR_VERSIONS = ['T']
 
+_REVIEWERS = ['ruki@google.com']
+
+_CCS = ['arc-cts-eng@google.com']
+
 
 def RunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> RawResult:
   with api.build_menu.configure_builder(missing_ok=True):
     return DoRunSteps(api, properties)
 
 
-def DoRunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> None:
+def DoRunSteps(api: RecipeApi, _properties: UprevPreviewProperties) -> None:
   api.cros_source.ensure_synced_cache(
       projects=_SYNC_PROJECTS, is_staging=api.cros_infra_config.is_staging)
 
@@ -121,9 +125,8 @@ def DoRunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> None:
           api.git.commit(commit_message)
 
         # Create a CL, and submit if needed.
-        change = api.gerrit.create_change(
-            info.path, reviewers=['ruki@google.com', 'shaochuan@chromium.org'],
-            hashtags=[])
+        change = api.gerrit.create_change(info.path, reviewers=_REVIEWERS,
+                                          ccs=_CCS)
 
         with api.step.nest('send to CQ'):
           api.gerrit.set_change_labels(change, {
