@@ -42,7 +42,8 @@ _manifest_info = namedtuple('_manifest_info',
 SNAPSHOT_LGKM_UPREV_INTERVAL_IN_SEC = int(5.5 * 60 * 60)
 
 # Number of results to be retrieved on chcking the previous builds.
-LIMIT_BUILD_SEARCH = 100
+# Note: trying reducing to 75 for b/400309564
+LIMIT_BUILD_SEARCH = 75
 
 
 class SnapshotOrchMenuApi(recipe_api.RecipeApi):
@@ -544,7 +545,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       props = json_format.MessageToDict(last.output.properties)
       lkgm = props.get('lkgm', None)
       # "lkgm" should not be None, since the previous code ensures that the
-      # build generated a lkgm CL.
+      # build generated a lkgm CL
       assert lkgm, 'the implementation expects the "lkgm" field exists.'
       previous_lkgm_version = lkgm.get('version', None)
       assert lkgm, 'the implementation expects the "version" field exists.'

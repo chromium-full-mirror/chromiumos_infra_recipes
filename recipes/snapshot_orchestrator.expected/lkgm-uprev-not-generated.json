@@ -11470,7 +11470,7 @@
       }
     },
     "name": "generate a LKGM uprev CL.Check the previous LKGM CL generation.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,output.properties,startTime\"}, \"pageSize\": 100, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,output.properties,startTime\"}, \"pageSize\": 75, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -11503,7 +11503,7 @@
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"fields\": \"id,output.properties,startTime\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"pageSize\": 100,@@@",
+      "@@@STEP_LOG_LINE@request@        \"pageSize\": 75,@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"postsubmit\",@@@",
