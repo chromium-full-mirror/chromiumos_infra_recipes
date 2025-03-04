@@ -526,15 +526,20 @@ class SigningApi(recipe_api.RecipeApi):
     src_gs_dir = self.m.build_menu.artifacts_gs_path()
     version = self.m.cros_version.version.legacy_version
 
-    def _get_gs_artifact_name_wrapper(image_type: 'common_pb2.ImageType'):
+    def _get_gs_artifact_name_wrapper(image_type: 'common_pb2.ImageType',
+                                      is_attestation: bool = False):
       return lambda build_target, version: self._get_gs_artifact_name(
-          build_target, version, image_type)
+          build_target, version, image_type, is_attestation)
 
     files_to_copy = {
         # Required for paygen -- the unsigned test image is used in n2n
         # payloads.
         'chromiumos_test_image.tar.xz':
             _get_gs_artifact_name_wrapper(common_pb2.IMAGE_TYPE_TEST),
+        self.get_bcid_attestation_pattern.format(
+            artifact='chromiumos_test_image.tar.xz'):
+            _get_gs_artifact_name_wrapper(common_pb2.IMAGE_TYPE_TEST,
+                                          is_attestation=True)
     }
 
     # Otherwise, only the image types specified in |sign_types| are marked for
@@ -759,7 +764,8 @@ class SigningApi(recipe_api.RecipeApi):
     return f'gs://{bucket}/{gs_dir}/'
 
   def _get_gs_artifact_name(self, build_target: str, version: str,
-                            image_type: common_pb2.ImageType) -> str:
+                            image_type: common_pb2.ImageType,
+                            is_attestation: bool = False) -> str:
     """Map artifacts to versioned name expected for paygen signing.
     """
     img_type = None
@@ -767,7 +773,10 @@ class SigningApi(recipe_api.RecipeApi):
       img_type = self.m.cros_release_util.image_type_to_str(image_type)
     img = ('%s-' % img_type) if img_type else ''
     suffix = IMAGE_TYPE_TO_SUFFIX.get(image_type, '')
-    return 'ChromeOS-%s%s-%s%s' % (img, version, build_target, suffix)
+    artifact_name = 'ChromeOS-%s%s-%s%s' % (img, version, build_target, suffix)
+    if is_attestation:
+      return self.get_bcid_attestation_pattern.format(artifact=artifact_name)
+    return artifact_name
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))

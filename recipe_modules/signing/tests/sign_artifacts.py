@@ -301,10 +301,24 @@ def GenTests(api: RecipeTestApi):
           ]),
       api.post_check(
           post_process.StepCommandContains,
+          'sign artifacts.stage paygen artifacts.for channel CHANNEL_CANARY.gsutil cp (2)',
+          [
+              'gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/chromiumos_test_image.tar.xz.intoto.jsonl',
+              'gs://chromeos-releases/canary-channel/kukui/1234.56.0/ChromeOS-test-R99-1234.56.0-kukui.tar.xz.intoto.jsonl',
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
           'sign artifacts.stage paygen artifacts.for channel CHANNEL_DEV.gsutil cp',
           [
               'gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/chromiumos_test_image.tar.xz',
               'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-test-R99-1234.56.0-kukui.tar.xz',
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.stage paygen artifacts.for channel CHANNEL_DEV.gsutil cp (2)',
+          [
+              'gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/chromiumos_test_image.tar.xz.intoto.jsonl',
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-test-R99-1234.56.0-kukui.tar.xz.intoto.jsonl',
           ]),
       api.post_check(
           post_process.MustRun,
