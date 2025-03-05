@@ -186,14 +186,17 @@ def TriggerCrosBuild(api: RecipeApi, properties: dict, bucket: str,
 def RunChromeBuild(api: RecipeApi, builder: str,
                    buildset: common_pb2.GitilesCommit,
                    timeout: int) -> Optional[build_pb2.Build]:
-  request = api.buildbucket.schedule_request(
-      project='chrome',
-      bucket='ci',
-      builder=builder,
-      gitiles_commit=buildset,
-      fields=BUILD_FIELDS_TO_RETRIEVE,
-  )
-  return api.buildbucket.run([request], timeout=timeout)[0]
+  with api.step.nest('run chrome builder'):
+    request = api.buildbucket.schedule_request(
+        project='chrome',
+        bucket='ci',
+        builder=builder,
+        gitiles_commit=buildset,
+    )
+    builds = api.buildbucket.schedule([request], step_name='schedule')
+    return api.buildbucket.collect_builds(
+        ToBuilderIds(builds), fields=BUILD_FIELDS_TO_RETRIEVE,
+        step_name='collect', timeout=timeout)[builds[0].id]
 
 
 def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
@@ -440,11 +443,11 @@ def GenTests(api: RecipeTestApi):
                 builds_service_pb2.BatchResponse(responses=[{
                     'schedule_build': build(k, common_pb2.SCHEDULED)
                 }]),
-                step_name=f'Run preuprev {k}.buildbucket.run{idx}.schedule'))
+                step_name=f'Run preuprev {k}.run chrome builder{idx}.schedule'))
         ret.append(
             api.buildbucket.simulated_collect_output(
                 [build(k, vv)],
-                step_name=f'Run preuprev {k}.buildbucket.run{idx}.collect'))
+                step_name=f'Run preuprev {k}.run chrome builder{idx}.collect'))
 
     r = ret[0]
     for i in ret[1:]:

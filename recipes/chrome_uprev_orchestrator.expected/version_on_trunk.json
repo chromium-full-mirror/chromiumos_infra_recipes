@@ -263,7 +263,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-betty-chrome-preuprev.buildbucket.run",
+    "name": "Run preuprev chromeos-betty-chrome-preuprev.run chrome builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -287,8 +287,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-betty-chrome-preuprev.buildbucket.run.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-betty-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "Run preuprev chromeos-betty-chrome-preuprev.run chrome builder.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-betty-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -326,7 +326,7 @@
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
@@ -354,7 +354,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-betty-chrome-preuprev.buildbucket.run.collect",
+    "name": "Run preuprev chromeos-betty-chrome-preuprev.run chrome builder.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -381,7 +381,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-betty-chrome-preuprev.buildbucket.run.collect.wait",
+    "name": "Run preuprev chromeos-betty-chrome-preuprev.run chrome builder.collect.wait",
     "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -406,8 +406,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-betty-chrome-preuprev.buildbucket.run.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"102114593\"}}]}",
+    "name": "Run preuprev chromeos-betty-chrome-preuprev.run chrome builder.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"102114593\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -436,13 +436,14 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"102114593\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@102114593@https://cr-buildbucket.appspot.com/build/102114593@@@"
     ]
   },
   {
@@ -451,7 +452,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-brya-chrome-preuprev.buildbucket.run",
+    "name": "Run preuprev chromeos-brya-chrome-preuprev.run chrome builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -475,8 +476,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-brya-chrome-preuprev.buildbucket.run.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-brya-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "Run preuprev chromeos-brya-chrome-preuprev.run chrome builder.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-brya-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -514,7 +515,7 @@
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
@@ -542,7 +543,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-brya-chrome-preuprev.buildbucket.run.collect",
+    "name": "Run preuprev chromeos-brya-chrome-preuprev.run chrome builder.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -569,7 +570,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-brya-chrome-preuprev.buildbucket.run.collect.wait",
+    "name": "Run preuprev chromeos-brya-chrome-preuprev.run chrome builder.collect.wait",
     "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -594,8 +595,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-brya-chrome-preuprev.buildbucket.run.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"284564751\"}}]}",
+    "name": "Run preuprev chromeos-brya-chrome-preuprev.run chrome builder.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"284564751\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -624,13 +625,14 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"284564751\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@284564751@https://cr-buildbucket.appspot.com/build/284564751@@@"
     ]
   },
   {
@@ -639,7 +641,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.buildbucket.run",
+    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.run chrome builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -663,8 +665,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.buildbucket.run.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-jacuzzi-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001340\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.run chrome builder.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-jacuzzi-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001340\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -702,7 +704,7 @@
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
@@ -730,7 +732,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.buildbucket.run.collect",
+    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.run chrome builder.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -757,7 +759,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.buildbucket.run.collect.wait",
+    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.run chrome builder.collect.wait",
     "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -782,8 +784,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.buildbucket.run.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"281483114\"}}]}",
+    "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.run chrome builder.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"281483114\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -812,13 +814,14 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"281483114\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@281483114@https://cr-buildbucket.appspot.com/build/281483114@@@"
     ]
   },
   {
@@ -827,7 +830,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-volteer-chrome-preuprev.buildbucket.run",
+    "name": "Run preuprev chromeos-volteer-chrome-preuprev.run chrome builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -851,8 +854,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-volteer-chrome-preuprev.buildbucket.run.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-volteer-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001343\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "Run preuprev chromeos-volteer-chrome-preuprev.run chrome builder.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-volteer-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001343\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -890,7 +893,7 @@
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
@@ -918,7 +921,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-volteer-chrome-preuprev.buildbucket.run.collect",
+    "name": "Run preuprev chromeos-volteer-chrome-preuprev.run chrome builder.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -945,7 +948,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-volteer-chrome-preuprev.buildbucket.run.collect.wait",
+    "name": "Run preuprev chromeos-volteer-chrome-preuprev.run chrome builder.collect.wait",
     "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -970,8 +973,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev chromeos-volteer-chrome-preuprev.buildbucket.run.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"425179835\"}}]}",
+    "name": "Run preuprev chromeos-volteer-chrome-preuprev.run chrome builder.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"425179835\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1000,13 +1003,14 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"425179835\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@425179835@https://cr-buildbucket.appspot.com/build/425179835@@@"
     ]
   },
   {
@@ -1015,7 +1019,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev linux-chromeos-chrome-preuprev.buildbucket.run",
+    "name": "Run preuprev linux-chromeos-chrome-preuprev.run chrome builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1039,8 +1043,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev linux-chromeos-chrome-preuprev.buildbucket.run.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"linux-chromeos-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001346\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "Run preuprev linux-chromeos-chrome-preuprev.run chrome builder.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"linux-chromeos-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001346\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1078,7 +1082,7 @@
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
@@ -1106,7 +1110,7 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev linux-chromeos-chrome-preuprev.buildbucket.run.collect",
+    "name": "Run preuprev linux-chromeos-chrome-preuprev.run chrome builder.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1133,7 +1137,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev linux-chromeos-chrome-preuprev.buildbucket.run.collect.wait",
+    "name": "Run preuprev linux-chromeos-chrome-preuprev.run chrome builder.collect.wait",
     "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1158,8 +1162,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run preuprev linux-chromeos-chrome-preuprev.buildbucket.run.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"992625145\"}}]}",
+    "name": "Run preuprev linux-chromeos-chrome-preuprev.run chrome builder.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"992625145\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1188,13 +1192,14 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"992625145\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@992625145@https://cr-buildbucket.appspot.com/build/992625145@@@"
     ]
   },
   {
