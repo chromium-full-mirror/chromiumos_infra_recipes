@@ -122,6 +122,16 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> None:
     # api.orch_menu.create_recipe_result() will return an error for us.
     return
 
+  # The testing step above may involve arc.DataCollector, which may modify the
+  # runtime artifacts pin. Call WriteLKGB again to make sure potential changes
+  # are included.
+  # If there's no change to the runtime artifacts pin, the second call will
+  # see no files being modified. We combine the list of modified files from
+  # first/second calls to not miss any changes.
+  modified_files += api.android.write_lkgb(android_package, android_version,
+                                           android_branch)
+  modified_files = list(set(modified_files))
+
   # Submit the LKGB update if any. |modified_files| can be empty if
   # |always_build| is set to true.
   if modified_files:
@@ -175,6 +185,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.orch_menu.test(
       'no-submit', data.ctp_normal,
       api.properties(android_package='android-package'),
+      api.post_check(post_process.MustRun, 'commit and generate CL'),
       api.post_check(post_process.DoesNotRun,
                      'commit and generate CL.submit CL 1'))
 
@@ -185,13 +196,28 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(android_package='android-package'),
       api.android.set_write_lkgb_response(modified_files=[]),
       api.post_check(post_process.DoesNotRun, 'run builds'),
+      api.post_check(post_process.DoesNotRun, 'commit and generate CL'),
   )
 
   yield api.orch_menu.test(
-      'always-build', data.ctp_normal,
+      'runtime-artifacts-pin-unmodified',
+      data.ctp_normal,
+      api.properties(android_package='android-package', always_build=True),
+      # Only the first WriteLKGB call sees files modified.
+      api.android.set_write_lkgb_response(modified_files=[], iteration=2),
+      api.post_check(post_process.MustRun, 'run builds'),
+      api.post_check(post_process.MustRun, 'commit and generate CL'),
+  )
+
+  yield api.orch_menu.test(
+      'always-build',
+      data.ctp_normal,
       api.properties(android_package='android-package', always_build=True),
       api.android.set_write_lkgb_response(modified_files=[]),
-      api.post_check(post_process.MustRun, 'run builds'))
+      api.android.set_write_lkgb_response(modified_files=[], iteration=2),
+      api.post_check(post_process.MustRun, 'run builds'),
+      api.post_check(post_process.DoesNotRun, 'commit and generate CL'),
+  )
 
   yield api.orch_menu.test('build-failure', data.ctp_normal,
                            api.properties(android_package='android-package'),

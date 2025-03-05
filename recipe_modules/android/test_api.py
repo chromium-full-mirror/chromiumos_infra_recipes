@@ -1,6 +1,9 @@
 # Copyright 2021 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+"""Test APIs to modify AndroidApi response in tests."""
+
 from typing import List
 
 from google.protobuf import json_format
@@ -45,8 +48,10 @@ class AndroidApiTestApi(recipe_test_api.RecipeTestApi):
     return self._mark_stable_response(
         MarkStableStatusType.MARK_STABLE_STATUS_EARLY_EXIT)
 
-  def set_write_lkgb_response(self, modified_files: List[str]) -> TestData:
+  def set_write_lkgb_response(self, modified_files: List[str],
+                              iteration: int = 1) -> TestData:
     response = WriteLKGBResponse(modified_files=modified_files)
+    iteration = '' if iteration == 1 else f' ({iteration})'
     return self.m.cros_build_api.set_api_return(
-        'write android lkgb', 'AndroidService/WriteLKGB',
+        f'write android lkgb{iteration}', 'AndroidService/WriteLKGB',
         json_format.MessageToJson(response))
