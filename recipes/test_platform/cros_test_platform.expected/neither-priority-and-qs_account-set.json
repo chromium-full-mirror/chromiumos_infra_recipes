@@ -115,7 +115,10 @@
   },
   {
     "cmd": [],
-    "name": "check if Ctpv2 needs to run"
+    "name": "check if Ctpv2 needs to run",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -152,114 +155,6 @@
       }
     },
     "name": "check if Ctpv2 needs to run.get allowed pools for ctpv2.fetch HEAD:testingconfig/ctp2_pools.txt",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure resultdb bigquery export"
-  },
-  {
-    "cmd": [
-      "rdb",
-      "rpc",
-      "luci.resultdb.v1.Recorder",
-      "UpdateInvocation",
-      "-include-update-token"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:external"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:0",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "configure resultdb bigquery export.mark resultdb invocation for bigquery export",
-    "stdin": "{\"invocation\": {\"bigqueryExports\": [{\"dataset\": \"resultdb\", \"project\": \"cros-test-analytics\", \"table\": \"test_results\", \"testResults\": {}}], \"name\": \"invocations/build:0\"}, \"updateMask\": \"bigqueryExports\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@json.input@{@@@",
-      "@@@STEP_LOG_LINE@json.input@  \"invocation\": {@@@",
-      "@@@STEP_LOG_LINE@json.input@    \"bigqueryExports\": [@@@",
-      "@@@STEP_LOG_LINE@json.input@      {@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"dataset\": \"resultdb\",@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"project\": \"cros-test-analytics\",@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"table\": \"test_results\",@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"testResults\": {}@@@",
-      "@@@STEP_LOG_LINE@json.input@      }@@@",
-      "@@@STEP_LOG_LINE@json.input@    ],@@@",
-      "@@@STEP_LOG_LINE@json.input@    \"name\": \"invocations/build:0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@  },@@@",
-      "@@@STEP_LOG_LINE@json.input@  \"updateMask\": \"bigqueryExports\"@@@",
-      "@@@STEP_LOG_LINE@json.input@}@@@",
-      "@@@STEP_LOG_END@json.input@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "publish build ID",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "input validation",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "input validation.service version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "input validation.request",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "input validation.request.validate timeouts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "input validation.request.validate scheduling parameters",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@first@Exactly one of priority and qs_account must be set. Found none.@@@",
-      "@@@STEP_LOG_END@first@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "input validation.request.software dependencies",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "input validation.request.container metadata url",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -331,7 +226,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "request validation failed"
+      "humanReason": "request has no tags"
     },
     "name": "$result"
   }

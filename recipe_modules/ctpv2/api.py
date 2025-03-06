@@ -6,6 +6,7 @@
 """API to call into the CTPv2 binary."""
 
 from recipe_engine import recipe_api
+from google.protobuf.json_format import MessageToDict
 from google.protobuf.struct_pb2 import Struct
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -77,6 +78,23 @@ class Ctpv2Command(recipe_api.RecipeApi):
     """Set the allowed ctp2 pools."""
     self.allowed_pools = allowed_pools
 
+  def get_ctpv2_with_fifo_list(self):  #pragma: nocover
+    # Fetch the buildbucket build so that we can read the Ctpv2WithFifo list.
+    build = build_pb2.Build()
+    build.CopyFrom(self.m.buildbucket.build)
+    props = MessageToDict(build.input.properties)
+
+    # This only gets hit on a recipes test.
+    if not props:
+      props = {'$chromeos/migration': []}
+
+    if '$chromeos/migration' not in props:  #pragma: nocover
+      raise self.m.step.StepFailure(
+          "migration list not provided in build input properties")
+
+    return props['ctpv2_with_fifo'] if 'ctpv2_with_fifo' in props else []
+
+
   def get_legacy_requests(self, requests, bucket='testplatform'):
     """return legacy requests.
 
@@ -90,14 +108,12 @@ class Ctpv2Command(recipe_api.RecipeApi):
     bucket = bucket if bucket != '' else 'testplatform'
     bucket = bucket.removesuffix('.shadow')
 
-
     if 'public' in bucket or 'external' in bucket:  #pragma: nocover
-      # The public and external builder(AL traffic should ctpv2) still services
-      # mixed request so we want to maintain the current filter.
+      # If the request is on the ctpv2WFifo list then send the traffic to v2.
       return {
           name: request
           for name, request in requests.items()
-          if not self._meets_ctpv2_criteria(request)
+          if not self.runInCTPv2(request)
       }
 
       # The standard CTP builder does not service any more v1 request. Force all
@@ -135,7 +151,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
       return {
           name: request
           for name, request in requests.items()
-          if self._meets_ctpv2_criteria(request)
+          if self.runInCTPv2(request)
       }
 
     return {}
@@ -206,6 +222,38 @@ class Ctpv2Command(recipe_api.RecipeApi):
         continue
       if tag in ['DUT_POOL_QUOTA', 'MANAGED_POOL_QUOTA'
                 ] or tag in self.allowed_pools:
+        return True
+    return False
+
+  def runInCTPv2(self, request):  #pragma: nocover
+    ctpv2WithFifo = self.get_ctpv2_with_fifo_list()
+
+    params = self.get_val_from_obj_or_dict(request, 'params')
+    if not params:  # pragma: no cover
+      return False
+
+    decorations = self.get_val_from_obj_or_dict(params, 'decorations')
+    if not decorations:  # pragma: no cover
+      return False
+
+    tags = self.get_val_from_obj_or_dict(decorations, 'tags')
+
+    if not tags:  # pragma: no cover
+      raise self.m.step.StepFailure("request has no tags")
+
+    for tag in tags:
+      if tag.startswith('label-pool:'):
+        tag = tag.removeprefix('label-pool:')
+      elif tag.startswith('pool:'):
+        tag = tag.removeprefix('pool:')
+      else:
+        continue
+
+      # If the tag is going to the shared pool or the CTP W/ Fifo pools then
+      # it is migrated to CTPv2.
+      ctpv2WithFifo.extend(['DUT_POOL_QUOTA', 'MANAGED_POOL_QUOTA'])
+
+      if tag in ctpv2WithFifo:
         return True
     return False
 

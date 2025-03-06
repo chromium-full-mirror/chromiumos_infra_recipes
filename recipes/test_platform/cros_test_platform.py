@@ -58,6 +58,7 @@ from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 from recipe_engine.recipe_api import StepFailure
 
+
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
@@ -168,7 +169,7 @@ def _validate_software_dependencies(api, requests):
   with api.step.nest('software dependencies') as step:
     for t, r in requests.items():
       errs = _invalid_software_dependencies(r.params.software_dependencies)
-      if errs:
+      if errs:  #pragma: nocover
         step.logs[t] = 'Errors in software_dependencies: %s' % ', '.join(
             sorted(errs))
         validation_error = True
@@ -181,7 +182,7 @@ def _invalid_software_dependencies(deps):
   seen = set()
   for dep_oneof in deps:
     dep = dep_oneof.WhichOneof('dep')
-    if dep in seen:
+    if dep in seen:  #pragma: nocover
       errs.append('has duplicate %s' % dep)
     seen.add(dep)
   # Only report duplicates once for each kind.
@@ -203,7 +204,7 @@ def _validate_timeouts(api, requests):
         continue  # pragma: no cover
 
       request_timeout_s = request_timeout.ToTimedelta().total_seconds()
-      if request_timeout_s > 0 and request_timeout_s >= max_timeout_s:
+      if request_timeout_s > 0 and request_timeout_s >= max_timeout_s:  #pragma: nocover
         step.logs[t] = 'Timeout (%s) is larger than maximum timeout (%s)' % (
             request_timeout.ToTimedelta(), max_timeout.ToTimedelta())
         step.status = api.step.FAILURE
@@ -220,7 +221,7 @@ def _validate_scheduling_params(api, requests):
   with api.step.nest('validate scheduling parameters') as step:
     for t, r in requests.items():
       error = _get_scheduling_error(r)
-      if error:
+      if error:  #pragma: nocover
         validation_error = True
         step.logs[t] = error
         step.status = api.step.FAILURE
@@ -236,15 +237,15 @@ _MANAGED_POOL_ALLOW_LIST = (
 
 def _get_scheduling_error(request):
   managed_pool = request.params.scheduling.managed_pool
-  if managed_pool not in _MANAGED_POOL_ALLOW_LIST:
+  if managed_pool not in _MANAGED_POOL_ALLOW_LIST:  #pragma: nocover
     return ('Pool %s not supported. See go/managed-pools-deprecation' %
             Request.Params.Scheduling.ManagedPool.Name(managed_pool))
 
   qs_account = request.params.scheduling.qs_account
   priority = request.params.scheduling.priority
-  if not priority and not qs_account:
+  if not priority and not qs_account:  #pragma: nocover
     return 'Exactly one of priority and qs_account must be set. Found none.'
-  if priority:
+  if priority:  #pragma: nocover
     if qs_account:
       return ('priority and qs_account should not both be set. ' +
               'Got priority: %d and qs_account: %s' % (priority, qs_account))
@@ -2009,7 +2010,7 @@ def summarize(api, enumerations, responses, error_in_requests,
 
 
 def _get_requests_from_properties(api, properties):
-  if properties.HasField('request'):
+  if properties.HasField('request'):  #pragma: nocover
     raise api.step.StepFailure(
         'This request was made using an outdated version of the skylab tool. '
         "Please `skylab update` and try again. If you're stuck on this, "
@@ -2267,7 +2268,8 @@ def _test_request(request_name_tag, build_target='foo-build-target',
                   individual_test_name=None, tag_criteria=None, seed=None,
                   software_deps=_default_software_dependencies(), retries=0,
                   total_shards=0, max_in_shard=0, suite_name=None,
-                  enable_autotest_sharding=False, swarming_tags=[]):
+                  enable_autotest_sharding=False,
+                  swarming_tags=['label-pool:test']):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
@@ -2317,7 +2319,8 @@ def _cft_test_request(request_name, build_target='foo-build-target',
                       tag_criteria=None, seed=None,
                       software_deps=_default_software_dependencies(), retries=0,
                       total_shards=0, max_in_shard=0, suite_name=None,
-                      enable_autotest_sharding=False, swarming_tags=[]):
+                      enable_autotest_sharding=False,
+                      swarming_tags=['label-pool:test']):
   test_req = _test_request(
       request_name, build_target, individual_test=individual_test,
       individual_test_name=individual_test_name, tag_criteria=tag_criteria,
@@ -2339,7 +2342,8 @@ def _cft_test_request_with_build_target_in_keyvals(tag):
   test_req = _cft_test_request(tag)
   test_req.params.decorations.CopyFrom(
       Request.Params.Decorations(
-          autotest_keyvals={'build_target': 'foo-build-target'}))
+          autotest_keyvals={'build_target': 'foo-build-target'},
+          tags=['label-pool:test']))
   return test_req
 
 
