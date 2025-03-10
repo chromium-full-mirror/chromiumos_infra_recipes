@@ -29,7 +29,6 @@ def RunSteps(api, properties):
     api.ctpv2.execute_luciexe()
     api.ctpv2.ensure_ctpv2()
     if properties.requests:
-      api.ctpv2.set_allowed_pools({'test-pool'})
       api.ctpv2.get_legacy_requests(properties.requests, 'testplatform')
       api.ctpv2.get_legacy_requests(properties.requests, 'testplatform')
 

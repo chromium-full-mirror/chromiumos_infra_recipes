@@ -1553,22 +1553,13 @@ def mergeV1AndV2Responses(api, v1_responses, v2_responses):  # pragma: no cover
 
 def CheckIfCtpv2NeedsToRun(api, properties):
   with api.step.nest('check if Ctpv2 needs to run') as step:
+    reqs = api.ctpv2.get_v2_requests(properties.requests,
+                                     api.buildbucket.build.builder.bucket)
 
-    # Check for any requests that qualify for
-    # ctpv2 translation.
-    ctp2_pools = []
-    try:
-      with api.step.nest('get allowed pools for ctpv2') as step:
-        ctp2_pools = api.cros_infra_config.get_ctp2_pools_config()
-        step.logs['allowed pools'] = '\n'.join(ctp2_pools)
-    # pylint: disable=broad-except
-    except Exception:  # pragma: no cover
-      pass
-    api.ctpv2.set_allowed_pools(ctp2_pools)
-    api.ctpv2.mark_requests_for_ctpv2_with_qs(properties.requests)
-    return len(
-        api.ctpv2.get_v2_requests(properties.requests,
-                                  api.buildbucket.build.builder.bucket))
+    step.logs['CTPv2 Requests'] = reqs
+    step.step_summary_text = f'{len(reqs)} CTPv2 requests found.'
+
+    return len(reqs)
 
 
 def remove_requests_on_blocked_pools(api, properties):  #pragma: nocover
