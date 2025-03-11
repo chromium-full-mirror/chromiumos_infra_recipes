@@ -165,9 +165,12 @@ class SigningUtilsApi(recipe_api.RecipeApi):
     channel = self.m.cros_release_util.channel_to_long_string(channel)
     build_target = self.m.build_menu.build_target.name
     version = self.m.cros_version.version.platform_version
+    build_target_str = ''
+    if build_target:
+      build_target_str = f'{build_target}/'
     if self.custom_artifact_version:
-      return f'{build_target}/{self.custom_artifact_version}'
-    return f'{channel}/{build_target}/{version}'
+      return f'{build_target_str}{self.custom_artifact_version}'
+    return f'{channel}/{build_target_str}{version}'
 
   def signing_response_to_metadata(
       self, sign_image_response: SignImageResponse

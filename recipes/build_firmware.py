@@ -25,6 +25,7 @@ from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
 from PB.chromiumos.build_report import BuildReport
+from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig, SigningConfig
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -54,6 +55,8 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'signing',
+    'signing_utils',
     'src_state',
     'test_util',
 ]
@@ -61,13 +64,14 @@ DEPS = [
 
 PROPERTIES = BuildFirmwareProperties
 
-# Artifacts that don't need to be signed.
+# Artifacts that don't need to be signed via legacy signing.
 # `host_emulation` (and `he`) will never need to be signed.
 # `nuvotitan_cw310_a1 fpga` will never need to be signed.
 # `opentitan` (and `nt`) will need to be signed in the future, but signing
 # isn't set up for that target yet.
-SKIP_SIGNING_RE = re.compile(
+SKIP_LEGACY_SIGNING_RE = re.compile(
     r'^(host_emulation|he|opentitan|nt|nuvotitan_cw310_a1)-')
+INCLUDE_SIGNING_RE = re.compile(r'nt-ti50')
 
 
 def UploadTestResults(api, location, builder_name):
@@ -199,23 +203,25 @@ def RunSteps(api, properties):
 
     # Invoke signing if applies.
     signing_scheduled = False
-    with api.step.nest('schedule signing build') as pres:
-      pres.step_text = '\n'.join([
-          f'builder_name={build.builder.builder}',
-          f'signing_allowed_builder_names={properties.signing_allowed_builder_names}',
-          f'sign_image_properties={properties.sign_image_properties}',
-          f'uploaded_artifacts={uploaded_artifacts}',
-      ])
-      if _invoke_signing_for_current_build(build.builder.builder,
-                                           uploaded_artifacts, properties):
-        requests = []
-        sign_image_props = MessageToDict(properties.sign_image_properties,
-                                         preserving_proto_field_name=True)
-        bucket = 'staging' if api.build_menu.is_staging else 'release'
-        builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
+    if _invoke_signing_for_current_build(build.builder.builder,
+                                         uploaded_artifacts, properties):
+      requests = []
+      sign_image_props = MessageToDict(properties.sign_image_properties,
+                                       preserving_proto_field_name=True)
+      bucket = 'staging' if api.build_menu.is_staging else 'release'
+      builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
+
+      # Legacy signing requests:
+      with api.step.nest('schedule legacy signing build') as pres:
+        pres.step_text = '\n'.join([
+            f'builder_name={build.builder.builder}',
+            f'signing_allowed_builder_names={properties.signing_allowed_builder_names}',
+            f'sign_image_properties={properties.sign_image_properties}',
+            f'uploaded_artifacts={uploaded_artifacts}',
+        ])
         for artifact_name in [
             a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-            if not SKIP_SIGNING_RE.match(a)
+            if not SKIP_LEGACY_SIGNING_RE.match(a)
         ]:
           archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
                                        uploaded_artifacts.gs_path,
@@ -226,6 +232,38 @@ def RunSteps(api, properties):
                                                properties=sign_image_props))
 
         api.buildbucket.schedule(requests)
+        signing_scheduled = True
+      # Signing requests:
+      with api.step.nest('sign artifacts'):
+        signing_configs = []
+        # TODO (b/395968753): do this via a config instead.
+        keyset = "DevTi50EcdsaKeys" if api.cros_infra_config.is_staging else "Ti50NuvoTitanSemiProdKeys"
+        for artifact_name in [
+            a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
+            if INCLUDE_SIGNING_RE.match(a)
+        ]:
+          signing_configs.append(
+              SigningConfig(
+                  image_type=common_pb2.IMAGE_TYPE_GSC_FIRMWARE,
+                  ensure_no_password=True,
+                  archive_path=artifact_name,
+                  channel=common_pb2.CHANNEL_AGNOSTIC,
+                  output_names=[f"@CHIP@_@KEYSET_VER@_{artifact_name}"],
+              ))
+
+        # Set up the custom version number to indicate Ti50.
+        version_num = api.cros_version.version.platform_version
+        api.signing_utils.custom_artifact_version = f'ti50/nt-signed/{version_num}'
+        api.signing.signing_operation(
+            config=BuildTargetSigningConfigs(build_target_signing_configs=[
+                BuildTargetSigningConfig(
+                    keyset=keyset,
+                    version=version_num,
+                    signing_configs=signing_configs,
+                )
+            ]),
+            local_artifact_dir=artifact_dir,
+        )
         signing_scheduled = True
 
     # Publish tar files to pubsub.
@@ -535,6 +573,16 @@ def GenTests(api):
             "path": "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
           }
         ]
+      },
+      {
+        "artifactType": 30,
+        "location": 3,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/nt-ti50.tar.bz2"
+          }
+        ]
       }
     ]
   }
@@ -788,7 +836,7 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1),
-      api.post_check(post_process.DoesNotRun, 'schedule signing build'),
+      api.post_check(post_process.DoesNotRun, 'schedule legacy signing build'),
       input_properties=({
           'firmware_location': 1
       }),
@@ -820,7 +868,7 @@ def GenTests(api):
 
   yield test(
       'signing-invocation',
-      api.post_check(post_process.MustRun, 'schedule signing build'),
+      api.post_check(post_process.MustRun, 'schedule legacy signing build'),
       builder='fw-ec-postsubmit', input_properties={
           'firmware_location': 1,
           'signing_allowed_builder_names': ['fw-ec-postsubmit'],
@@ -829,7 +877,7 @@ def GenTests(api):
 
   yield test(
       'staging-signing-invocation',
-      api.post_check(post_process.MustRun, 'schedule signing build'),
+      api.post_check(post_process.MustRun, 'schedule legacy signing build'),
       builder='fw-ec-postsubmit', bucket='staging', input_properties={
           'firmware_location':
               1,

@@ -630,7 +630,11 @@ class SigningApi(recipe_api.RecipeApi):
       upload_unsigned: Optional[bool] = True,
       attestation_eligible: bool = False,
   ) -> SignImageResponse:
-    """Implementation for local signing flow."""
+    """Implementation for local signing flow.
+
+    This method bootstraps signing with signing configs, and puts together
+    signing requests to send to the Build API endpoint.
+    """
     if not self.local_signing:
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
@@ -643,51 +647,6 @@ class SigningApi(recipe_api.RecipeApi):
         return None
       config = BuildTargetSigningConfigs(
           build_target_signing_configs=[build_target_config])
-
-      # Stage local artifacts for signing, if specified.
-      if local_artifact_dir:
-        with self.m.step.nest('copying local artifacts to prepare for signing'):
-          artifacts = self.m.file.listdir('list artifacts to stage for signing',
-                                          local_artifact_dir, recursive=True,
-                                          test_data=['chromeos-firmwareupdate'])
-          for artifact in artifacts:
-            self.m.file.copy('stage artifact for signing', artifact,
-                             archive_dir)
-
-      self.m.time.exponential_retry(retries=2,
-                                    delay=datetime.timedelta(seconds=1))
-
-      def docker_prune():
-        """Prunes the docker cache to remove stopped containers. The docker
-        root is the boot partition, so we don't want the cache to grow over
-        time.
-        """
-        self.m.step('docker prune', [
-            'docker',
-            'container',
-            'prune',
-            '--force',
-        ])
-
-      def docker_pull():
-        docker_prune()
-
-        # BAPI is hermetic so need to pull down the specified docker image
-        # ahead of time.
-        self.m.step('docker pull', [
-            'docker',
-            'pull',
-            self.signing_docker_image,
-        ])
-
-      # Make sure we're authenticated.
-      self.m.step('docker auth', [
-          'gcloud',
-          'auth',
-          'configure-docker',
-          'us-docker.pkg.dev',
-      ])
-      docker_pull()
 
       # Use the signing configs to extract the archive path for the artifacts we're
       # going to use as input to signing steps. These are the files we expect to
@@ -712,30 +671,87 @@ class SigningApi(recipe_api.RecipeApi):
       for gs_dir in sorted(gs_dirs):
         self.m.bot_cost.set_upload_size(gs_dir)
 
-      docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
+      return self.signing_operation(config, archive_dir, local_artifact_dir,
+                                    attestation_eligible,
+                                    failed_unsigned_verifications)
 
-      with self.m.step.nest('call BAPI') as presentation:
-        request = SignImageRequest(
-            signing_configs=config, archive_dir=str(archive_dir),
-            result_path=common_pb2.ResultPath(
-                path=common_pb2.Path(
-                    path=self.m.path.abspath(archive_dir),
-                    location=common_pb2.Path.Location.OUTSIDE,
-                )), tmp_path=self.m.path.abspath(docker_tmp_dir),
-            docker_image=self.signing_docker_image)
-        response = self.m.cros_build_api.ImageService.SignImage(request)
-        self.add_kms_logs_as_step_logs(presentation, archive_dir)
-        # Turn the step red if any failures are present.
-        for archive in response.signed_artifacts.archive_artifacts:
-          if archive.signing_status != PASSED:
-            presentation.status = self.m.step.FAILURE
+  def signing_operation(
+      self, config: BuildTargetSigningConfigs, archive_dir: Path = None,
+      local_artifact_dir: Optional[Path] = None,
+      attestation_eligible: bool = False,
+      failed_unsigned_verifications: Optional[set] = None) -> SignImageResponse:
+    """Do an explicit signing operation on a provided signing config."""
 
-      self.upload_signed_artifacts(response, attestation_eligible,
-                                   failed_unsigned_verifications)
+    @self.m.time.exponential_retry(retries=2,
+                                   delay=datetime.timedelta(seconds=1))
+    def docker_prune():
+      """Prunes the docker cache to remove stopped containers. The docker
+      root is the boot partition, so we don't want the cache to grow over
+      time.
+      """
+      self.m.step('docker prune', [
+          'docker',
+          'container',
+          'prune',
+          '--force',
+      ])
 
+    def docker_pull():
       docker_prune()
 
-      return response
+      # BAPI is hermetic so need to pull down the specified docker image
+      # ahead of time.
+      self.m.step('docker pull', [
+          'docker',
+          'pull',
+          self.signing_docker_image,
+      ])
+
+    # Make sure we're authenticated.
+    self.m.step('docker auth', [
+        'gcloud',
+        'auth',
+        'configure-docker',
+        'us-docker.pkg.dev',
+    ])
+    docker_pull()
+
+    if not archive_dir:
+      archive_dir = self.m.path.mkdtemp('signing-dir')
+
+    # Stage local artifacts for signing, if specified.
+    if local_artifact_dir:
+      with self.m.step.nest('copying local artifacts to prepare for signing'):
+        artifacts = self.m.file.listdir('list artifacts to stage for signing',
+                                        local_artifact_dir, recursive=True,
+                                        test_data=['chromeos-firmwareupdate'])
+        for artifact in artifacts:
+          self.m.file.copy('stage artifact for signing', artifact, archive_dir)
+
+    docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
+
+    with self.m.step.nest('call BAPI') as presentation:
+      request = SignImageRequest(
+          signing_configs=config, archive_dir=str(archive_dir),
+          result_path=common_pb2.ResultPath(
+              path=common_pb2.Path(
+                  path=self.m.path.abspath(archive_dir),
+                  location=common_pb2.Path.Location.OUTSIDE,
+              )), tmp_path=self.m.path.abspath(docker_tmp_dir),
+          docker_image=self.signing_docker_image)
+      response = self.m.cros_build_api.ImageService.SignImage(request)
+      self.add_kms_logs_as_step_logs(presentation, archive_dir)
+      # Turn the step red if any failures are present.
+      for archive in response.signed_artifacts.archive_artifacts:
+        if archive.signing_status != PASSED:
+          presentation.status = self.m.step.FAILURE
+
+    self.upload_signed_artifacts(response, attestation_eligible,
+                                 failed_unsigned_verifications)
+
+    docker_prune()
+
+    return response
 
   def add_kms_logs_as_step_logs(self, presentation: StepPresentation,
                                 result_path: Path):

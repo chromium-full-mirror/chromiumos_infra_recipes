@@ -5424,13 +5424,6 @@
   },
   {
     "cmd": [],
-    "name": "schedule signing build",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@builder_name=firmware-ti50-cq<br/>signing_allowed_builder_names=[]<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-cq/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "Create test containers",
     "~followup_annotations": [
       "@@@STEP_TEXT@Skipping due to missing builder configs.@@@"

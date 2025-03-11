@@ -5775,13 +5775,6 @@
   },
   {
     "cmd": [],
-    "name": "schedule signing build",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@builder_name=amd64-generic-snapshot<br/>signing_allowed_builder_names=[]<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'AUTOTEST_FILES': ['artifact.tar.gz'], 'EBUILD_LOGS': ['log.tar.gz'], 'IMAGE_ZIP': ['artifact.tar.gz'], 'PINNED_GUEST_IMAGES': ['artifact.tar.gz'], 'TAST_FILES': ['artifact.tar.gz'], 'TEST_UPDATE_PAYLOAD': ['artifact.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",

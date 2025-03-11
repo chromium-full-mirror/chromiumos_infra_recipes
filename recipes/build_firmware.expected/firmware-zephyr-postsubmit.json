@@ -4945,13 +4945,6 @@
   },
   {
     "cmd": [],
-    "name": "schedule signing build",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@builder_name=firmware-zephyr-postsubmit<br/>signing_allowed_builder_names=[]<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-zephyr-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'karis.EC.tar.bz2', 'rex/firmware_from_source.tar.bz2', 'screebo.EC.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['brox.EC.tar.bz2', 'karis.EC.tar.bz2', 'screebo.EC.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'rex/firmware_from_source.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}], 'FIRMWARE_TOKEN_DATABASE': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['tokens.bin']}]})@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
