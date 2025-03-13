@@ -2867,7 +2867,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -2879,7 +2878,8 @@
       "-p",
       "branch=main",
       "-p",
-      "status=open"
+      "status=open",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -2945,7 +2945,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chrome-internal-review.googlesource.com",
       "--json_file",
@@ -2957,7 +2956,8 @@
       "-p",
       "branch=main",
       "-p",
-      "status=open"
+      "status=open",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -3031,7 +3031,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -3045,7 +3044,8 @@
       "-p",
       "status=merged",
       "-p",
-      "-age=30d"
+      "-age=30d",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -3192,7 +3192,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chrome-internal-review.googlesource.com",
       "--json_file",
@@ -3206,7 +3205,8 @@
       "-p",
       "status=merged",
       "-p",
-      "-age=30d"
+      "-age=30d",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"

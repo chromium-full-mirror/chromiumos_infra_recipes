@@ -3431,7 +3431,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -3441,7 +3440,8 @@
       "-p",
       "status=open",
       "-p",
-      "label=Commit-Queue<2"
+      "label=Commit-Queue<2",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "env": {

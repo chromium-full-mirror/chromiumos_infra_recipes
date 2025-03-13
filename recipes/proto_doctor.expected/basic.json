@@ -731,7 +731,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -743,7 +742,8 @@
       "-p",
       "branch=main",
       "-o",
-      "LABELS"
+      "LABELS",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -783,7 +783,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chrome-internal-review.googlesource.com",
       "--json_file",
@@ -795,7 +794,8 @@
       "-p",
       "branch=main",
       "-o",
-      "LABELS"
+      "LABELS",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -828,7 +828,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -840,7 +839,8 @@
       "-p",
       "branch=main",
       "-o",
-      "LABELS"
+      "LABELS",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -874,7 +874,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chrome-internal-review.googlesource.com",
       "--json_file",
@@ -886,7 +885,8 @@
       "-p",
       "branch=main",
       "-o",
-      "LABELS"
+      "LABELS",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -920,7 +920,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -930,7 +929,8 @@
       "-p",
       "hashtag=protodoctor",
       "-p",
-      "branch=main"
+      "branch=main",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -977,7 +977,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chrome-internal-review.googlesource.com",
       "--json_file",
@@ -987,7 +986,8 @@
       "-p",
       "hashtag=protodoctor",
       "-p",
-      "branch=main"
+      "branch=main",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -2050,7 +2050,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -2062,7 +2061,8 @@
       "-p",
       "branch=release-R100-14526.B",
       "-o",
-      "LABELS"
+      "LABELS",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -2088,7 +2088,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chrome-internal-review.googlesource.com",
       "--json_file",
@@ -2100,7 +2099,8 @@
       "-p",
       "branch=release-R100-14526.B",
       "-o",
-      "LABELS"
+      "LABELS",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -2134,7 +2134,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -2144,7 +2143,8 @@
       "-p",
       "hashtag=protodoctor",
       "-p",
-      "branch=release-R100-14526.B"
+      "branch=release-R100-14526.B",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -2191,7 +2191,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chrome-internal-review.googlesource.com",
       "--json_file",
@@ -2201,7 +2200,8 @@
       "-p",
       "hashtag=protodoctor",
       "-p",
-      "branch=release-R100-14526.B"
+      "branch=release-R100-14526.B",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"

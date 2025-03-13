@@ -58,7 +58,6 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
-      "--verbose",
       "--host",
       "https://chromium-review.googlesource.com",
       "--json_file",
@@ -72,7 +71,8 @@
       "-p",
       "status=merged",
       "-o",
-      "ALL_REVISIONS"
+      "ALL_REVISIONS",
+      "--verbose"
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
