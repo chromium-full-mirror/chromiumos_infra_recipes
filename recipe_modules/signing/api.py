@@ -358,7 +358,8 @@ class SigningApi(recipe_api.RecipeApi):
     build_target_config = self.get_config()
 
     if not build_target_config.signing_configs:
-      return None, None
+      _, archive_dir = self.download_release_artifacts([])
+      return None, archive_dir
 
     self._paygen_keyset = build_target_config.keyset
 
@@ -516,7 +517,6 @@ class SigningApi(recipe_api.RecipeApi):
       return relevant_signing_configs, local_dir
 
   def stage_paygen_artifacts(self,
-                             build_target_config: BuildTargetSigningConfig,
                              channels: List['common_pb2.Channel']) -> List[str]:
     """Copy the artifacts needed for paygen into the appropriate GS locations.
 
@@ -553,8 +553,8 @@ class SigningApi(recipe_api.RecipeApi):
           gs_dirs.append(dest_gs_dir)
           for src_file, upload_path in files_to_copy.items():
 
-            artifact_upload_name = upload_path(build_target_config.build_target,
-                                               version)
+            artifact_upload_name = upload_path(
+                self.m.build_menu.build_target.name, version)
             # -n so we don't clobber existing destination artifacts.
             self.m.gsutil([
                 'cp',
@@ -642,17 +642,16 @@ class SigningApi(recipe_api.RecipeApi):
     with self.m.step.nest('sign artifacts') as pres:
       build_target_config, archive_dir = self.setup_signing(
           sign_types, channels)
-      if not build_target_config and not archive_dir:
-        pres.step_text = 'Skipping signing for this board due to empty signing config. See go/cros-signing-help for onboarding instructions.'
-        return None
-      config = BuildTargetSigningConfigs(
-          build_target_signing_configs=[build_target_config])
+
+      signing_configs = []
+      if build_target_config:
+        signing_configs = build_target_config.signing_configs
 
       # Use the signing configs to extract the archive path for the artifacts we're
       # going to use as input to signing steps. These are the files we expect to
       # see in the signing_dir with verifiable BCID attestations.
       artifacts = []
-      for signing_config in build_target_config.signing_configs:
+      for signing_config in signing_configs:
         artifacts.append(
             self.m.path.join(archive_dir, signing_config.archive_path))
 
@@ -662,12 +661,20 @@ class SigningApi(recipe_api.RecipeApi):
 
       gs_dirs = set()
       if include_paygen:
-        gs_dirs.update(
-            self.stage_paygen_artifacts(build_target_config, channels))
+        gs_dirs.update(self.stage_paygen_artifacts(channels))
       if upload_unsigned:
         gs_dirs.update(
-            self.upload_unsigned_artifacts(archive_dir, build_target_config,
+            self.upload_unsigned_artifacts(archive_dir, signing_configs,
                                            channels))
+
+      # Now that we've uploaded the unsigned artifacts, we can short-circuit if
+      # there was an empty signing config.
+      if not build_target_config:
+        pres.step_text = 'Skipping signing for this board due to empty signing config. See go/cros-signing-help for onboarding instructions.'
+        return None
+      config = BuildTargetSigningConfigs(
+          build_target_signing_configs=[build_target_config])
+
       for gs_dir in sorted(gs_dirs):
         self.m.bot_cost.set_upload_size(gs_dir)
 
@@ -797,7 +804,7 @@ class SigningApi(recipe_api.RecipeApi):
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
   def upload_unsigned_artifacts(
-      self, archive_dir: Path, build_target_config: BuildTargetSigningConfig,
+      self, archive_dir: Path, signing_configs: List[SigningConfig],
       channels: List['common_pb2.Channel']) -> List[str]:
     """Uploads files from archive_dir to GS based on signing config.
 
@@ -806,6 +813,7 @@ class SigningApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(
         f'upload unsigned artifacts to {self.gs_upload_bucket} bucket'):
+      build_target = self.m.build_menu.build_target.name
       gs_dirs = []
       for channel in channels:
         gs_dir = self._get_gs_path_for_channel(channel)
@@ -826,34 +834,27 @@ class SigningApi(recipe_api.RecipeApi):
           files_to_copy = (
               # (<src>, <dst>, <suffix>),
               ('image.zip',
-               self._get_gs_artifact_name(build_target_config.build_target,
-                                          version, None), 'zip'),
+               self._get_gs_artifact_name(build_target, version, None), 'zip'),
               ('chromiumos_test_image.tar.xz',
-               self._get_gs_artifact_name(build_target_config.build_target,
-                                          version,
+               self._get_gs_artifact_name(build_target, version,
                                           common_pb2.IMAGE_TYPE_TEST), None),
-              ('debug.tgz',
-               f'debug-{build_target_config.build_target.replace("_", "-")}',
-               'tgz'),
-              ('chromeos-hwqual-%s-%s.tar.bz2' %
-               (build_target_config.build_target, version), None, None),
+              ('debug.tgz', f'debug-{build_target.replace("_", "-")}', 'tgz'),
+              ('chromeos-hwqual-%s-%s.tar.bz2' % (build_target, version), None,
+               None),
               ('stateful.tgz', None, None),
               ('dlc', None, None),
               ('full_dev_part_KERN.bin.gz', None, None),
               ('full_dev_part_ROOT.bin.gz', None, None),
               ('full_dev_part_MINIOS.bin.gz', None, None),
               ('recovery_image.tar.xz',
-               self._get_gs_artifact_name(build_target_config.build_target,
-                                          version,
+               self._get_gs_artifact_name(build_target, version,
                                           common_pb2.IMAGE_TYPE_RECOVERY),
                None),
               ('factory_image.zip',
-               self._get_gs_artifact_name(build_target_config.build_target,
-                                          version,
+               self._get_gs_artifact_name(build_target, version,
                                           common_pb2.IMAGE_TYPE_FACTORY), None),
               ('firmware_from_source.tar.bz2',
-               self._get_gs_artifact_name(build_target_config.build_target,
-                                          version,
+               self._get_gs_artifact_name(build_target, version,
                                           common_pb2.IMAGE_TYPE_FIRMWARE),
                None),
           )
@@ -876,10 +877,9 @@ class SigningApi(recipe_api.RecipeApi):
               ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
 
           # Files to sign are copied.
-          for signing_config in build_target_config.signing_configs:
+          for signing_config in signing_configs:
             artifact_upload_name = self._get_gs_artifact_name(
-                build_target_config.build_target, version,
-                signing_config.image_type)
+                build_target, version, signing_config.image_type)
             uploaded.add(signing_config.archive_path)
             # -n so we don't clobber existing destination artifacts.
             self.m.gsutil([

@@ -39,10 +39,8 @@ def RunSteps(api: RecipeApi):
   sign_types = [IMAGE_TYPE_BASE]
   channels = [CHANNEL_CANARY]
 
-  processed_config, archive_dir = api.signing.setup_signing(
-      sign_types, channels)
+  processed_config, _ = api.signing.setup_signing(sign_types, channels)
   api.assertions.assertEqual(None, processed_config)
-  api.assertions.assertEqual(None, archive_dir)
 
   # Call signing.
   api.signing.sign_artifacts(
