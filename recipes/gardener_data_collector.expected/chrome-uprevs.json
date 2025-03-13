@@ -34,6 +34,8 @@
       "CURRENT_REVISION",
       "-o",
       "CURRENT_FILES",
+      "-o",
+      "CURRENT_COMMIT",
       "--verbose"
     ],
     "env": {
@@ -80,6 +82,13 @@
       "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromiumos/overlays/chromiumos-overlay\",@@@",
       "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"c89a0ff2988dbd697d4375924dadec75832c79f3\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"parents\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@            {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"commit\": \"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@          ]@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"new_mode\": 33188,@@@",
@@ -107,6 +116,13 @@
       "@@@STEP_LOG_LINE@json.output@      \"9bbb014843d74f7536a66139067fd082b1a73d19\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 5,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"refs/heads/main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"parents\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@            {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"commit\": \"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@          ]@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2023-02-11 15:45:17.000000000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"description\": \"Rebase\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
@@ -187,6 +203,8 @@
       "CURRENT_REVISION",
       "-o",
       "CURRENT_FILES",
+      "-o",
+      "CURRENT_COMMIT",
       "--verbose"
     ],
     "env": {
@@ -202,9 +220,163 @@
   },
   {
     "cmd": [],
+    "name": "find last 7-day Chrome main uprev (chrome-main) CLs"
+  },
+  {
+    "cmd": [],
+    "name": "find last 7-day Chrome main uprev (chrome-main) CLs.query https://chromium-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found 0 matching CLs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "repo=chromiumos/overlays/chromiumos-overlay",
+      "-p",
+      "branch=main",
+      "-p",
+      "-age=7d",
+      "-p",
+      "topic=chrome-main",
+      "-o",
+      "MESSAGES",
+      "-o",
+      "CURRENT_REVISION",
+      "-o",
+      "CURRENT_FILES",
+      "-o",
+      "CURRENT_COMMIT",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "find last 7-day Chrome main uprev (chrome-main) CLs.query https://chromium-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_LINE@data@GIT_COMMIT=\"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
+      "--retry",
+      "10",
+      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT"
+    ],
+    "name": "fetch gitiles file.curl https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "fetch gitiles file (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_LINE@data@GIT_COMMIT=\"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
+      "--retry",
+      "10",
+      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT"
+    ],
+    "name": "fetch gitiles file (2).curl https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "fetch gitiles file (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_LINE@data@GIT_COMMIT=\"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
+      "--retry",
+      "10",
+      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5589.0_rc-r1.ebuild?format=TEXT"
+    ],
+    "name": "fetch gitiles file (3).curl https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5589.0_rc-r1.ebuild?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "fetch gitiles file (4)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_LINE@data@GIT_COMMIT=\"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
+      "--retry",
+      "10",
+      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/9bbb014843d74f7536a66139067fd082b1a73d19/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5584.0_rc-r1.ebuild?format=TEXT"
+    ],
+    "name": "fetch gitiles file (4).curl https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/9bbb014843d74f7536a66139067fd082b1a73d19/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5584.0_rc-r1.ebuild?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@chrome_uprev_commits@[{\"branch\": \"main\", \"cq_tries\": \"1\", \"created\": \"2024-11-27 04:13:33.000000000\", \"new_version\": \"133.0.6862.0\", \"number\": \"6047779\", \"old_version\": \"133.0.6861.0\", \"status\": \"NEW\", \"subject\": \"chromeos-chrome: Automatic uprev to 133.0.6862.0.\"}, {\"branch\": \"main\", \"created\": \"2023-02-11 14:56:09.000000000\", \"new_version\": \"112.0.5584.0\", \"number\": \"4242579\", \"old_version\": \"112.0.5589.0\", \"revert_of\": \"4242666\", \"status\": \"MERGED\", \"subject\": \"Revert \\\"chromeos-chrome, chromeos-lacros-parallel: Automatic uprev to 112.0.5589.0.\\\"\", \"submitted\": \"2023-02-12 03:45:17.000000000\"}]@@@",
+      "@@@SET_BUILD_PROPERTY@chrome_uprev_commits@[{\"branch\": \"main\", \"cq_tries\": \"1\", \"created\": \"2024-11-27 04:13:33.000000000\", \"new_version\": \"133.0.6862.0@deadbeef\", \"number\": \"6047779\", \"old_version\": \"133.0.6861.0@deadbeef\", \"status\": \"NEW\", \"subject\": \"chromeos-chrome: Automatic uprev to 133.0.6862.0.\"}, {\"branch\": \"main\", \"created\": \"2023-02-11 14:56:09.000000000\", \"new_version\": \"112.0.5584.0@deadbeef\", \"number\": \"4242579\", \"old_version\": \"112.0.5589.0@deadbeef\", \"revert_of\": \"4242666\", \"status\": \"MERGED\", \"subject\": \"Revert \\\"chromeos-chrome, chromeos-lacros-parallel: Automatic uprev to 112.0.5589.0.\\\"\", \"submitted\": \"2023-02-12 03:45:17.000000000\"}]@@@",
       "@@@SET_BUILD_PROPERTY@lkgm_commits@[]@@@"
     ]
   },
