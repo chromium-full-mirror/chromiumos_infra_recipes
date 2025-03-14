@@ -651,7 +651,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
 
   # Normal release build with local signing enabled but skipped.
   yield api.build_menu.test(
-      'release-build-local-signing-skip-paygen',
+      'release-build-local-signing-empty-config-skipped',
       api.properties(
           **{
               'latest_files_gs_bucket':
