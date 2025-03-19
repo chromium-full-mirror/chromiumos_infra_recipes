@@ -206,8 +206,9 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
           pres.logs['request'] = MessageToJson(request)
 
           paygen_parallel_runner.run_function_async(
-              do_a_paygen, request, success_handler=lambda resp, req=request,
-              api=api: report_paygen_success_to_snoopy(api, resp)
+              do_a_paygen, request,
+              success_handler=lambda resp, req=request, api=api:
+              report_paygen_success_to_snoopy(api, resp, req.generation_request)
               if not get_failure_reason(resp) else None,
               try_count=_PAYGEN_TRY_COUNT)
 
@@ -427,14 +428,16 @@ def get_paygen_response_artifacts(
   ]
 
 
-def report_paygen_success_to_snoopy(api: RecipeApi,
-                                    resp: GenerationResponse):
+def report_paygen_success_to_snoopy(api: RecipeApi, resp: GenerationResponse,
+                                    req: GenerationRequest):
   for artifact in get_paygen_response_artifacts(resp):
     with api.failures.ignore_exceptions():
       if artifact.file_path.location is common_pb2.Path.Location.OUTSIDE:
         abspath = artifact.file_path.path
         file_hash = api.file.file_hash(abspath, test_data='deadbeef')
-        api.bcid_reporter.report_gcs(file_hash, artifact.remote_uri)
+        # Only generate BCID attestation when local signing is used.
+        if req.use_local_signing:
+          api.bcid_reporter.report_gcs(file_hash, artifact.remote_uri)
       else:
         raise api.step.StepFailure(
             f'Artifact file_path must have Path.Location.OUTSIDE, file_path: {artifact.file_path}'
@@ -617,6 +620,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'doing paygen.running paygen operations in parallel.snoop: report_gcs'
+      ),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -1112,6 +1119,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'doing paygen.running paygen operations in parallel.verify provenance.verifying provenance for input.bcid_verifier: verify provenance'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.snoop: report_gcs'
       ),
       api.post_process(post_process.DropExpectation),
   )

@@ -1971,20 +1971,6 @@
   },
   {
     "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-gcs",
-      "-digest",
-      "deadbeef",
-      "-gcs-uri",
-      ""
-    ],
-    "name": "doing paygen.running paygen operations in parallel.snoop: report_gcs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",

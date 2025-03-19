@@ -1990,20 +1990,6 @@
   },
   {
     "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-gcs",
-      "-digest",
-      "deadbeef",
-      "-gcs-uri",
-      "gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc"
-    ],
-    "name": "doing paygen.running paygen operations in parallel.snoop: report_gcs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -2017,20 +2003,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-gcs",
-      "-digest",
-      "deadbeef",
-      "-gcs-uri",
-      "gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc2"
-    ],
-    "name": "doing paygen.running paygen operations in parallel.snoop: report_gcs (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

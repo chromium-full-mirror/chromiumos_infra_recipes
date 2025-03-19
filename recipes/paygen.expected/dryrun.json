@@ -3078,32 +3078,6 @@
     ]
   },
   {
-    "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-gcs",
-      "-digest",
-      "deadbeef",
-      "-gcs-uri",
-      ""
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "doing paygen.running paygen operations in parallel.snoop: report_gcs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "doing paygen.set payloads",
     "~followup_annotations": [
