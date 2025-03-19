@@ -784,6 +784,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     """Generate responses for SigningService."""
     responses = {}
     responses['CreatePreMPKeys'] = '{}'
+    responses['SignTi50Paos'] = '{}'
     return responses
 
   @property

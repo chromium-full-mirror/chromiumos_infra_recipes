@@ -6,6 +6,7 @@
 """Module providing signing functionality."""
 
 import collections
+import contextlib
 import copy
 import datetime
 import json
@@ -17,6 +18,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Set
 from google.protobuf.text_format import Parse
 
 from PB.chromite.api.image import SignImageRequest, SignImageResponse
+from PB.chromite.api.signing import SignTi50PaosRequest
 from PB.chromiumos import build_report as build_report_pb2  # pylint: disable=unused-import
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
@@ -682,13 +684,9 @@ class SigningApi(recipe_api.RecipeApi):
                                     attestation_eligible,
                                     failed_unsigned_verifications)
 
-  def signing_operation(
-      self, config: BuildTargetSigningConfigs, archive_dir: Path = None,
-      local_artifact_dir: Optional[Path] = None,
-      attestation_eligible: bool = False,
-      failed_unsigned_verifications: Optional[set] = None) -> SignImageResponse:
-    """Do an explicit signing operation on a provided signing config."""
 
+  @contextlib.contextmanager
+  def docker_setup(self):
     @self.m.time.exponential_retry(retries=2,
                                    delay=datetime.timedelta(seconds=1))
     def docker_prune():
@@ -722,12 +720,66 @@ class SigningApi(recipe_api.RecipeApi):
         'us-docker.pkg.dev',
     ])
     docker_pull()
+    yield
+    docker_prune()
 
-    if not archive_dir:
+  def signing_operation(
+      self, config: BuildTargetSigningConfigs, archive_dir: Path = None,
+      local_artifact_dir: Optional[Path] = None,
+      attestation_eligible: bool = False,
+      failed_unsigned_verifications: Optional[set] = None) -> SignImageResponse:
+    """Do an explicit signing operation on a provided signing config."""
+    with self.docker_setup():
+      if not archive_dir:
+        archive_dir = self.m.path.mkdtemp('signing-dir')
+
+      # Stage local artifacts for signing, if specified.
+      if local_artifact_dir:
+        with self.m.step.nest('copying local artifacts to prepare for signing'):
+          artifacts = self.m.file.listdir('list artifacts to stage for signing',
+                                          local_artifact_dir, recursive=True,
+                                          test_data=['chromeos-firmwareupdate'])
+          for artifact in artifacts:
+            self.m.file.copy('stage artifact for signing', artifact,
+                             archive_dir)
+
+      docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
+
+      with self.m.step.nest('call BAPI') as presentation:
+        request = SignImageRequest(
+            signing_configs=config, archive_dir=str(archive_dir),
+            result_path=common_pb2.ResultPath(
+                path=common_pb2.Path(
+                    path=self.m.path.abspath(archive_dir),
+                    location=common_pb2.Path.Location.OUTSIDE,
+                )), tmp_path=self.m.path.abspath(docker_tmp_dir),
+            docker_image=self.signing_docker_image)
+        response = self.m.cros_build_api.ImageService.SignImage(request)
+        self.add_kms_logs_as_step_logs(presentation, archive_dir)
+        # Turn the step red if any failures are present.
+        for archive in response.signed_artifacts.archive_artifacts:
+          if archive.signing_status != PASSED:
+            presentation.status = self.m.step.FAILURE
+
+      self.upload_signed_artifacts(response, attestation_eligible,
+                                   failed_unsigned_verifications)
+
+    return response
+
+  def sign_ti50_paos(
+      self,
+      local_artifact_dir: Path,
+      project: str,
+      keyring: str,
+      key: str,
+      filename: str,
+      version: int = 1,
+      location: str = 'us',
+  ):
+    with self.docker_setup():
+      docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
       archive_dir = self.m.path.mkdtemp('signing-dir')
 
-    # Stage local artifacts for signing, if specified.
-    if local_artifact_dir:
       with self.m.step.nest('copying local artifacts to prepare for signing'):
         artifacts = self.m.file.listdir('list artifacts to stage for signing',
                                         local_artifact_dir, recursive=True,
@@ -735,30 +787,33 @@ class SigningApi(recipe_api.RecipeApi):
         for artifact in artifacts:
           self.m.file.copy('stage artifact for signing', artifact, archive_dir)
 
-    docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
+      self.m.cros_build_api.SigningService.SignTi50Paos(
+          SignTi50PaosRequest(
+              project=project,
+              location=location,
+              keyring=keyring,
+              key=key,
+              version=version,
+              filename=filename,
+              docker_image=self.signing_docker_image,
+              archive_dir=str(archive_dir),
+              result_path=common_pb2.ResultPath(
+                  path=common_pb2.Path(
+                      path=self.m.path.abspath(archive_dir),
+                      location=common_pb2.Path.Location.OUTSIDE,
+                  )),
+              tmp_path=self.m.path.abspath(docker_tmp_dir),
+          ))
+      with self.m.step.nest(
+          f'upload signed artifact to {self.gs_upload_bucket} bucket'):
+        self.m.gsutil([
+            'cp',
+            '-n',
+            os.path.join(str(archive_dir), filename),
+            os.path.join(
+                self._get_gs_path_for_channel(common_pb2.CHANNEL_AGNOSTIC)),
+        ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
 
-    with self.m.step.nest('call BAPI') as presentation:
-      request = SignImageRequest(
-          signing_configs=config, archive_dir=str(archive_dir),
-          result_path=common_pb2.ResultPath(
-              path=common_pb2.Path(
-                  path=self.m.path.abspath(archive_dir),
-                  location=common_pb2.Path.Location.OUTSIDE,
-              )), tmp_path=self.m.path.abspath(docker_tmp_dir),
-          docker_image=self.signing_docker_image)
-      response = self.m.cros_build_api.ImageService.SignImage(request)
-      self.add_kms_logs_as_step_logs(presentation, archive_dir)
-      # Turn the step red if any failures are present.
-      for archive in response.signed_artifacts.archive_artifacts:
-        if archive.signing_status != PASSED:
-          presentation.status = self.m.step.FAILURE
-
-    self.upload_signed_artifacts(response, attestation_eligible,
-                                 failed_unsigned_verifications)
-
-    docker_prune()
-
-    return response
 
   def add_kms_logs_as_step_logs(self, presentation: StepPresentation,
                                 result_path: Path):

@@ -72,6 +72,7 @@ PROPERTIES = BuildFirmwareProperties
 SKIP_LEGACY_SIGNING_RE = re.compile(
     r'^(host_emulation|he|opentitan|nt|nuvotitan_cw310_a1)-')
 INCLUDE_SIGNING_RE = re.compile(r'nt-ti50')
+GENERATE_PAOS_RE = re.compile(r'nt-ti50')
 
 
 def UploadTestResults(api, location, builder_name):
@@ -236,8 +237,6 @@ def RunSteps(api, properties):
       # Signing requests:
       with api.step.nest('sign artifacts'):
         signing_configs = []
-        # TODO (b/395968753): do this via a config instead.
-        keyset = "DevTi50EcdsaKeys" if api.cros_infra_config.is_staging else "Ti50NuvoTitanSemiProdKeys"
         for artifact_name in [
             a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
             if INCLUDE_SIGNING_RE.match(a)
@@ -257,7 +256,7 @@ def RunSteps(api, properties):
         api.signing.signing_operation(
             config=BuildTargetSigningConfigs(build_target_signing_configs=[
                 BuildTargetSigningConfig(
-                    keyset=keyset,
+                    keyset=properties.signing_keyset,
                     version=version_num,
                     signing_configs=signing_configs,
                 )
@@ -265,6 +264,19 @@ def RunSteps(api, properties):
             local_artifact_dir=artifact_dir,
         )
         signing_scheduled = True
+
+    if properties.pao_signing_config.key and uploaded_artifacts and len(
+        uploaded_artifacts) > 2:
+      with api.step.nest("signing PAOs in artifact"):
+        for artifact_name in [
+            a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
+            if GENERATE_PAOS_RE.match(a)
+        ]:
+          api.signing.sign_ti50_paos(artifact_dir,
+                                     properties.pao_signing_config.project,
+                                     properties.pao_signing_config.keyring,
+                                     properties.pao_signing_config.key,
+                                     artifact_name)
 
     # Publish tar files to pubsub.
     if not api.cv.active:
@@ -811,16 +823,18 @@ def GenTests(api):
                           board=['betty'], publish_to_goldeneye=True,
                           type='GSC')),
               ]))), builder='firmware-ti50-postsubmit', input_properties={
-                  'firmware_location':
-                      common_pb2.PLATFORM_TI50,
-                  'chromiumos_sdk_pin_file':
-                      sdk_pin_path,
-                  'set_suite_scheduling':
-                      True,
+                  'firmware_location': common_pb2.PLATFORM_TI50,
+                  'chromiumos_sdk_pin_file': sdk_pin_path,
+                  'set_suite_scheduling': True,
                   'signing_allowed_builder_names': [
                       'staging-firmware-ti50-postsubmit',
                       'firmware-ti50-postsubmit',
                   ],
+                  'pao_signing_config': {
+                      "project": "chromeos",
+                      "keyring": "ring",
+                      "key": "pao-key"
+                  },
               })
 
   yield test(

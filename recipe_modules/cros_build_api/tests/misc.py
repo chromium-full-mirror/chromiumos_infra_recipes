@@ -219,6 +219,7 @@ def RunSteps(api):
       },
       'SigningService': {
           'CreatePreMPKeys': signing.CreatePreMPKeysResponse,
+          'SignTi50Paos': signing.SignTi50PaosResponse,
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,
