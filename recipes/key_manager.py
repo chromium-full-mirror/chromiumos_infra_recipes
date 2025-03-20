@@ -5,34 +5,34 @@
 
 """Recipe for performing various manipulations on ChromeOS signing keys."""
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
-                                                       builder_common_pb2)
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
-from PB.recipes.chromeos.key_manager import KeyManagerProperties
-from PB.recipe_modules.recipe_engine.buildbucket.properties import InputProperties
+from PB.chromite.api.signing import CreateAccessoryKeyRequest
 from PB.chromite.api.signing import CreatePreMPKeysRequest
 from PB.chromiumos.common import BuildTarget
-
+from PB.go.chromium.org.luci.buildbucket.proto import (
+    builder_common as builder_common_pb2,)
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.recipe_engine.buildbucket.properties import (
+    InputProperties,)
+from PB.recipes.chromeos.key_manager import KeyManagerProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
-    'recipe_engine/buildbucket',
-    'recipe_engine/context',
-    'recipe_engine/properties',
-    'recipe_engine/step',
-    'cros_build_api',
-    'cros_debug',
-    'cros_try',
-    'easy',
-    'gerrit',
-    'git',
-    'signing',
-    'src_state',
+    "recipe_engine/buildbucket",
+    "recipe_engine/context",
+    "recipe_engine/properties",
+    "recipe_engine/step",
+    "cros_build_api",
+    "cros_debug",
+    "cros_try",
+    "easy",
+    "gerrit",
+    "git",
+    "signing",
+    "src_state",
 ]
 
 PROPERTIES = KeyManagerProperties
@@ -40,37 +40,62 @@ PROPERTIES = KeyManagerProperties
 
 def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
   if not properties.bug:
-    raise StepFailure('`bug` is a required property.')
+    raise StepFailure("`bug` is a required property.")
 
-  with api.step.nest('set up dependencies'):
+  with api.step.nest("set up dependencies"):
     api.git.clone(
-        'https://chromium.googlesource.com/chromiumos/chromite/',
-        target_path=api.src_state.workspace_path / 'infra/chromite-HEAD',
-        branch='main', single_branch=True)
+        "https://chromium.googlesource.com/chromiumos/chromite/",
+        target_path=api.src_state.workspace_path / "infra/chromite-HEAD",
+        branch="main",
+        single_branch=True,
+    )
 
-    api.git.clone('https://chromium.googlesource.com/chromiumos/chromite/',
-                  target_path=api.src_state.workspace_path / 'infra/chromite',
-                  branch='main', single_branch=True)
+    api.git.clone(
+        "https://chromium.googlesource.com/chromiumos/chromite/",
+        target_path=api.src_state.workspace_path / "infra/chromite",
+        branch="main",
+        single_branch=True,
+    )
 
     release_keys_path = api.src_state.workspace_path.joinpath(
-        'src/platform/signing/keys')
+        "src/platform/signing/keys")
     api.git.clone(
-        'https://chrome-internal.googlesource.com/chromeos/platform/release-keys',
-        target_path=release_keys_path, branch='main', single_branch=True)
+        "https://chrome-internal.googlesource.com/chromeos/platform/release-keys",
+        target_path=release_keys_path,
+        branch="main",
+        single_branch=True,
+    )
 
-  with api.step.nest('create PreMP keys'):
-    api.step('docker auth', [
-        'gcloud',
-        'auth',
-        'configure-docker',
-        'us-docker.pkg.dev',
-    ])
-    api.step('docker pull', [
-        'docker',
-        'pull',
-        api.signing.signing_docker_image,
-    ])
-    is_staging = api.buildbucket.build.builder.bucket == 'staging'
+  if properties.HasField("create_premp_keys_request"):
+    create_premp_keys(api, properties, release_keys_path)
+  elif properties.HasField("create_accessory_keys_request"):
+    create_accessory_keys(api, properties, release_keys_path)
+  else:
+    raise StepFailure(
+        "Properties must include either an accessory or PreMP key request.")
+
+
+def create_premp_keys(api: RecipeApi, properties: KeyManagerProperties,
+                      release_keys_path: str):
+  with api.step.nest("create PreMP keys"):
+    api.step(
+        "docker auth",
+        [
+            "gcloud",
+            "auth",
+            "configure-docker",
+            "us-docker.pkg.dev",
+        ],
+    )
+    api.step(
+        "docker pull",
+        [
+            "docker",
+            "pull",
+            api.signing.signing_docker_image,
+        ],
+    )
+    is_staging = api.buildbucket.build.builder.bucket == "staging"
     create_premp_keys_request = properties.create_premp_keys_request
     add_loem = create_premp_keys_request.add_loem
     # These fields shouldn't be set by the user, but in any case
@@ -81,151 +106,439 @@ def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
     api.cros_build_api.SigningService.CreatePreMPKeys(create_premp_keys_request)
     commit_subject = "Add LOEM for" if add_loem else "Create PreMP keys for"
     commit_lines = [
-        f'{commit_subject} {create_premp_keys_request.build_target.name}', '',
-        f'Generated by key-manager, see {api.buildbucket.build_url()} for job details.'
+        f"{commit_subject} {create_premp_keys_request.build_target.name}",
+        "",
+        f"Generated by key-manager, see {api.buildbucket.build_url()} for job details.",
     ]
     if create_premp_keys_request.dry_run:
       commit_lines += [
-          'This CL was created as part of a dry run build, it is not meant to be submitted.'
+          "This CL was created as part of a dry run build, it is not meant to be submitted."
       ]
     commit_lines += [
-        '',
-        f'BUG=b:{properties.bug}',
-        'TEST=CQ',
+        "",
+        f"BUG=b:{properties.bug}",
+        "TEST=CQ",
     ]
-    commit_message = '\n'.join(commit_lines) + '\n'
-    with api.step.nest('commit keyset to release-keys'), api.context(
+    commit_message = "\n".join(commit_lines) + "\n"
+    with api.step.nest("commit keyset to release-keys"), api.context(
         cwd=release_keys_path):
-      # Regenerate generated files and copy paygen public key.
-      api.step('regenerate generated files',
-               ['./keyset/public/scripts/regenerate_keysets.sh', '--all'])
-      # TODO(b/318522770): Plumb keyset dir through from docker/BAPI
-      # instead of obliviously calling `git add -A`.
-      api.git.add_all()
-      api.git.commit(commit_message)
-      reviewers = [] if is_staging else ['croskeymanagers@google.com']
-      invoker = api.cros_try.get_invoker()
-      change = api.gerrit.create_change(
-          str(release_keys_path), project_path=release_keys_path,
-          non_repo_checkout=True, reviewers=reviewers,
-          ccs=[invoker] if invoker else [])
-      api.easy.set_properties_step(
-          keyset_commit=api.gerrit.parse_gerrit_change_url(change))
+      change = get_gerrit_change(api, release_keys_path, is_staging)
+      commit_keyset(api, change, commit_message)
+
       # Abandon dry run changes so they don't accidentally get submitted.
       if create_premp_keys_request.dry_run:
         api.gerrit.abandon_change(change)
 
 
+def create_accessory_keys(api: RecipeApi, properties: KeyManagerProperties,
+                          release_keys_path: str):
+  with api.step.nest("create accessory keys"):
+    api.step(
+        "docker auth",
+        [
+            "gcloud",
+            "auth",
+            "configure-docker",
+            "us-docker.pkg.dev",
+        ],
+    )
+    api.step(
+        "docker pull",
+        [
+            "docker",
+            "pull",
+            api.signing.signing_docker_image,
+        ],
+    )
+    is_staging = api.buildbucket.build.builder.bucket == "staging"
+    create_accessory_keys_request = properties.create_accessory_keys_request
+    # These fields shouldn't be set by the user, but in any case
+    # set them here (potentially overwriting existing values).
+    create_accessory_keys_request.docker_image =\
+        api.signing.signing_docker_image
+    create_accessory_keys_request.release_keys_checkout = str(release_keys_path)
+    create_accessory_keys_request.is_staging = is_staging
+    api.cros_build_api.SigningService.CreateAccessoryKeys(
+        create_accessory_keys_request)
+
+    pre_mp_text = (" PreMP" if create_accessory_keys_request.is_pre_mp else "")
+    version_text = (f"-v{create_accessory_keys_request.version}"
+                    if create_accessory_keys_request.version > 0 else "")
+    commit_lines = [
+        f"Create{pre_mp_text} accesory keys for {create_accessory_keys_request.build_target.name}-{create_accessory_keys_request.accessory}{version_text}",
+        "",
+        f"Generated by key-manager, see {api.buildbucket.build_url()} for job details.",
+    ]
+    if create_accessory_keys_request.dry_run:
+      commit_lines += [
+          "This CL was created as part of a dry run build, it is not meant to be submitted."
+      ]
+    elif is_staging:
+      commit_lines += [
+          "This CL was created for staging, it is not meant to be submitted."
+      ]
+    commit_lines += [
+        "",
+        f"BUG=b:{properties.bug}",
+        "TEST=CQ",
+    ]
+    commit_message = "\n".join(commit_lines) + "\n"
+    with api.step.nest("commit keyset to release-keys"), api.context(
+        cwd=release_keys_path):
+      change = get_gerrit_change(api, release_keys_path, is_staging)
+      commit_keyset(api, change, commit_message)
+
+      # Abandon dry run changes so they don't accidentally get submitted.
+      if create_accessory_keys_request.dry_run or is_staging:
+        api.gerrit.abandon_change(change)
+
+
+def get_gerrit_change(api: RecipeApi, release_keys_path: str,
+                      is_staging: bool) -> common_pb2.GerritChange:
+  reviewers = [] if is_staging else ["croskeymanagers@google.com"]
+  invoker = api.cros_try.get_invoker()
+
+  return api.gerrit.create_change(
+      str(release_keys_path),
+      project_path=release_keys_path,
+      non_repo_checkout=True,
+      reviewers=reviewers,
+      ccs=[invoker] if invoker else [],
+  )
+
+
+def commit_keyset(api: RecipeApi, change: common_pb2.GerritChange,
+                  commit_message: str):
+  # Regenerate generated files and copy paygen public key.
+  api.step(
+      "regenerate generated files",
+      ["./keyset/public/scripts/regenerate_keysets.sh", "--all"],
+  )
+  # TODO(b/318522770): Plumb keyset dir through from docker/BAPI
+  # instead of obliviously calling `git add -A`.
+  api.git.add_all()
+  api.git.commit(commit_message)
+  api.easy.set_properties_step(
+      keyset_commit=api.gerrit.parse_gerrit_change_url(change))
+
+
 def GenTests(api: RecipeTestApi):
   yield api.test(
-      'basic',
+      "PreMp-basic",
       api.properties(
           KeyManagerProperties(
               create_premp_keys_request=CreatePreMPKeysRequest(
-                  build_target=BuildTarget(name='atlas')), bug=1337),
+                  build_target=BuildTarget(name="atlas")),
+              bug=1337,
+          ),
           **{
-              '$recipe_engine/buildbucket':
+              "$recipe_engine/buildbucket":
                   InputProperties(
                       build=build_pb2.Build(tags=[
-                          common_pb2.StringPair(key='tryjob-launcher',
-                                                value='jackneus@google.com')
+                          common_pb2.StringPair(
+                              key="tryjob-launcher",
+                              value="jackneus@google.com",
+                          )
                       ])),
-          }),
-      api.post_check(
-          post_process.StepCommandContains, 'create PreMP keys.docker pull', [
-              'docker', 'pull',
-              'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:'
-          ]),
-      api.post_check(
-          post_process.LogContains,
-          'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys',
-          'request',
-          ['us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:']),
-      api.post_check(
-          post_process.MustRun,
-          'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys'),
-      api.post_check(
-          post_process.MustRun,
-          'create PreMP keys.commit keyset to release-keys.regenerate generated files',
+          },
       ),
       api.post_check(
           post_process.StepCommandContains,
-          'create PreMP keys.commit keyset to release-keys.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload',
+          "create PreMP keys.docker pull",
           [
-              '--reviewers',
-              'croskeymanagers@google.com',
-              '--cc',
-              'jackneus@google.com',
-          ]),
+              "docker",
+              "pull",
+              "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:",
+          ],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys",
+          "request",
+          ["us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:"],
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create PreMP keys.commit keyset to release-keys.regenerate generated files",
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "create PreMP keys.commit keyset to release-keys.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload",
+          [
+              "--reviewers",
+              "croskeymanagers@google.com",
+              "--cc",
+              "jackneus@google.com",
+          ],
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
-      'staging',
+      "PreMp-staging",
       api.buildbucket.build(
           build_pb2.Build(
               builder=builder_common_pb2.BuilderID(
-                  project='chromeos', bucket='staging',
-                  builder='staging-key-manager'))),
+                  project="chromeos",
+                  bucket="staging",
+                  builder="staging-key-manager",
+              ))),
       api.properties(
           KeyManagerProperties(
               create_premp_keys_request=CreatePreMPKeysRequest(
-                  build_target=BuildTarget(name='atlas')), bug=420)),
+                  build_target=BuildTarget(name="atlas")),
+              bug=420,
+          )),
       api.post_check(
-          post_process.StepCommandContains, 'create PreMP keys.docker pull', [
-              'docker', 'pull',
-              'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:'
-          ]),
+          post_process.StepCommandContains,
+          "create PreMP keys.docker pull",
+          [
+              "docker",
+              "pull",
+              "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:",
+          ],
+      ),
       api.post_check(
           post_process.LogContains,
-          'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys',
-          'request',
-          ['us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:']),
+          "create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys",
+          "request",
+          ["us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:"],
+      ),
       api.post_check(
           post_process.LogContains,
-          'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys',
-          'request', ['"dryRun": true']),
-      api.post_check(
-          post_process.MustRun,
-          'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys'),
-      api.post_check(
-          post_process.MustRun,
-          'create PreMP keys.commit keyset to release-keys.regenerate generated files',
+          "create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys",
+          "request",
+          ['"dryRun": true'],
       ),
       api.post_check(
           post_process.MustRun,
-          'create PreMP keys.commit keyset to release-keys.abandon CL 1',
+          "create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create PreMP keys.commit keyset to release-keys.regenerate generated files",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create PreMP keys.commit keyset to release-keys.abandon CL 1",
       ),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
-      'missing-bug',
+      "PreMp-add-loem",
       api.properties(
           KeyManagerProperties(
               create_premp_keys_request=CreatePreMPKeysRequest(
-                  build_target=BuildTarget(name='atlas'))),
-          **{
-              '$recipe_engine/buildbucket':
-                  InputProperties(
-                      build=build_pb2.Build(tags=[
-                          common_pb2.StringPair(key='tryjob-launcher',
-                                                value='jackneus@google.com')
-                      ])),
-          }),
-      api.post_check(post_process.SummaryMarkdown,
-                     '`bug` is a required property.'),
-      api.post_process(post_process.DropExpectation), status='FAILURE')
-
-  yield api.test(
-      'add-loem',
-      api.properties(
-          KeyManagerProperties(
-              create_premp_keys_request=CreatePreMPKeysRequest(
-                  build_target=BuildTarget(name='atlas'), add_loem=True),
-              bug=1337)),
+                  build_target=BuildTarget(name="atlas"), add_loem=True),
+              bug=1337,
+          )),
       api.post_check(
           post_process.LogContains,
-          'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys',
-          'request', ['"addLoem\": true']),
-      api.post_process(post_process.DropExpectation))
+          "create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys",
+          "request",
+          ['"addLoem": true'],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "missing-bug",
+      api.properties(
+          KeyManagerProperties(
+              create_premp_keys_request=CreatePreMPKeysRequest(
+                  build_target=BuildTarget(name="atlas"))),
+          **{
+              "$recipe_engine/buildbucket":
+                  InputProperties(
+                      build=build_pb2.Build(tags=[
+                          common_pb2.StringPair(
+                              key="tryjob-launcher",
+                              value="jackneus@google.com",
+                          )
+                      ])),
+          },
+      ),
+      api.post_check(post_process.SummaryMarkdown,
+                     "`bug` is a required property."),
+      api.post_process(post_process.DropExpectation),
+      status="FAILURE",
+  )
+
+  yield api.test(
+      "Accessory-basic",
+      api.properties(
+          KeyManagerProperties(
+              create_accessory_keys_request=CreateAccessoryKeyRequest(
+                  build_target=BuildTarget(name="atlas"),
+                  accessory="accessory",
+              ),
+              bug=1337,
+          ),
+          **{
+              "$recipe_engine/buildbucket":
+                  InputProperties(
+                      build=build_pb2.Build(tags=[
+                          common_pb2.StringPair(
+                              key="tryjob-launcher",
+                              value="jackneus@google.com",
+                          )
+                      ])),
+          },
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "create accessory keys.docker pull",
+          [
+              "docker",
+              "pull",
+              "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:",
+          ],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
+          "request",
+          ["us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:"],
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create accessory keys.commit keyset to release-keys.regenerate generated files",
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "create accessory keys.commit keyset to release-keys.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload",
+          [
+              "--reviewers",
+              "croskeymanagers@google.com",
+              "--cc",
+              "jackneus@google.com",
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "Accessory-staging",
+      api.buildbucket.build(
+          build_pb2.Build(
+              builder=builder_common_pb2.BuilderID(
+                  project="chromeos",
+                  bucket="staging",
+                  builder="staging-key-manager",
+              ))),
+      api.properties(
+          KeyManagerProperties(
+              create_accessory_keys_request=CreateAccessoryKeyRequest(
+                  build_target=BuildTarget(name="atlas"),
+                  accessory="accessory",
+              ),
+              bug=1337,
+          )),
+      api.post_check(
+          post_process.StepCommandContains,
+          "create accessory keys.docker pull",
+          [
+              "docker",
+              "pull",
+              "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:",
+          ],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
+          "request",
+          ["us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:"],
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create accessory keys.commit keyset to release-keys.regenerate generated files",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create accessory keys.commit keyset to release-keys.abandon CL 1",
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "Accessory-dryRun",
+      api.properties(
+          KeyManagerProperties(
+              create_accessory_keys_request=CreateAccessoryKeyRequest(
+                  build_target=BuildTarget(name="atlas"),
+                  accessory="accessory",
+                  dry_run=True,
+              ),
+              bug=1337,
+          )),
+      api.post_check(
+          post_process.StepCommandContains,
+          "create accessory keys.docker pull",
+          [
+              "docker",
+              "pull",
+              "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:",
+          ],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
+          "request",
+          ["us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:"],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
+          "request",
+          ['"dryRun": true'],
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create accessory keys.commit keyset to release-keys.regenerate generated files",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create accessory keys.commit keyset to release-keys.abandon CL 1",
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "missing-request",
+      api.properties(
+          KeyManagerProperties(bug=420),
+          **{
+              "$recipe_engine/buildbucket":
+                  InputProperties(
+                      build=build_pb2.Build(tags=[
+                          common_pb2.StringPair(
+                              key="tryjob-launcher",
+                              value="jackneus@google.com",
+                          )
+                      ])),
+          },
+      ),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Properties must include either an accessory or PreMP key request.",
+      ),
+      api.post_process(post_process.DropExpectation),
+      status="FAILURE",
+  )

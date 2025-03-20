@@ -10,6 +10,7 @@ import "chromite/api/signing.proto";
 
 message KeyManagerProperties {
   chromite.api.CreatePreMPKeysRequest create_premp_keys_request = 1;
+  chromite.api.CreateAccessoryKeyRequest create_accessory_keys_request = 3;
 
   // Buganizer ID to be associated with the PreMP Key creation request.
   int64 bug = 2;
