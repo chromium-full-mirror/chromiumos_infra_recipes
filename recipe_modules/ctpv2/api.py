@@ -103,7 +103,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
     bucket = bucket if bucket != '' else 'testplatform'
     bucket = bucket.removesuffix('.shadow')
 
-    if 'public' in bucket or 'external' in bucket:  #pragma: nocover
+    if 'external' in bucket:  #pragma: nocover
       # If the request is on the ctpv2WFifo list then send the traffic to v2.
       return {
           name: request
@@ -112,7 +112,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
       }
 
       # The standard CTP builder does not service any more v1 request. Force all
-      # to be read as CTPv2 requests.
+      # to be read as CTPv2 requests. Same for public.
       #
       # This will also capture any new buckets which are not partners nor public
       # and force them into using CTPv2. This is by design as we no longer
@@ -132,16 +132,16 @@ class Ctpv2Command(recipe_api.RecipeApi):
     bucket = bucket if bucket != '' else 'testplatform'
     bucket = bucket.removesuffix('.shadow')
 
-    if bucket == 'testplatform':
+    if bucket == 'testplatform' or 'public' in bucket:
       # The standard CTP builder does not service any more v1 request. Force all
-      # to be read as CTPv2 requests.
+      # to be read as CTPv2 requests. Same for public builders.
       #
       # This will also capture any new buckets which are not partners nor public
       # and force them into using CTPv2. This is by design as we no longer
       # intend to onboard new workflows onto the v1 stack.
       return dict(requests.items())
-    if 'public' in bucket or 'external' in bucket:
-      # The public and external builder(AL traffic should be ctpv2) still
+    if 'external' in bucket:
+      # The external builder(AL traffic should be ctpv2) still
       # services mixed request so we want to maintain the current filter.
       return {
           name: request
