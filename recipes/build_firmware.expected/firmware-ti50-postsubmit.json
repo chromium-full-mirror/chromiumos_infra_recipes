@@ -5028,7 +5028,7 @@
       "@@@STEP_LOG_LINE@request@            \"imageType\": 13,@@@",
       "@@@STEP_LOG_LINE@request@            \"ensureNoPassword\": true,@@@",
       "@@@STEP_LOG_LINE@request@            \"outputNames\": [@@@",
-      "@@@STEP_LOG_LINE@request@              \"@CHIP@_@KEYSET_VER@_nt-ti50.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@request@              \"@CHIP@_@KEYSET_VER@_nt-ti50\"@@@",
       "@@@STEP_LOG_LINE@request@            ],@@@",
       "@@@STEP_LOG_LINE@request@            \"archivePath\": \"nt-ti50.tar.bz2\",@@@",
       "@@@STEP_LOG_LINE@request@            \"channel\": 7@@@",
@@ -5086,7 +5086,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"signingConfigs\": [\n          {\n            \"imageType\": 13,\n            \"ensureNoPassword\": true,\n            \"outputNames\": [\n              \"@CHIP@_@KEYSET_VER@_nt-ti50.tar.bz2\"\n            ],\n            \"archivePath\": \"nt-ti50.tar.bz2\",\n            \"channel\": 7\n          }\n        ],\n        \"version\": \"1234.56.0\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signing-dir_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:\",\n  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_1\",\n  \"tmpPath\": \"[CLEANUP]/signing_tmp__tmp_1\"\n}",
+      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"signingConfigs\": [\n          {\n            \"imageType\": 13,\n            \"ensureNoPassword\": true,\n            \"outputNames\": [\n              \"@CHIP@_@KEYSET_VER@_nt-ti50\"\n            ],\n            \"archivePath\": \"nt-ti50.tar.bz2\",\n            \"channel\": 7\n          }\n        ],\n        \"version\": \"1234.56.0\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signing-dir_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:\",\n  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_1\",\n  \"tmpPath\": \"[CLEANUP]/signing_tmp__tmp_1\"\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5711,7 +5711,8 @@
     "cmd": [],
     "name": "signing PAOs in artifact.upload signed artifact to chromeos-throw-away-bucket bucket",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throw-away-bucket/ti50/nt-signed/1234.56.0/@@@"
     ]
   },
   {

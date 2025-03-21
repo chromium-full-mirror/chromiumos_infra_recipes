@@ -247,7 +247,9 @@ def RunSteps(api, properties):
                   ensure_no_password=True,
                   archive_path=artifact_name,
                   channel=common_pb2.CHANNEL_AGNOSTIC,
-                  output_names=[f"@CHIP@_@KEYSET_VER@_{artifact_name}"],
+                  output_names=[
+                      f"@CHIP@_@KEYSET_VER@_{artifact_name.removesuffix('.tar.bz2')}"
+                  ],
               ))
 
         # Set up the custom version number to indicate Ti50.

@@ -805,14 +805,18 @@ class SigningApi(recipe_api.RecipeApi):
               tmp_path=self.m.path.abspath(docker_tmp_dir),
           ))
       with self.m.step.nest(
-          f'upload signed artifact to {self.gs_upload_bucket} bucket'):
+          f'upload signed artifact to {self.gs_upload_bucket} bucket') as pres:
+        gs_dir = os.path.join(
+            self._get_gs_path_for_channel(common_pb2.CHANNEL_AGNOSTIC))
         self.m.gsutil([
             'cp',
             '-n',
             os.path.join(str(archive_dir), filename),
-            os.path.join(
-                self._get_gs_path_for_channel(common_pb2.CHANNEL_AGNOSTIC)),
+            gs_dir,
         ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
+        pres.links['gs upload dir'] = (
+            'https://console.cloud.google.com/storage/browser/%s' %
+            gs_dir[len('gs://'):])
 
 
   def add_kms_logs_as_step_logs(self, presentation: StepPresentation,
