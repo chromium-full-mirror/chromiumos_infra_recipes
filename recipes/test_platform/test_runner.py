@@ -772,6 +772,11 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   if hwid_sku:
     base_tags.append(('hwid_sku', hwid_sku[0]))
 
+  hwid = api.cros_tags.get_values('hwid',
+                                  api.buildbucket.swarming_bot_dimensions)
+  if hwid:
+    base_tags.append(('hwid', hwid[0]))
+
   modem_type = api.cros_tags.get_values('label-modem_type',
                                         api.buildbucket.swarming_bot_dimensions)
   if modem_type:
@@ -3789,6 +3794,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                   'gale',
               'label-hwid_sku':
                   'katsu_MT8183_0B',
+              'hwid':
+                  'KATSU MT-8183-0B',
               'label-pool':
                   'DUT_POOL_QUOTA',
               'label-carrier':
