@@ -261,10 +261,12 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'sign artifacts.call BAPI.call chromite.api.ImageService/SignImage'),
-      api.post_check(post_process.LogContains, 'sign artifacts.call BAPI',
-                     'log1', ['this is log 1']),
-      api.post_check(post_process.LogContains, 'sign artifacts.call BAPI',
-                     'log2', ['this is log 2']),
+      api.post_check(post_process.LogContains,
+                     'sign artifacts.call BAPI.read cloudkms logs', 'log1',
+                     ['this is log 1']),
+      api.post_check(post_process.LogContains,
+                     'sign artifacts.call BAPI.read cloudkms logs', 'log2',
+                     ['this is log 2']),
       api.post_check(post_process.StepFailure, 'sign artifacts.call BAPI'),
       api.post_check(
           post_process.DoesNotRun,

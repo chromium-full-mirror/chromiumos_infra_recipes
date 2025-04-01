@@ -755,7 +755,7 @@ class SigningApi(recipe_api.RecipeApi):
                 )), tmp_path=self.m.path.abspath(docker_tmp_dir),
             docker_image=self.signing_docker_image)
         response = self.m.cros_build_api.ImageService.SignImage(request)
-        self.add_kms_logs_as_step_logs(presentation, archive_dir)
+        self.add_kms_logs_as_step_logs(archive_dir)
         # Turn the step red if any failures are present.
         for archive in response.signed_artifacts.archive_artifacts:
           if archive.signing_status != PASSED:
@@ -819,15 +819,13 @@ class SigningApi(recipe_api.RecipeApi):
             gs_dir[len('gs://'):])
 
 
-  def add_kms_logs_as_step_logs(self, presentation: StepPresentation,
-                                result_path: Path):
+  def add_kms_logs_as_step_logs(self, result_path: Path):
     """Add the CloudKMS logs to the given step presentation.
 
     Args:
-      presentation: The step presentation to add logs to.
       result_path: The result_path passed to the signing call.
     """
-    with self.m.step.nest('read cloudkms logs'):
+    with self.m.step.nest('read cloudkms logs') as presentation:
       kms_log_dir = result_path / 'cloudkms-logs'
       kms_log_files = self.m.file.listdir(f'list {kms_log_dir}', kms_log_dir)
       for log_file in kms_log_files:
@@ -977,8 +975,10 @@ class SigningApi(recipe_api.RecipeApi):
           # Allow for any success artifacts to upload, so just store the
           # exception.
           ex = StepFailure(
-              'Failed to sign artifact. Check stdout of signing'
-              ' build API call for more information. See go/cros-signing-help.')
+              'Failed to sign artifact. Check stdout of sign artifacts/call '
+              'BAPI/sign artifacts|call BAPI|call '
+              'chromite.api.ImageService/SignImage for more information. See '
+              'go/cros-signing-help for more info.')
 
       if not to_upload_by_channel and not ex:
         presentation.step_text = 'no signed artifacts'
