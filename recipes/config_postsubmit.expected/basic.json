@@ -2282,244 +2282,11 @@
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL"
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
-      "-m",
-      "chromiumos.config.payload.ConfigBundle",
-      "-a",
-      "chromiumos.config.payload.ConfigBundleList",
-      "-o",
-      "[CLEANUP]/tmp_tmp_1"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "Do flatten_configs and create CL.aggregating program configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "nproc"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "Do flatten_configs and create CL.count online CPUs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "Do update_device_stability and create CL"
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@generated/config.jsonproto@@@",
-      "@@@STEP_SUMMARY_TEXT@(does not exist)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.set empty_flatten_payload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@empty_flatten_payload@[]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
-      "-m",
-      "chromiumos.config.payload.FlatConfigList",
-      "-a",
-      "chromiumos.config.payload.FlatConfigList",
-      "-o",
-      "[CLEANUP]/tmp_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.generate flattened configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_programs.py",
-      "-l",
-      "debug",
-      "-o",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.jsonproto",
-      "-b",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.binaryproto",
-      "-i",
-      "[CLEANUP]/tmp_tmp_2",
-      "-p",
-      "[CLEANUP]/tmp_tmp_1"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.joining program and project configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do aggregate_configs and create CL"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "chromeos/config-internal",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "Do aggregate_configs and create CL.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do aggregate_configs and create CL.aggregating configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
-      "-m",
-      "chromiumos.config.payload.ConfigBundle",
-      "-a",
-      "chromiumos.config.payload.ConfigBundleList",
-      "-o",
-      "hw_design/generated/configs.jsonproto"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.merge ConfigBundles to config-internal",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.diffing to find changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.diffing to find changes.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "hw_design/generated/configs.jsonproto"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.git add",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Automerging and importing config changes.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_postsubmit/aggregate",
-      "[CLEANUP]/commit_msg_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.write commit message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Automerging and importing config changes.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: config_postsubmit/aggregate@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.git commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--porcelain",
-      "cros",
-      "HEAD:refs/heads/main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do aggregate_configs and create CL.upload configs to ufs",
+    "name": "Do update_device_stability and create CL.upload configs to ufs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2532,7 +2299,7 @@
       "prod"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do aggregate_configs and create CL.upload configs to ufs.upload generated configs to UFS datastore",
+    "name": "Do update_device_stability and create CL.upload configs to ufs.upload generated configs to UFS datastore",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2638,18 +2405,18 @@
       "/path/to/tmp/json",
       "copy",
       "Updating Suite Scheduler's generated rules.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_postsubmit/regenerate_suite_scheduler",
-      "[CLEANUP]/commit_msg_tmp_3"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "Do regenerate_suite_scheduler_configs and create CL.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Updating Suite Scheduler's generated rules.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Automation-Id: config_postsubmit/regenerate_suite_scheduler@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Updating Suite Scheduler's generated rules.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: config_postsubmit/regenerate_suite_scheduler@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
   {
@@ -2657,7 +2424,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_3"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
@@ -2949,18 +2716,18 @@
       "/path/to/tmp/json",
       "copy",
       "Updating generated test plans.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_postsubmit/regenerate_test_plan",
-      "[CLEANUP]/commit_msg_tmp_4"
+      "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal/test/plans",
     "infra_step": true,
     "name": "Do regenerate_test_plan and create CL.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Updating generated test plans.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Automation-Id: config_postsubmit/regenerate_test_plan@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_4@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Updating generated test plans.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Automation-Id: config_postsubmit/regenerate_test_plan@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
     ]
   },
   {
@@ -2968,7 +2735,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_4"
+      "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal/test/plans",
     "infra_step": true,

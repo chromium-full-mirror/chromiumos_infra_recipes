@@ -100,238 +100,24 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   return [CommitInfo(public_repo_path, message, [])]
 
 
-def _flatten_configs(api, properties, project_infos, dry_run):
-  del dry_run
+def _update_device_stability(api, properties, _project_infos, dry_run):
+  """Update the device stability configs in UFS.
 
-  flatten_script = (
-      api.context.cwd / 'src/config/payload_utils/flatten_config_payload.py')
+  Uses the config_to_datastore script to do the update.
 
-  allowed_projects = [
-      project.repo_name for project in properties.allowed_projects
-  ]
-
-  allowed_programs = [
-      program.repo_name for program in properties.allowed_programs
-  ]
-
-  cwd = api.context.cwd
-  merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
-  program_join_script = cwd / 'src/config/payload_utils/join_programs.py'
-
-  joined_config = 'generated/joined.jsonproto'
-  config_bundle = 'generated/config.jsonproto'
-  flat_config = 'generated/flattened.jsonproto'
-  binary_flat_config = 'generated/flattened.binaryproto'
-
-  # Get paths of all generated program payloads
-  files = []
-  for project_info in project_infos:
-    if not project_info.name in allowed_programs:
-      continue
-
-    path = cwd / project_info.path / 'generated/config.jsonproto'
-    if api.path.exists(path):
-      files.append(path)
-
-  program_configs_path = api.path.mkstemp()
-  # yapf: disable
-  api.step('aggregating program configs', [
-    merge_script,
-    '-m', 'chromiumos.config.payload.ConfigBundle',
-    '-a', 'chromiumos.config.payload.ConfigBundleList',
-    '-o', program_configs_path] + files)
-  # yapf:enable
-
-  flat_files = []
-
-  # generated a temporary flattened.jsonproto in each project
-  empty_flatten_payload = []
-
-  # To be ran in parallel later.
-  def _individual_project_runner(project_info, _tries):
-    if not project_info.name.startswith('chromeos/project'):
-      return
-
-    with api.step.nest('processing %s' % project_info.name) as presentation,\
-         api.context(api.context.cwd / project_info.path):
-
-      if not project_info.name in allowed_projects:
-        presentation.step_summary_text = 'skipping, not in allowed projects'
-        return
-
-      # if no joined configuration (not backfilled), use the ConfigBundle
-      input_config = joined_config
-      if not api.path.exists(api.context.cwd / input_config):
-        input_config = config_bundle
-      presentation.step_text = input_config
-
-      full_input = api.context.cwd / input_config
-      if not api.path.exists(full_input):
-        presentation.step_summary_text = '(does not exist)'
-        return
-
-      # have input selected and we know it exists, generate a flattened file
-      cmd = [
-          flatten_script,
-          '--input',
-          input_config,
-          '--output',
-          flat_config,
-      ]
-
-      result = api.step(
-          'generate flat payload',
-          cmd,
-          stdout=api.raw_io.output_text(),
-      )
-
-      # note if we had no flattened entries for project
-      nflat = int(result.stdout.strip())
-      if nflat == 0:
-        program, project = project_info.name.split('/')[2:4]
-        empty_flatten_payload.append([program, project])
-
-      flat_files.append(api.context.cwd / flat_config)
-
-  n_ts = api.bot_scaling.get_num_cores()
-  parallel_runners = api.future_utils.create_parallel_runner(
-      max_concurrent_requests=n_ts)
-
-  for project_info in project_infos:
-    parallel_runners.run_function_async(
-        _individual_project_runner, project_info,
-        error_handler=lambda e: result_pb2.RawResult(
-            summary_markdown=f'Failed flattening individual config: {e}',
-            status=common_pb2.FAILURE,
-        ))
-
-  parallel_runners.wait_for_and_throw()
-
-  # store empty flattened payloads into the output properties
-  api.easy.set_properties_step(empty_flatten_payload=empty_flatten_payload)
-
-  # now merge and import into config-internal
-  cwd = api.context.cwd
-  merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
-  config_internal = cwd / 'src/config-internal'
-  output_path = config_internal / 'hw_design' / flat_config
-  binary_output_path = config_internal / 'hw_design' / binary_flat_config
-
-  with api.context(config_internal),\
-       api.step.nest('aggregating flattened configs'):
-    project_configs_path = api.path.mkstemp()
-
-    # Merge all the flattened projet configs together into a single payload
-    # yapf: disable
-    cmd = [
-        merge_script,
-        '-m', 'chromiumos.config.payload.FlatConfigList',
-        '-a', 'chromiumos.config.payload.FlatConfigList',
-        '-o', project_configs_path,
-    ] + flat_files
-    # yapf: enable
-
-    api.step('generate flattened configs', cmd)
-
-    # join with program definitions
-    # yapf: disable
-    api.step('joining program and project configs', [
-      program_join_script,
-      '-l', 'debug',
-      '-o', output_path,
-      '-b', binary_output_path,
-      '-i', project_configs_path,
-      '-p', program_configs_path
-    ])
-    # yapf: enable
-
-    return []
-
-
-def _aggregate_configs(api, properties, repo_project_infos, dry_run):
-  """Aggregate ConfigBundle messages and copy them to multiple locations.
-
-  1. config-internal - This provides a single centralized location from which
-  services can read all device configurations.
-  2. UFS datastore - This enables the usage of configs as schedulable labels.
+  Args:
+    project_infos: ignored, but accepted. See notes on _ACTIONS.
   """
-  allowed_projects = [
-      project.repo_name for project in properties.allowed_projects
-  ]
-
-  allowed_programs = [
-      program.repo_name for program in properties.allowed_programs
-  ]
-
-  # get project info for internal config repo
-  config_project_info = api.repo.project_info('chromeos/config-internal')
+  del dry_run  # Unused.
 
   cwd = api.context.cwd
-  merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
   config_internal = cwd / 'src/config-internal'
-
-  def _merge_configs():
-    # find all the input config files
-    files = []
-    for repo_project_info in repo_project_infos:
-      # repo_project_info is a ProjectInfo object (defined in repo/api.py),
-      # which describes a Gerrit project. allowed_projects and allowed_programs
-      # contain the names of Gerrit repos associated with CrOS projects or
-      # programs which contain ConfigBundles that should be merged, for example
-      # 'chromeos/program/galaxy' or 'chromeos/project/galaxy/milkyway'. For
-      # each ProjectInfo, check if its name is in the lists of allowed project
-      # or program repos, and aggregate the ConfigBundle.
-      #
-      # Project ConfigBundles are under 'generated/joined.jsonproto', program
-      # ConfigBundles are under 'generated/config.jsonproto'.
-      if repo_project_info.name in allowed_projects:
-        path = cwd / repo_project_info.path / 'generated/joined.jsonproto'
-      elif repo_project_info.name in allowed_programs:
-        path = cwd / repo_project_info.path / 'generated/config.jsonproto'
-      else:
-        continue  #pragma: nocover
-
-      if api.path.exists(path):
-        files.append(path)
-
-    # merge and import
-    output_path = 'hw_design/generated/configs.jsonproto'
-    api.step(
-        'merge ConfigBundles to config-internal',
-        [
-            merge_script, '-m', 'chromiumos.config.payload.ConfigBundle', '-a',
-            'chromiumos.config.payload.ConfigBundleList', '-o', output_path
-        ] + files,
-    )
-
-    with api.step.nest('diffing to find changes') as presentation:
-      if not api.git.diff_check(output_path):
-        presentation.step_summary_text = 'No changes to commit'
-        return False  # abort transaction
-
-    # commit files
-    api.git.add([output_path])
-    automation_id = 'config_postsubmit/aggregate'
-    message = \
-      '''Automerging and importing config changes.
-
-Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
-    api.git.commit(message)
-    return True
-
-  with api.context(config_internal),\
-       api.step.nest('aggregating configs'):
-
-    api.git_txn.update_ref(config_project_info.remote, _merge_configs,
-                           ref=config_project_info.branch, dry_run=dry_run)
 
   config_to_ufs_datastore = (
       cwd / 'src/config/payload_utils/config_to_datastore.py')
 
   ufs_env = properties.ufs_env or 'prod'
 
-  # only need to upload for not flattened configs; need to determine condition
   with api.context(config_internal),\
        api.step.nest('upload configs to ufs'):
 
@@ -418,13 +204,9 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 # optionally return a list of CommitInfos. In addition, each action should take
 # a dry_run arg, to control interaction with external services, e.g. committing
 # directly to git instead of returning a CommitInfo.
-#
-# Note: Order here matters, currently:
-#         Flatten_configs must be ran before _aggregate_configs.
 _ACTIONS = OrderedDict([
     (PROPERTIES.REPLICATE_PUBLIC_CONFIG, _replicate_public_config),
-    (PROPERTIES.FLATTEN_CONFIGS, _flatten_configs),
-    (PROPERTIES.COPY_TO_INTERNAL, _aggregate_configs),
+    (PROPERTIES.COPY_TO_INTERNAL, _update_device_stability),
     (PROPERTIES.REGENERATE_SUITE_SCHEDULER,
      _regenerate_suite_scheduler_configs),
     (PROPERTIES.REGENERATE_TEST_PLAN, _regenerate_test_plan),
@@ -659,176 +441,17 @@ def GenTests(api):
                      r'Do \w* and create CL.abandon CL 1'),
       api.post_process(post_process.DropExpectation))
 
-  # flattening stage tests
-
-  def mock_project_payloads(fname):
-    return api.path.exists(
-        api.src_state.workspace_path.joinpath(
-            'src/project/galaxy/milkyway/generated/%s' % fname))
-
-  def mock_program_payloads():
-    return api.path.exists(
-        api.src_state.workspace_path.joinpath(
-            'src/program/galaxy/generated/config.jsonproto'))
-
-  def flatten_step_data(value):
-    """Returns StepData for the call to flatten_config_payload.py call."""
-    data = api.step_data(
-        'Do flatten_configs and create CL'               \
-          '.processing chromeos/project/galaxy/milkyway' \
-          '.generate flat payload',
-        stdout=api.raw_io.output_text(str(value) + '\n'),
-    )
-    return data
-
   yield api.test(
-      'flattening-basic',
+      'update_device_stability-basic',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      api.git.diff_check(True),
-      flatten_step_data(1),
       api.post_process(
           post_process.MustRun,
-          'Do flatten_configs and create CL'                 \
-              '.processing chromeos/project/galaxy/milkyway' \
-              '.generate flat payload'
-      ),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do flatten_configs and create CL'        \
-              '.processing chromeos/program/galaxy' \
-              '.generate flat payload'
-      ),
-  )
-
-  yield api.test(
-      'flattening-not-allowed-project',
-      default_properties(allowed_projects=[]),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      api.git.diff_check(True),
-      api.post_process(
-          post_process.StepSummaryEquals,
-          'Do flatten_configs and create CL' \
-              '.processing chromeos/project/galaxy/milkyway',
-          'skipping, not in allowed projects'),
-  )
-
-  yield api.test(
-      'flattening-no-entries',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      api.git.diff_check(True),
-      flatten_step_data(0),
-      api.post_process(
-          post_process.PropertyEquals,
-          'empty_flatten_payload',
-          [['galaxy', 'milkyway']],
-      ),
-  )
-
-  yield api.test(
-      'no-flattening-changes',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('joined.jsonproto'),
-      api.git.diff_check(False),
-      flatten_step_data(1),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do flatten_configs and create CL'   \
-              '.aggregating flattened configs' \
-              '.update ref.git transaction.git push'
-      ),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do flatten_configs and create CL'   \
-              '.aggregating flattened configs' \
-              '.update ref.git transaction.git push'
-      ),
-  )
-
-  yield api.test(
-      'no-input-files',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      api.post_process(
-          post_process.StepSummaryEquals,
-          'Do flatten_configs and create CL' \
-              '.processing chromeos/project/galaxy/milkyway',
-          '(does not exist)'),
-  )
-
-  # import to internal config stage tests
-  yield api.test(
-      'aggregate_configs-basic',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
-      mock_program_payloads(),
-      api.git.diff_check(True),
-      api.post_process(
-          post_process.MustRun,
-          'Do aggregate_configs and create CL'
-          '.aggregating configs'
-          '.update ref.git transaction.merge ConfigBundles'
-          ' to config-internal',
-      ),
-      api.post_process(
-          post_process.MustRun,
-          'Do aggregate_configs and create CL'
+          'Do update_device_stability and create CL'
           '.upload configs to ufs'
           '.upload generated configs to UFS datastore',
       ),
-  )
-
-  yield api.test(
-      'aggregate_configs-no-diff',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_program_payloads(),
-      mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
-      api.git.diff_check(False),
-      api.post_process(
-          post_process.StepSummaryEquals, 'Do aggregate_configs and create CL'
-          '.aggregating configs'
-          '.update ref.git transaction.diffing to find changes',
-          'No changes to commit'),
-      api.post_process(
-          post_process.MustRun,
-          'Do aggregate_configs and create CL'
-          '.upload configs to ufs'
-          '.upload generated configs to UFS datastore',
-      ),
-  )
-
-  yield api.test(
-      'aggregate_configs-error',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_program_payloads(),
-      mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
-      api.git.diff_check(True),
-      api.step_data(
-          'Do aggregate_configs and create CL'
-          '.aggregating configs'
-          '.update ref.git transaction.merge '
-          'ConfigBundles to config-internal', retcode=1),
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
   )
 
   yield api.test(
@@ -854,8 +477,6 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(True),
       api.step_data(
           'Do regenerate_suite_scheduler_configs and create CL' \
@@ -877,8 +498,6 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(True),
       api.step_data(
           'Do regenerate_test_plan and create CL' \

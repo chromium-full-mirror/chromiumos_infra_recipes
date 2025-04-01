@@ -16,7 +16,9 @@ message ConfigPostsubmitProperties {
     // The flatten configs action type.
     FLATTEN_CONFIGS = 1;
 
-    // The copy internal action type.
+    // The copy internal action type. Note that this action now only updates
+    // device stability configs in UFS, it is named "COPY_TO_INTERNAL" for
+    // legacy reasons.
     COPY_TO_INTERNAL = 2;
 
     // The replicate public config action type.
