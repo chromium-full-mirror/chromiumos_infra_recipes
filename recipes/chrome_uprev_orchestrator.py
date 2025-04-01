@@ -238,7 +238,7 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
         })['message']
     position = int(
         re.search(
-            r'Cr-Commit-Position: refs/heads/main@{#(\d+)}',
+            r'^Cr-Commit-Position: refs/heads/main@{#(\d+)}',
             message,
             flags=re.M,
         ).group(1))
