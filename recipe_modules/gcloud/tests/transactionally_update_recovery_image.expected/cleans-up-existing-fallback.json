@@ -8,7 +8,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=image-123"
+      "name=image-123",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "check whether image exists: image-123",
@@ -36,7 +38,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromeos-source-snapshot-fallback"
+      "name=initial-chromeos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "check whether image exists: initial-chromeos-source-snapshot-fallback",
@@ -79,7 +83,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromeos-source-snapshot"
+      "name=initial-chromeos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "check whether image exists: initial-chromeos-source-snapshot",

@@ -59,7 +59,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot"
+      "name=initial-chromiumos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromiumos-source-snapshot",
@@ -82,7 +84,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot"
+      "name=initial-chromiumos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromiumos-source-snapshot (2)",
@@ -105,7 +109,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot-fallback"
+      "name=initial-chromiumos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromiumos-source-snapshot-fallback",
@@ -210,7 +216,7 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
-      "--image-project=chromeos-bot",
+      "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot-fallback",
       "--type=pd-standard"

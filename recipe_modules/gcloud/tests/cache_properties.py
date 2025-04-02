@@ -164,14 +164,13 @@ def GenTests(api):
   )
 
   yield api.test(
-      'chromeos-release-bot',
-      api.properties(
-          **{'$chromeos/gcloud': {
-              'gce_project': 'chromeos-release-bot'
-          }}),
+      'chromeos-bot',
+      api.properties(**{'$chromeos/gcloud': {
+          'gce_project': 'chromeos-bot'
+      }}),
       api.post_check(
           post_process.StepCommandContains,
           'source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ',
-          ['--project', 'chromeos-bot']),
+          ['--project', 'chromeos-release-bot']),
       api.post_check(post_process.DropExpectation),
   )

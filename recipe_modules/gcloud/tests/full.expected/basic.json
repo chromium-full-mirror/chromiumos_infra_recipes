@@ -382,7 +382,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=chromiumos-main-16287984"
+      "name=chromiumos-main-16287984",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "check whether image exists: chromiumos-main-16287984",
@@ -433,7 +435,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=staging-chromiumos-release-r93-14092-b-16287710"
+      "name=staging-chromiumos-release-r93-14092-b-16287710",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "check whether image exists: staging-chromiumos-release-r93-14092-b-16287710",
@@ -482,7 +486,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=chrome-release-r93-14092-b-99999999"
+      "name=chrome-release-r93-14092-b-99999999",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "check whether image exists: chrome-release-r93-14092-b-99999999",

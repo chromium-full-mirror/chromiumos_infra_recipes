@@ -340,7 +340,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name="
+      "name=",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
@@ -372,7 +374,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromeos-source-snapshot"
+      "name=initial-chromeos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot",
@@ -404,7 +408,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromeos-source-snapshot-fallback"
+      "name=initial-chromeos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot-fallback",

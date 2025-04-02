@@ -854,7 +854,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name="
+      "name=",
+      "--project",
+      "chromeos-release-bot"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
@@ -901,7 +903,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromeos-source-snapshot"
+      "name=initial-chromeos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
@@ -948,7 +952,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromeos-source-snapshot-fallback"
+      "name=initial-chromeos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"

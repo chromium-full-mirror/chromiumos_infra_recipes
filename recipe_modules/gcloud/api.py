@@ -21,6 +21,7 @@ from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 DEFAULT_GCE_PROJECT = 'chromeos-bot'
+DEFAULT_SOURCE_CACHE_GCE_PROJECT = 'chromeos-release-bot'
 
 _SWARMING_HOST_REGEXP = (r'^(chromeos|chromiumos)-'
                          r'\w*-'
@@ -124,6 +125,10 @@ class GcloudApi(recipe_api.RecipeApi):
   @property
   def host_zone(self):
     return self._zone
+
+  @property
+  def gce_project(self):
+    return self._gce_project
 
   @property
   def gce_disk(self):
@@ -446,9 +451,10 @@ class GcloudApi(recipe_api.RecipeApi):
     Returns:
       The stdout of the gcloud command.
     """
+    # TODO(b/375521639): Add property for source cache image GCE project.
     cmd = [
         'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
-        '--image-project={}'.format(DEFAULT_GCE_PROJECT), '--quiet'
+        '--image-project={}'.format(DEFAULT_SOURCE_CACHE_GCE_PROJECT), '--quiet'
     ]
 
     step_name = 'create empty disk'
@@ -604,9 +610,9 @@ class GcloudApi(recipe_api.RecipeApi):
         'gcloud', 'compute', 'images', 'list', '--format', 'json(name)',
         '--filter', 'name={}'.format(image)
     ]
-    # If we aren't in DEFAULT_GCE_PROJECT, specify DEFAULT_GCE_PROJECT which houses images.
-    if self._gce_project != DEFAULT_GCE_PROJECT:
-      list_cmd += ['--project', DEFAULT_GCE_PROJECT]
+    # If we aren't in DEFAULT_SOURCE_CACHE_GCE_PROJECT, specify DEFAULT_SOURCE_CACHE_GCE_PROJECT which houses images.
+    if self._gce_project != DEFAULT_SOURCE_CACHE_GCE_PROJECT:
+      list_cmd += ['--project', DEFAULT_SOURCE_CACHE_GCE_PROJECT]
     test_stdout = self.test_api.image_exists_data
     # If there is test data set for this call, pass that through. Otherwise, use
     # the default response from test_api.

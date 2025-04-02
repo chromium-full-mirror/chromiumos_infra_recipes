@@ -18,7 +18,7 @@ DEPS = [
 
 def RunSteps(api):
   api.assertions.assertEqual(
-      str(api.gcloud._gce_project),
+      str(api.gcloud.gce_project),
       api.properties.thaw()['expected_gce_project'])
 
 

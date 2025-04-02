@@ -9,7 +9,7 @@
       "config",
       "set",
       "project",
-      "chromeos-release-bot"
+      "chromeos-bot"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -76,7 +76,7 @@
       "--filter",
       "name=",
       "--project",
-      "chromeos-bot"
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
@@ -110,7 +110,7 @@
       "--filter",
       "name=initial-chromiumos-source-snapshot",
       "--project",
-      "chromeos-bot"
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromiumos-source-snapshot",
@@ -144,7 +144,7 @@
       "--filter",
       "name=initial-chromiumos-source-snapshot-fallback",
       "--project",
-      "chromeos-bot"
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromiumos-source-snapshot-fallback",
@@ -251,7 +251,7 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
-      "--image-project=chromeos-bot",
+      "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
       "--type=pd-standard"

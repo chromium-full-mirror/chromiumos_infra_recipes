@@ -98,7 +98,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name="
+      "name=",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -142,7 +144,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot"
+      "name=initial-chromiumos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -186,7 +190,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot-fallback"
+      "name=initial-chromiumos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -695,7 +701,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name="
+      "name=",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -739,7 +747,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot"
+      "name=initial-chromiumos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -783,7 +793,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot-fallback"
+      "name=initial-chromiumos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -938,7 +950,7 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
       "--zone=us-central1-b",
-      "--image-project=chromeos-bot",
+      "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
       "--type=pd-standard"
@@ -1189,7 +1201,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name="
+      "name=",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1233,7 +1247,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot"
+      "name=initial-chromiumos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1277,7 +1293,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot-fallback"
+      "name=initial-chromiumos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1431,7 +1449,7 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
       "--zone=us-central1-b",
-      "--image-project=chromeos-bot",
+      "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
       "--type=pd-standard"
@@ -1656,7 +1674,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name="
+      "name=",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1700,7 +1720,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot"
+      "name=initial-chromiumos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1744,7 +1766,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot-fallback"
+      "name=initial-chromiumos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -2248,7 +2272,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name="
+      "name=",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -2292,7 +2318,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot"
+      "name=initial-chromiumos-source-snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -2336,7 +2364,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=initial-chromiumos-source-snapshot-fallback"
+      "name=initial-chromiumos-source-snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "luci_context": {
@@ -2490,7 +2520,7 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
-      "--image-project=chromeos-bot",
+      "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
       "--type=pd-standard"

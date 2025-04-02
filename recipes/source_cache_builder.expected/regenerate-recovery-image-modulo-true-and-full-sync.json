@@ -156,7 +156,7 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
-      "--image-project=chromeos-bot",
+      "--image-project=chromeos-release-bot",
       "--quiet",
       "--type=pd-ssd",
       "--size=200GB"
@@ -828,7 +828,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=chromiumos-main-13370000"
+      "name=chromiumos-main-13370000",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache update.regenerate recovery image.check whether image exists: chromiumos-main-13370000",
@@ -854,7 +856,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=chromeos_default_recovery_snapshot-fallback"
+      "name=chromeos_default_recovery_snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache update.regenerate recovery image.check whether image exists: chromeos_default_recovery_snapshot-fallback",
@@ -880,7 +884,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=chromeos_default_recovery_snapshot"
+      "name=chromeos_default_recovery_snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache update.regenerate recovery image.check whether image exists: chromeos_default_recovery_snapshot",

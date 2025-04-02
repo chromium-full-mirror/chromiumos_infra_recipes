@@ -116,7 +116,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name="
+      "name=",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
@@ -148,7 +150,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=chromeos_default_recovery_snapshot"
+      "name=chromeos_default_recovery_snapshot",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.check whether image exists: chromeos_default_recovery_snapshot",
@@ -180,7 +184,9 @@
       "--format",
       "json(name)",
       "--filter",
-      "name=chromeos_default_recovery_snapshot-fallback"
+      "name=chromeos_default_recovery_snapshot-fallback",
+      "--project",
+      "chromeos-release-bot"
     ],
     "infra_step": true,
     "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.check whether image exists: chromeos_default_recovery_snapshot-fallback",
@@ -287,7 +293,7 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
-      "--image-project=chromeos-bot",
+      "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=chromeos_default_recovery_snapshot",
       "--type=pd-ssd"
