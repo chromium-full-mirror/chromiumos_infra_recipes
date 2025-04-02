@@ -2369,6 +2369,7 @@
       "forall",
       "src/private-overlays/project-cheets-private",
       "chromite",
+      "infra/chromite-HEAD",
       "src/third_party/chromiumos-overlay",
       "--ignore-missing",
       "-j",
@@ -2412,6 +2413,7 @@
       "forall",
       "src/private-overlays/project-cheets-private",
       "chromite",
+      "infra/chromite-HEAD",
       "src/third_party/chromiumos-overlay",
       "--ignore-missing",
       "-j",
@@ -2471,6 +2473,7 @@
       "--prune",
       "src/private-overlays/project-cheets-private",
       "chromite",
+      "infra/chromite-HEAD",
       "src/third_party/chromiumos-overlay"
     ],
     "cwd": "[CACHE]/chromeos",
@@ -2587,6 +2590,7 @@
       "info",
       "src/private-overlays/project-cheets-private",
       "chromite",
+      "infra/chromite-HEAD",
       "src/third_party/chromiumos-overlay"
     ],
     "cwd": "[CACHE]/chromeos",

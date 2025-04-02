@@ -52,6 +52,7 @@ _OVERLAY_PATH = 'src/private-overlays/project-cheets-private'
 _SYNC_PROJECTS = [
     _OVERLAY_PATH,
     'chromite',
+    'infra/chromite-HEAD',
     # Chromite reads chromeos_version.sh to determine the milestone.
     'src/third_party/chromiumos-overlay',
 ]
