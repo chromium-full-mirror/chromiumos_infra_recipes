@@ -253,13 +253,13 @@ def RunSteps(api, properties):
               ))
 
         # Set up the custom version number to indicate Ti50.
-        version_num = api.cros_version.version.platform_version
-        api.signing_utils.custom_artifact_version = f'ti50/nt-signed/{version_num}'
+        version = api.cros_version.version
+        api.signing_utils.custom_artifact_version = f'ti50/nt-signed/{version}'
         api.signing.signing_operation(
             config=BuildTargetSigningConfigs(build_target_signing_configs=[
                 BuildTargetSigningConfig(
                     keyset=properties.signing_keyset,
-                    version=version_num,
+                    version=version.platform_version,
                     signing_configs=signing_configs,
                 )
             ]),
