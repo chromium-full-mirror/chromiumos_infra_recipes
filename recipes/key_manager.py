@@ -119,11 +119,18 @@ def create_premp_keys(api: RecipeApi, properties: KeyManagerProperties,
         f"BUG=b:{properties.bug}",
         "TEST=CQ",
     ]
-    commit_message = "\n".join(commit_lines) + "\n"
     with api.step.nest("commit keyset to release-keys"), api.context(
         cwd=release_keys_path):
+      # Regenerate generated files and copy paygen public key.
+      api.step(
+          "regenerate generated files",
+          ["./keyset/public/scripts/regenerate_keysets.sh", "--all"],
+      )
+      commit_message = "\n".join(commit_lines) + "\n"
+      commit_keyset(api, commit_message)
       change = get_gerrit_change(api, release_keys_path, is_staging)
-      commit_keyset(api, change, commit_message)
+      api.easy.set_properties_step(
+          keyset_commit=api.gerrit.parse_gerrit_change_url(change))
 
       # Abandon dry run changes so they don't accidentally get submitted.
       if create_premp_keys_request.dry_run:
@@ -182,11 +189,13 @@ def create_accessory_keys(api: RecipeApi, properties: KeyManagerProperties,
         f"BUG=b:{properties.bug}",
         "TEST=CQ",
     ]
-    commit_message = "\n".join(commit_lines) + "\n"
     with api.step.nest("commit keyset to release-keys"), api.context(
         cwd=release_keys_path):
+      commit_message = "\n".join(commit_lines) + "\n"
+      commit_keyset(api, commit_message)
       change = get_gerrit_change(api, release_keys_path, is_staging)
-      commit_keyset(api, change, commit_message)
+      api.easy.set_properties_step(
+          keyset_commit=api.gerrit.parse_gerrit_change_url(change))
 
       # Abandon dry run changes so they don't accidentally get submitted.
       if create_accessory_keys_request.dry_run or is_staging:
@@ -207,19 +216,11 @@ def get_gerrit_change(api: RecipeApi, release_keys_path: str,
   )
 
 
-def commit_keyset(api: RecipeApi, change: common_pb2.GerritChange,
-                  commit_message: str):
-  # Regenerate generated files and copy paygen public key.
-  api.step(
-      "regenerate generated files",
-      ["./keyset/public/scripts/regenerate_keysets.sh", "--all"],
-  )
+def commit_keyset(api: RecipeApi, commit_message: str):
   # TODO(b/318522770): Plumb keyset dir through from docker/BAPI
   # instead of obliviously calling `git add -A`.
   api.git.add_all()
   api.git.commit(commit_message)
-  api.easy.set_properties_step(
-      keyset_commit=api.gerrit.parse_gerrit_change_url(change))
 
 
 def GenTests(api: RecipeTestApi):
@@ -264,6 +265,13 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           "create PreMP keys.commit keyset to release-keys.regenerate generated files",
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "create PreMP keys.commit keyset to release-keys.git add",
+          [
+              "-A",
+          ],
       ),
       api.post_check(
           post_process.StepCommandContains,
@@ -410,8 +418,11 @@ def GenTests(api: RecipeTestApi):
           "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
       ),
       api.post_check(
-          post_process.MustRun,
-          "create accessory keys.commit keyset to release-keys.regenerate generated files",
+          post_process.StepCommandContains,
+          "create accessory keys.commit keyset to release-keys.git add",
+          [
+              "-A",
+          ],
       ),
       api.post_check(
           post_process.StepCommandContains,
@@ -464,10 +475,6 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(
           post_process.MustRun,
-          "create accessory keys.commit keyset to release-keys.regenerate generated files",
-      ),
-      api.post_check(
-          post_process.MustRun,
           "create accessory keys.commit keyset to release-keys.abandon CL 1",
       ),
       api.post_process(post_process.DropExpectation),
@@ -508,10 +515,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           "create accessory keys.call chromite.api.SigningService/CreateAccessoryKeys",
-      ),
-      api.post_check(
-          post_process.MustRun,
-          "create accessory keys.commit keyset to release-keys.regenerate generated files",
       ),
       api.post_check(
           post_process.MustRun,
