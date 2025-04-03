@@ -60,7 +60,7 @@ BUILD_FIELDS_TO_RETRIEVE = [
     'infra.resultdb',
 ]
 
-PUPR_TIMEOUT = 15 * 60  # 15 minutes
+PUPR_TIMEOUT = 30 * 60  # 30 minutes
 PRE_UPREV_TEST_TIMEOUT = 6 * 60 * 60  # 6 hour
 
 

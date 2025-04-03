@@ -162,7 +162,7 @@
       }
     },
     "name": "wait for pupr.wait",
-    "timeout": 900,
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
