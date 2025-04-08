@@ -55,8 +55,7 @@ PROPERTIES = ConfigPostsubmitProperties
 # Fields:
 #  project_path (str): Path to the repo to commit to.
 #  message (str): Commit message.
-#  files (list[paths]): Files to add to commit, if empty will add project_path.
-CommitInfo = namedtuple('CommitInfo', ['project_path', 'message', 'files'])
+CommitInfo = namedtuple('CommitInfo', ['project_path', 'message'])
 
 
 def _replicate_public_config(api, _properties, project_infos, dry_run):
@@ -97,7 +96,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
         api.file.rmtree('remove dest dir', dest_path)
         api.file.copytree('copy public config', public_config_path, dest_path)
 
-  return [CommitInfo(public_repo_path, message, [])]
+  return [CommitInfo(public_repo_path, message)]
 
 
 def _update_device_stability(api, properties, _project_infos, dry_run):
@@ -131,73 +130,6 @@ def _update_device_stability(api, properties, _project_infos, dry_run):
   return []
 
 
-def _regenerate_suite_scheduler_configs(api, _properties, _project_infos,
-                                        dry_run):
-  """Run Suite Scheduler configuration's ./generate and commit the results.
-
-  This action runs the generate function in src/config-internal/test and commits
-  the results.
-
-  Args:
-    project_infos: ignored, but accepted. See notes on _ACTIONS.
-  """
-  del dry_run  # Unused.
-
-  config_internal_dir = api.context.cwd / 'src/config-internal'
-  susch_dir = config_internal_dir / 'test/suite_scheduler'
-  message = f'''Updating Suite Scheduler's generated rules.
-
-Cr-Build-Url: {api.buildbucket.build_url()}
-Cr-Automation-Id: config_postsubmit/regenerate_suite_scheduler'''
-
-  with api.step.nest('regenerating suite scheduler configs') as presentation, \
-      api.context(susch_dir):
-
-    api.step('run regenerate_configs.sh', ['./regenerate_configs.sh'])
-
-    with api.step.nest('diffing to find changes'):
-      changed_files = api.git.get_working_dir_diff_files(
-          pathspec=config_internal_dir)
-      if not changed_files:
-        presentation.step_summary_text = 'no changes'
-        return []
-
-  return [CommitInfo(config_internal_dir, message, changed_files)]
-
-
-def _regenerate_test_plan(api, _properties, _project_infos, dry_run):
-  """Run test configurations ./generate and ./generate_test_plan_summary.
-
-  This action runs the generate function in src/config-internal/test and commits
-  the results.
-
-  Args:
-    project_infos: ignored, but accepted. See notes on _ACTIONS.
-  """
-  del dry_run  # Unused.
-
-  config_internal = api.context.cwd / 'src/config-internal'
-  config_internal_test = config_internal / 'test'
-  config_internal_test_plans = config_internal_test / 'plans'
-
-  message = '''Updating generated test plans.
-
-Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
-                           'config_postsubmit/regenerate_test_plan')
-
-  with api.step.nest('regenerating test plans') as presentation, \
-      api.context(config_internal_test):
-
-    api.step('run generate', ['./generate'])
-    with api.step.nest('diffing to find changes'):
-      if not api.git.diff_check(config_internal_test_plans):
-        presentation.step_text = 'no changes'
-        return []
-
-    return [CommitInfo(config_internal_test_plans, message, [])]
-
-
 # A map of CL configurations -> their functions which run on config repos.
 #
 # Each action should take a RecipesApi and list of ProjectInfos as args and
@@ -207,9 +139,6 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 _ACTIONS = OrderedDict([
     (PROPERTIES.REPLICATE_PUBLIC_CONFIG, _replicate_public_config),
     (PROPERTIES.COPY_TO_INTERNAL, _update_device_stability),
-    (PROPERTIES.REGENERATE_SUITE_SCHEDULER,
-     _regenerate_suite_scheduler_configs),
-    (PROPERTIES.REGENERATE_TEST_PLAN, _regenerate_test_plan),
 ])
 
 
@@ -236,12 +165,7 @@ def _create_cl(
     if api.git.get_working_dir_diff_files():
       api.repo.start(branch_name, projects=[commit_info.project_path])
 
-      # If given a list of files, use that to add, otherwise add the whole
-      # project.
-      if commit_info.files:
-        api.git.add(commit_info.files)
-      else:
-        api.git.add([commit_info.project_path])
+      api.git.add([commit_info.project_path])
       api.git.commit(commit_info.message)
       change = api.gerrit.create_change(project=commit_info.project_path,
                                         reviewers=cl_config.reviewers,
@@ -452,64 +376,4 @@ def GenTests(api):
           '.upload configs to ufs'
           '.upload generated configs to UFS datastore',
       ),
-  )
-
-  yield api.test(
-      'regenerate_suite_scheduler_configs-no-diff',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      api.step_data(
-          'Do regenerate_suite_scheduler_configs and create CL'
-          '.regenerating suite scheduler configs'
-          '.diffing to find changes'
-          '.git status',
-          stdout=api.raw_io.output_text(''),
-      ),
-      api.post_process(
-          post_process.StepSummaryEquals,
-          'Do regenerate_suite_scheduler_configs and create CL'
-          '.regenerating suite scheduler configs', 'no changes'),
-  )
-
-  yield api.test(
-      'regenerate_suite_scheduler_configs-error',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      api.git.diff_check(True),
-      api.step_data(
-          'Do regenerate_suite_scheduler_configs and create CL' \
-              '.regenerating suite scheduler configs'           \
-              '.run regenerate_configs.sh',
-          retcode=1),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do regenerate_suite_scheduler_configs and create CL' \
-              '.regenerating suite scheduler configs'           \
-              '.diffing to find changes',
-      ),
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
-  )
-
-  yield api.test(
-      'regenerate_test_plan-error',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      api.git.diff_check(True),
-      api.step_data(
-          'Do regenerate_test_plan and create CL' \
-              '.regenerating test plans'          \
-              '.run generate',
-          retcode=1),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do regenerate_test_plan and create CL' \
-              '.regenerating test plans'          \
-              '.diffing to find changes',
-      ),
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
   )
