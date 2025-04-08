@@ -286,7 +286,7 @@ Cr-Automation-Id: {}''' \
     with api.context(cwd=config_internal):
       config_project_info = api.repo.project_info()
       api.git_txn.update_ref(config_project_info.remote, _filter_all_test_plans,
-                             ref=api.git.remote_head(), automerge=True)
+                             automerge=True)
 
 
 def GenTests(api: RecipeTestApi):
