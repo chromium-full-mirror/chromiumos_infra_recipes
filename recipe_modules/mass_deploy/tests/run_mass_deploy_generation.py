@@ -115,6 +115,25 @@ _METADATA_FLEXOR = {
         }
 }
 
+_METADATA_LTC = {
+    'gs://chromeos-releases/ltc-channel/reven/15437.42.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions':
+        {
+            'channel': 'ltc',
+            'type': 'recovery',
+            'outputs': {
+                'chromeos_15487.0.0.0_reven_recovery_ltc-channel_mp-v2.bin': {},
+                'chromeos_15487.0.0_reven_recovery_ltc-channel_mp-v2.bin.zip': {
+                }
+            },
+            'release_directory': 'ltc-channel/reven/15437.42.0',
+            'version': {
+                'full': 'R116-15487.0.0',
+                'milestone': '116',
+                'platform': '15487.0.0'
+            }
+        }
+}
+
 _METADATA_LTS = {
     'gs://chromeos-releases/lts-channel/reven/15437.42.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions':
         {
@@ -140,6 +159,18 @@ def RunSteps(api):
 
 def GenTests(api):
 
+  def _any_log_contains(check, step_odict, steps, log_name,
+                        expected_substrings):
+    """Assert that each expected substring occurs in the log of at least one step
+
+    This lets us test output of steps that appear multiple times.
+    """
+    # Collect all logs we want to examine.
+    logs = [step_odict[step].logs[log_name] for step in steps]
+
+    for expected in expected_substrings:
+      check(any(expected in log for log in logs))
+
   def _gen_metadata(channels, outputs_override=None, include_flexor=False):
     """Piece together test data"""
     result = {}
@@ -151,6 +182,8 @@ def GenTests(api):
       result.update(deepcopy(_METADATA_BETA))
     if 'stable' in channels:
       result.update(deepcopy(_METADATA_STABLE))
+    if 'ltc' in channels:
+      result.update(deepcopy(_METADATA_LTC))
     if 'lts' in channels:
       result.update(deepcopy(_METADATA_LTS))
 
@@ -166,21 +199,49 @@ def GenTests(api):
 
   yield api.test(
       'normal-release',
-      api.properties(signing_metadata=_gen_metadata(['beta', 'stable', 'lts'])),
+      api.properties(signing_metadata=_gen_metadata(['beta', 'stable'])),
       api.post_check(
           post_process.MustRun,
           'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.MustRun,
                      'generate mass deploy builds.determine builder settings'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.schedule mass deploy build(s)'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.schedule mass deploy build(s).buildbucket.schedule'
+      ), api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'multiple-valid-builds',
+      api.properties(signing_metadata=_gen_metadata(['ltc', 'lts'])),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.MustRun,
-                     'generate mass deploy builds.schedule mass deploy build'),
-      api.post_check(post_process.StepSummaryEquals,
-                     'generate mass deploy builds.schedule mass deploy build',
-                     'scheduled release-mass-deploy'),
+                     'generate mass deploy builds.determine builder settings'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.schedule mass deploy build(s)'),
+      # Check that multiple builds are triggered,
+      # and that each channel appears in at least one build.
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.schedule mass deploy build(s).buildbucket.schedule'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.schedule mass deploy build(s).buildbucket.schedule (2)'
+      ),
+      api.post_check(_any_log_contains, (
+          'generate mass deploy builds.schedule mass deploy build(s).buildbucket.schedule',
+          'generate mass deploy builds.schedule mass deploy build(s).buildbucket.schedule (2)',
+      ), "request", ('ltc-channel', 'lts-channel')),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'no-lts',
+      'no-valid-build',
       api.properties(signing_metadata=_gen_metadata(['canary', 'dev'])),
       api.post_check(
           post_process.MustRun,
@@ -218,9 +279,6 @@ def GenTests(api):
       'staging',
       api.properties(signing_metadata=_gen_metadata(['beta', 'lts'])),
       api.buildbucket.generic_build(bucket='staging'),
-      api.post_check(post_process.StepSummaryEquals,
-                     'generate mass deploy builds.schedule mass deploy build',
-                     'scheduled staging-release-mass-deploy'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -232,11 +290,9 @@ def GenTests(api):
           'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.MustRun,
                      'generate mass deploy builds.determine builder settings'),
-      api.post_check(post_process.MustRun,
-                     'generate mass deploy builds.schedule mass deploy build'),
-      api.post_check(post_process.StepSummaryEquals,
-                     'generate mass deploy builds.schedule mass deploy build',
-                     'scheduled release-mass-deploy'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.schedule mass deploy build(s)'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
