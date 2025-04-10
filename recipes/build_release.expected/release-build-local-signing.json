@@ -16808,22 +16808,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.set signed_upload_paths",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@signed_upload_paths@{\"canary-channel\": \"gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/\"}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.set bcid",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_signed_prov_generation\": [], \"failed_unsigned_prov_verification\": []}@@@"
-    ]
-  },
-  {
     "cmd": [
       "docker",
       "container",
@@ -20720,6 +20704,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set mutable output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_signed_prov_generation\": [], \"failed_unsigned_prov_verification\": []}@@@",
+      "@@@SET_BUILD_PROPERTY@signed_upload_paths@{\"canary-channel\": \"gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/\"}@@@"
     ]
   },
   {

@@ -28,6 +28,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_infra_config',
+    'mutable_output',
     'signing',
 ]
 
@@ -37,163 +38,164 @@ FAILED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_FAILED
 
 
 def RunSteps(api: RecipeApi):
-  # For coverage, set to the default value.
-  api.signing.test_api.signing_config_test_data = api.signing.test_api.signing_config_test_data
-  # Fetch config.
-  config = api.signing.get_config()
-  expected_keyset = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar'
-  expected_keyset_accessory = 'devkeys-acc' if api.cros_infra_config.is_staging else None
-  expected_keyset_factory = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar-factory'
-  expected_config = BuildTargetSigningConfig(
-      build_target='kukui',
-      keyset=expected_keyset,
-      signing_configs=[
-          SigningConfig(
-              image_type=IMAGE_TYPE_BASE,
-              keyset=expected_keyset,
-              ensure_no_password=True,
-              firmware_update=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_FACTORY,
-              keyset=expected_keyset_factory,
-              ensure_no_password=True,
-              firmware_update=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_FIRMWARE,
-              ensure_no_password=True,
-              firmware_update=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_RECOVERY,
-              ensure_no_password=True,
-              firmware_update=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
-              keyset=expected_keyset_accessory,
-              ensure_no_password=True,
-              firmware_update=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_FLEXOR_KERNEL,
-              ensure_no_password=True,
-              firmware_update=True,
-          ),
-      ],
-  )
-  api.assertions.assertEqual(config, expected_config)
+  with api.mutable_output.wrap():
+    # For coverage, set to the default value.
+    api.signing.test_api.signing_config_test_data = api.signing.test_api.signing_config_test_data
+    # Fetch config.
+    config = api.signing.get_config()
+    expected_keyset = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar'
+    expected_keyset_accessory = 'devkeys-acc' if api.cros_infra_config.is_staging else None
+    expected_keyset_factory = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar-factory'
+    expected_config = BuildTargetSigningConfig(
+        build_target='kukui',
+        keyset=expected_keyset,
+        signing_configs=[
+            SigningConfig(
+                image_type=IMAGE_TYPE_BASE,
+                keyset=expected_keyset,
+                ensure_no_password=True,
+                firmware_update=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_FACTORY,
+                keyset=expected_keyset_factory,
+                ensure_no_password=True,
+                firmware_update=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_FIRMWARE,
+                ensure_no_password=True,
+                firmware_update=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_RECOVERY,
+                ensure_no_password=True,
+                firmware_update=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
+                keyset=expected_keyset_accessory,
+                ensure_no_password=True,
+                firmware_update=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_FLEXOR_KERNEL,
+                ensure_no_password=True,
+                firmware_update=True,
+            ),
+        ],
+    )
+    api.assertions.assertEqual(config, expected_config)
 
-  sign_types = [
-      IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE, IMAGE_TYPE_RECOVERY,
-      IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_FLEXOR_KERNEL
-  ]
-  channels = [CHANNEL_CANARY, CHANNEL_DEV]
+    sign_types = [
+        IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE, IMAGE_TYPE_RECOVERY,
+        IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_FLEXOR_KERNEL
+    ]
+    channels = [CHANNEL_CANARY, CHANNEL_DEV]
 
-  processed_config, archive_dir = api.signing.setup_signing(
-      sign_types, channels)
-  api.path.mock_add_file(
-      f"{str(archive_dir).replace('1','2')}/chromiumos_test_image.tar.xz")
-  api.path.mock_add_file(f"{str(archive_dir).replace('1','2')}/dlc/dlc.img")
-  api.assertions.assertEqual(api.signing.get_paygen_keyset(), expected_keyset)
-  expected_processed_config = BuildTargetSigningConfig(
-      build_target='kukui',
-      keyset=expected_keyset,
-      version='1234.56.0',
-      signing_configs=[
-          SigningConfig(
-              image_type=IMAGE_TYPE_BASE,
-              channel=CHANNEL_CANARY,
-              keyset=expected_keyset,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='chromiumos_base_image.tar.xz',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_FIRMWARE,
-              channel=CHANNEL_CANARY,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='firmware_from_source.tar.bz2',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_RECOVERY,
-              channel=CHANNEL_CANARY,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='recovery_image.tar.xz',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
-              channel=CHANNEL_CANARY,
-              keyset=expected_keyset_accessory,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='firmware_from_source.tar.bz2',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_FLEXOR_KERNEL,
-              channel=CHANNEL_CANARY,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='flexor_vmlinuz.tar.zst',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_BASE,
-              channel=CHANNEL_DEV,
-              keyset=expected_keyset,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='chromiumos_base_image.tar.xz',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_FIRMWARE,
-              channel=CHANNEL_DEV,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='firmware_from_source.tar.bz2',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_RECOVERY,
-              channel=CHANNEL_DEV,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='recovery_image.tar.xz',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
-              channel=CHANNEL_DEV,
-              keyset=expected_keyset_accessory,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='firmware_from_source.tar.bz2',
-              recovery_zip=True,
-          ),
-          SigningConfig(
-              image_type=IMAGE_TYPE_FLEXOR_KERNEL,
-              channel=CHANNEL_DEV,
-              ensure_no_password=True,
-              firmware_update=True,
-              archive_path='flexor_vmlinuz.tar.zst',
-              recovery_zip=True,
-          ),
-      ],
-  )
-  api.assertions.assertEqual(processed_config, expected_processed_config)
+    processed_config, archive_dir = api.signing.setup_signing(
+        sign_types, channels)
+    api.path.mock_add_file(
+        f"{str(archive_dir).replace('1','2')}/chromiumos_test_image.tar.xz")
+    api.path.mock_add_file(f"{str(archive_dir).replace('1','2')}/dlc/dlc.img")
+    api.assertions.assertEqual(api.signing.get_paygen_keyset(), expected_keyset)
+    expected_processed_config = BuildTargetSigningConfig(
+        build_target='kukui',
+        keyset=expected_keyset,
+        version='1234.56.0',
+        signing_configs=[
+            SigningConfig(
+                image_type=IMAGE_TYPE_BASE,
+                channel=CHANNEL_CANARY,
+                keyset=expected_keyset,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='chromiumos_base_image.tar.xz',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_FIRMWARE,
+                channel=CHANNEL_CANARY,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='firmware_from_source.tar.bz2',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_RECOVERY,
+                channel=CHANNEL_CANARY,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='recovery_image.tar.xz',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
+                channel=CHANNEL_CANARY,
+                keyset=expected_keyset_accessory,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='firmware_from_source.tar.bz2',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_FLEXOR_KERNEL,
+                channel=CHANNEL_CANARY,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='flexor_vmlinuz.tar.zst',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_BASE,
+                channel=CHANNEL_DEV,
+                keyset=expected_keyset,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='chromiumos_base_image.tar.xz',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_FIRMWARE,
+                channel=CHANNEL_DEV,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='firmware_from_source.tar.bz2',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_RECOVERY,
+                channel=CHANNEL_DEV,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='recovery_image.tar.xz',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
+                channel=CHANNEL_DEV,
+                keyset=expected_keyset_accessory,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='firmware_from_source.tar.bz2',
+                recovery_zip=True,
+            ),
+            SigningConfig(
+                image_type=IMAGE_TYPE_FLEXOR_KERNEL,
+                channel=CHANNEL_DEV,
+                ensure_no_password=True,
+                firmware_update=True,
+                archive_path='flexor_vmlinuz.tar.zst',
+                recovery_zip=True,
+            ),
+        ],
+    )
+    api.assertions.assertEqual(processed_config, expected_processed_config)
 
-  # Call signing.
-  api.signing.sign_artifacts(
-      sign_types=sign_types, channels=channels,
-      local_artifact_dir=api.path.start_dir / 'shellball-dir')
+    # Call signing.
+    api.signing.sign_artifacts(
+        sign_types=sign_types, channels=channels,
+        local_artifact_dir=api.path.start_dir / 'shellball-dir')
 
 
 def GenTests(api: RecipeTestApi):

@@ -4871,6 +4871,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set mutable output properties"
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "Step('test firmware.call build API script') (retcode: 1)"

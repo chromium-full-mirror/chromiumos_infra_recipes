@@ -13806,6 +13806,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set mutable output properties"
+  },
+  {
     "failure": {
       "humanReason": "Infra Failure: Step('upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script') (retcode: 1)"
     },

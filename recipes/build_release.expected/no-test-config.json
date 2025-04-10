@@ -5422,6 +5422,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set mutable output properties"
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "testing config doesn't exist for this build target, see go/cros-release-onboarding-guide"

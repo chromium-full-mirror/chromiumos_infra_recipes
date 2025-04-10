@@ -18376,6 +18376,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set mutable output properties"
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "Step('run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call build API script') (retcode: 1)"

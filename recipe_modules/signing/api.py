@@ -1036,17 +1036,17 @@ class SigningApi(recipe_api.RecipeApi):
 
             _gs_upload(self, local_artifact_path, gs_dir)
 
-      self.m.easy.set_properties_step(
-          **{'signed_upload_paths': signed_upload_paths})
+      # If you find yourself looking at this line because you get an error like
+      # `'NoneType' object has no attribute 'update'`, this means the calling recipe
+      # is missing `api.mutable_output.wrap()`.
+      self.m.mutable_output(signed_upload_paths=signed_upload_paths)
 
-      self.m.easy.set_properties_step(
-          **{
-              'bcid': {
-                  'failed_unsigned_prov_verification':
-                      list(sorted(failed_unsigned_artifact_verification)),
-                  'failed_signed_prov_generation':
-                      list(sorted(failed_prov_generation))
-              }
+      self.m.mutable_output(
+          bcid={
+              'failed_unsigned_prov_verification':
+                  list(sorted(failed_unsigned_artifact_verification)),
+              'failed_signed_prov_generation':
+                  list(sorted(failed_prov_generation))
           })
 
       if ex:

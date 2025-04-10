@@ -63,6 +63,7 @@ DEPS = [
     'easy',
     'failures',
     'mass_deploy',
+    'mutable_output',
     'signing',
     'signing_utils',
     'src_state',
@@ -75,61 +76,62 @@ PROPERTIES = BuildReleaseProperties
 StepDetails = BuildReport.StepDetails
 
 def RunSteps(api, properties):
-  api.easy.log_parent_step()
-  api.cros_try.check_try_version()
-  api.checkpoint.register()
-  if api.checkpoint.is_retry():
-    api.build_reporting.init_report_from_previous_build()
-  api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
-  api.cros_release.validate_sign_types()
-  api.cros_release.check_channel_override()
-  api.cros_release.set_output_properties()
-  # For dlc_utils.get_dlc_artifacts.
-  api.path.mock_add_paths(api.path.cleanup_dir /
-                          'artifacts_tmp_1/dlc/fake/dlc.img')
-  api.path.mock_add_paths(api.path.cleanup_dir /
-                          'artifacts_tmp_1/dlc/fake2/dlc.img')
+  with api.mutable_output.wrap():
+    api.easy.log_parent_step()
+    api.cros_try.check_try_version()
+    api.checkpoint.register()
+    if api.checkpoint.is_retry():
+      api.build_reporting.init_report_from_previous_build()
+    api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
+    api.cros_release.validate_sign_types()
+    api.cros_release.check_channel_override()
+    api.cros_release.set_output_properties()
+    # For dlc_utils.get_dlc_artifacts.
+    api.path.mock_add_paths(api.path.cleanup_dir /
+                            'artifacts_tmp_1/dlc/fake/dlc.img')
+    api.path.mock_add_paths(api.path.cleanup_dir /
+                            'artifacts_tmp_1/dlc/fake2/dlc.img')
 
-  api.bot_scaling.drop_cpu_cores(min_cpus_left=16, max_drop_ratio=.50)
+    api.bot_scaling.drop_cpu_cores(min_cpus_left=16, max_drop_ratio=.50)
 
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
-                                     api.build_menu.build_target.name)
+    api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                       api.build_menu.build_target.name)
 
-  with api.failures.ignore_exceptions():
-    with api.step.nest('checking attestation eligibility') as pres:
-      # Config determines whether to report artifacts.
-      if api.cros_infra_config.config.artifacts.attestation_eligible:
-        api.bcid_reporter.report_stage('start')
-        pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
-      else:
-        pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
+    with api.failures.ignore_exceptions():
+      with api.step.nest('checking attestation eligibility') as pres:
+        # Config determines whether to report artifacts.
+        if api.cros_infra_config.config.artifacts.attestation_eligible:
+          api.bcid_reporter.report_stage('start')
+          pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
+        else:
+          pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
 
-  #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
-  with api.context(env={'CHROMEOS_OFFICIAL': '1'}):
-    with api.build_reporting.publish_to_gs():
-      with api.build_reporting.status_reporting():
-        with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
-                                                raise_on_failed_publish=True):
-          with api.build_menu.configure_builder(
-            lookup_config_with_bucket=True,
-          ) as config, \
-              api.build_menu.setup_workspace_and_chroot():
-            branch = api.src_state.gitiles_commit.ref
-            if branch.startswith('refs/heads/'):
-              branch = branch[len('refs/heads/'):]
-            api.build_reporting.publish_branch(branch)
+    #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
+    with api.context(env={'CHROMEOS_OFFICIAL': '1'}):
+      with api.build_reporting.publish_to_gs():
+        with api.build_reporting.status_reporting():
+          with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
+                                                  raise_on_failed_publish=True):
+            with api.build_menu.configure_builder(
+              lookup_config_with_bucket=True,
+            ) as config, \
+                api.build_menu.setup_workspace_and_chroot():
+              branch = api.src_state.gitiles_commit.ref
+              if branch.startswith('refs/heads/'):
+                branch = branch[len('refs/heads/'):]
+              api.build_reporting.publish_branch(branch)
 
-            api.build_reporting.publish_channels(api.cros_release.channels)
+              api.build_reporting.publish_channels(api.cros_release.channels)
 
-            with api.step.nest('check that test config exists'):
-              try:
-                api.cros_test_plan.generate_target_test_requirements_config()
-              except Exception as e:
-                raise StepFailure(
-                    "testing config doesn't exist for this build target, see go/cros-release-onboarding-guide"
-                ) from e
+              with api.step.nest('check that test config exists'):
+                try:
+                  api.cros_test_plan.generate_target_test_requirements_config()
+                except Exception as e:
+                  raise StepFailure(
+                      "testing config doesn't exist for this build target, see go/cros-release-onboarding-guide"
+                  ) from e
 
-            return DoRunSteps(api, config, properties)
+              return DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, properties):

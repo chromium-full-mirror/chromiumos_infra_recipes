@@ -11616,6 +11616,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set mutable output properties"
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "Step('install packages.call chromite.api.SysrootService/InstallPackages.call build API script') (retcode: 1)"

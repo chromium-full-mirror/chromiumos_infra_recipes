@@ -25,6 +25,7 @@ DEPS = [
     'build_reporting',
     'cros_release',
     'git',
+    'mutable_output',
     'signing',
     'test_util',
 ]
@@ -32,43 +33,45 @@ DEPS = [
 
 
 def RunSteps(api):
-  # Manufacture the minimal builder config.
-  config = BuilderConfig(
-      id=BuilderConfig.Id(name='kukui-release', type=BuilderConfig.Id.RELEASE),
-      artifacts=BuilderConfig.Artifacts(
-          artifacts_info=common_pb2.ArtifactsByService(
-              legacy=common_pb2.ArtifactsByService.Legacy(output_artifacts=[
-                  common_pb2.ArtifactsByService.Legacy.ArtifactInfo(
-                      gs_locations=[
-                          'chromeos-image-archive/{target}-release/{version}'
-                      ])
-              ]),
-          )))
-  sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='kukui'))
+  with api.mutable_output.wrap():
+    # Manufacture the minimal builder config.
+    config = BuilderConfig(
+        id=BuilderConfig.Id(name='kukui-release',
+                            type=BuilderConfig.Id.RELEASE),
+        artifacts=BuilderConfig.Artifacts(
+            artifacts_info=common_pb2.ArtifactsByService(
+                legacy=common_pb2.ArtifactsByService.Legacy(output_artifacts=[
+                    common_pb2.ArtifactsByService.Legacy.ArtifactInfo(
+                        gs_locations=[
+                            'chromeos-image-archive/{target}-release/{version}'
+                        ])
+                ]),
+            )))
+    sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='kukui'))
 
-  if api.signing.local_signing:
-    release_sign_types = api.cros_release.sign_types
-    channels = api.cros_release.channels
-    _ = api.signing.sign_artifacts(sign_types=release_sign_types,
-                                   channels=channels)
-  else:
-    # Test data for instruction files are defined in
-    # recipe_modules/cros_build_api/test_api.py.
-    _, instructions = api.cros_release.push_and_sign_images(config, sysroot)
-    api.assertions.assertEqual(
-        instructions,
-        [
-            'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions',
-            'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions',
-        ],
-    )
+    if api.signing.local_signing:
+      release_sign_types = api.cros_release.sign_types
+      channels = api.cros_release.channels
+      _ = api.signing.sign_artifacts(sign_types=release_sign_types,
+                                     channels=channels)
+    else:
+      # Test data for instruction files are defined in
+      # recipe_modules/cros_build_api/test_api.py.
+      _, instructions = api.cros_release.push_and_sign_images(config, sysroot)
+      api.assertions.assertEqual(
+          instructions,
+          [
+              'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions',
+              'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions',
+          ],
+      )
 
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
-                                     'build_target')
-  api.cros_release.check_buildspec()
+    api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                       'build_target')
+    api.cros_release.check_buildspec()
 
-  api.cros_release.set_output_properties()
-  api.cros_release.run_payload_generation(use_split_paygen=True)
+    api.cros_release.set_output_properties()
+    api.cros_release.run_payload_generation(use_split_paygen=True)
 
 
 def GenTests(api):

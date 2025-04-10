@@ -45,6 +45,7 @@ DEPS = [
     'cros_source',
     'gerrit',
     'git',
+    'mutable_output',
     'signing',
     'signing_utils',
     'src_state',
@@ -165,76 +166,76 @@ def get_keyset_is_mp(response: SignImageResponse) -> bool:
 
 
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
-  with api.cros_source.checkout_overlays_context():
-    api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
-    api.cros_source.ensure_synced_cache()
-    fw_config_path = api.src_state.workspace_path / 'firmware-config'
-    with api.step.nest('clone firmware-config'):
-      api.git.clone(
-          'https://chrome-internal.googlesource.com/chromeos/firmware-config',
-          target_path=fw_config_path, depth=1)
+  with api.mutable_output.wrap():
+    with api.cros_source.checkout_overlays_context():
+      api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
+      api.cros_source.ensure_synced_cache()
+      fw_config_path = api.src_state.workspace_path / 'firmware-config'
+      with api.step.nest('clone firmware-config'):
+        api.git.clone(
+            'https://chrome-internal.googlesource.com/chromeos/firmware-config',
+            target_path=fw_config_path, depth=1)
 
-    with api.step.nest('pack firmware') as pres:
-      # Ensure cipd packages are present.
-      fw_path = api.src_state.workspace_path / 'src/platform/firmware'
-      cipd_path = api.path.start_dir / 'cipd'
-      api.cipd.ensure(cipd_path, fw_path / 'cipd_manifest.txt',
-                      'ensure cipd packages for packing firmware')
+      with api.step.nest('pack firmware') as pres:
+        # Ensure cipd packages are present.
+        fw_path = api.src_state.workspace_path / 'src/platform/firmware'
+        cipd_path = api.path.start_dir / 'cipd'
+        api.cipd.ensure(cipd_path, fw_path / 'cipd_manifest.txt',
+                        'ensure cipd packages for packing firmware')
 
-      # Call pack_firmware with cipd bins in PATH.
-      with api.context(env={
-          'PATH': api.path.pathsep.join([str(cipd_path / 'bin'), '%(PATH)s'])
-      }):
-        # Pack firmware uses config for the base target. Remove prefix if present.
-        base_target_name = api.build_menu.build_target.name.split(
-            'android-')[-1]
-        output_artifact_dir = api.path.mkdtemp('shellball-dir')
-        output_artifact_name = api.cros_artifacts.artifacts_by_image_type.get(
-            common_pb2.IMAGE_TYPE_SHELLBALL, 'chromeos-firmwareupdate')
+        # Call pack_firmware with cipd bins in PATH.
+        with api.context(env={
+            'PATH': api.path.pathsep.join([str(cipd_path / 'bin'), '%(PATH)s'])
+        }):
+          # Pack firmware uses config for the base target. Remove prefix if present.
+          base_target_name = api.build_menu.build_target.name.split(
+              'android-')[-1]
+          output_artifact_dir = api.path.mkdtemp('shellball-dir')
+          output_artifact_name = api.cros_artifacts.artifacts_by_image_type.get(
+              common_pb2.IMAGE_TYPE_SHELLBALL, 'chromeos-firmwareupdate')
 
-        pack_fw_cmd = [
-            'vpython3',
-            fw_path / 'pack_firmware.py',
-            '--imagedir',
-            'tmp/distfiles',
-            '--config',
-            fw_config_path / base_target_name,
-            '--output',
-            output_artifact_dir / output_artifact_name,
-            '--textproto',
-            '--download',
-        ]
-        api.step('call pack_firmware', pack_fw_cmd)
+          pack_fw_cmd = [
+              'vpython3',
+              fw_path / 'pack_firmware.py',
+              '--imagedir',
+              'tmp/distfiles',
+              '--config',
+              fw_config_path / base_target_name,
+              '--output',
+              output_artifact_dir / output_artifact_name,
+              '--textproto',
+              '--download',
+          ]
+          api.step('call pack_firmware', pack_fw_cmd)
 
-    # Get shellball version for target.
-    new_shellball_version = api.signing.get_shellball_version()
-    api.signing_utils.custom_artifact_version = new_shellball_version
+      # Get shellball version for target.
+      new_shellball_version = api.signing.get_shellball_version()
+      api.signing_utils.custom_artifact_version = new_shellball_version
 
-    # Sign shellball.
-    if api._test_data.enabled:  # pylint: disable=protected-access
-      api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
-          'signing_config', TEST_SIGNING_CONFIG)
-    api.cros_release.validate_sign_types()
-    with api.step.nest('sign firmware shellball') as pres:
-      signed_image_response = api.signing.sign_artifacts(
-          sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
-          channels=[common_pb2.CHANNEL_AGNOSTIC], include_paygen=False,
-          local_artifact_dir=output_artifact_dir, upload_unsigned=False)
-      if not signed_image_response:
-        raise StepFailure('Empty signing config for build target')
-      shellball_path = get_shellball_path(api, signed_image_response)
-      pres.logs['signed builds'] = shellball_path
+      # Sign shellball.
+      if api._test_data.enabled:  # pylint: disable=protected-access
+        api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
+            'signing_config', TEST_SIGNING_CONFIG)
+      api.cros_release.validate_sign_types()
+      with api.step.nest('sign firmware shellball') as pres:
+        signed_image_response = api.signing.sign_artifacts(
+            sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
+            channels=[common_pb2.CHANNEL_AGNOSTIC], include_paygen=False,
+            local_artifact_dir=output_artifact_dir, upload_unsigned=False)
+        if not signed_image_response:
+          raise StepFailure('Empty signing config for build target')
+        shellball_path = get_shellball_path(api, signed_image_response)
+        pres.logs['signed builds'] = shellball_path
 
-    # Advance LATEST-SHELLBALL for each version.
-    api.signing.upload_shellball_latest_file(new_shellball_version)
+      # Advance LATEST-SHELLBALL for each version.
+      api.signing.upload_shellball_latest_file(new_shellball_version)
 
-    # Open a cl with the new firmware prebuilts.
-    return upload_firmware_prebuilts(api,
-                                     output_artifact_dir / output_artifact_name,
-                                     shellball_path, base_target_name,
-                                     new_shellball_version,
-                                     get_keyset_is_mp(signed_image_response),
-                                     abandon=api.cros_infra_config.is_staging)
+      # Open a cl with the new firmware prebuilts.
+      return upload_firmware_prebuilts(
+          api, output_artifact_dir / output_artifact_name, shellball_path,
+          base_target_name, new_shellball_version,
+          get_keyset_is_mp(signed_image_response),
+          abandon=api.cros_infra_config.is_staging)
 
 
 # Sample SignImageResponse for testing.

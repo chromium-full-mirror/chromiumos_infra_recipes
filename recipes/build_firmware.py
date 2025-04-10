@@ -55,6 +55,7 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'mutable_output',
     'signing',
     'signing_utils',
     'src_state',
@@ -122,250 +123,255 @@ def CreateContainers(api, config):
 
 
 def RunSteps(api, properties):
-  start_time = api.time.utcnow()
-  commit = api.src_state.gitiles_commit
-  if properties.gitiles_commit:
-    commit = properties.gitiles_commit
-  with api.failures.ignore_exceptions():
-    with api.step.nest('checking attestation eligibility') as pres:
-      # Config determines whether to report artifacts.
-      if api.cros_infra_config.config.artifacts.attestation_eligible:
-        api.bcid_reporter.report_stage('start')
-        pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
-      else:
-        pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
-  with api.build_menu.configure_builder(commit=commit) \
-     as config, api.build_menu.setup_workspace():
-    is_staging = api.cros_infra_config.is_staging
-    if properties.bump_version:
-      api.cros_version.bump_version(dry_run=is_staging)
-      api.cros_release.create_buildspec(
-          dry_run=is_staging, gs_location=properties.buildspec_gs_path)
-    chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
-    api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
-
-    service = api.cros_build_api.FirmwareService
-    chroot = api.cros_sdk.chroot
-    location = properties.firmware_location or config.general.firmware_location
-
+  with api.mutable_output.wrap():
+    start_time = api.time.utcnow()
+    commit = api.src_state.gitiles_commit
+    if properties.gitiles_commit:
+      commit = properties.gitiles_commit
     with api.failures.ignore_exceptions():
-      if api.cros_infra_config.config.artifacts.attestation_eligible:
-        api.bcid_reporter.report_stage('compile')
-    firmware_targets = [
-        FirmwareTarget(name=bt.name) for bt in properties.build_targets
-    ]
-    response = service.BuildAllFirmware(
-        BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                code_coverage=properties.code_coverage,
-                                firmware_targets=firmware_targets),
-        name='build firmware')
-    binary_sizes = {}
-    if response.metrics and response.metrics.value:
-      for fw_metric in response.metrics.value:
-        region_prefix = ''
-        if fw_metric.platform_name:
-          region_prefix += fw_metric.platform_name + '_'
-        if fw_metric.target_name:
-          region_prefix += fw_metric.target_name + '_'
-        for fw_section in fw_metric.fw_section:
-          if fw_section.track_on_gerrit:
-            if fw_section.used:
-              binary_sizes[region_prefix + fw_section.region] = fw_section.used
-            if fw_section.total:
-              binary_sizes[region_prefix + fw_section.region +
-                           '.budget'] = fw_section.total
+      with api.step.nest('checking attestation eligibility') as pres:
+        # Config determines whether to report artifacts.
+        if api.cros_infra_config.config.artifacts.attestation_eligible:
+          api.bcid_reporter.report_stage('start')
+          pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
+        else:
+          pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
+    with api.build_menu.configure_builder(commit=commit) \
+      as config, api.build_menu.setup_workspace():
+      is_staging = api.cros_infra_config.is_staging
+      if properties.bump_version:
+        api.cros_version.bump_version(dry_run=is_staging)
+        api.cros_release.create_buildspec(
+            dry_run=is_staging, gs_location=properties.buildspec_gs_path)
+      chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
+      api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
 
-    if binary_sizes:
-      api.easy.set_properties_step(binary_sizes=binary_sizes,
-                                   step_name='output binary sizes')
-    snapshot_sha = api.src_state.gitiles_commit.id
-    api.easy.set_properties_step(got_revision=snapshot_sha,
-                                 step_name='output got_revision')
+      service = api.cros_build_api.FirmwareService
+      chroot = api.cros_sdk.chroot
+      location = properties.firmware_location or config.general.firmware_location
 
-    build = api.buildbucket.build
-    try:
-      service.TestAllFirmware(
-          TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                 code_coverage=properties.code_coverage,
-                                 firmware_targets=firmware_targets),
-          name='test firmware')
-    except StepFailure as ex:
-      UploadTestResults(api, location, build.builder.builder)
-      raise ex
+      with api.failures.ignore_exceptions():
+        if api.cros_infra_config.config.artifacts.attestation_eligible:
+          api.bcid_reporter.report_stage('compile')
+      firmware_targets = [
+          FirmwareTarget(name=bt.name) for bt in properties.build_targets
+      ]
+      response = service.BuildAllFirmware(
+          BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
+                                  code_coverage=properties.code_coverage,
+                                  firmware_targets=firmware_targets),
+          name='build firmware')
+      binary_sizes = {}
+      if response.metrics and response.metrics.value:
+        for fw_metric in response.metrics.value:
+          region_prefix = ''
+          if fw_metric.platform_name:
+            region_prefix += fw_metric.platform_name + '_'
+          if fw_metric.target_name:
+            region_prefix += fw_metric.target_name + '_'
+          for fw_section in fw_metric.fw_section:
+            if fw_section.track_on_gerrit:
+              if fw_section.used:
+                binary_sizes[region_prefix +
+                             fw_section.region] = fw_section.used
+              if fw_section.total:
+                binary_sizes[region_prefix + fw_section.region +
+                             '.budget'] = fw_section.total
 
-    uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
-        config=config, report_to_spike=api.cros_infra_config.config.artifacts
-        .attestation_eligible, use_file_paths=True,
-        build_targets=firmware_targets)
+      if binary_sizes:
+        api.easy.set_properties_step(binary_sizes=binary_sizes,
+                                     step_name='output binary sizes')
+      snapshot_sha = api.src_state.gitiles_commit.id
+      api.easy.set_properties_step(got_revision=snapshot_sha,
+                                   step_name='output got_revision')
 
-    with api.failures.ignore_exceptions():
-      if api.cros_infra_config.config.artifacts.attestation_eligible:
-        api.bcid_reporter.report_stage('upload-complete')
+      build = api.buildbucket.build
+      try:
+        service.TestAllFirmware(
+            TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
+                                   code_coverage=properties.code_coverage,
+                                   firmware_targets=firmware_targets),
+            name='test firmware')
+      except StepFailure as ex:
+        UploadTestResults(api, location, build.builder.builder)
+        raise ex
 
-    # Invoke signing if applies.
-    signing_scheduled = False
-    if _invoke_signing_for_current_build(build.builder.builder,
-                                         uploaded_artifacts, properties):
-      requests = []
-      sign_image_props = MessageToDict(properties.sign_image_properties,
-                                       preserving_proto_field_name=True)
-      bucket = 'staging' if api.build_menu.is_staging else 'release'
-      builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
+      uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
+          config=config, report_to_spike=api.cros_infra_config.config.artifacts
+          .attestation_eligible, use_file_paths=True,
+          build_targets=firmware_targets)
 
-      # Legacy signing requests:
-      with api.step.nest('schedule legacy signing build') as pres:
-        pres.step_text = '\n'.join([
-            f'builder_name={build.builder.builder}',
-            f'signing_allowed_builder_names={properties.signing_allowed_builder_names}',
-            f'sign_image_properties={properties.sign_image_properties}',
-            f'uploaded_artifacts={uploaded_artifacts}',
-        ])
-        for artifact_name in [
-            a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-            if not SKIP_LEGACY_SIGNING_RE.match(a)
-        ]:
-          archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
-                                       uploaded_artifacts.gs_path,
+      with api.failures.ignore_exceptions():
+        if api.cros_infra_config.config.artifacts.attestation_eligible:
+          api.bcid_reporter.report_stage('upload-complete')
+
+      # Invoke signing if applies.
+      signing_scheduled = False
+      if _invoke_signing_for_current_build(build.builder.builder,
+                                           uploaded_artifacts, properties):
+        requests = []
+        sign_image_props = MessageToDict(properties.sign_image_properties,
+                                         preserving_proto_field_name=True)
+        bucket = 'staging' if api.build_menu.is_staging else 'release'
+        builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
+
+        # Legacy signing requests:
+        with api.step.nest('schedule legacy signing build') as pres:
+          pres.step_text = '\n'.join([
+              f'builder_name={build.builder.builder}',
+              f'signing_allowed_builder_names={properties.signing_allowed_builder_names}',
+              f'sign_image_properties={properties.sign_image_properties}',
+              f'uploaded_artifacts={uploaded_artifacts}',
+          ])
+          for artifact_name in [
+              a
+              for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
+              if not SKIP_LEGACY_SIGNING_RE.match(a)
+          ]:
+            archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
+                                         uploaded_artifacts.gs_path,
+                                         artifact_name)
+            sign_image_props['archive'] = archive
+            requests.append(
+                api.buildbucket.schedule_request(bucket=bucket, builder=builder,
+                                                 properties=sign_image_props))
+
+          api.buildbucket.schedule(requests)
+          signing_scheduled = True
+        # Signing requests:
+        with api.step.nest('sign artifacts'):
+          signing_configs = []
+          for artifact_name in [
+              a
+              for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
+              if INCLUDE_SIGNING_RE.match(a)
+          ]:
+            signing_configs.append(
+                SigningConfig(
+                    image_type=common_pb2.IMAGE_TYPE_GSC_FIRMWARE,
+                    ensure_no_password=True,
+                    archive_path=artifact_name,
+                    channel=common_pb2.CHANNEL_AGNOSTIC,
+                    output_names=[
+                        f"@CHIP@_@KEYSET_VER@_{artifact_name.removesuffix('.tar.bz2')}"
+                    ],
+                ))
+
+          # Set up the custom version number to indicate Ti50.
+          version = api.cros_version.version
+          api.signing_utils.custom_artifact_version = f'ti50/nt-signed/{version}'
+          api.signing.signing_operation(
+              config=BuildTargetSigningConfigs(build_target_signing_configs=[
+                  BuildTargetSigningConfig(
+                      keyset=properties.signing_keyset,
+                      version=version.platform_version,
+                      signing_configs=signing_configs,
+                  )
+              ]),
+              local_artifact_dir=artifact_dir,
+          )
+          signing_scheduled = True
+
+      if properties.pao_signing_config.key and uploaded_artifacts and len(
+          uploaded_artifacts) > 2:
+        with api.step.nest("signing PAOs in artifact"):
+          for artifact_name in [
+              a
+              for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
+              if GENERATE_PAOS_RE.match(a)
+          ]:
+            api.signing.sign_ti50_paos(artifact_dir,
+                                       properties.pao_signing_config.project,
+                                       properties.pao_signing_config.keyring,
+                                       properties.pao_signing_config.key,
                                        artifact_name)
-          sign_image_props['archive'] = archive
-          requests.append(
-              api.buildbucket.schedule_request(bucket=bucket, builder=builder,
-                                               properties=sign_image_props))
 
-        api.buildbucket.schedule(requests)
-        signing_scheduled = True
-      # Signing requests:
-      with api.step.nest('sign artifacts'):
-        signing_configs = []
-        for artifact_name in [
-            a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-            if INCLUDE_SIGNING_RE.match(a)
-        ]:
-          signing_configs.append(
-              SigningConfig(
-                  image_type=common_pb2.IMAGE_TYPE_GSC_FIRMWARE,
-                  ensure_no_password=True,
-                  archive_path=artifact_name,
-                  channel=common_pb2.CHANNEL_AGNOSTIC,
-                  output_names=[
-                      f"@CHIP@_@KEYSET_VER@_{artifact_name.removesuffix('.tar.bz2')}"
-                  ],
-              ))
-
-        # Set up the custom version number to indicate Ti50.
-        version = api.cros_version.version
-        api.signing_utils.custom_artifact_version = f'ti50/nt-signed/{version}'
-        api.signing.signing_operation(
-            config=BuildTargetSigningConfigs(build_target_signing_configs=[
-                BuildTargetSigningConfig(
-                    keyset=properties.signing_keyset,
-                    version=version.platform_version,
-                    signing_configs=signing_configs,
-                )
-            ]),
-            local_artifact_dir=artifact_dir,
-        )
-        signing_scheduled = True
-
-    if properties.pao_signing_config.key and uploaded_artifacts and len(
-        uploaded_artifacts) > 2:
-      with api.step.nest("signing PAOs in artifact"):
-        for artifact_name in [
-            a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-            if GENERATE_PAOS_RE.match(a)
-        ]:
-          api.signing.sign_ti50_paos(artifact_dir,
-                                     properties.pao_signing_config.project,
-                                     properties.pao_signing_config.keyring,
-                                     properties.pao_signing_config.key,
-                                     artifact_name)
-
-    # Publish tar files to pubsub.
-    if not api.cv.active:
-      with api.step.nest('sending pub/sub notifications') as step:
-        step.logs['debug'] = ''
-        api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FIRMWARE,
-                                           None)
-        branch = api.src_state.gitiles_commit.ref
-        if branch.startswith('refs/heads/'):
-          branch = branch[len('refs/heads/'):]
-        bcs_version = api.cros_version.version
-        step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
-        step.logs[
-            'debug'] += 'Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO\n'
-        metadata_by_name = {}
-        for metadata_path in uploaded_artifacts.files_by_artifact.get(
-            'FIRMWARE_TARBALL_INFO', []):
-          # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
-          metadata_path = api.path.abspath(
-              api.path.join(artifact_dir, metadata_path))
-          if api.path.exists(metadata_path):
-            step.logs['debug'] += f'Reading proto from {metadata_path}\n'
-            metadata = api.file.read_proto(
-                'read fw metadata',
-                metadata_path,
-                FirmwareArtifactInfo,
-                'JSONPB',
-            )
-            for obj in metadata.objects:
-              step.logs[
-                  'debug'] += f'metadata_by_name[{obj.file_name}]={obj.tarball_info}\n'
-              metadata_by_name[obj.file_name] = obj.tarball_info
-          else:
-            step.logs['debug'] += f'{metadata_path} does not exist\n'
-        if uploaded_artifacts.published:
-          for atype, dests in uploaded_artifacts.published.items():
-            step.logs['debug'] += f'published: {atype}:{dests}\n'
-            for loc in dests:
-              for file in loc['files']:
-                metadata = metadata_by_name.get(file)
+      # Publish tar files to pubsub.
+      if not api.cv.active:
+        with api.step.nest('sending pub/sub notifications') as step:
+          step.logs['debug'] = ''
+          api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FIRMWARE,
+                                             None)
+          branch = api.src_state.gitiles_commit.ref
+          if branch.startswith('refs/heads/'):
+            branch = branch[len('refs/heads/'):]
+          bcs_version = api.cros_version.version
+          step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
+          step.logs[
+              'debug'] += 'Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO\n'
+          metadata_by_name = {}
+          for metadata_path in uploaded_artifacts.files_by_artifact.get(
+              'FIRMWARE_TARBALL_INFO', []):
+            # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
+            metadata_path = api.path.abspath(
+                api.path.join(artifact_dir, metadata_path))
+            if api.path.exists(metadata_path):
+              step.logs['debug'] += f'Reading proto from {metadata_path}\n'
+              metadata = api.file.read_proto(
+                  'read fw metadata',
+                  metadata_path,
+                  FirmwareArtifactInfo,
+                  'JSONPB',
+              )
+              for obj in metadata.objects:
                 step.logs[
-                    'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
-                if metadata:
-                  for board in metadata.board:
-                    if metadata.type == FirmwareArtifactInfo.TarballInfo.FirmwareType.EC and branch == 'snapshot':
-                      step.logs[
-                          'debug'] += f'SKIPPING Pub/sub {file} for {board}\n'
-                      continue
-                    step.logs['debug'] += f'Pub/sub {file} for {board}\n'
-                    api.build_reporting.reset_build_report(board)
-                    build_report = api.build_reporting.merged_build_report
-                    step_info = build_report.steps.info[
-                        api.build_reporting.step_as_str(
-                            BuildReport.StepDetails.STEP_OVERALL)]
-                    step_info.order = 1
-                    step_info.status = BuildReport.StepDetails.STATUS_SUCCESS
-                    step_info.runtime.begin.FromDatetime(start_time)
-                    step_info.runtime.end.FromDatetime(api.time.utcnow())
-                    build_report.status.value = BuildReport.BuildStatus.SUCCESS
-                    build_config = build_report.config
-                    build_config.branch.name = branch
-                    new_ver = build_config.versions.add()
-                    new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_MILESTONE
-                    new_ver.value = str(bcs_version.milestone)
-                    new_ver = build_config.versions.add()
-                    new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_PLATFORM
-                    new_ver.value = bcs_version.platform_version
-                    gs_bucket, gs_path = loc['gs_location'].split('/', 1)
-                    api.build_reporting.publish_build_artifacts(
-                        UploadedArtifacts(gs_bucket, gs_path,
-                                          {atype: [file]}), artifact_dir,
-                        force_publish=metadata.publish_to_goldeneye)
+                    'debug'] += f'metadata_by_name[{obj.file_name}]={obj.tarball_info}\n'
+                metadata_by_name[obj.file_name] = obj.tarball_info
+            else:
+              step.logs['debug'] += f'{metadata_path} does not exist\n'
+          if uploaded_artifacts.published:
+            for atype, dests in uploaded_artifacts.published.items():
+              step.logs['debug'] += f'published: {atype}:{dests}\n'
+              for loc in dests:
+                for file in loc['files']:
+                  metadata = metadata_by_name.get(file)
+                  step.logs[
+                      'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
+                  if metadata:
+                    for board in metadata.board:
+                      if metadata.type == FirmwareArtifactInfo.TarballInfo.FirmwareType.EC and branch == 'snapshot':
+                        step.logs[
+                            'debug'] += f'SKIPPING Pub/sub {file} for {board}\n'
+                        continue
+                      step.logs['debug'] += f'Pub/sub {file} for {board}\n'
+                      api.build_reporting.reset_build_report(board)
+                      build_report = api.build_reporting.merged_build_report
+                      step_info = build_report.steps.info[
+                          api.build_reporting.step_as_str(
+                              BuildReport.StepDetails.STEP_OVERALL)]
+                      step_info.order = 1
+                      step_info.status = BuildReport.StepDetails.STATUS_SUCCESS
+                      step_info.runtime.begin.FromDatetime(start_time)
+                      step_info.runtime.end.FromDatetime(api.time.utcnow())
+                      build_report.status.value = BuildReport.BuildStatus.SUCCESS
+                      build_config = build_report.config
+                      build_config.branch.name = branch
+                      new_ver = build_config.versions.add()
+                      new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_MILESTONE
+                      new_ver.value = str(bcs_version.milestone)
+                      new_ver = build_config.versions.add()
+                      new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_PLATFORM
+                      new_ver.value = bcs_version.platform_version
+                      gs_bucket, gs_path = loc['gs_location'].split('/', 1)
+                      api.build_reporting.publish_build_artifacts(
+                          UploadedArtifacts(gs_bucket, gs_path,
+                                            {atype: [file]}), artifact_dir,
+                          force_publish=metadata.publish_to_goldeneye)
 
 
-    UploadTestResults(api, location, build.builder.builder)
+      UploadTestResults(api, location, build.builder.builder)
 
-    CreateContainers(api, config)
+      CreateContainers(api, config)
 
-    # Tast artifacts are only required by ToT builders since those are the only
-    # builders that generate signed outputs.
-    # Ideally we would have an ArtifactType and key off of that.
-    if location == common_pb2.PLATFORM_TI50 and signing_scheduled:
-      CreateTi50TastArtifacts(api, config)
+      # Tast artifacts are only required by ToT builders since those are the only
+      # builders that generate signed outputs.
+      # Ideally we would have an ArtifactType and key off of that.
+      if location == common_pb2.PLATFORM_TI50 and signing_scheduled:
+        CreateTi50TastArtifacts(api, config)
 
-    api.easy.set_properties_step(
-        suite_scheduling=str(properties.set_suite_scheduling and
-                             not is_staging))
+      api.easy.set_properties_step(
+          suite_scheduling=str(properties.set_suite_scheduling and
+                               not is_staging))
 
 
 def CreateTi50TastArtifacts(api, config):

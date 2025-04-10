@@ -11120,6 +11120,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set mutable output properties"
+  },
+  {
     "name": "$result"
   }
 ]

@@ -5402,22 +5402,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.set signed_upload_paths",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@signed_upload_paths@{\"canary-channel\": \"gs://chromeos-throw-away-bucket/ti50/nt-signed/R99-1234.56.0-101/\"}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.set bcid",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_signed_prov_generation\": [], \"failed_unsigned_prov_verification\": []}@@@"
-    ]
-  },
-  {
     "cmd": [
       "docker",
       "container",
@@ -6198,6 +6182,14 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set mutable output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_signed_prov_generation\": [], \"failed_unsigned_prov_verification\": []}@@@",
+      "@@@SET_BUILD_PROPERTY@signed_upload_paths@{\"canary-channel\": \"gs://chromeos-throw-away-bucket/ti50/nt-signed/R99-1234.56.0-101/\"}@@@"
     ]
   },
   {

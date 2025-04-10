@@ -38,6 +38,7 @@ DEPS = [
     'cros_source',
     'gerrit',
     'git',
+    'mutable_output',
     'signing',
 ]
 
@@ -125,47 +126,48 @@ def get_recovery_path(api: RecipeApi, response: SignImageResponse) -> Path:
 
 
 def RunSteps(api: RecipeApi):
-  with api.cros_source.checkout_overlays_context():
-    api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
-    api.cros_source.ensure_synced_cache()
+  with api.mutable_output.wrap():
+    with api.cros_source.checkout_overlays_context():
+      api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
+      api.cros_source.ensure_synced_cache()
 
-    # Signing uses config for the base target. Remove prefix if present.
-    target = api.build_menu.build_target.name.split('android-')[-1]
+      # Signing uses config for the base target. Remove prefix if present.
+      target = api.build_menu.build_target.name.split('android-')[-1]
 
-    # TODO(b/371248376): Remove when we can create our own recovery image.
-    # For now, just get the image from the android prebuild repo.
-    checkout = api.path.mkdtemp()
-    with api.context(cwd=checkout):
-      api.git.clone(
-          f'https://googleplex-android.googlesource.com/device/google/desktop/{target}-kernels/6.6',
-          depth=1)
+      # TODO(b/371248376): Remove when we can create our own recovery image.
+      # For now, just get the image from the android prebuild repo.
+      checkout = api.path.mkdtemp()
+      with api.context(cwd=checkout):
+        api.git.clone(
+            f'https://googleplex-android.googlesource.com/device/google/desktop/{target}-kernels/6.6',
+            depth=1)
 
-      recovery_dir = api.path.mkdtemp(prefix='recovery')
-      recovery_local_path = api.path.join(recovery_dir, 'vmlinuz.image')
+        recovery_dir = api.path.mkdtemp(prefix='recovery')
+        recovery_local_path = api.path.join(recovery_dir, 'vmlinuz.image')
 
-      # copy the file in.
-      api.file.copy('copy prebuild recovery image into temp dir',
-                    api.path.join(checkout, 'recovery', 'vmlinuz.image'),
-                    recovery_local_path)
+        # copy the file in.
+        api.file.copy('copy prebuild recovery image into temp dir',
+                      api.path.join(checkout, 'recovery', 'vmlinuz.image'),
+                      recovery_local_path)
 
-    # Sign recovery kernel image and upload to GS.
-    if api._test_data.enabled:  # pylint: disable=protected-access
-      api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
-          'signing_config', TEST_SIGNING_CONFIG)
-    api.cros_release.validate_sign_types()
-    with api.step.nest('sign recovery kernel image') as pres:
-      signed_image_response = api.signing.sign_artifacts(
-          sign_types=[common_pb2.IMAGE_TYPE_RECOVERY_KERNEL],
-          channels=api.cros_release.channels, include_paygen=False,
-          local_artifact_dir=recovery_dir, upload_unsigned=False)
-      if not signed_image_response:
-        raise StepFailure('Empty signing config for build target')
-      recovery_path = get_recovery_path(api, signed_image_response)
-      pres.logs['signed builds'] = recovery_path
+      # Sign recovery kernel image and upload to GS.
+      if api._test_data.enabled:  # pylint: disable=protected-access
+        api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
+            'signing_config', TEST_SIGNING_CONFIG)
+      api.cros_release.validate_sign_types()
+      with api.step.nest('sign recovery kernel image') as pres:
+        signed_image_response = api.signing.sign_artifacts(
+            sign_types=[common_pb2.IMAGE_TYPE_RECOVERY_KERNEL],
+            channels=api.cros_release.channels, include_paygen=False,
+            local_artifact_dir=recovery_dir, upload_unsigned=False)
+        if not signed_image_response:
+          raise StepFailure('Empty signing config for build target')
+        recovery_path = get_recovery_path(api, signed_image_response)
+        pres.logs['signed builds'] = recovery_path
 
-    # Open a cl with the new recovery kernel prebuilts.
-    return upload_recovery_prebuilts(api, checkout, recovery_path, target,
-                                     abandon=api.cros_infra_config.is_staging)
+      # Open a cl with the new recovery kernel prebuilts.
+      return upload_recovery_prebuilts(api, checkout, recovery_path, target,
+                                       abandon=api.cros_infra_config.is_staging)
 
 
 # Sample SignImageResponse for testing.

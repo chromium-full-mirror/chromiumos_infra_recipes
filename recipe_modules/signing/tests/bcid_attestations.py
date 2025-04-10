@@ -25,6 +25,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_infra_config',
+    'mutable_output',
     'signing',
 ]
 
@@ -32,16 +33,17 @@ PASSED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
 
 
 def RunSteps(api: RecipeApi):
-  sign_types = [IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE, IMAGE_TYPE_RECOVERY]
-  channels = [CHANNEL_DEV, CHANNEL_CANARY]
+  with api.mutable_output.wrap():
+    sign_types = [IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE, IMAGE_TYPE_RECOVERY]
+    channels = [CHANNEL_DEV, CHANNEL_CANARY]
 
-  for filepath in api.properties.get('files_to_mock', []):
-    api.path.mock_add_file(filepath)
+    for filepath in api.properties.get('files_to_mock', []):
+      api.path.mock_add_file(filepath)
 
-  # Call signing.
-  api.signing.sign_artifacts(
-      sign_types=sign_types, channels=channels,
-      attestation_eligible=api.properties['attestation_eligible'])
+    # Call signing.
+    api.signing.sign_artifacts(
+        sign_types=sign_types, channels=channels,
+        attestation_eligible=api.properties['attestation_eligible'])
 
 
 def GenTests(api: RecipeTestApi):
