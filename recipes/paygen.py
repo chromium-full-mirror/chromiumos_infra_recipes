@@ -475,17 +475,17 @@ def download_and_verify_paygen_inputs(
           artifacts_to_verify.append(artifact_path)
         except StepFailure as step_failure:
           pres.step_summary_text = 'attestation download failed'
-          failed_artifact_verification.add(artifact_name)
+          failed_artifact_verification.add(payload_input.gs_path)
           if paygen_input_provenance_verification_fatal:
             pres.status = api.step.FAILURE
             raise step_failure
           # No attestation, cannot continue with verification
           continue
 
-      failed_artifact_verification.update(
-          api.signing.verify_bcid_attestations_for_artifacts(
-              artifacts_to_verify, True,
-              paygen_input_provenance_verification_fatal))
+      failed_verification = api.signing.verify_bcid_attestations_for_artifacts(
+          artifacts_to_verify, True, paygen_input_provenance_verification_fatal)
+      if failed_verification:
+        failed_artifact_verification.add(payload_input.gs_path)
     with api.step.nest('clean up payload input archives'):
       for payload_input in unsigned_payload.payload_inputs:
         # If reporting inputs, delete archives which have been extracted.
@@ -1164,8 +1164,10 @@ def GenTests(api: RecipeTestApi):
           retcode=1),
       # Output property captures failures, but build succeeds.
       api.post_check(
-          post_process.PropertyEquals, 'bcid',
-          {"failed_payload_input_prov_verification": ["archive", "input"]}),
+          post_process.PropertyEquals, 'bcid', {
+              "failed_payload_input_prov_verification":
+                  ["gs://path-to-input", "gs://path-to-input-archive"]
+          }),
       api.post_check(
           post_process.MustRun,
           'doing paygen.running paygen operations in parallel.finalizing single payload'
