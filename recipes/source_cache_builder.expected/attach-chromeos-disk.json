@@ -355,6 +355,40 @@
   },
   {
     "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "resize",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "--size=300",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.source cache.resize GCE disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "resize2fs",
+      "/dev/sdy"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "source cache update.source cache.execute resize2fs on resized disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",

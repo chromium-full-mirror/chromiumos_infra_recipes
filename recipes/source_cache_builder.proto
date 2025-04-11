@@ -32,6 +32,8 @@ message SourceCacheDefinition {
   // recovery image when multiple cache definitions share a recovery image.
   // Default false.
   bool can_update_recovery_image = 8;
+  // GCE disk size.
+  int32 disk_size_gb = 9;
 }
 
 message SourceCacheBuilderProperties {

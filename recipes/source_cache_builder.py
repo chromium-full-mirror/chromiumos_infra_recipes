@@ -107,6 +107,7 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
       successful_sync = False
       api.gcloud.setup_cache_disk(cache_name=cache.cache_name,
                                   branch=cache.branch,
+                                  disk_size=cache.disk_size_gb,
                                   disk_type=cache.disk_type, recipe_mount=True,
                                   disallow_previously_mounted=True,
                                   recovery_snapshot=cache.recovery_snapshot)
@@ -253,6 +254,7 @@ def GenTests(api: RecipeTestApi):
               'recovery_snapshot': 'chromeos_default_recovery_snapshot',
               'branch': 'release-R90-13816.B',
               'disk_type': 'pd-ssd',
+              'disk_size_gb': '300',
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
