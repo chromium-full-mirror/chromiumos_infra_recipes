@@ -49,7 +49,8 @@ FETCH_BEST_CHROME_REVISION_INTERVAL = 600
 FETCH_BEST_CHROME_REVISION_TIMES = 30
 WAIT_ORCHESTRATOR_TIMEOUT_SEC = 3600 * 10  # 10 hour
 UPREV_CL_TOPICS = [
-    'chromeos-base/lacros-ash-atomic', 'staging/chrome-main', 'chrome-main'
+    'chromeos-base/lacros-ash-atomic',
+    'chromeos-base/chromeos-chrome',
 ]
 INVOCATION_PREFIX = 'invocations/'
 
@@ -220,7 +221,8 @@ def RunSteps(api: RecipeApi):
     return NO_CL_FOUND
   cl = cl[0]
   patch_sets = api.gerrit.fetch_patch_sets([cl], include_files=True)
-  if patch_sets[0].topic not in UPREV_CL_TOPICS:
+  if patch_sets[0].topic not in UPREV_CL_TOPICS or patch_sets[
+      0].branch != 'main':
     return NOT_AN_UPREV_CL
 
   target_chrome_revision = None
@@ -383,6 +385,7 @@ def GenTests(api: RecipeTestApi):
     change = {
         '_number': CHANGE_NUMBER,
         'topic': topic if topic else '',
+        'branch': 'main',
         'change_id': str(CHANGE_NUMBER),
         'status': 'NEW',
         'revision_info': {
