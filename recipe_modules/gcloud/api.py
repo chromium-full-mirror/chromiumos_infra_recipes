@@ -711,14 +711,19 @@ class GcloudApi(recipe_api.RecipeApi):
 
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       try:
-        self.m.easy.stdout_step('resize GCE disk', [
-            'gcloud', 'compute', 'disks', 'resize', disk,
-            '--size={}'.format(size), '--zone={}'.format(zone), '--quiet'
-        ], infra_step=True)
+        self.m.easy.stdout_step(
+            'resize GCE disk', [
+                'gcloud', 'compute', 'disks', 'resize', disk,
+                '--size={}'.format(size), '--zone={}'.format(zone), '--quiet'
+            ], infra_step=True,
+            stderr=self.m.raw_io.output_text(add_output_log=True))
       except self.m.step.InfraFailure as e:
         # Check output that indicates we've actually succeded.
-        if not _is_set_size(e.result.stdout.decode('utf-8')):
+        if not _is_set_size(
+            e.result.stdout.decode('utf-8')) and not _is_set_size(
+                e.result.stderr):
           raise
+        self.m.step.active_result.presentation.step_text = 'Disk was already correct size.'
 
       self.m.easy.stdout_step(
           'execute resize2fs on resized disk',

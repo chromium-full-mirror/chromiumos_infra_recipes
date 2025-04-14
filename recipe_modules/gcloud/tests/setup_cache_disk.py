@@ -186,6 +186,24 @@ def GenTests(api):
               "than existing size '10' GiB.\n"), retcode=1),
   )
   yield api.test(
+      'resize-disk-but-same-size-stderr',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
+      api.step_data((
+          'source cache.setup source cache disk.create disk from snapshot image.check whether'
+          + ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-lmno-cros'),
+                    retcode=404),
+      api.step_data('source cache.resize GCE disk', retcode=1),
+      api.step_data(
+          'source cache.resize GCE disk (2)', stderr=api.raw_io.output_text(
+              'Some non-sequitur message to the disk size.\n'
+              "New disk size '10' GiB must be larger "
+              "than existing size '10' GiB.\n"), retcode=1),
+      api.post_check(post_process.StepTextEquals,
+                     'source cache.resize GCE disk (2)',
+                     'Disk was already correct size.'),
+      api.post_process(post_process.DropExpectation),
+  )
+  yield api.test(
       'create-disk-fails-as-exists-but-404-before',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.step_data(

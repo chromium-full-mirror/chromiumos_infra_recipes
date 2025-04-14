@@ -356,6 +356,7 @@
     "name": "source cache.resize GCE disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -377,6 +378,8 @@
     "name": "source cache.resize GCE disk (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Disk was already correct size.@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },

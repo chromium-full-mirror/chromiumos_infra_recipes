@@ -370,7 +370,8 @@
     "infra_step": true,
     "name": "source cache update.source cache.resize GCE disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
