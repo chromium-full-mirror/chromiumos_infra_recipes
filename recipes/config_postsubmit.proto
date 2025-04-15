@@ -6,7 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.config_postsubmit;
 
-// NEXT ID: 5
+// NEXT ID: 6
 message ConfigPostsubmitProperties {
 
   enum ActionTypes {
@@ -26,6 +26,9 @@ message ConfigPostsubmitProperties {
 
     // Regenerate the test plan.
     REGENERATE_TEST_PLAN = 4;
+
+    // Update Android configs from snapshot artifacts.
+    UPDATE_ANDROID_CONFIG = 5;
   }
 
   message ActionCLConfig {
@@ -67,4 +70,7 @@ message ConfigPostsubmitProperties {
   // UFS environment to upload configs to, passed to the --env arg on the
   // config_to_datastore.py script. Default is "prod".
   string ufs_env = 4;
+
+  // List of snapshot builders to monitor for the UPDATE_ANDROID_CONFIG action.
+  repeated string snapshot_builders_to_monitor = 5;
 }

@@ -17,9 +17,16 @@ returns a list of repos to make commits to.
 
 from collections import OrderedDict
 from collections import namedtuple
+import re
 
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 
+from google.protobuf import json_format
+from PB.go.chromium.org.luci.buildbucket.proto import (
+    builder_common as builder_common_pb2,)
+from PB.go.chromium.org.luci.buildbucket.proto import (
+    builds_service as builds_service_pb2,)
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
@@ -27,6 +34,8 @@ from recipe_engine import post_process
 from recipe_engine import recipe_api
 
 DEPS = [
+    'depot_tools/gitiles',
+    'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
@@ -130,6 +139,131 @@ def _update_device_stability(api, properties, _project_infos, dry_run):
   return []
 
 
+def _update_android_config(api, properties, _project_infos, dry_run):
+  """Downloads CrOS configs from snapshot builders and generates Android XMLs.
+
+  For each of the snapshot_builders_to_monitor:
+  1. Find the latest successful build.
+  2. Download the config_protos.zip artifact.
+  3. Unzip and find all the project config.jsonproto files.
+  4. Use the cros_to_al.py script to convert them to Android XML config files.
+
+  Args:
+    See notes on _ACTIONS. _project_infos is currently unused by this action.
+  """
+  del dry_run
+
+  for builder_name in properties.snapshot_builders_to_monitor:
+    with api.step.nest(f"Process builder {builder_name}"):
+      builds = api.buildbucket.search(
+          builds_service_pb2.BuildPredicate(
+              builder=builder_common_pb2.BuilderID(
+                  project="chromeos",
+                  bucket="postsubmit",
+                  builder=builder_name,
+              ),
+              status=common_pb2.SUCCESS,
+          ),
+          fields=["id", "output.properties"],
+          limit=1,
+          step_name=f"Find latest successful build for {builder_name}",
+      )
+
+      if not builds:
+        api.step.active_result.presentation.step_text = (
+            "No successful build found")
+        continue
+
+      build = builds[0]
+      output_props = json_format.MessageToDict(build.output.properties)
+
+      artifact_base_link = output_props.get("artifact_link")
+      artifacts_info = output_props.get("artifacts",
+                                        {}).get("files_by_artifact", {})
+      if "config_protos.zip" not in artifacts_info.get("CHROMEOS_CONFIG", []):
+        api.step.active_result.presentation.step_text = (
+            "No config_protos.zip found")
+        continue
+
+      gs_path = f"{artifact_base_link}/config_protos.zip"
+      api.step.active_result.presentation.step_text = (
+          f"Found artifact {gs_path} from build {build.id}")
+
+      dl_dir = api.path.mkdtemp(f"download_{builder_name}")
+      unzip_dir = api.path.mkdtemp(f"unzip_{builder_name}")
+      zip_local_path = dl_dir / "config_protos.zip"
+
+      api.gsutil.download_url(gs_path, dl_dir)
+      api.step(
+          "unzip config_protos.zip",
+          ["unzip", "-q", zip_local_path, "-d", unzip_dir],
+      )
+
+      jsonproto_files = api.file.glob_paths(
+          name="find jsonproto files",
+          source=unzip_dir,
+          pattern="**/config.jsonproto",
+          test_data=[
+              unzip_dir /
+              ("example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto"
+              ),
+              unzip_dir /
+              ("example_program/chromeos-config-bsp-private-0.0.1/program/example_program/generated/config.jsonproto"
+              ),
+          ],
+      )
+
+      xsd_schema_path = api.path.mkdtemp("xsd_schema") / "hal_config.xsd"
+      xsd_bytes = api.gitiles.download_file(
+          "https://googleplex-android.googlesource.com/device/google/desktop/common",
+          "config/hal_config.xsd",
+          step_test_data=lambda: api.gitiles.test_api.make_encoded_file("""
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+</xs:schema>
+            """),
+      )
+
+      api.file.write_raw(
+          "write hal_config.xsd",
+          xsd_schema_path,
+          xsd_bytes,
+      )
+
+      cros_to_al_script = (
+          api.context.cwd / "src/config/payload_utils/cros_to_al.py")
+
+      for jsonproto_path in jsonproto_files:
+        # config.jsonproto paths end with patterns like
+        # chromeos-config-bsp-private-0.0.1/<program>/generated/config.jsonproto.
+        # Extract the project name with a regex.
+        match = re.search(
+            r"chromeos-config-bsp-private-[\d\.]+/([^/]+)/generated/config.jsonproto",
+            str(jsonproto_path),
+        )
+        if not match:
+          continue
+
+        project_name = match.group(1)
+
+        with api.step.nest(
+            f"Process {project_name} from {api.path.basename(jsonproto_path)}"):
+          # TODO(b/402023024): Sync repos and create CLs.
+          output_xml_path = api.path.mkdtemp("output_xml") / "hal_config.xml"
+          api.step(
+              f"Run cros_to_al.py for {project_name}",
+              [
+                  cros_to_al_script,
+                  "-o",
+                  output_xml_path,
+                  "-x",
+                  xsd_schema_path,
+                  jsonproto_path,
+              ],
+          )
+
+  return []
+
+
 # A map of CL configurations -> their functions which run on config repos.
 #
 # Each action should take a RecipesApi and list of ProjectInfos as args and
@@ -139,6 +273,7 @@ def _update_device_stability(api, properties, _project_infos, dry_run):
 _ACTIONS = OrderedDict([
     (PROPERTIES.REPLICATE_PUBLIC_CONFIG, _replicate_public_config),
     (PROPERTIES.COPY_TO_INTERNAL, _update_device_stability),
+    (PROPERTIES.UPDATE_ANDROID_CONFIG, _update_android_config),
 ])
 
 
@@ -273,6 +408,7 @@ def GenTests(api):
             },
             allowed_programs=allowed_programs,
             allowed_projects=allowed_projects,
+            snapshot_builders_to_monitor=['example-snapshot'],
         ))
 
   def config_dlm_step_data(api):
@@ -314,10 +450,30 @@ def GenTests(api):
                 ]),
         ))
 
+  def snapshot_build_step_data(api, include_artifacts=True):
+    output = build_pb2.Build.Output()
+    output.properties['artifact_link'] = (
+        'gs://chromeos-image-archive/example-snapshot/R123-45678.0.0-123')
+    if include_artifacts:
+      output.properties['artifacts'] = {
+          'files_by_artifact': {
+              'CHROMEOS_CONFIG': ['config.yaml', 'config_protos.zip'],
+          }
+      }
+    return api.buildbucket.simulated_search_results(
+        [build_pb2.Build(
+            id=123,
+            status='SUCCESS',
+            output=output,
+        )],
+        step_name='Do update_android_config and create CL.Process builder example-snapshot.Find latest successful build for example-snapshot',
+    )
+
   yield api.test(
       'basic',
       default_properties(),
       config_repos_step_data(api),
+      snapshot_build_step_data(api),
       config_dlm_step_data(api),
       api.git.diff_check(True),
       api.post_process(
@@ -340,6 +496,7 @@ def GenTests(api):
       'failed_actions',
       default_properties(),
       config_repos_step_data(api),
+      snapshot_build_step_data(api),
       config_dlm_step_data(api),
       api.step_data(
           'Do replicate_public_config and create CL' \
@@ -360,7 +517,8 @@ def GenTests(api):
 
   yield api.test(
       'abandon-cl', default_properties(abandon=True),
-      config_repos_step_data(api), config_dlm_step_data(api),
+      config_repos_step_data(api), snapshot_build_step_data(api),
+      config_dlm_step_data(api),
       api.post_check(post_process.MustRunRE,
                      r'Do \w* and create CL.abandon CL 1'),
       api.post_process(post_process.DropExpectation))
@@ -369,6 +527,7 @@ def GenTests(api):
       'update_device_stability-basic',
       default_properties(),
       config_repos_step_data(api),
+      snapshot_build_step_data(api),
       config_dlm_step_data(api),
       api.post_process(
           post_process.MustRun,
@@ -376,4 +535,25 @@ def GenTests(api):
           '.upload configs to ufs'
           '.upload generated configs to UFS datastore',
       ),
+  )
+
+  yield api.test(
+      'no snapshot builders found',
+      default_properties(),
+      config_repos_step_data(api),
+      api.buildbucket.simulated_search_results(
+          [],
+          step_name='Do update_android_config and create CL.Process builder example-snapshot.Find latest successful build for example-snapshot',
+      ),
+      config_dlm_step_data(api),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'no config_protos.zip found',
+      default_properties(),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api, include_artifacts=False),
+      config_dlm_step_data(api),
+      api.post_process(post_process.DropExpectation),
   )

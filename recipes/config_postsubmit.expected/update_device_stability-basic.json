@@ -2312,6 +2312,195 @@
   },
   {
     "cmd": [],
+    "name": "Do update_android_config and create CL"
+  },
+  {
+    "cmd": [],
+    "name": "Do update_android_config and create CL.Process builder example-snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.Find latest successful build for example-snapshot",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,output.properties\"}, \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"example-snapshot\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Found artifact gs://chromeos-image-archive/example-snapshot/R123-45678.0.0-123/config_protos.zip from build 123@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"123\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"artifact_link\": \"gs://chromeos-image-archive/example-snapshot/R123-45678.0.0-123\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"files_by_artifact\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                    \"CHROMEOS_CONFIG\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@                      \"config.yaml\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                      \"config_protos.zip\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@                  }@@@",
+      "@@@STEP_LOG_LINE@json.output@                }@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"id,output.properties\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"bucket\": \"postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"builder\": \"example-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/example-snapshot/R123-45678.0.0-123/config_protos.zip",
+      "[CLEANUP]/download_example-snapshot_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.gsutil download_url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "unzip",
+      "-q",
+      "[CLEANUP]/download_example-snapshot_tmp_1/config_protos.zip",
+      "-d",
+      "[CLEANUP]/unzip_example-snapshot_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.unzip config_protos.zip",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[CLEANUP]/unzip_example-snapshot_tmp_1",
+      "**/config.jsonproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.find jsonproto files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/unzip_example-snapshot_tmp_1/[CLEANUP]/unzip_example-snapshot_tmp_1/example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/unzip_example-snapshot_tmp_1/[CLEANUP]/unzip_example-snapshot_tmp_1/example_program/chromeos-config-bsp-private-0.0.1/program/example_program/generated/config.jsonproto@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://googleplex-android.googlesource.com/device/google/desktop/common/+/main/config/hal_config.xsd",
+      "--format",
+      "text"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.fetch main:config/hal_config.xsd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n<xs:schema attributeFormDefault=\"unqualified\" elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n</xs:schema>\n            ",
+      "[CLEANUP]/xsd_schema_tmp_1/hal_config.xsd"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.write hal_config.xsd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.Process example_project from config.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/cros_to_al.py",
+      "-o",
+      "[CLEANUP]/output_xml_tmp_1/hal_config.xml",
+      "-x",
+      "[CLEANUP]/xsd_schema_tmp_1/hal_config.xsd",
+      "[CLEANUP]/unzip_example-snapshot_tmp_1/[CLEANUP]/unzip_example-snapshot_tmp_1/example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.Process example_project from config.jsonproto.Run cros_to_al.py for example_project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"main\", \"call\": \"checkout_tip_of_tree\"}@@@"
