@@ -199,6 +199,17 @@ def DoRunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
       payloads_json = [MessageToJson(payload) for payload in payloads]
       api.easy.set_properties_step(payloads=payloads_json)
 
+    with api.step.nest('set `bcid` output property'):
+      bcid_failures = []
+      for run in res:
+        if 'bcid' not in run.output.properties or 'failed_payload_input_prov_verification' not in run.output.properties[
+            'bcid']:
+          continue
+        bcid_failures.extend(run.output.properties['bcid']
+                             ['failed_payload_input_prov_verification'])
+      bcid_json = {'failed_payload_input_prov_verification': bcid_failures}
+      api.easy.set_properties_step(bcid=bcid_json)
+
   if properties.publish_to_pubsub:
     api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_PAYGEN, '')
     with api.build_reporting.step_reporting(
@@ -597,6 +608,40 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'),
       status='FAILURE',
+  )
+
+  bcid_prop = {
+      'failed_payload_input_prov_verification': [
+          'gs://path-to-failure', 'gs://path-to-failure'
+      ]
+  }
+  build_bcid_fail = build_pb2.Build(id=8922054662172514000,
+                                    status=common_pb2.SUCCESS,
+                                    output=build_pb2.Build.Output())
+  build_bcid_fail.output.properties.update({
+      'bcid': bcid_prop,
+  })
+  yield api.test(
+      'bcid-failure',
+      get_props(),
+      good_paygen_cfg,
+      api.buildbucket.build(build_message),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.buildbucket.simulated_collect_output([build_bcid_fail] + [
+          build_pb2.Build(id=8922054662172514000 + 1 + x, status='SUCCESS')
+          for x in range(10)
+      ], 'running children.collect'),
+      api.post_check(post_process.MustRun,
+                     'results.set `bcid` output property'),
+      api.post_process(post_process.PropertyEquals, 'bcid', bcid_prop),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

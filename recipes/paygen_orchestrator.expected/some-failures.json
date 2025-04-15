@@ -1695,6 +1695,21 @@
   },
   {
     "cmd": [],
+    "name": "results.set `bcid` output property",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "results.set `bcid` output property.set bcid",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_payload_input_prov_verification\": []}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
