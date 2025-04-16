@@ -87,8 +87,20 @@ def GenTests(api: RecipeTestApi):
       ), api.post_process(post_process.DropExpectation), build_target='kukui',
       builder='kukui-release-main', status='SUCCESS')
 
+  bcid_success = {
+      'failed_signed_prov_generation': [],
+      'failed_unsigned_prov_verification': []
+  }
   yield api.build_menu.test(
       'signed-attestations', api.properties(attestation_eligible=True),
+      api.properties(
+          attestation_eligible=True,
+          files_to_mock=[
+              '[CLEANUP]/signing-dir_tmp_1/chromiumos_base_image.tar.xz.intoto.jsonl',
+              '[CLEANUP]/signing-dir_tmp_1/firmware_from_source.tar.bz2.intoto.jsonl',
+              '[CLEANUP]/signing-dir_tmp_1/recovery_image.tar.xz.intoto.jsonl'
+          ],
+      ),
       api.properties(
           **{
               '$chromeos/signing':
@@ -117,9 +129,18 @@ def GenTests(api: RecipeTestApi):
           [
               '-report-gcs', '-digest', 'deadbeef', '-gcs-uri',
               'gs://chromeos-releases/canary-channel/kukui/1234.56.0/chromeos-firmwareupdate'
-          ]), api.post_process(post_process.DropExpectation),
-      build_target='kukui', builder='kukui-release-main', status='SUCCESS')
+          ]), api.post_process(post_process.PropertyEquals, 'bcid',
+                               bcid_success),
+      api.post_process(post_process.DropExpectation), build_target='kukui',
+      builder='kukui-release-main', status='SUCCESS')
 
+  bcid_failed_both = {
+      'failed_signed_prov_generation': ['chromeos-firmwareupdate'],
+      'failed_unsigned_prov_verification': [
+          'chromiumos_base_image.tar.xz', 'firmware_from_source.tar.bz2',
+          'recovery_image.tar.xz'
+      ]
+  }
   yield api.build_menu.test(
       'non-fatal-failure-signed-provenance-generation',
       api.properties(attestation_eligible=True),
@@ -151,7 +172,9 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.gsutil cp'
-      ), api.post_process(post_process.DropExpectation), build_target='kukui',
+      ), api.post_process(post_process.PropertyEquals, 'bcid',
+                          bcid_failed_both),
+      api.post_process(post_process.DropExpectation), build_target='kukui',
       builder='kukui-release-main', status='SUCCESS')
 
   yield api.build_menu.test(
@@ -215,7 +238,9 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.gsutil cp'
-      ), api.post_process(post_process.DropExpectation), build_target='kukui',
+      ), api.post_process(post_process.PropertyEquals, 'bcid',
+                          bcid_failed_both),
+      api.post_process(post_process.DropExpectation), build_target='kukui',
       builder='kukui-release-main', status='SUCCESS')
 
   yield api.build_menu.test(
@@ -260,6 +285,13 @@ def GenTests(api: RecipeTestApi):
       ), api.post_process(post_process.DropExpectation), build_target='kukui',
       builder='kukui-release-main', status='FAILURE')
 
+  bcid_failed_unsigned = {
+      'failed_signed_prov_generation': [],
+      'failed_unsigned_prov_verification': [
+          'chromiumos_base_image.tar.xz', 'firmware_from_source.tar.bz2',
+          'recovery_image.tar.xz'
+      ]
+  }
   yield api.build_menu.test(
       'try-download-attestation-file',
       api.properties(attestation_eligible=True),
@@ -276,5 +308,8 @@ def GenTests(api: RecipeTestApi):
           }),
       api.override_step_data(
           'sign artifacts.download release artifacts.gsutil download stateful.tgz.intoto.jsonl from chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184',
-          retcode=1), api.post_process(post_process.DropExpectation),
-      build_target='kukui', builder='kukui-release-main', status='SUCCESS')
+          retcode=1),
+      api.post_process(post_process.PropertyEquals, 'bcid',
+                       bcid_failed_unsigned),
+      api.post_process(post_process.DropExpectation), build_target='kukui',
+      builder='kukui-release-main', status='SUCCESS')

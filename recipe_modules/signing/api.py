@@ -1043,9 +1043,9 @@ class SigningApi(recipe_api.RecipeApi):
           **{
               'bcid': {
                   'failed_unsigned_prov_verification':
-                      list(failed_unsigned_artifact_verification),
+                      list(sorted(failed_unsigned_artifact_verification)),
                   'failed_signed_prov_generation':
-                      list(failed_prov_generation)
+                      list(sorted(failed_prov_generation))
               }
           })
 
