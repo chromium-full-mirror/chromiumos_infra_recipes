@@ -59,6 +59,8 @@ class GcloudApi(recipe_api.RecipeApi):
     self._dev_ref = 'a'
     self._disk = None
     self._gce_project = (properties.gce_project or DEFAULT_GCE_PROJECT)
+    self._source_cache_gce_project = (
+        properties.source_cache_gce_project or DEFAULT_SOURCE_CACHE_GCE_PROJECT)
     self._infra_host = None
     self._overlay_branch_file = 'overlay_branch.txt'
     self._snapshot_suffix = None
@@ -129,6 +131,10 @@ class GcloudApi(recipe_api.RecipeApi):
   @property
   def gce_project(self):
     return self._gce_project
+
+  @property
+  def source_cache_gce_project(self):
+    return self._source_cache_gce_project
 
   @property
   def gce_disk(self):
@@ -451,10 +457,10 @@ class GcloudApi(recipe_api.RecipeApi):
     Returns:
       The stdout of the gcloud command.
     """
-    # TODO(b/375521639): Add property for source cache image GCE project.
+    # Specify self.source_cache_gce_project which houses images.
     cmd = [
         'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
-        '--image-project={}'.format(DEFAULT_SOURCE_CACHE_GCE_PROJECT), '--quiet'
+        '--image-project={}'.format(self.source_cache_gce_project), '--quiet'
     ]
 
     step_name = 'create empty disk'
@@ -610,9 +616,9 @@ class GcloudApi(recipe_api.RecipeApi):
         'gcloud', 'compute', 'images', 'list', '--format', 'json(name)',
         '--filter', 'name={}'.format(image)
     ]
-    # If we aren't in DEFAULT_SOURCE_CACHE_GCE_PROJECT, specify DEFAULT_SOURCE_CACHE_GCE_PROJECT which houses images.
-    if self._gce_project != DEFAULT_SOURCE_CACHE_GCE_PROJECT:
-      list_cmd += ['--project', DEFAULT_SOURCE_CACHE_GCE_PROJECT]
+    # If we aren't in self.source_cache_gce_project, specify it because it houses images.
+    if self._gce_project != self.source_cache_gce_project:
+      list_cmd += ['--project', self.source_cache_gce_project]
     test_stdout = self.test_api.image_exists_data
     # If there is test data set for this call, pass that through. Otherwise, use
     # the default response from test_api.

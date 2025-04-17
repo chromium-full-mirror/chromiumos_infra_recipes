@@ -29,4 +29,8 @@ message GcloudProperties {
 
   // If provided, this overrides the GCE project used by the gcloud module.
   string gce_project = 3;
+
+  // If provided, this overrides the GCE project used by the gcloud module for
+  // source cache images.
+  string source_cache_gce_project = 4;
 }
