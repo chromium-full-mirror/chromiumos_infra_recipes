@@ -21,6 +21,9 @@ def RunSteps(api):
   api.assertions.assertEqual(api.path.cleanup_dir / 'chromiumos_workspace',
                              workspace_path)
 
+  api.assertions.assertEqual(api.path.cleanup_dir / 'android_workspace',
+                             api.src_state.android_workspace_path)
+
   try:
     # workspace_path is immutable.
     api.src_state.workspace_path = 'foo'

@@ -11,8 +11,9 @@ from collections import namedtuple
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
-# api.path.cleanup_dir / WORKSPACE is source root.
+# api.path.cleanup_dir / [WORKSPACE|ANDROID_WORKSPACE] is source root.
 WORKSPACE = 'chromiumos_workspace'
+ANDROID_WORKSPACE = 'android_workspace'
 
 _project_info = namedtuple('project_info', ['host', 'project', 'relpath'])
 _manifests = {
@@ -21,7 +22,10 @@ _manifests = {
                       'chromeos/manifest-internal', 'manifest-internal'),
     'external':
         _project_info('chromium.googlesource.com', 'chromiumos/manifest',
-                      'manifest')
+                      'manifest'),
+    'android_internal':
+        _project_info('googleplex-android.googlesource.com',
+                      'platform/manifest', None),
 }
 
 default_branch = 'main'
@@ -34,7 +38,6 @@ class ManifestProject:
   Attributes:
     host (str): The gitiles host (e.g., 'chromium.googlesource.com')
     gerrit_host (str): The gerrit host.
-    remote (str): The name of the git remote used by repo for this project.
     project (str): The project name.
     ref (str): The revision, typically 'refs/heads/main', may be a SHA1 hash.
     relpath (str): The location of the source tree, relative to the
@@ -47,7 +50,7 @@ class ManifestProject:
 
   def __init__(self, host, project, relpath, workspace_path, ref=None,
                gerrit_host=None):
-    external = (host == 'chromium.googlesource.com')
+    external = host == 'chromium.googlesource.com'
     self.host = host
     self.remote = ('cros' if external else 'cros-internal')
     self.project = project
@@ -56,7 +59,7 @@ class ManifestProject:
     self.ref = ref or 'refs/heads/{}'.format(
         'main' if external else default_branch)
     self.gerrit_host = gerrit_host
-    self.path = workspace_path / relpath
+    self.path = workspace_path / relpath if relpath else None
     self.url = 'https://{}/{}'.format(host, project)
 
   def __str__(self):
