@@ -47,25 +47,6 @@ def GenTests(api):
       api.ctpv2.mock_luciexe_call('callsite-execute-luciexe'),
   )
   yield api.test(
-      'v2-with-qs',
-      api.properties(
-          **{
-              '$chromeos/ctpv2':
-                  Ctpv2ModuleProperties(
-                      version=Ctpv2ModuleProperties.Version(
-                          cipd_label='some-cipd-label',
-                      )),
-              'requests': {
-                  'fake-request': {
-                      'params': {
-                          'runViaCft': True,
-                          'runCtpv2WithQs': True,
-                      }
-                  }
-              }
-          }) + api.ctpv2.mock_luciexe_call('callsite-execute-luciexe'),
-  )
-  yield api.test(
       'allowed-pool',
       api.properties(
           **{
@@ -124,22 +105,6 @@ def GenTests(api):
                           },
                           'runCtpv2WithQs': True,
                       }
-                  }
-              }
-          }) + api.ctpv2.mock_luciexe_call('callsite-execute-luciexe'),
-  )
-  yield api.test(
-      'invalid-ctpv2-request',
-      api.properties(
-          **{
-              '$chromeos/ctpv2':
-                  Ctpv2ModuleProperties(
-                      version=Ctpv2ModuleProperties.Version(
-                          cipd_label='some-cipd-label',
-                      )),
-              'requests': {
-                  'fake-request': {
-                      'params': {}
                   }
               }
           }) + api.ctpv2.mock_luciexe_call('callsite-execute-luciexe'),

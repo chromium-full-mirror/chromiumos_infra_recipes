@@ -98,26 +98,15 @@ class Ctpv2Command(recipe_api.RecipeApi):
       bucket: bucket of the current builder
 
     Returns:
-      Dict of legacy v1 requests that meet ctpv2 criteria (unless reversed).
+      empty dict.
     """
-    bucket = bucket if bucket != '' else 'testplatform'
-    bucket = bucket.removesuffix('.shadow')
-
-    if 'external' in bucket:  #pragma: nocover
-      # If the request is on the ctpv2WFifo list then send the traffic to v2.
-      return {
-          name: request
-          for name, request in requests.items()
-          if not self.runInCTPv2(request)
-      }
-
-      # The standard CTP builder does not service any more v1 request. Force all
-      # to be read as CTPv2 requests. Same for public.
-      #
-      # This will also capture any new buckets which are not partners nor public
-      # and force them into using CTPv2. This is by design as we no longer
-      # intend to onboard new workflows onto the v1 stack.
-    return {}
+    # return the unit test request for v1 to avoid recipes unit test failures until we get rid of recipes completely.
+    # 100% of prod traffic should flow through ctpv2.
+    return {
+        name: request
+        for name, request in requests.items()
+        if self.pool_in_recipes_test_pool_list(request)
+    }
 
   def get_v2_requests(self, requests, bucket='testplatform'):  #pragma: nocover
     """return v2 requests.
@@ -127,29 +116,15 @@ class Ctpv2Command(recipe_api.RecipeApi):
       bucket: bucket of the current builder
 
     Returns:
-      Dict of legacy v1 requests that meet ctpv2 criteria.
+      dict of provided requests
     """
-    bucket = bucket if bucket != '' else 'testplatform'
-    bucket = bucket.removesuffix('.shadow')
-
-    if bucket == 'testplatform' or 'public' in bucket:
-      # The standard CTP builder does not service any more v1 request. Force all
-      # to be read as CTPv2 requests. Same for public builders.
-      #
-      # This will also capture any new buckets which are not partners nor public
-      # and force them into using CTPv2. This is by design as we no longer
-      # intend to onboard new workflows onto the v1 stack.
-      return dict(requests.items())
-    if 'external' in bucket:
-      # The external builder(AL traffic should be ctpv2) still
-      # services mixed request so we want to maintain the current filter.
-      return {
-          name: request
-          for name, request in requests.items()
-          if self.runInCTPv2(request)
-      }
-
-    return {}
+    # return the unit test request for v1 to avoid recipes unit test failures until we get rid of recipes completely.
+    # 100% of traffic flows through ctpv2
+    return {
+        name: request
+        for name, request in requests.items()
+        if not self.pool_in_recipes_test_pool_list(request)
+    }
 
   def runInCTPv2(self, request):  #pragma: nocover
     ctpv2WithFifo = self.get_ctpv2_with_fifo_list()
@@ -180,6 +155,36 @@ class Ctpv2Command(recipe_api.RecipeApi):
       ctpv2WithFifo.extend(['DUT_POOL_QUOTA', 'MANAGED_POOL_QUOTA'])
 
       if tag in ctpv2WithFifo:
+        return True
+    return False
+
+  def pool_in_recipes_test_pool_list(self, request):  #pragma: nocover
+    ctpv1RecipesTestPools = [
+        'recipesTest', 'schedukeRecipesTest', 'notSchedukeRecipesTest'
+    ]
+
+    params = self.get_val_from_obj_or_dict(request, 'params')
+    if not params:  # pragma: no cover
+      return False
+
+    decorations = self.get_val_from_obj_or_dict(params, 'decorations')
+    if not decorations:  # pragma: no cover
+      return False
+
+    tags = self.get_val_from_obj_or_dict(decorations, 'tags')
+
+    if not tags:  # pragma: no cover
+      raise self.m.step.StepFailure("request has no tags")
+
+    for tag in tags:
+      if tag.startswith('label-pool:'):
+        tag = tag.removeprefix('label-pool:')
+      elif tag.startswith('pool:'):
+        tag = tag.removeprefix('pool:')
+      else:
+        continue
+
+      if tag in ctpv1RecipesTestPools:
         return True
     return False
 

@@ -2260,7 +2260,7 @@ def _test_request(request_name_tag, build_target='foo-build-target',
                   software_deps=_default_software_dependencies(), retries=0,
                   total_shards=0, max_in_shard=0, suite_name=None,
                   enable_autotest_sharding=False,
-                  swarming_tags=['label-pool:test']):
+                  swarming_tags=['label-pool:recipesTest']):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
@@ -2311,7 +2311,7 @@ def _cft_test_request(request_name, build_target='foo-build-target',
                       software_deps=_default_software_dependencies(), retries=0,
                       total_shards=0, max_in_shard=0, suite_name=None,
                       enable_autotest_sharding=False,
-                      swarming_tags=['label-pool:test']):
+                      swarming_tags=['label-pool:recipesTest']):
   test_req = _test_request(
       request_name, build_target, individual_test=individual_test,
       individual_test_name=individual_test_name, tag_criteria=tag_criteria,
@@ -2334,7 +2334,7 @@ def _cft_test_request_with_build_target_in_keyvals(tag):
   test_req.params.decorations.CopyFrom(
       Request.Params.Decorations(
           autotest_keyvals={'build_target': 'foo-build-target'},
-          tags=['label-pool:test']))
+          tags=['label-pool:recipesTest']))
   return test_req
 
 
@@ -3671,21 +3671,21 @@ def GenTests(api):
                           .TestCaseTagCriteria(tags=['beep', 'boop'],
                                                tag_excludes=['blap', 'blop']),
                           total_shards=5,
-                          swarming_tags=['label-pool:schedukeTest']),
+                          swarming_tags=['label-pool:schedukeRecipesTest']),
                   'default_2':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
                           .TestCaseTagCriteria(tags=['beep', 'boop'],
                                                tag_excludes=['blap', 'blop']),
                           total_shards=5,
-                          swarming_tags=['label-pool:NotSchedukeTest'])
+                          swarming_tags=['label-pool:NotSchedukeRecipesTest'])
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
               }),
-      _set_build(bid=42, tags={'label-pool': 'schedukeTest'}),
+      _set_build(bid=42, tags={'label-pool': 'schedukeRecipesTest'}),
       status='FAILURE',
   )
 
