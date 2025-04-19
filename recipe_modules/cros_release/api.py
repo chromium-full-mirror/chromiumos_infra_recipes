@@ -512,6 +512,14 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         self.m.build_reporting.publish(
             BuildReport(payloads=payload_information))
 
+      # If we have BCID properties from paygen, update existing BCID props.
+      if 'bcid' in paygen_orch_build.output.properties:
+        paygen_bcid = paygen_orch_build.output.properties['bcid']
+        existing_props = self.m.mutable_output.props
+        bcid = existing_props['bcid'] if 'bcid' in existing_props else {}
+        for k, v in json_format.MessageToDict(paygen_bcid).items():
+          bcid[k] = v
+        self.m.mutable_output(bcid=bcid)
       # Raise paygen failure after publishing any successful payloads to pubsub.
       if paygen_orch_build.status != common_pb2.SUCCESS:
         raise failure('paygen orchestrator failed\n{}'.format(build_url))

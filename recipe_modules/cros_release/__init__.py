@@ -31,6 +31,7 @@ DEPS = [
     'git',
     'git_footers',
     'gobin',
+    'mutable_output',
     'paygen_orchestration',
     'repo',
     'signing',

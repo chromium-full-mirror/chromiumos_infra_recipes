@@ -10,6 +10,7 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/step',
     'mutable_output',
 ]
@@ -20,6 +21,9 @@ def RunSteps(api: RecipeApi):
     with api.step.nest('Inner step'):
       api.mutable_output(foo='bar', other=2)
     api.mutable_output(foo='baz', third='yet another?')
+
+    expected_props = {'foo': 'baz', 'other': 2, 'third': 'yet another?'}
+    api.assertions.assertEqual(expected_props, api.mutable_output.props)
 
 
 def GenTests(api: RecipeTestApi):

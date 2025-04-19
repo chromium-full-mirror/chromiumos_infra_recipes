@@ -27,6 +27,7 @@ sent to this module will be emitted as output properties of the build.
 """
 
 import contextlib
+from typing import Dict
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -52,6 +53,11 @@ class MutableOutputApi(recipe_api.RecipeApi):
       self.m.easy.set_properties_step(step_name='set mutable output properties',
                                       **self._props)
       self._props = None
+
+  @property
+  def props(self) -> Dict:
+    """Get existing props."""
+    return self._props
 
   def __call__(self, **kwargs) -> None:
     self._props.update(kwargs)

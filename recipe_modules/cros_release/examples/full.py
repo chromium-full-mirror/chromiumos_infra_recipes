@@ -71,6 +71,8 @@ def RunSteps(api):
     api.cros_release.check_buildspec()
 
     api.cros_release.set_output_properties()
+    if 'bcid_fail' in api.properties and api.properties['bcid_fail']:
+      api.mutable_output(bcid={'existing': ['failed_artifact']})
     api.cros_release.run_payload_generation(use_split_paygen=True)
 
 
@@ -273,6 +275,50 @@ def GenTests(api):
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'request', ['"builder": "paygen-orchestrator-mpa"']),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
+  successful_paygen_orch.output.properties['bcid'] = {
+      'failed_payload_input_prov_verification': ['paygen_artifact']
+  }
+  expected_bcid = {
+      "existing": ["failed_artifact"],
+      "failed_payload_input_prov_verification": ["paygen_artifact"]
+  }
+  yield api.build_menu.test(
+      'bcid-paygen-props',
+      api.properties(
+          bcid_fail=True, **{
+              '$chromeos/cros_version':
+                  CrosVersionProperties(remove_snapshot_from_version=True),
+              '$chromeos/cros_source': {
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
+                  }
+              },
+          }),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'json.output', ['"bucket": "release"']),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(
+          post_process.LogContains,
+          'push images.call chromite.api.ImageService/PushImage', 'request',
+          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'request', ['"use_split_paygen": true']),
+      api.post_check(post_process.DoesNotRun,
+                     'generate payloads.inspect failure'),
+      api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
+                                     bucket='release').build,
+      api.post_check(post_process.PropertyEquals, 'bcid', expected_bcid),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='kukui-release-main',
