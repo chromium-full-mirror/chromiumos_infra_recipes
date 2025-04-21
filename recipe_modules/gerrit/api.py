@@ -314,17 +314,20 @@ class Label(enum.Enum):
   """Describe some valid Gerrit labels. Not necessarily exhaustive."""
 
   # Whether or not the change can skip submit approvals.
-  BOT_COMMIT = 1
+  BOT_COMMIT = enum.auto()
 
   # Whether or not a change has been reviewed.
-  CODE_REVIEW = 2
+  CODE_REVIEW = enum.auto()
 
   # Describes how the change should be tested and/or whether it should
   # be submitted when finished.
-  COMMIT_QUEUE = 3
+  COMMIT_QUEUE = enum.auto()
 
   # Whether or not the CL has been manually tested.
-  VERIFIED = 4
+  VERIFIED = enum.auto()
+
+  # Whether the change is ready for presubmit (Android hosts only).
+  PRESUBMIT_READY = enum.auto()
 
   @property
   def key(self) -> str:
@@ -707,7 +710,7 @@ class GerritApi(RecipeApi):
         change = self.parse_gerrit_change(gerrit_change_url)
         # If there's no project_info (i.e. we're outside of a repo checkout),
         # use the project kwarg as the project name.
-        change.project = project_info.name if project_info else project
+        change.project = project_info.name if project_info else str(project)
         return change
 
   def set_change_labels_remote(self, gerrit_change: GerritChange,

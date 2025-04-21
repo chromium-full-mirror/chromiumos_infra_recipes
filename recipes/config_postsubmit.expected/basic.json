@@ -2179,7 +2179,7 @@
       "ht2",
       "--send-mail"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2202,7 +2202,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2228,60 +2228,67 @@
     "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 2}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/project_public/+/1@@@"
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "[CLEANUP]/chromiumos_workspace/src/project_public",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/project_public|src/[CLEANUP]/chromiumos_workspace/src/project_public|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
-    "infra_step": true,
-    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.git rebase",
+    "cmd": [],
+    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.ensure auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
+    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.git push",
+    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
+    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2316,6 +2323,25 @@
   },
   {
     "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CLEANUP]/android_workspace"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.ensure android workspace path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
@@ -2327,7 +2353,7 @@
       "1",
       "--verbose"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2355,7 +2381,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2376,7 +2402,7 @@
       "checkout",
       "--force"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/.repo/repo",
+    "cwd": "[CLEANUP]/android_workspace/.repo/repo",
     "infra_step": true,
     "name": "Do update_android_config and create CL.repo binary update.git checkout",
     "~followup_annotations": [
@@ -2388,7 +2414,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2408,7 +2434,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2440,7 +2466,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.Find latest successful build for example-snapshot",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,output.properties\"}, \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"example-snapshot\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,output.properties\"}, \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"example-snapshot\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"relevance\", \"value\": \"relevant\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Found artifact gs://chromeos-image-archive/example-snapshot/R123-45678.0.0-123/config_protos.zip from build 123@@@",
@@ -2486,7 +2512,13 @@
       "@@@STEP_LOG_LINE@request@            \"builder\": \"example-snapshot\",@@@",
       "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
-      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"key\": \"relevance\",@@@",
+      "@@@STEP_LOG_LINE@request@              \"value\": \"relevant\"@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
@@ -2720,9 +2752,28 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_configs/example_project"
+    ],
+    "cwd": "[CLEANUP]/android_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.ensure XML path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "move",
       "[CLEANUP]/output_xml_tmp_1/hal_config.xml",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/hal_configs/example_project/hal_config.xml"
+      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_configs/example_project/hal_config.xml"
     ],
     "cwd": "[CLEANUP]/android_workspace",
     "infra_step": true,
@@ -2787,7 +2838,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Automatic config update.\n\n- Generated by https://cr-buildbucket.appspot.com/build/0.\n",
+      "Automatic config update.\n\n- Generated by https://cr-buildbucket.appspot.com/build/0.\n\nFlag: EXEMPT desktop only\n",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example",
@@ -2798,6 +2849,8 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Automatic config update.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@- Generated by https://cr-buildbucket.appspot.com/build/0.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Flag: EXEMPT desktop only@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
@@ -2889,7 +2942,7 @@
       "",
       "--send-mail"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/android_workspace/device/google/desktop/example",
+    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2912,7 +2965,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/android_workspace/device/google/desktop/example",
+    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
