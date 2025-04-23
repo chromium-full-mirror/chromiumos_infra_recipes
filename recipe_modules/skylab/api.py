@@ -335,6 +335,7 @@ class SkylabApi(recipe_api.RecipeApi):
     previous_results = previous_results or {}
     tast_first_class_tests = []
     count_direct_test_retry_tests = 0
+    skylab_tasks = []
 
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
@@ -343,6 +344,9 @@ class SkylabApi(recipe_api.RecipeApi):
 
       # str -> (Request dict)
       reqs = {}
+      # A map of the request display name to the UnitHwTest from which it was
+      # generated.
+      req_tag_to_uht = {}
       suiteReqCount = {}
       with self.m.step.nest('create test requests'):
         for uht in unit_hw_tests:
@@ -405,6 +409,7 @@ class SkylabApi(recipe_api.RecipeApi):
               suiteReqCount[key] += 1
               key += '_{}'.format(suiteReqCount[key])
             reqs[key] = json_format.MessageToDict(request)
+            req_tag_to_uht[key] = uht
 
       # It is possible no reqs were actually added, e.g. if no containers are
       # found. Exit early instead of scheduling a pointless CTP build.
@@ -415,28 +420,29 @@ class SkylabApi(recipe_api.RecipeApi):
 
       bb_tags = self.m.cros_tags.make_schedule_tags(
           self.m.cros_infra_config.gitiles_commit, inherit_buildsets=True)
-      build_urls = []
+      build_ids = []
       for _, batch in enumerate(request_batches):
 
         build = self.schedule_ctp_requests(tagged_requests=batch,
                                            can_outlive_parent=async_suite_run,
                                            bb_tags=bb_tags,
                                            inherit_buildsets=False)
-        build_urls.append(self.m.buildbucket.build_url(build_id=build.id))
+        for req_tag in batch.keys():
+          uht = req_tag_to_uht[req_tag]
+          skylab_tasks.append(
+              SkylabTask(id=build.id,
+                         url=self.m.buildbucket.build_url(build_id=build.id),
+                         test=uht.hw_test, unit=uht.unit))
+        build_ids.append(build.id)
       presentation.properties[
           _TAST_FIRST_CLASS_TESTS_OUTPUT_PROP] = tast_first_class_tests
       presentation.properties[
           'count_direct_test_retry_tests'] = count_direct_test_retry_tests
-      for i, build_url in enumerate(build_urls):
-        presentation.links['suite link {}'.format(i)] = build_url
+      for i, build_id in enumerate(build_ids):
+        presentation.links['suite link {}'.format(
+            i)] = self.m.buildbucket.build_url(build_id=build_id)
 
-      tasks = []
-      for uht in unit_hw_tests:
-        for build_url in build_urls:
-          tasks.append(
-              SkylabTask(id=build.id, url=build_url, test=uht.hw_test,
-                         unit=uht.unit))
-      return tasks
+      return skylab_tasks
 
   def batch_requests(self, requests_dict, batch_size):
     batches = []
