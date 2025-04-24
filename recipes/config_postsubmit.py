@@ -152,7 +152,8 @@ def _update_android_config(api, properties, _project_infos, dry_run):
   1. Find the latest successful build.
   2. Download the config_protos.zip artifact.
   3. Unzip and find all the project config.jsonproto files.
-  4. Use the cros_to_al.py script to convert them to Android XML config files.
+  4. Use the cros_to_android.py script to convert them to Android XML config
+     files.
   5. Return CommitInfos for the modified Android projects.
 
   The setup functions in this builder do not sync the Android source, so this
@@ -249,8 +250,8 @@ def _update_android_config(api, properties, _project_infos, dry_run):
           xsd_bytes,
       )
 
-      cros_to_al_script = (
-          api.context.cwd / "src/config/payload_utils/cros_to_al.py")
+      cros_to_android_script = (
+          api.context.cwd / "src/config/payload_utils/cros_to_android.py")
 
       project_to_xml_path = {}
       for jsonproto_path in jsonproto_files:
@@ -270,9 +271,10 @@ def _update_android_config(api, properties, _project_infos, dry_run):
             f"Process {project_name} from {api.path.basename(jsonproto_path)}"):
           output_xml_path = api.path.mkdtemp("output_xml") / "hal_config.xml"
           api.step(
-              f"Run cros_to_al.py for {project_name}",
+              f"Run generate-hal-xml for {project_name}",
               [
-                  cros_to_al_script,
+                  cros_to_android_script,
+                  "generate-hal-xml",
                   "-o",
                   output_xml_path,
                   "-x",
