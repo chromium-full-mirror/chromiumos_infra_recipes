@@ -273,6 +273,7 @@ def GenTests(api: RecipeTestApi) -> Generator:
                   ref='refs/tags/79.0.3945.20',
                   revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
               ),
+              url='https://chrome-internal.googlesource.com/chromeos/firmware-config/+/2e98837390a338b275e93671514293bba2c150ef',
           ),
           triggers_pb2.Trigger(id='123', noop=triggers_pb2.NoopTrigger(
               data='foo')),
