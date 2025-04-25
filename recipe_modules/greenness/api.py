@@ -157,21 +157,6 @@ class GreennessApi(recipe_api.RecipeApi):
         self._builder_greenness_dict[builder] = GreennessTuple(
             score, builder_score, True, True)
 
-  def update_vmtest_info(self, results: List[build_pb2.Build]) -> None:
-    """Update greenness with VM test information.
-
-    Args:
-      results: Builds of the VM test runs.
-    """
-    for res in results:
-      if 'greenness' in res.output.properties:
-        builder = str(res.input.properties['name']).split('.', maxsplit=1)[0]
-        greenness = int(res.output.properties['greenness'])
-        builder_score = self._get_build_score_for_tests(
-            self._builder_greenness_dict, builder)
-        self._builder_greenness_dict[builder] = GreennessTuple(
-            greenness, builder_score, True, True)
-
   def update_irrelevant_scores(self):
     """Update scores in the greenness dict for irrelevant builds.
 
