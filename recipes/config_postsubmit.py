@@ -20,6 +20,8 @@ import dataclasses
 import re
 
 from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
+
 
 from google.protobuf import json_format
 from PB.go.chromium.org.luci.buildbucket.proto import (
@@ -63,14 +65,36 @@ PROPERTIES = ConfigPostsubmitProperties
 @dataclasses.dataclass(frozen=True)
 class CommitInfo:
   """Represents a commit that should be made as the result of an action."""
-  # Path to the repo to commit to.
-  project_path: str
+  api: recipe_api.RecipeApi
+
+  project_info: ProjectInfo
 
   # Commit message.
   message: str
 
-  # True if using an Android Gerrit host.
-  android_host: bool = False
+  @property
+  def android_host(self) -> bool:
+    """True if the commit is to an Android Gerrit host."""
+    return not self.project_info.remote in ("cros", "cros-internal")
+
+  @property
+  def workspace_path(self) -> recipe_api.Path:
+    """Path to the root of the workspace."""
+    return self.api.src_state.android_workspace_path if self.android_host else self.api.src_state.workspace_path
+
+  @property
+  def gerrit_host_url(self) -> str:
+    """URL of the Gerrit host.
+
+    For example 'https://chromium-review.googlesource.com.'
+    """
+    if self.project_info.remote == "cros":
+      return "https://chromium-review.googlesource.com"
+
+    if self.project_info.remote == "cros-internal":  #pragma: nocover
+      return "https://chrome-internal-review.googlesource.com"
+
+    return "https://googleplex-android-review.googlesource.com"
 
 
 def _replicate_public_config(api, _properties, project_infos, dry_run):
@@ -111,7 +135,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
         api.file.rmtree('remove dest dir', dest_path)
         api.file.copytree('copy public config', public_config_path, dest_path)
 
-  return [CommitInfo(public_repo_path, message)]
+  return [CommitInfo(api, api.repo.project_info(public_repo_path), message)]
 
 
 def _update_device_stability(api, properties, _project_infos, dry_run):
@@ -310,8 +334,17 @@ Flag: EXEMPT desktop only
               xml_path,
               final_xml_path,
           )
+        project_info_test_data = api.repo.test_api.project_infos_test_data([{
+            'project': 'device/google/desktop/example_program',
+            'path': 'device/google/desktop/example_program',
+            'remote': 'goog',
+        }])
         commit_infos.append(
-            CommitInfo(program_path, commit_message, android_host=True))
+            CommitInfo(
+                api,
+                api.repo.project_info(program_path,
+                                      test_data=project_info_test_data),
+                commit_message))
 
   return commit_infos
 
@@ -335,8 +368,12 @@ def _create_cl(
     commit_info: CommitInfo,
     branch_name: str,
     cl_config: ConfigPostsubmitProperties.ActionCLConfig,
-) -> common_pb2.GerritChange:
+) -> None:
   """Creates a CL based on commit_info.
+
+  Hashes the project's directory contents and embeds the hash as a tag in the
+  commit message, then queries Gerrit to detect identical changes. If identical
+  changes are found, skips creating the CL.
 
   Args:
     api: See RunSteps documentation.
@@ -344,23 +381,42 @@ def _create_cl(
       commit.
     branch_name: Name of the branch to create the commit on.
     cl_config: CL parameters & configuration.
-
-    Returns:
-      The newly created change.
   """
-  with api.context(cwd=commit_info.project_path):
+  with api.context(cwd=commit_info.workspace_path /
+                   commit_info.project_info.path):
     if api.git.get_working_dir_diff_files():
-      api.repo.start(branch_name, projects=[commit_info.project_path])
+      api.repo.start(branch_name, projects=[api.context.cwd])
 
-      api.git.add([commit_info.project_path])
+      api.git.add([api.context.cwd])
+
+      with api.step.nest("query for existing changes") as step:
+        project_hash = api.file.compute_hash(
+            f'compute hash of {commit_info.project_info.path}',
+            paths=[api.context.cwd], base_path=api.context.cwd)
+
+        existing_changes = api.gerrit.query_changes(
+            commit_info.gerrit_host_url,
+            query_params=[
+                ('status', 'open'),
+                ('hashtag', f'content-hash-{project_hash}'),
+                ('owner', api.buildbucket.swarming_task_service_account),
+            ],
+        )
+        if existing_changes:
+          step.step_text = (
+              f"Skipping CL creation for {commit_info.project_info.path}: Found existing open CL "
+              f"with the same Content-Hash ({project_hash[:8]}...): "
+              f"{api.gerrit.parse_gerrit_change_url(existing_changes[0])}")
+          return
+
       api.git.commit(commit_info.message)
       change = api.gerrit.create_change(
-          project=commit_info.project_path,
+          project=commit_info.project_info.path,
           reviewers=cl_config.reviewers,
           ccs=cl_config.ccs,
-          hashtags=cl_config.hashtags,
+          hashtags=list(cl_config.hashtags) + [f'content-hash-{project_hash}'],
           topic=cl_config.topic,
-          project_path=commit_info.project_path,
+          project_path=api.context.cwd,
       )
       if cl_config.send_to_cq:
         with api.step.nest('send to CQ'):
@@ -527,6 +583,13 @@ def GenTests(api):
         step_name='Do update_android_config and create CL.Process builder example-snapshot.Find latest successful build for example-snapshot',
     )
 
+  def existing_changes_step_data(api, action, host_url, changes=None):
+    return api.gerrit.set_query_changes_response(
+        f"Do {action.__name__.strip('_')} and create CL.query for existing changes",
+        host_url=host_url,
+        changes=changes or [],
+    )
+
   yield api.test(
       'basic',
       default_properties(),
@@ -534,6 +597,8 @@ def GenTests(api):
       snapshot_build_step_data(api),
       config_dlm_step_data(api),
       api.git.diff_check(True),
+      existing_changes_step_data(api, action=_replicate_public_config, host_url="https://chromium-review.googlesource.com",),
+      existing_changes_step_data(api, action=_update_android_config, host_url="https://googleplex-android-review.googlesource.com",),
       api.post_process(
           post_process.StepCommandContains,
           'Do replicate_public_config and create CL' \
@@ -544,10 +609,41 @@ def GenTests(api):
               '[CLEANUP]/chromiumos_workspace/src/' \
                   'project/galaxy/milkyway/public_sw_build_config',
               '[CLEANUP]/chromiumos_workspace/src/' \
-                  'project_public/galaxy/milkyway/sw_build_config',
+                'project_public/galaxy/milkyway/sw_build_config',
           ],
       ),
       api.post_check(post_process.DoesNotRunRE, r'.*\.abandon CL.*'),
+  )
+
+  yield api.test(
+      'duplicate-android-cl-found',
+      default_properties(),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api),
+      config_dlm_step_data(api),
+      api.git.diff_check(True),
+      existing_changes_step_data(
+          api,
+          action=_replicate_public_config,
+          host_url="https://chromium-review.googlesource.com",
+      ),
+      existing_changes_step_data(
+          api, action=_update_android_config,
+          host_url="https://googleplex-android-review.googlesource.com",
+          changes=[{
+              '_number': 123,
+              'project': 'example_repo',
+          }]),
+      api.post_process(
+          post_process.StepTextContains,
+          'Do update_android_config and create CL.query for existing changes.query https://googleplex-android-review.googlesource.com',
+          ['found 1 matching CL'],
+      ),
+      api.post_check(
+          post_process.DoesNotRunRE,
+          r'Do update_android_config and create CL.create gerrit change for .*\.git_cl upload'
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -574,12 +670,20 @@ def GenTests(api):
   )
 
   yield api.test(
-      'abandon-cl', default_properties(abandon=True),
-      config_repos_step_data(api), snapshot_build_step_data(api),
+      'abandon-cl',
+      default_properties(abandon=True),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api),
       config_dlm_step_data(api),
+      existing_changes_step_data(
+          api,
+          action=_replicate_public_config,
+          host_url="https://chromium-review.googlesource.com",
+      ),
       api.post_check(post_process.MustRunRE,
                      r'Do \w* and create CL.abandon CL 1'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield api.test(
       'update_device_stability-basic',
