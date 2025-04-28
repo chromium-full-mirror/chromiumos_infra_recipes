@@ -2037,6 +2037,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Do replicate_public_config and create CL.create CL",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "status",
@@ -2044,9 +2051,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.git status",
+    "name": "Do replicate_public_config and create CL.create CL.git status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2066,9 +2073,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.repo start",
+    "name": "Do replicate_public_config and create CL.create CL.repo start",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2079,16 +2086,16 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.git add",
+    "name": "Do replicate_public_config and create CL.create CL.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do replicate_public_config and create CL.query for existing changes",
+    "name": "Do replicate_public_config and create CL.create CL.query for existing changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2104,17 +2111,17 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.query for existing changes.compute hash of src/[CLEANUP]/chromiumos_workspace/src/project_public",
+    "name": "Do replicate_public_config and create CL.create CL.query for existing changes.compute hash of src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@Hash calculated: cdb4ee2aea69cc6a83331bbe96dc2caa9a299d21329efb0336fc02a82e1839a8@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do replicate_public_config and create CL.query for existing changes.query https://chromium-review.googlesource.com",
+    "name": "Do replicate_public_config and create CL.create CL.query for existing changes.query https://chromium-review.googlesource.com",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@found 0 matching CLs@@@"
     ]
   },
@@ -2140,9 +2147,9 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.query for existing changes.query https://chromium-review.googlesource.com.gerrit changes",
+    "name": "Do replicate_public_config and create CL.create CL.query for existing changes.query https://chromium-review.googlesource.com.gerrit changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@[]@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -2160,9 +2167,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.write commit message",
+    "name": "Do replicate_public_config and create CL.create CL.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update with publically filtered configs.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
@@ -2179,24 +2186,24 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.git commit",
+    "name": "Do replicate_public_config and create CL.create CL.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do replicate_public_config and create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public",
+    "name": "Do replicate_public_config and create CL.create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do replicate_public_config and create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.check if project src/[CLEANUP]/chromiumos_workspace/src/project_public exists",
+    "name": "Do replicate_public_config and create CL.create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.check if project src/[CLEANUP]/chromiumos_workspace/src/project_public exists",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2215,9 +2222,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.check if project src/[CLEANUP]/chromiumos_workspace/src/project_public exists.repo info",
+    "name": "Do replicate_public_config and create CL.create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.check if project src/[CLEANUP]/chromiumos_workspace/src/project_public exists.repo info",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2240,9 +2247,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.repo forall",
+    "name": "Do replicate_public_config and create CL.create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/project_public|src/src/[CLEANUP]/chromiumos_workspace/src/project_public|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
@@ -2279,9 +2286,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Do replicate_public_config and create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.git_cl upload",
+    "name": "Do replicate_public_config and create CL.create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2302,23 +2309,23 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Do replicate_public_config and create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.git_cl status",
+    "name": "Do replicate_public_config and create CL.create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do replicate_public_config and create CL.create CL.send to CQ",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do replicate_public_config and create CL.send to CQ",
+    "name": "Do replicate_public_config and create CL.create CL.send to CQ.set labels on CL 1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 2}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/[CLEANUP]/chromiumos_workspace/src/project_public/+/1@@@"
@@ -2326,9 +2333,9 @@
   },
   {
     "cmd": [],
-    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.ensure auth token",
+    "name": "Do replicate_public_config and create CL.create CL.send to CQ.set labels on CL 1.ensure auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -2341,9 +2348,9 @@
       "-"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
-    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
+    "name": "Do replicate_public_config and create CL.create CL.send to CQ.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -2359,9 +2366,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.ensure auth token.Write auth token to temp file",
+    "name": "Do replicate_public_config and create CL.create CL.send to CQ.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -2379,9 +2386,9 @@
       "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
-    "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "name": "Do replicate_public_config and create CL.create CL.send to CQ.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -2901,6 +2908,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Do update_android_config and create CL.create CL",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "status",
@@ -2908,9 +2922,9 @@
     ],
     "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.git status",
+    "name": "Do update_android_config and create CL.create CL.git status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2930,9 +2944,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Do update_android_config and create CL.repo start",
+    "name": "Do update_android_config and create CL.create CL.repo start",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2943,16 +2957,16 @@
     ],
     "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.git add",
+    "name": "Do update_android_config and create CL.create CL.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do update_android_config and create CL.query for existing changes",
+    "name": "Do update_android_config and create CL.create CL.query for existing changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2968,17 +2982,17 @@
     ],
     "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.query for existing changes.compute hash of device/google/desktop/example_program",
+    "name": "Do update_android_config and create CL.create CL.query for existing changes.compute hash of device/google/desktop/example_program",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@Hash calculated: cdb4ee2aea69cc6a83331bbe96dc2caa9a299d21329efb0336fc02a82e1839a8@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do update_android_config and create CL.query for existing changes.query https://googleplex-android-review.googlesource.com",
+    "name": "Do update_android_config and create CL.create CL.query for existing changes.query https://googleplex-android-review.googlesource.com",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@found 0 matching CLs@@@"
     ]
   },
@@ -3004,9 +3018,9 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
-    "name": "Do update_android_config and create CL.query for existing changes.query https://googleplex-android-review.googlesource.com.gerrit changes",
+    "name": "Do update_android_config and create CL.create CL.query for existing changes.query https://googleplex-android-review.googlesource.com.gerrit changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@[]@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -3024,9 +3038,9 @@
     ],
     "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.write commit message",
+    "name": "Do update_android_config and create CL.create CL.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Automatic config update.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@- Generated by https://cr-buildbucket.appspot.com/build/0.@@@",
@@ -3044,24 +3058,24 @@
     ],
     "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.git commit",
+    "name": "Do update_android_config and create CL.create CL.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do update_android_config and create CL.create gerrit change for device/google/desktop/example_program",
+    "name": "Do update_android_config and create CL.create CL.create gerrit change for device/google/desktop/example_program",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do update_android_config and create CL.create gerrit change for device/google/desktop/example_program.check if project device/google/desktop/example_program exists",
+    "name": "Do update_android_config and create CL.create CL.create gerrit change for device/google/desktop/example_program.check if project device/google/desktop/example_program exists",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3080,9 +3094,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Do update_android_config and create CL.create gerrit change for device/google/desktop/example_program.check if project device/google/desktop/example_program exists.repo info",
+    "name": "Do update_android_config and create CL.create CL.create gerrit change for device/google/desktop/example_program.check if project device/google/desktop/example_program exists.repo info",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -3105,9 +3119,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Do update_android_config and create CL.create gerrit change for device/google/desktop/example_program.repo forall",
+    "name": "Do update_android_config and create CL.create CL.create gerrit change for device/google/desktop/example_program.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@device/google/desktop/example_program|src/device/google/desktop/example_program|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
@@ -3134,9 +3148,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Do update_android_config and create CL.create gerrit change for device/google/desktop/example_program.git_cl upload",
+    "name": "Do update_android_config and create CL.create CL.create gerrit change for device/google/desktop/example_program.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3157,9 +3171,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Do update_android_config and create CL.create gerrit change for device/google/desktop/example_program.git_cl status",
+    "name": "Do update_android_config and create CL.create CL.create gerrit change for device/google/desktop/example_program.git_cl status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

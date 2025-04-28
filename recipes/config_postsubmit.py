@@ -382,14 +382,15 @@ def _create_cl(
     branch_name: Name of the branch to create the commit on.
     cl_config: CL parameters & configuration.
   """
-  with api.context(cwd=commit_info.workspace_path /
-                   commit_info.project_info.path):
+  with api.context(
+      cwd=commit_info.workspace_path /
+      commit_info.project_info.path), api.step.nest("create CL") as create_step:
     if api.git.get_working_dir_diff_files():
       api.repo.start(branch_name, projects=[api.context.cwd])
 
       api.git.add([api.context.cwd])
 
-      with api.step.nest("query for existing changes") as step:
+      with api.step.nest("query for existing changes") as query_step:
         project_hash = api.file.compute_hash(
             f'compute hash of {commit_info.project_info.path}',
             paths=[api.context.cwd], base_path=api.context.cwd)
@@ -403,13 +404,18 @@ def _create_cl(
             ],
         )
         if existing_changes:
-          step.step_text = (
+          query_step.step_text = (
               f"Skipping CL creation for {commit_info.project_info.path}: Found existing open CL "
               f"with the same Content-Hash ({project_hash[:8]}...): "
               f"{api.gerrit.parse_gerrit_change_url(existing_changes[0])}")
           return
 
       api.git.commit(commit_info.message)
+
+      if cl_config.skip_upload:
+        create_step.step_text = "skip_upload set, no CL created."
+        return
+
       change = api.gerrit.create_change(
           project=commit_info.project_info.path,
           reviewers=cl_config.reviewers,
@@ -500,7 +506,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def default_properties(allowed_projects=None, allowed_programs=None,
-                         abandon: bool = False):
+                         abandon: bool = False, skip_upload: bool = False):
     if allowed_projects is None:
       allowed_projects = [{'repo_name': 'chromeos/project/galaxy/milkyway'}]
 
@@ -509,8 +515,9 @@ def GenTests(api):
 
     aclc = PROPERTIES.ActionCLConfig(
         reviewers=['test1@google.com'],
-        ccs=['test2@google.com', 'test3@google.com'], topic='test topic',
-        hashtags=['ht1', 'ht2'], send_to_cq=True, abandon=abandon)
+        ccs=['test2@google.com',
+             'test3@google.com'], topic='test topic', hashtags=['ht1', 'ht2'],
+        send_to_cq=True, abandon=abandon, skip_upload=skip_upload)
     return api.properties(
         PROPERTIES(
             cl_configs={
@@ -585,7 +592,7 @@ def GenTests(api):
 
   def existing_changes_step_data(api, action, host_url, changes=None):
     return api.gerrit.set_query_changes_response(
-        f"Do {action.__name__.strip('_')} and create CL.query for existing changes",
+        f"Do {action.__name__.strip('_')} and create CL.create CL.query for existing changes",
         host_url=host_url,
         changes=changes or [],
     )
@@ -636,12 +643,12 @@ def GenTests(api):
           }]),
       api.post_process(
           post_process.StepTextContains,
-          'Do update_android_config and create CL.query for existing changes.query https://googleplex-android-review.googlesource.com',
+          'Do update_android_config and create CL.create CL.query for existing changes.query https://googleplex-android-review.googlesource.com',
           ['found 1 matching CL'],
       ),
       api.post_check(
           post_process.DoesNotRunRE,
-          r'Do update_android_config and create CL.create gerrit change for .*\.git_cl upload'
+          r'Do update_android_config and create CL.create CL.create gerrit change for .*\.git_cl upload'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -681,7 +688,7 @@ def GenTests(api):
           host_url="https://chromium-review.googlesource.com",
       ),
       api.post_check(post_process.MustRunRE,
-                     r'Do \w* and create CL.abandon CL 1'),
+                     r'Do \w* and create CL.create CL.abandon CL 1'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -717,5 +724,20 @@ def GenTests(api):
       config_repos_step_data(api),
       snapshot_build_step_data(api, include_artifacts=False),
       config_dlm_step_data(api),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'skip upload',
+      default_properties(skip_upload=True),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api),
+      config_dlm_step_data(api),
+      existing_changes_step_data(
+          api,
+          action=_replicate_public_config,
+          host_url="https://chromium-review.googlesource.com",
+      ),
+      api.post_process(post_process.DoesNotRunRE, r'.*git_cl upload'),
       api.post_process(post_process.DropExpectation),
   )

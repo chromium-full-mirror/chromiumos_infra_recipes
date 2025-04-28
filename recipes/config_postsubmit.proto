@@ -49,6 +49,10 @@ message ConfigPostsubmitProperties {
 
     // Should the CLs be abandoned immediately?
     bool abandon = 6;
+
+    // Entirely skip the CL upload. This should be used in cases where the
+    // staging service account doesn't have permission to create CLs.
+    bool skip_upload = 7;
   }
 
   message AllowedRepo {
