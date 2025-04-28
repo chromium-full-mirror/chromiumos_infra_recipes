@@ -72,7 +72,7 @@ PROPERTIES = BuildFirmwareProperties
 # isn't set up for that target yet.
 SKIP_LEGACY_SIGNING_RE = re.compile(
     r'^(host_emulation|he|opentitan|nt|nuvotitan_cw310_a1)-')
-INCLUDE_SIGNING_RE = re.compile(r'nt-ti50')
+INCLUDE_SIGNING_RE = re.compile(r'nt-(ti50|system_test_auto)')
 GENERATE_PAOS_RE = re.compile(r'nt-ti50')
 
 
