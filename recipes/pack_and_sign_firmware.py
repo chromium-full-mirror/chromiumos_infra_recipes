@@ -95,6 +95,13 @@ def create_or_update_symlink(api: RecipeApi, directory: Path, file: str,
     api.step('create symlink', ['ln', '-s', file, symlink])
 
 
+def create_manifest(api: RecipeApi, directory: Path, shellball: str):
+  with api.context(cwd=directory):
+    manifest_file = api.raw_io.output_text(leak_to=directory /
+                                           f'{shellball}.manifest.json')
+    api.step('create manifest', [f'./{shellball}', '--manifest'],
+             stdout=manifest_file)
+
 def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
                               shellball_path: Path, target: str, version: str,
                               keyset_is_mp: bool,
@@ -116,6 +123,8 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
     create_or_update_symlink(api, checkout / 'firmware/dev-signed',
                              f'chromeos-firmwareupdate_{version}',
                              'chromeos-firmwareupdate_LATEST')
+    create_manifest(api, checkout / 'firmware/dev-signed',
+                    f'chromeos-firmwareupdate_{version}')
     # Copy the signed shellball into the firmware prebuild repo.
     directory = 'mp-signed' if keyset_is_mp else 'premp-signed'
     api.file.ensure_directory(f'make sure {directory} exists',
@@ -127,6 +136,9 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
     create_or_update_symlink(api, checkout / f'firmware/{directory}',
                              f'chromeos-firmwareupdate_{version}',
                              'chromeos-firmwareupdate_LATEST')
+
+    create_manifest(api, checkout / f'firmware/{directory}',
+                    f'chromeos-firmwareupdate_{version}')
 
     # Check to make sure there was actually a change.
     diff_lines = api.git.get_working_dir_diff_files()
