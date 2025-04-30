@@ -4331,7 +4331,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/brya.EC.15236.0.0.tar.bz2",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/Brya_EC.15236.0.0.tbz2",
       "-C",
       "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/brya",
       "ec.bin"
@@ -4366,7 +4366,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/poppy.15236.0.0.tar.bz2",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/Poppy.15236.0.0.tbz2",
       "-C",
       "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/build/poppy/firmware",
       "image.bin"
@@ -4401,7 +4401,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/reef.EC.15236.0.0.tar.bz2",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/Reef_EC.15236.0.0.tbz2",
       "-C",
       "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/build/reef/firmware",
       "ec.bin",
@@ -4439,7 +4439,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/brya.15236.0.0.tar.bz2",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/Brya.15236.0.0.tbz2",
       "-C",
       "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware",
       "image-brya.bin"

@@ -4436,7 +4436,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/brya.EC.15460.22.0.tar.bz2",
+      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/Brya_EC.15460.22.0.tbz2",
       "-C",
       "[CACHE]/cros_chroot/chroot/build/target/firmware/brya",
       "ec.bin"
@@ -4471,7 +4471,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/poppy.15460.22.0.tar.bz2",
+      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/Poppy.15460.22.0.tbz2",
       "-C",
       "[CACHE]/cros_chroot/chroot/build/target/firmware/build/poppy/firmware",
       "image.bin"
@@ -4506,7 +4506,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/reef.EC.15460.22.0.tar.bz2",
+      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/Reef_EC.15460.22.0.tbz2",
       "-C",
       "[CACHE]/cros_chroot/chroot/build/target/firmware/build/reef/firmware",
       "ec.bin",
@@ -4544,7 +4544,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/brya.15460.22.0.tar.bz2",
+      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/Brya.15460.22.0.tbz2",
       "-C",
       "[CACHE]/cros_chroot/chroot/build/target/firmware",
       "image-brya.bin"
