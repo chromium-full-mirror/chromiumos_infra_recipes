@@ -468,6 +468,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           bucket=bucket,
           properties=paygen_properties,
           can_outlive_parent=False,
+          as_shadow_if_parent_is_led=True,
           tags=self.m.buildbucket.tags(
               parent_buildbucket_id=str(self.m.buildbucket.build.id)),
       )
