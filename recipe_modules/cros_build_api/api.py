@@ -164,6 +164,10 @@ class ObservabilityService(Stub):
   """Stub for ObservabilityService."""
 
 
+class QualbotService(Stub):
+  """Stub for QualbotService."""
+
+
 class ImageService(Stub):
   """Stub for ImageService."""
 

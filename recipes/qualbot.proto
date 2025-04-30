@@ -1,0 +1,11 @@
+// Copyright 2025 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.qualbot;
+
+import "chromite/api/qualbot.proto";
+
+message QualbotProperties { chromite.api.RunQualbotRequest request = 1; };

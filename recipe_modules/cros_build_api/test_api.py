@@ -661,6 +661,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def qualbot_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
+    """Generate responses for QualbotService."""
+    responses = {}
+    responses['RunQualbot'] = jsonify(failure_reason='FAILURE_UNKNOWN')
+    return responses
+
+  @property
   def relevancy_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for RelevancyService."""
     responses = {}
@@ -892,6 +899,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'PackageService': self.package_service_responses,
         'PayloadService': self.payload_service_responses,
         'PortageExplorerService': self.portage_explorer_service_responses,
+        'QualbotService': self.qualbot_service_responses,
         'RelevancyService': self.relevancy_service_responses,
         'SdkService': self.sdk_service_responses,
         'SdkSubtoolsService': self.sdk_subtools_service_responses,
