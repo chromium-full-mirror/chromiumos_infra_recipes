@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.cop;
 
-import "chromiumos/common.proto";
-
 message CopProperties {
   // Google Cloud project where the builds will be launched.
   string project_name = 1;

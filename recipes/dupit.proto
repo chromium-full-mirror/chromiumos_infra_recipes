@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.dupit;
 
-import "chromiumos/builder_config.proto";
-
 message DupitProperties {
   // List of mirror sources.
   repeated Mirror mirrors = 1;

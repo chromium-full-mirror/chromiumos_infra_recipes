@@ -6,6 +6,4 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.sysroot_archive.examples;
 
-import "chromiumos/common.proto";
-
 message ExtractSysrootArchiveTestProperties { string builder_name = 1; }

@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.pupr_local_uprev;
 
-import "chromiumos/common.proto";
-
 // SdkUprevSpec contains information for SDK uprevs.
 message SdkUprevSpec {
   // sdk_version is the new value for SDK_LATEST_VERSION in the

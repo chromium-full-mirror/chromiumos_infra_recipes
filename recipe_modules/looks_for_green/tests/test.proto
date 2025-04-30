@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.looks_for_green.tests;
 
-import "go.chromium.org/luci/buildbucket/proto/common.proto";
-
 message CalcApproxSnapAgeHoursProperties {
   int32 expected_approx_snap_age_hours = 1;
   string test_start_str = 2;

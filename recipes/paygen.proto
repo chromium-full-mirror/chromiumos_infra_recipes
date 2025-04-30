@@ -6,10 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.paygen;
 
-import "recipes/chromeos/paygen_orchestrator.proto";
-
 import "chromite/api/payload.proto";
-import "chromiumos/common.proto";
 
 message PaygenProperties {
 

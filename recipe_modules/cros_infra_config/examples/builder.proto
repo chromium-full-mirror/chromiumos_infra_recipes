@@ -8,7 +8,6 @@ package recipe_modules.chromeos.cros_infra_config.examples;
 
 import "chromiumos/common.proto";
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
-import "google/protobuf/wrappers.proto";
 
 message BuilderProperties {
   // The build_target for this builder.

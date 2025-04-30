@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.sysroot_archive.tests;
 
-import "chromiumos/common.proto";
-
 message FindBestArchiveTestProperties {
   // Board name for sysroot archive.
   string board_name = 1;

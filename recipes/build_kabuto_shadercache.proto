@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.build_kabuto_shadercache;
 
-import "chromiumos/common.proto";
-
 message BuildKabutoShadercacheProperties {
   // Bucket and path to the payload to build shaders with.
   // Required

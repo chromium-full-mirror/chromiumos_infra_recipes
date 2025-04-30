@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.kernel_checkconfig;
 
-import "chromiumos/common.proto";
-
 message KernelCheckconfigProperties {
   // Path to the kernel source to test, relative to the checkout root. e.g.,
   // "src/third_party/kernel/v5.15". Required.
