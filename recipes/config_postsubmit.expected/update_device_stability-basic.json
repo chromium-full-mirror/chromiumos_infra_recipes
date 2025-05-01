@@ -2513,13 +2513,27 @@
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/cros_to_android.py",
       "generate-hal-xml",
       "-o",
-      "[CLEANUP]/output_xml_tmp_1/hal_config.xml",
+      "[CLEANUP]/output_hal_xml_tmp_1/hal_config.xml",
       "-x",
       "[CLEANUP]/xsd_schema_tmp_1/hal_config.xsd",
       "[CLEANUP]/unzip_example-snapshot_tmp_1/[CLEANUP]/unzip_example-snapshot_tmp_1/example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "Do update_android_config and create CL.Process builder example-snapshot.Process example_project from config.jsonproto.Run generate-hal-xml for example_project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/cros_to_android.py",
+      "generate-feature-xml",
+      "-o",
+      "[CLEANUP]/output_feature_xml_tmp_1",
+      "[CLEANUP]/unzip_example-snapshot_tmp_1/[CLEANUP]/unzip_example-snapshot_tmp_1/example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.Process example_project from config.jsonproto.Run generate-feature-xml for example_project",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2643,7 +2657,7 @@
     ],
     "cwd": "[CLEANUP]/android_workspace",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.Process builder example-snapshot.ensure XML path",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.ensure HAL XML path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2656,12 +2670,30 @@
       "--json-output",
       "/path/to/tmp/json",
       "move",
-      "[CLEANUP]/output_xml_tmp_1/hal_config.xml",
+      "[CLEANUP]/output_hal_xml_tmp_1/hal_config.xml",
       "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_configs/example_project/hal_config.xml"
     ],
     "cwd": "[CLEANUP]/android_workspace",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.Process builder example-snapshot.move XML for example_project",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.move HAL XML for example_project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "[CLEANUP]/output_feature_xml_tmp_1",
+      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/features/example_project"
+    ],
+    "cwd": "[CLEANUP]/android_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.copy feature XMLs for example_project",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -277,7 +277,8 @@ def _update_android_config(api, properties, _project_infos, dry_run):
       cros_to_android_script = (
           api.context.cwd / "src/config/payload_utils/cros_to_android.py")
 
-      project_to_xml_path = {}
+      project_to_hal_xml_path = {}
+      project_to_feature_xml_output_dir = {}
       for jsonproto_path in jsonproto_files:
         # config.jsonproto paths end with patterns like
         # chromeos-config-bsp-private-0.0.1/<program>/generated/config.jsonproto.
@@ -293,7 +294,8 @@ def _update_android_config(api, properties, _project_infos, dry_run):
 
         with api.step.nest(
             f"Process {project_name} from {api.path.basename(jsonproto_path)}"):
-          output_xml_path = api.path.mkdtemp("output_xml") / "hal_config.xml"
+          output_xml_path = api.path.mkdtemp(
+              "output_hal_xml") / "hal_config.xml"
           api.step(
               f"Run generate-hal-xml for {project_name}",
               [
@@ -307,7 +309,22 @@ def _update_android_config(api, properties, _project_infos, dry_run):
               ],
           )
 
-          project_to_xml_path[project_name] = output_xml_path
+          project_to_hal_xml_path[project_name] = output_xml_path
+
+          feature_xml_output_dir = api.path.mkdtemp("output_feature_xml")
+          api.step(
+              f"Run generate-feature-xml for {project_name}",
+              [
+                  cros_to_android_script,
+                  "generate-feature-xml",
+                  "-o",
+                  feature_xml_output_dir,
+                  jsonproto_path,
+              ],
+          )
+          project_to_feature_xml_output_dir[project_name] = (
+              feature_xml_output_dir)
+
 
       commit_message = f'''Automatic config update.
 
@@ -326,14 +343,22 @@ Flag: EXEMPT desktop only
                       current_branch=True)
 
         program_path = api.context.cwd / f'device/google/desktop/{program_name}'
-        for project, xml_path in project_to_xml_path.items():
+        for project, xml_path in project_to_hal_xml_path.items():
           final_xml_path = program_path / f'configs/hal_configs/{project}/hal_config.xml'
-          api.file.ensure_directory("ensure XML path", final_xml_path.parent)
+          api.file.ensure_directory("ensure HAL XML path",
+                                    final_xml_path.parent)
           api.file.move(
-              f'move XML for {project}',
+              f'move HAL XML for {project}',
               xml_path,
               final_xml_path,
           )
+
+        for project, feature_xml_output_dir in project_to_feature_xml_output_dir.items(
+        ):
+          api.file.copytree(f"copy feature XMLs for {project}",
+                            feature_xml_output_dir,
+                            program_path / 'configs/features' / project)
+
         project_info_test_data = api.repo.test_api.project_infos_test_data([{
             'project': 'device/google/desktop/example_program',
             'path': 'device/google/desktop/example_program',
