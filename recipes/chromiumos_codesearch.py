@@ -74,6 +74,8 @@ def RunSteps(api, properties):
     api.build_menu.install_packages(config=config, packages=env_info.packages,
                                     timeout_sec=60 * 60 * 12)
 
+    api.build_menu.upload_artifacts(config, name='upload ebuild logs')
+
     # Start the process of creating a kzip.
     build_dir = api.cros_source.workspace_path / 'src' / 'out' / build_target
     with api.context(cwd=api.cros_source.workspace_path):
