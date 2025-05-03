@@ -236,7 +236,7 @@
       }
     },
     "name": "trigger gardener-data-collector",
-    "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"gardener-data-collector\", \"project\": \"chromeos\"}], \"trigger\": {\"buildbucket\": {}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"chrome-uprev-orchestrator/1\"}}], \"timestamp\": 1337000001500000}",
+    "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"gardener-data-collector\", \"project\": \"chromeos\"}], \"trigger\": {\"buildbucket\": {}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"chrome-uprev-orchestrator/1\", \"url\": \"https://cr-buildbucket.appspot.com/build/1231231231\"}}], \"timestamp\": 1337000001500000}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@input@{@@@",
       "@@@STEP_LOG_LINE@input@    \"batches\": [@@@",
@@ -250,7 +250,8 @@
       "@@@STEP_LOG_LINE@input@            \"trigger\": {@@@",
       "@@@STEP_LOG_LINE@input@                \"buildbucket\": {},@@@",
       "@@@STEP_LOG_LINE@input@                \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\",@@@",
-      "@@@STEP_LOG_LINE@input@                \"title\": \"chrome-uprev-orchestrator/1\"@@@",
+      "@@@STEP_LOG_LINE@input@                \"title\": \"chrome-uprev-orchestrator/1\",@@@",
+      "@@@STEP_LOG_LINE@input@                \"url\": \"https://cr-buildbucket.appspot.com/build/1231231231\"@@@",
       "@@@STEP_LOG_LINE@input@            }@@@",
       "@@@STEP_LOG_LINE@input@        }@@@",
       "@@@STEP_LOG_LINE@input@    ],@@@",

@@ -107,7 +107,7 @@
     ],
     "infra_step": true,
     "name": "luci-scheduler.EmitTriggers",
-    "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"amd64-generic-codesearch\", \"project\": \"chromeos\"}, {\"job\": \"arm64-generic-codesearch\", \"project\": \"chromeos\"}], \"trigger\": {\"gitiles\": {\"properties\": {\"codesearch_mirror_revision\": \"d3adb33f\", \"codesearch_mirror_revision_timestamp\": \"\"}, \"ref\": \"refs/heads/snapshot\", \"repo\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"revision\": \"\", \"tags\": [\"user_agent:recipe\"]}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"/0\"}}], \"timestamp\": 1337000001500000}",
+    "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"amd64-generic-codesearch\", \"project\": \"chromeos\"}, {\"job\": \"arm64-generic-codesearch\", \"project\": \"chromeos\"}], \"trigger\": {\"gitiles\": {\"properties\": {\"codesearch_mirror_revision\": \"d3adb33f\", \"codesearch_mirror_revision_timestamp\": \"\"}, \"ref\": \"refs/heads/snapshot\", \"repo\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"revision\": \"\", \"tags\": [\"user_agent:recipe\"]}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"/0\", \"url\": \"https://cr-buildbucket.appspot.com/build/0\"}}], \"timestamp\": 1337000001500000}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@input@{@@@",
       "@@@STEP_LOG_LINE@input@    \"batches\": [@@@",
@@ -136,7 +136,8 @@
       "@@@STEP_LOG_LINE@input@                    ]@@@",
       "@@@STEP_LOG_LINE@input@                },@@@",
       "@@@STEP_LOG_LINE@input@                \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\",@@@",
-      "@@@STEP_LOG_LINE@input@                \"title\": \"/0\"@@@",
+      "@@@STEP_LOG_LINE@input@                \"title\": \"/0\",@@@",
+      "@@@STEP_LOG_LINE@input@                \"url\": \"https://cr-buildbucket.appspot.com/build/0\"@@@",
       "@@@STEP_LOG_LINE@input@            }@@@",
       "@@@STEP_LOG_LINE@input@        }@@@",
       "@@@STEP_LOG_LINE@input@    ],@@@",
