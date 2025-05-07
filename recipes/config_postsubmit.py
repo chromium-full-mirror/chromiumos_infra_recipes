@@ -357,7 +357,8 @@ Flag: EXEMPT desktop only
         ):
           api.file.copytree(f"copy feature XMLs for {project}",
                             feature_xml_output_dir,
-                            program_path / 'configs/features' / project)
+                            program_path / 'configs/features' / project,
+                            allow_override=True)
 
         project_info_test_data = api.repo.test_api.project_infos_test_data([{
             'project': 'device/google/desktop/example_program',

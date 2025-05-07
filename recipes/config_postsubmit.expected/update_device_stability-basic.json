@@ -2688,6 +2688,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
+      "--allow-override",
       "[CLEANUP]/output_feature_xml_tmp_1",
       "[CLEANUP]/android_workspace/device/google/desktop/example/configs/features/example_project"
     ],
