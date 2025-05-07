@@ -14,6 +14,7 @@ from PB.chromiumos import build_report as build_report_pb2
 from PB.chromiumos import common as common_pb2
 from PB.chromiumos import signing as signing_pb2
 from PB.chromite.api.image import SignImageResponse
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
@@ -30,6 +31,7 @@ DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',
+    'recipe_engine/cv',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
@@ -147,6 +149,12 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
           summary_markdown='No firmware images changed.',
           status=bb_common_pb2.SUCCESS,
       )
+    # Skip upload in CQ.
+    if api.cv.active:
+      api.step.empty('Skipping CL upload in CQ')
+      return result_pb2.RawResult(
+          status=bb_common_pb2.SUCCESS,
+      )
     # Create a cl updating the file.
     api.git.add_all()
     bbid = api.buildbucket.build_url()
@@ -187,6 +195,23 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
         api.git.clone(
             'https://chrome-internal.googlesource.com/chromeos/firmware-config',
             target_path=fw_config_path, depth=1)
+
+      # In staging, allow cherry picking firmware-config CLs for testing.
+      if api.cros_infra_config.is_staging:
+        with api.step.nest('apply gerrit changes') as pres, api.context(
+            cwd=fw_config_path):
+          relevant_changes = [
+              x for x in api.buildbucket.build.input.gerrit_changes
+              if x.project == 'chromeos/firmware-config'
+          ]
+          if relevant_changes:
+            patch_sets = api.gerrit.fetch_patch_sets(relevant_changes)
+            for patch_set in patch_sets:
+              commit_id = api.git.fetch_ref(patch_set.git_fetch_url,
+                                            patch_set.git_fetch_ref)
+              api.git.cherry_pick(commit_id)
+          else:
+            pres.step_text = 'No chromeos/firmware-config changes to apply.'
 
       with api.step.nest('pack firmware') as pres:
         # Ensure cipd packages are present.
@@ -481,4 +506,60 @@ def GenTests(api: RecipeTestApi):
       build_target='kukui',
       bucket='staging',
       builder='firmware-packager-android-kukui-main',
+  )
+
+  test_gerrit_changes = [
+      GerritChange(host='chromium-review.googlesource.com', change=1,
+                   project='chromeos/firmware-config', patchset=1),
+      GerritChange(host='chromium-review.googlesource.com', change=2,
+                   project='some-other-project', patchset=1),
+  ]
+  fetch_changes_response = {
+      101: {
+          'change_id': '101',
+          'revision_info': {
+              'commit': {
+                  'message': 'test commit',
+              },
+          },
+      }
+  }
+  yield api.build_menu.test(
+      'cq',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_CANARY],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware',
+                                        use_dev_keys=True)),
+          }),
+      api.gerrit.set_gerrit_fetch_changes_response('apply gerrit changes',
+                                                   test_gerrit_changes,
+                                                   fetch_changes_response),
+      # Only cherry pick the firmware-config change.
+      api.post_check(post_process.MustRun,
+                     'apply gerrit changes.git cherry-pick'),
+      api.post_check(post_process.DoesNotRun,
+                     'apply gerrit changes.git cherry-pick (2)'),
+      api.step_data(
+          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
+          retcode=1),
+      api.post_check(
+          post_process.LogContains,
+          'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.'
+          'ImageService/SignImage', 'request',
+          ['\"keyset\": \"DevPreMPKeys\"']),
+      # Skip CL upload.
+      api.post_check(post_process.DoesNotRun, 'git commit'),
+      api.post_check(post_process.MustRun, 'Skipping CL upload in CQ'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      bucket='staging',
+      builder='firmware-packager-android-kukui-main',
+      cq=True,
+      gerrit_changes=test_gerrit_changes,
   )
