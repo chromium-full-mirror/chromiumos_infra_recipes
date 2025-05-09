@@ -115,7 +115,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
           self._public_build.id, step_name='collect', timeout=60 * 60 * 13)
 
   def _success_build_count(self, builds):
-    return sum([b.status == common_pb2.SUCCESS for b in builds])
+    return sum(b.status == common_pb2.SUCCESS for b in builds)
 
   def _success_percent(self, builds):
     successful_builds = self._success_build_count(builds)
@@ -183,6 +183,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         self.m.buildbucket.build.id,
         # Showing debug messages to investigate b/383617613.
         '--debug',
+        '--force-overriding-user',
+        self.m.buildbucket.swarming_task_service_account,
     ]
     if branch:
       cmd.extend(['--branch', 'refs/branch-heads/{}'.format(branch)])

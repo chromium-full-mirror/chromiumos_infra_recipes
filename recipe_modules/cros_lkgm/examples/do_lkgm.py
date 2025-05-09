@@ -161,7 +161,9 @@ def GenTests(api):
       api.post_check(
           post_process.StepCommandContains, 'call chrome_chromeos_lkgm', [
               '--lkgm', '1234.56.0', '--buildbucket-id', '8945511751514863184',
-              '--debug', '--branch', 'refs/branch-heads/5615'
+              '--debug', '--force-overriding-user',
+              'test-account@test-project.iam.gserviceaccount.com', '--branch',
+              'refs/branch-heads/5615'
           ]), api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),
@@ -204,11 +206,12 @@ def GenTests(api):
                      ['70.00%', '50%']),
       api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
                      'LKGM candidate'),
-      api.post_check(post_process.StepCommandContains,
-                     'call chrome_chromeos_lkgm', [
-                         '--lkgm', '1234.56.0', '--buildbucket-id',
-                         '8945511751514863184', '--debug', '--dryrun'
-                     ]), api.post_process(post_process.DropExpectation),
+      api.post_check(
+          post_process.StepCommandContains, 'call chrome_chromeos_lkgm', [
+              '--lkgm', '1234.56.0', '--buildbucket-id', '8945511751514863184',
+              '--debug', '--force-overriding-user',
+              'test-account@test-project.iam.gserviceaccount.com', '--dryrun'
+          ]), api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID))
 
