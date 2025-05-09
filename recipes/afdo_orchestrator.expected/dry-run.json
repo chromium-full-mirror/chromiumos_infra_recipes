@@ -4751,7 +4751,8 @@
       "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"backend\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"config\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"priority\": 30@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"priority\": 30,@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"service_account\": \"test-account@test-project.iam.gserviceaccount.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
       "@@@STEP_LOG_LINE@json.output@            \"task\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"details\": {@@@",
@@ -5210,7 +5211,8 @@
       "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"backend\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"config\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                  \"priority\": 30@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"priority\": 30,@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"service_account\": \"test-account@test-project.iam.gserviceaccount.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@                },@@@",
       "@@@STEP_LOG_LINE@json.output@                \"task\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                  \"details\": {@@@",
@@ -5315,7 +5317,7 @@
     "name": "clean up orchestrator.set child_build_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@child_build_info@[{\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"benchmark-afdo-process-toolchain\", \"project\": \"chromeos\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"id\": \"8945511751514863184\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8945511751514863184\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"benchmark-afdo-process\"}}, \"build_target\": {\"name\": \"benchmark-afdo-process\"}}}, \"status\": \"SUCCESS\", \"tested_in_this_run\": false}]@@@"
+      "@@@SET_BUILD_PROPERTY@child_build_info@[{\"builder\": {\"bucket\": \"toolchain\", \"builder\": \"benchmark-afdo-process-toolchain\", \"project\": \"chromeos\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"id\": \"8945511751514863184\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0, \"service_account\": \"test-account@test-project.iam.gserviceaccount.com\"}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8945511751514863184\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"benchmark-afdo-process\"}}, \"build_target\": {\"name\": \"benchmark-afdo-process\"}}}, \"status\": \"SUCCESS\", \"tested_in_this_run\": false}]@@@"
     ]
   },
   {

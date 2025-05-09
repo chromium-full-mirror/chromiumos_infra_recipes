@@ -198,6 +198,9 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     if output_gitiles_commit:
       msg.output.gitiles_commit.CopyFrom(output_gitiles_commit)
 
+    self.m.buildbucket.update_backend_service_account(
+        msg, 'test-account@test-project.iam.gserviceaccount.com')
+
     ret = self.m.buildbucket.build(msg)
     if input_dict:
       ret += self.m.properties(**input_dict)
