@@ -455,20 +455,14 @@ class FirmwareBuilder():
         # Regular expression to check if required AP Image file is present
         res = ap_regex.search(str(file))
         if res and res.group(1):
-          # To ensure the correct file name, the first letter of the
-          # board_name must be capitalized.
-          output_board_name = res.group(1).title()
-          output_name = f'{output_board_name}.{build_version}.tbz2'
+          output_name = f'{res.group(1)}.{build_version}.tar.bz2'
 
         # For older pre-unibuild boards, the artifact structure is different.
         # we need to look for image.bin under build/poppy/firmware.
         # We can grab the name of directory since the format is fixed.
         if relative_file_path.name == 'image.bin':
           board_name = relative_file_path.parts[-3]
-          # To ensure the correct file name, the first letter of the
-          # board_name must be capitalized.
-          output_board_name = board_name.title()
-          output_name = f'{output_board_name}.{build_version}.tbz2'
+          output_name = f'{board_name}.{build_version}.tar.bz2'
 
         if relative_file_path.name == 'ec.bin':
           # Compressed file must follow the naming convention
@@ -483,10 +477,7 @@ class FirmwareBuilder():
           if board_name == 'firmware':
             board_name = relative_file_path.parts[-3]
 
-          # To ensure the correct file name, the first letter of the
-          # board_name must be capitalized.
-          output_board_name = board_name.title()
-          output_name = f'{output_board_name}_EC.{build_version}.tbz2'
+          output_name = f'{board_name}.EC.{build_version}.tar.bz2'
 
         # In case File is not AP or EC firmware, skip the compression
         # and go to next file.
