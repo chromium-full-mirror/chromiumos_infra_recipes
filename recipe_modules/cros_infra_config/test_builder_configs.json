@@ -4586,6 +4586,13 @@
           "ref": "refs/heads/main"
         }
       }
+    },
+    {
+      "id": {
+        "bucket": "staging",
+        "name": "fwpackager-cq",
+        "type": "CQ"
+      }
     }
   ]
 }

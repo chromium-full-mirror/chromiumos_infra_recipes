@@ -28,6 +28,7 @@ DEPS = [
     'easy',
     'mutable_output',
     'signing_utils',
+    'src_state',
 ]
 
 

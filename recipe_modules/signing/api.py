@@ -301,10 +301,21 @@ class SigningApi(recipe_api.RecipeApi):
     if self._signing_config:
       return self._signing_config
     with self.m.step.nest('fetch signing config') as pres:
+      branch = None
+      branch_log = ''
       try:
         branch = self.m.cros_infra_config.config.orchestrator.gitiles_commit.ref
       except AttributeError as e:
-        raise StepFailure('could not get branch from builder config') from e
+        branch_log = f'Could not get branch from orchestrator.gitiles_commit: {e}. '
+      if not branch:
+        pres.logs[
+            'branch'] = branch_log + 'Falling back to src_state.gitiles_commit'
+        branch = self.m.src_state.gitiles_commit.ref
+        branch = branch[len('refs/heads/'):] if branch.startswith(
+            'refs/heads/') else branch
+        branch = 'main' if branch in ['snapshot', 'staging-snapshot'
+                                     ] else branch
+
       signing_config_textproto = self.m.gitiles.download_file(
           CONFIG_INTERNAL_REPO_URL, SIGNING_CONFIG_FILEPATH, branch=branch,
           step_test_data=self.m.signing.test_api.get_config_data)

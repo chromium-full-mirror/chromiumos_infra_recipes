@@ -300,3 +300,42 @@ def GenTests(api: RecipeTestApi):
                   "gs://chromeos-releases/canary-channel/kukui/1234.56.0/"
           }), api.post_process(post_process.DropExpectation),
       build_target='kukui', builder='kukui-release-main', status='FAILURE')
+
+  yield api.build_menu.test(
+      'cq',
+      api.properties(
+          **{
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(
+                          local_signing=True,
+                          gs_upload_bucket='chromeos-throw-away-bucket'))
+          }),
+      api.cros_build_api.set_api_return('sign artifacts.call BAPI',
+                                        'ImageService/SignImage',
+                                        MessageToJson(sample_response)),
+      api.step_data(
+          'sign artifacts.call BAPI.read cloudkms logs.list [CLEANUP]/signing-dir_tmp_2/cloudkms-logs',
+          api.file.listdir([
+              '[CLEANUP]/signing-dir_tmp_2/cloudkms-logs/log1',
+              '[CLEANUP]/signing-dir_tmp_2/cloudkms-logs/log2',
+          ])),
+      api.step_data(
+          'sign artifacts.call BAPI.read cloudkms logs.read log1',
+          api.file.read_text('this is log 1'),
+      ),
+      api.step_data(
+          'sign artifacts.call BAPI.read cloudkms logs.read log2',
+          api.file.read_text('this is log 2'),
+      ),
+      api.post_check(post_process.LogContains, 'fetch signing config', 'branch',
+                     ['Falling back to src_state.gitiles_commit']),
+      api.post_check(
+          post_process.MustRun,
+          'sign artifacts.call BAPI.call chromite.api.ImageService/SignImage'),
+      api.post_process(
+          post_process.PropertyEquals, 'signed_upload_paths', {
+              "canary-channel":
+                  "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/"
+          }), api.post_process(post_process.DropExpectation),
+      build_target='kukui', builder='fwpackager-cq', status='FAILURE')

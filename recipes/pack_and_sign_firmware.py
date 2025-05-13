@@ -109,6 +109,12 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
                               keyset_is_mp: bool,
                               abandon: bool = True) -> result_pb2.RawResult:
   """Uploads the firmware prebuilts to the android repo."""
+  # Skip upload in CQ.
+  if api.cv.active:
+    api.step.empty('Skipping CL upload in CQ')
+    return result_pb2.RawResult(
+        status=bb_common_pb2.SUCCESS,
+    )
   # Check out the android codebase.
   checkout = api.path.mkdtemp()
   with api.context(cwd=checkout):
@@ -147,12 +153,6 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
     if not diff_lines:
       return result_pb2.RawResult(
           summary_markdown='No firmware images changed.',
-          status=bb_common_pb2.SUCCESS,
-      )
-    # Skip upload in CQ.
-    if api.cv.active:
-      api.step.empty('Skipping CL upload in CQ')
-      return result_pb2.RawResult(
           status=bb_common_pb2.SUCCESS,
       )
     # Create a cl updating the file.
