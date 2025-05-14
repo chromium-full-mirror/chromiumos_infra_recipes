@@ -8,7 +8,7 @@
 # pylint: disable=too-few-public-methods
 #
 # [VPYTHON:BEGIN]
-# python_version: "3.8"
+# python_version: "3.11"
 # wheel: <
 #   name: "infra/python/wheels/requests-py2_py3"
 #   version: "version:2.21.0"
@@ -35,7 +35,7 @@
 # >
 # wheel: <
 #   name: "infra/python/wheels/cryptography/${vpython_platform}"
-#   version: "version:2.9.2"
+#   version: "version:3.3.2"
 # >
 # wheel: <
 #   name: "infra/python/wheels/enum34-py3"
