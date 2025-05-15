@@ -224,6 +224,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
         with api.context(env={
             'PATH': api.path.pathsep.join([str(cipd_path / 'bin'), '%(PATH)s'])
         }):
+          # TODO(b/352625756): Remove prefix handling after consolidating config
+          # with base targets.
           # Pack firmware uses config for the base target. Remove prefix if present.
           base_target_name = api.build_menu.build_target.name.split(
               'android-')[-1]

@@ -159,6 +159,8 @@ def RunSteps(api: RecipeApi):
       api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
       api.cros_source.ensure_synced_cache()
 
+      # TODO(b/352625756): Remove prefix handling after consolidating config
+      # with base targets.
       # Signing uses config for the base target. Remove prefix if present.
       target = api.build_menu.build_target.name.split('android-')[-1]
 
