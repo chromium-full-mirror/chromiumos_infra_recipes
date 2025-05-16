@@ -765,9 +765,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     appears in previously_uploaded_artifacts, it will not be included in the
     returned copy of artifacts_info.
 
-    Note that the EBUILD_LOGS is NOT filtered, as there are cases where this
-    artifact changes after an initial upload (e.g. it can change between
-    install packages and unit testing).
+    Note that some artifacts (e.g., EBUILD_LOGS) are NOT filtered, as there are
+    cases where this artifact changes after an initial upload (e.g. it can
+    change between install packages and unit testing).
 
     Args:
       artifacts_info: ArtifactsByService to filter. Note that a copy will be
@@ -781,6 +781,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     filtered_artifacts_info = common_pb2.ArtifactsByService()
     filtered_artifacts_info.CopyFrom(artifacts_info)
+
+    # As mentioned in the docstring, these artifacts might change between
+    # package installation and unittests. Don't filter them.
+    artifact_types_to_reupload = {
+        BuilderConfig.Artifacts.ArtifactTypes.EBUILD_LOGS,
+        BuilderConfig.Artifacts.ArtifactTypes.CLANG_CRASH_DIAGNOSES,
+        BuilderConfig.Artifacts.ArtifactTypes.TOOLCHAIN_WARNING_LOGS,
+    }
 
     for _, service in filtered_artifacts_info.ListFields():
       # Each service is expected to have an 'output_artifacts' field, which
@@ -798,13 +806,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             filtered_artifact_types = []
             for art_type in art_info.artifact_types:
               type_name = BuilderConfig.Artifacts.ArtifactTypes.Name(art_type)
-              # EBUILD_LOGS type is always included.
+              # Always include artifact_types_to_reupload.
               if (type_name
                   not in previously_uploaded_artifacts.files_by_artifact or
-                  art_type
-                  == BuilderConfig.Artifacts.ArtifactTypes.EBUILD_LOGS):
+                  art_type in artifact_types_to_reupload):
                 filtered_artifact_types.append(art_type)
-
             # Set artifact_types to the new filtered list.
             art_info.artifact_types[:] = filtered_artifact_types
 

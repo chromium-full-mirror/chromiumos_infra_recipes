@@ -947,6 +947,12 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             test_data.get('set_upreved_ebuilds'))
         if method in custom_responses:
           return custom_responses[method]
+    elif service == 'ToolchainService':
+      if (test_data.enabled and
+          'set_toolchain_service_artifacts_result' in test_data):
+        custom_responses = test_data['set_toolchain_service_artifacts_result']
+        if r := custom_responses.get(method):
+          return r
 
     return responses_by_service[service][method]
 
@@ -968,6 +974,18 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       with mod_test_data, you can pass this into api.test().
     """
     return ebuilds
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def set_toolchain_service_artifacts_result(
+      result: Dict[str, Any]) -> Dict[str, Any]:
+    """Set the `response_for_endpoint` for `ToolchainService`.
+
+    This is expected to be a map of service method (e.g., `BundleArtifacts`) to
+    the response to output. If none is provided, the defaults in
+    `toolchain_service_responses` are returned by `response_for_endpoint`.
+    """
+    return result
 
   def set_api_return(self, parent_step_name: str, endpoint: str = '',
                      data: str = '', iteration: int = 1, retcode: int = 0,

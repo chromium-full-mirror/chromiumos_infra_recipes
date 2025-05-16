@@ -6,6 +6,8 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
+import json
+
 from google.protobuf import json_format
 from PB.chromite.api.artifacts import GetRequest
 from PB.chromite.api.sysroot import Sysroot
@@ -21,7 +23,6 @@ DEPS = [
 ]
 
 
-
 def RunSteps(api):
   artifacts_info = ArtifactsByService(
       legacy=ArtifactsByService.Legacy(output_artifacts=[
@@ -34,6 +35,11 @@ def RunSteps(api):
                   ArtifactsByService.Toolchain
                   .UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE
               ], gs_locations=['publish_gs_location', 'pub2/{gs_path}'],
+              acl_name='public-read'),
+          ArtifactsByService.Toolchain.ArtifactInfo(
+              artifact_types=[
+                  ArtifactsByService.Toolchain.TOOLCHAIN_WARNING_LOGS
+              ], gs_locations=['warning_logs_publish_gs_location'],
               acl_name='public-read')
       ]),
       firmware=ArtifactsByService.Firmware(output_artifacts=[
@@ -55,6 +61,7 @@ def RunSteps(api):
       gs_bucket='test_bucket', gs_path='builder/R99-1234.56.0-101-',
       files_by_artifact={
           'EBUILD_LOGS': ['artifact.tar.gz'],
+          'TOOLCHAIN_WARNING_LOGS': ['warning-artifact.tar.gz'],
           'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['testafdofile'],
           'FIRMWARE_TARBALL': ['from_source.tar.bz2'],
       })
@@ -85,7 +92,7 @@ def GenTests(api):
   )
 
   # Expect all firmware types except FIRMWARE_TARBALL to be uploaded. Note that
-  # EBUILD_LOGS will be re-uploaded.
+  # EBUILD_LOGS and TOOLCHAIN_WARNING_LOGS will be re-uploaded.
   expected_get_req = GetRequest(
       sysroot=Sysroot(path='/build/target',
                       build_target=BuildTarget(name='target')),
@@ -94,8 +101,13 @@ def GenTests(api):
               ArtifactsByService.Legacy.ArtifactInfo(artifact_types=[
                   ArtifactsByService.Legacy.EBUILD_LOGS,
               ])
-          ]), toolchain=ArtifactsByService.Toolchain(),
-          firmware=ArtifactsByService.Firmware(output_artifacts=[
+          ]), toolchain=ArtifactsByService.Toolchain(output_artifacts=[
+              ArtifactsByService.Toolchain.ArtifactInfo(
+                  artifact_types=[
+                      ArtifactsByService.Toolchain.TOOLCHAIN_WARNING_LOGS
+                  ], gs_locations=['warning_logs_publish_gs_location'],
+                  acl_name='public-read')
+          ]), firmware=ArtifactsByService.Firmware(output_artifacts=[
               ArtifactsByService.Firmware.ArtifactInfo(
                   artifact_types=[
                       ArtifactsByService.Firmware.FIRMWARE_TARBALL_INFO,
@@ -113,6 +125,20 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           '{}'),
+      api.cros_build_api.set_toolchain_service_artifacts_result({
+          'BundleArtifacts':
+              json.dumps(
+                  {
+                      'artifacts_info': [{
+                          'artifact_type':
+                              'TOOLCHAIN_WARNING_LOGS',
+                          'artifacts': [{
+                              'path':
+                                  '[CLEANUP]/artifacts_tmp_1/warning-artifact.tar.gz',
+                          }],
+                      }],
+                  }, sort_keys=True)
+      }),
       api.post_process(
           post_process.LogEquals,
           'upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts',
@@ -128,6 +154,8 @@ def GenTests(api):
       api.post_process(
           post_process.MustRun,
           'upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs',
+          # This is the warning-logs upload step.
+          'upload artifacts.call chromite.api.ToolchainService/BundleArtifacts',
       ),
       # The artifacts property should contain previously uploaded artifact types
       # (UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE in this case).
@@ -135,6 +163,7 @@ def GenTests(api):
           post_process.PropertyEquals, 'artifacts', {
               'files_by_artifact': {
                   'EBUILD_LOGS': ['artifact.tar.gz'],
+                  'TOOLCHAIN_WARNING_LOGS': ['warning-artifact.tar.gz'],
                   'FIRMWARE_TARBALL': ['from_source.tar.bz2'],
                   'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'],
                   'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'],
@@ -144,6 +173,4 @@ def GenTests(api):
               'gs_path': 'builder/R99-1234.56.0-101-',
               'published': {},
           }),
-      api.post_process(post_process.DoesNotRunRE,
-                       'upload artifacts.call chromite.api.ToolchainService.*'),
   )
