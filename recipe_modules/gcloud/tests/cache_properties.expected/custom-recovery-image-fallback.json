@@ -219,7 +219,7 @@
       "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=super-custom-snapshot-fallback",
-      "--type=pd-standard"
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

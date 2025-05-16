@@ -960,8 +960,7 @@ class GcloudApi(recipe_api.RecipeApi):
           disk=self._disk, zone=self._zone, disk_type=disk_type, size='200GB'))
     except self.m.step.StepFailure:
       self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
-          disk=self._disk, zone=self._zone, disk_type='pd-standard',
-          size='200GB'))
+          disk=self._disk, zone=self._zone, disk_type='pd-ssd', size='200GB'))
     # Attach disk.
     self.attach_disk(name=self._short_name, instance=self.infra_host,
                      disk=self._disk, zone=self._zone)
@@ -1033,17 +1032,18 @@ class GcloudApi(recipe_api.RecipeApi):
           disk_exists = False
 
         if not disk_exists:
-          # Create the disk but in the event of a stockout of SSD, catch the
-          # exception and create a standard spinning disk. Also catch if the
-          # disk is perhaps already in existance (false 404 from earlier check).
+          # Create the disk but in the event of a stockout of the specified disk_type,
+          # catch the exception and use SSD (performance) Persistent Disk.
+          # Also catch if the disk is perhaps already in existance
+          # (false 404 from earlier check).
           try:
             self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
                 disk=self._disk, zone=self._zone, image=snapshot,
                 disk_type=disk_type))
           except self.m.step.StepFailure:
-            self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
-                disk=self._disk, zone=self._zone, image=snapshot,
-                disk_type='pd-standard'))
+            self._wrap_in_disk_exists_swallow(
+                lambda: self.create_disk(disk=self._disk, zone=self._zone,
+                                         image=snapshot, disk_type='pd-ssd'))
         return snapshot or None
 
   def _setup_new_cache_mount_outside_path(self, recipe_mount_path):
@@ -1095,7 +1095,7 @@ class GcloudApi(recipe_api.RecipeApi):
           'specific_image_to_mount must be provided with cache action MOUNT_SPECIFIC_IMAGE'
       )
 
-  def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
+  def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-ssd',
                        disk_size=None, recipe_mount=False,
                        disallow_previously_mounted=False, mount_existing=False,
                        recovery_snapshot=None):
@@ -1107,8 +1107,8 @@ class GcloudApi(recipe_api.RecipeApi):
     Args:
       cache_name (str): Name of the cache file to use.
       branch (str): Git branch.
-      disk_type (str): Type of GCE disk to create, defaults to standard
-        persistent disk.
+      disk_type (str): Type of GCE disk to create, defaults to SSD (performance)
+        Persistent Disk.
       disk_size (str): Size of the disk to create in GB, defaults to image size.
       recipe_mount (bool): Whether mount needs to be in the path to use within
         a recipe.

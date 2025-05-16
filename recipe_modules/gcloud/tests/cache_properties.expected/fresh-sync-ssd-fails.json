@@ -124,7 +124,7 @@
       "--zone=us-central1-b",
       "--image-project=chromeos-release-bot",
       "--quiet",
-      "--type=pd-standard",
+      "--type=pd-ssd",
       "--size=200GB"
     ],
     "env": {
@@ -148,7 +148,7 @@
       "--zone=us-central1-b",
       "--image-project=chromeos-release-bot",
       "--quiet",
-      "--type=pd-standard",
+      "--type=pd-ssd",
       "--size=200GB"
     ],
     "env": {

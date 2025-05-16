@@ -248,7 +248,7 @@
       "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
-      "--type=pd-standard"
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -712,7 +712,7 @@
       "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
-      "--type=pd-standard"
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -1049,7 +1049,7 @@
       "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
-      "--type=pd-standard"
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -1373,7 +1373,7 @@
       "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
-      "--type=pd-standard"
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -1830,7 +1830,7 @@
       "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=initial-chromiumos-source-snapshot",
-      "--type=pd-standard"
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

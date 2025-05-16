@@ -178,7 +178,7 @@
       "--image-project=chromeos-release-bot",
       "--quiet",
       "--image=test-cache-snapshot-123",
-      "--type=pd-standard"
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
