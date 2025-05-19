@@ -986,10 +986,10 @@ class SigningApi(recipe_api.RecipeApi):
           # Allow for any success artifacts to upload, so just store the
           # exception.
           ex = StepFailure(
-              'Failed to sign artifact. Check stdout of sign artifacts/call '
-              'BAPI/sign artifacts|call BAPI|call '
-              'chromite.api.ImageService/SignImage for more information. See '
-              'go/cros-signing-help for more info.')
+              'Failed to sign artifact. Check stdout of '
+              'sign artifacts|call BAPI|call '
+              'chromite.api.ImageService/SignImage for more information. '
+              'See go/cros-signing-help for more info.')
 
       if not to_upload_by_channel and not ex:
         presentation.step_text = 'no signed artifacts'
