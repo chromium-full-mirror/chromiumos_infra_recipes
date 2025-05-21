@@ -348,7 +348,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22kukui-release-main%22%7D%7D%2C+%22pageSize%22%3A+1000%2C+%22mask%22%3A+%7B%22fields%22%3A+%22id%2Cinput.properties%22%7D%7D@@@"
     ]
   },
   {

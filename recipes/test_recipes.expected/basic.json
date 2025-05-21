@@ -831,6 +831,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22staging%22%2C+%22builder%22%3A+%22staging-Annealing%22%7D%2C+%22status%22%3A+%22SUCCESS%22%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@staging-Annealing@https://cr-buildbucket.appspot.com/build/1@@@"
     ]
   },
@@ -1385,6 +1386,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22staging%22%2C+%22builder%22%3A+%22staging-chromite-snapshot%22%7D%2C+%22status%22%3A+%22SUCCESS%22%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@staging-chromite-snapshot@https://cr-buildbucket.appspot.com/build/2@@@"
     ]
   },
@@ -1548,6 +1550,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22staging%22%2C+%22builder%22%3A+%22staging-no-size%22%7D%2C+%22status%22%3A+%22SUCCESS%22%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@staging-no-size@https://cr-buildbucket.appspot.com/build/4@@@"
     ]
   },
@@ -2130,6 +2133,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22staging%22%2C+%22builder%22%3A+%22staging-release-triggerer%22%7D%2C+%22status%22%3A+%22SUCCESS%22%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@staging-release-triggerer@https://cr-buildbucket.appspot.com/build/3@@@"
     ]
   },
@@ -2709,6 +2713,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22staging%22%2C+%22builder%22%3A+%22staging-release-main-octopus%22%7D%2C+%22status%22%3A+%22SUCCESS%22%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@staging-release-main-octopus@https://cr-buildbucket.appspot.com/build/5@@@"
     ]
   },

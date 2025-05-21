@@ -73,7 +73,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22postsubmit%22%2C+%22builder%22%3A+%22atlas-snapshot%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22snapshot%22%2C+%22value%22%3A+%222d72510e447ab60a9728aeea2362d8be2cbd7789%22%7D%5D%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -292,6 +293,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22postsubmit%22%2C+%22builder%22%3A+%22atlas-snapshot%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22snapshot%22%2C+%22value%22%3A+%222d72510e447ab60a9728aeea2362d8be2cbd7789%22%7D%5D%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@atlas-snapshot@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
@@ -365,7 +367,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22postsubmit%22%2C+%22builder%22%3A+%22atlas-snapshot%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22snapshot%22%2C+%22value%22%3A+%222d72510e447ab60a9728aeea2362d8be2cbd7789%22%7D%5D%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -438,7 +441,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22postsubmit%22%2C+%22builder%22%3A+%22atlas-snapshot%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22snapshot%22%2C+%22value%22%3A+%222d72510e447ab60a9728aeea2362d8be2cbd7789%22%7D%5D%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -514,7 +518,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22postsubmit%22%2C+%22builder%22%3A+%22atlas-snapshot%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22snapshot%22%2C+%22value%22%3A+%222d72510e447ab60a9728aeea2362d8be2cbd7789%22%7D%5D%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -590,7 +595,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22postsubmit%22%2C+%22builder%22%3A+%22atlas-snapshot%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22snapshot%22%2C+%22value%22%3A+%222d72510e447ab60a9728aeea2362d8be2cbd7789%22%7D%5D%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -661,7 +667,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22postsubmit%22%2C+%22builder%22%3A+%22atlas-snapshot%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22snapshot%22%2C+%22value%22%3A+%222d72510e447ab60a9728aeea2362d8be2cbd7789%22%7D%5D%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {

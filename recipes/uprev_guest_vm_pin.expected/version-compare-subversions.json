@@ -1900,6 +1900,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tatl-release-main%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"
     ]
@@ -1953,7 +1954,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tatl-release-R108-15183.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2005,7 +2007,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tatl-release-R107-15117.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2057,7 +2060,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tatl-release-R102-14695.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2109,7 +2113,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tatl-release-stabilize-15129.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2161,7 +2166,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tatl-release-stabilize-15185.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2281,6 +2287,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tael-release-main%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"
     ]
@@ -2334,7 +2341,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tael-release-R108-15183.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2386,7 +2394,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tael-release-R107-15117.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2438,7 +2447,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tael-release-R102-14695.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2490,7 +2500,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tael-release-stabilize-15129.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
@@ -2542,7 +2553,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22release%22%2C+%22builder%22%3A+%22tael-release-stabilize-15185.B%22%7D%2C+%22status%22%3A+%22SUCCESS%22%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%221969-12-29T00%3A00%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {

@@ -504,6 +504,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%7D%2C+%22gerritChanges%22%3A+%5B%7B%22host%22%3A+%22chromium-review.googlesource.com%22%2C+%22project%22%3A+%22chromiumos%2Foverlays%2Fchromiumos-overlay%22%2C+%22change%22%3A+%224567890%22%2C+%22patchset%22%3A+%222%22%7D%5D%2C+%22includeExperimental%22%3A+true%7D%2C+%22pageSize%22%3A+500%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
       "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@8922054662172514001@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@STEP_LINK@8922054662172514002@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
@@ -579,7 +580,8 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%7D%2C+%22gerritChanges%22%3A+%5B%7B%22host%22%3A+%22chromium-review.googlesource.com%22%2C+%22project%22%3A+%22chromiumos%2Foverlays%2Fchromiumos-overlay%22%2C+%22change%22%3A+%224567890%22%2C+%22patchset%22%3A+%221%22%7D%5D%2C+%22includeExperimental%22%3A+true%7D%2C+%22pageSize%22%3A+500%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@"
     ]
   },
   {
