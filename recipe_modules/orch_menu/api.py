@@ -773,7 +773,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
                     [new_build_request],
                     url_title_fn=self.m.naming.get_build_title,
                     step_name=builder_name,
-                    include_sub_invs=not (builder_name == 'chrome-uprev-cq'),
+                    include_sub_invs=True,
                 ))
             if self._properties.stagger_children_seconds:
               self.m.time.sleep(self._properties.stagger_children_seconds)
