@@ -816,7 +816,7 @@ class GitApi(recipe_api.RecipeApi):
 
     Returns: (str): commit author email.
     """
-    return self._step(['log', '--format=%aE', '-n', '-1', commit_id],
+    return self._step(['show', '-s', '--format=%ae', commit_id],
                       stdout=self.m.raw_io.output_text(), test_stdout='%s\n' %
                       self.test_api.test_author_email).stdout.strip()
 

@@ -594,14 +594,13 @@
   {
     "cmd": [
       "git",
-      "log",
-      "--format=%aE",
-      "-n",
-      "-1",
+      "show",
+      "-s",
+      "--format=%ae",
       "HEAD"
     ],
     "infra_step": true,
-    "name": "git log (3)"
+    "name": "git show (2)"
   },
   {
     "name": "$result"
