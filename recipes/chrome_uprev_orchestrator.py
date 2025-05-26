@@ -309,21 +309,6 @@ def DoUprev(api: RecipeApi, buildset: common_pb2.GitilesCommit,
               },
           ))
 
-  # Wait for pupr to complete and notify gardener-data-collector to update
-  # dashboard data.
-  api.buildbucket.collect_builds(
-      ToBuilderIds(pupr_builds), fields=BUILD_FIELDS_TO_RETRIEVE,
-      timeout=PUPR_TIMEOUT, step_name='wait for pupr')
-  # Trigger via luci-scheduler rather than schedule to buildbucket directly.
-  # This prevents having multiple gardener-data-collector running together.
-  api.scheduler.emit_trigger(
-      api.scheduler.BuildbucketTrigger(
-          # Do not pass buildset as part of trigger.
-          inherit_tags=False),
-      project='chromeos',
-      jobs=['gardener-data-collector'],
-      step_name='trigger gardener-data-collector')
-
   return [x.result() for x in preuprevs]
 
 

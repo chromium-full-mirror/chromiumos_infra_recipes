@@ -32,6 +32,7 @@ DEPS = [
     'recipe_engine/futures',
     'recipe_engine/resultdb',
     'recipe_engine/time',
+    'recipe_engine/scheduler',
     'recipe_engine/step',
     'recipe_engine/raw_io',
     'easy',
@@ -224,6 +225,14 @@ def RunSteps(api: RecipeApi):
   if patch_sets[0].topic not in UPREV_CL_TOPICS or patch_sets[
       0].branch != 'main':
     return NOT_AN_UPREV_CL
+
+  api.scheduler.emit_trigger(
+      api.scheduler.BuildbucketTrigger(
+          # Do not pass buildset as part of trigger.
+          inherit_tags=False),
+      project='chromeos',
+      jobs=['gardener-data-collector'],
+      step_name='trigger gardener-data-collector')
 
   target_chrome_revision = None
   target_chrome_milestone = None

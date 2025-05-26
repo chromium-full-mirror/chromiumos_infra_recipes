@@ -217,6 +217,52 @@
     ]
   },
   {
+    "cmd": [
+      "prpc",
+      "call",
+      "-format=json",
+      "luci-scheduler.appspot.com",
+      "scheduler.Scheduler.EmitTriggers"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/inv-9999",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "trigger gardener-data-collector",
+    "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"gardener-data-collector\", \"project\": \"chromeos\"}], \"trigger\": {\"buildbucket\": {}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"chrome-uprev-cq/0\", \"url\": \"https://cr-buildbucket.appspot.com/build/8945511751514863184\"}}], \"timestamp\": 1337000001500000}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@input@{@@@",
+      "@@@STEP_LOG_LINE@input@    \"batches\": [@@@",
+      "@@@STEP_LOG_LINE@input@        {@@@",
+      "@@@STEP_LOG_LINE@input@            \"jobs\": [@@@",
+      "@@@STEP_LOG_LINE@input@                {@@@",
+      "@@@STEP_LOG_LINE@input@                    \"job\": \"gardener-data-collector\",@@@",
+      "@@@STEP_LOG_LINE@input@                    \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@input@                }@@@",
+      "@@@STEP_LOG_LINE@input@            ],@@@",
+      "@@@STEP_LOG_LINE@input@            \"trigger\": {@@@",
+      "@@@STEP_LOG_LINE@input@                \"buildbucket\": {},@@@",
+      "@@@STEP_LOG_LINE@input@                \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\",@@@",
+      "@@@STEP_LOG_LINE@input@                \"title\": \"chrome-uprev-cq/0\",@@@",
+      "@@@STEP_LOG_LINE@input@                \"url\": \"https://cr-buildbucket.appspot.com/build/8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@input@            }@@@",
+      "@@@STEP_LOG_LINE@input@        }@@@",
+      "@@@STEP_LOG_LINE@input@    ],@@@",
+      "@@@STEP_LOG_LINE@input@    \"timestamp\": 1337000001500000@@@",
+      "@@@STEP_LOG_LINE@input@}@@@",
+      "@@@STEP_LOG_END@input@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "extract target Chrome revision",
     "~followup_annotations": [
@@ -702,7 +748,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:21Z\", \"startTime\": \"2012-05-14T04:53:21Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:23Z\", \"startTime\": \"2012-05-14T04:53:23Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -746,8 +792,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:21Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:21Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:23Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -755,7 +801,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A21Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A21Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A23Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A23Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712312@https://cr-buildbucket.appspot.com/build/13219283712312@@@"
     ]
   },
@@ -787,7 +833,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (2)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:23Z\", \"startTime\": \"2012-05-14T04:53:23Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:24Z\", \"startTime\": \"2012-05-14T04:53:24Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -831,8 +877,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:23Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:24Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:24Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -840,7 +886,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A23Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A23Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A24Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A24Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712313@https://cr-buildbucket.appspot.com/build/13219283712313@@@"
     ]
   },

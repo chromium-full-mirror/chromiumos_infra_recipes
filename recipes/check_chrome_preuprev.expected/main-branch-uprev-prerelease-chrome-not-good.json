@@ -217,6 +217,52 @@
     ]
   },
   {
+    "cmd": [
+      "prpc",
+      "call",
+      "-format=json",
+      "luci-scheduler.appspot.com",
+      "scheduler.Scheduler.EmitTriggers"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/inv-9999",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "trigger gardener-data-collector",
+    "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"gardener-data-collector\", \"project\": \"chromeos\"}], \"trigger\": {\"buildbucket\": {}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"chrome-uprev-cq/0\", \"url\": \"https://cr-buildbucket.appspot.com/build/8945511751514863184\"}}], \"timestamp\": 1337000001500000}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@input@{@@@",
+      "@@@STEP_LOG_LINE@input@    \"batches\": [@@@",
+      "@@@STEP_LOG_LINE@input@        {@@@",
+      "@@@STEP_LOG_LINE@input@            \"jobs\": [@@@",
+      "@@@STEP_LOG_LINE@input@                {@@@",
+      "@@@STEP_LOG_LINE@input@                    \"job\": \"gardener-data-collector\",@@@",
+      "@@@STEP_LOG_LINE@input@                    \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@input@                }@@@",
+      "@@@STEP_LOG_LINE@input@            ],@@@",
+      "@@@STEP_LOG_LINE@input@            \"trigger\": {@@@",
+      "@@@STEP_LOG_LINE@input@                \"buildbucket\": {},@@@",
+      "@@@STEP_LOG_LINE@input@                \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\",@@@",
+      "@@@STEP_LOG_LINE@input@                \"title\": \"chrome-uprev-cq/0\",@@@",
+      "@@@STEP_LOG_LINE@input@                \"url\": \"https://cr-buildbucket.appspot.com/build/8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@input@            }@@@",
+      "@@@STEP_LOG_LINE@input@        }@@@",
+      "@@@STEP_LOG_LINE@input@    ],@@@",
+      "@@@STEP_LOG_LINE@input@    \"timestamp\": 1337000001500000@@@",
+      "@@@STEP_LOG_LINE@input@}@@@",
+      "@@@STEP_LOG_END@input@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "extract target Chrome revision",
     "~followup_annotations": [
@@ -703,7 +749,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:21Z\", \"startTime\": \"2012-05-14T04:53:21Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:23Z\", \"startTime\": \"2012-05-14T04:53:23Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -741,8 +787,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:21Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:21Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:23Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -750,7 +796,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A21Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A21Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A23Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A23Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712312@https://cr-buildbucket.appspot.com/build/13219283712312@@@"
     ]
   },
@@ -782,7 +828,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (2)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:23Z\", \"startTime\": \"2012-05-14T04:53:23Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:24Z\", \"startTime\": \"2012-05-14T04:53:24Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -826,8 +872,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:23Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:24Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:24Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -835,7 +881,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A23Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A23Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A24Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A24Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712313@https://cr-buildbucket.appspot.com/build/13219283712313@@@"
     ]
   },
@@ -867,7 +913,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (3)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:24Z\", \"startTime\": \"2012-05-14T04:53:24Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:26Z\", \"startTime\": \"2012-05-14T04:53:26Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -911,8 +957,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:24Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:24Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:26Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:26Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -920,7 +966,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A24Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A24Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A26Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A26Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712314@https://cr-buildbucket.appspot.com/build/13219283712314@@@"
     ]
   },
@@ -952,7 +998,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (4)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:26Z\", \"startTime\": \"2012-05-14T04:53:26Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:27Z\", \"startTime\": \"2012-05-14T04:53:27Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -996,8 +1042,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:26Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:26Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:27Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:27Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1005,7 +1051,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A26Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A26Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A27Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A27Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712315@https://cr-buildbucket.appspot.com/build/13219283712315@@@"
     ]
   },
@@ -1037,7 +1083,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (5)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:27Z\", \"startTime\": \"2012-05-14T04:53:27Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:29Z\", \"startTime\": \"2012-05-14T04:53:29Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1081,8 +1127,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:27Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:27Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:29Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:29Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1090,7 +1136,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A27Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A27Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A29Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A29Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712316@https://cr-buildbucket.appspot.com/build/13219283712316@@@"
     ]
   },
@@ -1122,7 +1168,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (6)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:29Z\", \"startTime\": \"2012-05-14T04:53:29Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:30Z\", \"startTime\": \"2012-05-14T04:53:30Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1166,8 +1212,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:29Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:29Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:30Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:30Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1175,7 +1221,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A29Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A29Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A30Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A30Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712317@https://cr-buildbucket.appspot.com/build/13219283712317@@@"
     ]
   },
@@ -1207,7 +1253,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (7)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:30Z\", \"startTime\": \"2012-05-14T04:53:30Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:32Z\", \"startTime\": \"2012-05-14T04:53:32Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1251,8 +1297,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:30Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:30Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:32Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:32Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1260,7 +1306,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A30Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A30Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A32Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A32Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712318@https://cr-buildbucket.appspot.com/build/13219283712318@@@"
     ]
   },
@@ -1292,7 +1338,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (8)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:32Z\", \"startTime\": \"2012-05-14T04:53:32Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:33Z\", \"startTime\": \"2012-05-14T04:53:33Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1336,8 +1382,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:32Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:32Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:33Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:33Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1345,7 +1391,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A32Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A32Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A33Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A33Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712319@https://cr-buildbucket.appspot.com/build/13219283712319@@@"
     ]
   },
@@ -1377,7 +1423,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (9)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:33Z\", \"startTime\": \"2012-05-14T04:53:33Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:35Z\", \"startTime\": \"2012-05-14T04:53:35Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1421,8 +1467,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:33Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:33Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:35Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:35Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1430,7 +1476,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A33Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A33Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A35Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A35Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712320@https://cr-buildbucket.appspot.com/build/13219283712320@@@"
     ]
   },
@@ -1462,7 +1508,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (10)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:35Z\", \"startTime\": \"2012-05-14T04:53:35Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:36Z\", \"startTime\": \"2012-05-14T04:53:36Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1506,8 +1552,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:35Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:35Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:36Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:36Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1515,7 +1561,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A35Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A35Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A36Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A36Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712321@https://cr-buildbucket.appspot.com/build/13219283712321@@@"
     ]
   },
@@ -1547,7 +1593,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (11)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:36Z\", \"startTime\": \"2012-05-14T04:53:36Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:38Z\", \"startTime\": \"2012-05-14T04:53:38Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1591,8 +1637,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:36Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:36Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:38Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:38Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1600,7 +1646,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A36Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A36Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A38Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A38Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712322@https://cr-buildbucket.appspot.com/build/13219283712322@@@"
     ]
   },
@@ -1632,7 +1678,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (12)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:38Z\", \"startTime\": \"2012-05-14T04:53:38Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:39Z\", \"startTime\": \"2012-05-14T04:53:39Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1676,8 +1722,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:38Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:38Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:39Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:39Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1685,7 +1731,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A38Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A38Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A39Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A39Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712323@https://cr-buildbucket.appspot.com/build/13219283712323@@@"
     ]
   },
@@ -1717,7 +1763,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (13)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:39Z\", \"startTime\": \"2012-05-14T04:53:39Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:41Z\", \"startTime\": \"2012-05-14T04:53:41Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1761,8 +1807,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:39Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:39Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:41Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:41Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1770,7 +1816,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A39Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A39Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A41Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A41Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712324@https://cr-buildbucket.appspot.com/build/13219283712324@@@"
     ]
   },
@@ -1802,7 +1848,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (14)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:41Z\", \"startTime\": \"2012-05-14T04:53:41Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:42Z\", \"startTime\": \"2012-05-14T04:53:42Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1846,8 +1892,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:41Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:41Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:42Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:42Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1855,7 +1901,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A41Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A41Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A42Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A42Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712325@https://cr-buildbucket.appspot.com/build/13219283712325@@@"
     ]
   },
@@ -1887,7 +1933,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (15)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:42Z\", \"startTime\": \"2012-05-14T04:53:42Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:44Z\", \"startTime\": \"2012-05-14T04:53:44Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1931,8 +1977,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:42Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:42Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:44Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:44Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -1940,7 +1986,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A42Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A42Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A44Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A44Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712326@https://cr-buildbucket.appspot.com/build/13219283712326@@@"
     ]
   },
@@ -1972,7 +2018,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (16)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:44Z\", \"startTime\": \"2012-05-14T04:53:44Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:45Z\", \"startTime\": \"2012-05-14T04:53:45Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2016,8 +2062,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:44Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:44Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:45Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:45Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2025,7 +2071,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A44Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A44Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A45Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A45Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712327@https://cr-buildbucket.appspot.com/build/13219283712327@@@"
     ]
   },
@@ -2057,7 +2103,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (17)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:45Z\", \"startTime\": \"2012-05-14T04:53:45Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:47Z\", \"startTime\": \"2012-05-14T04:53:47Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2101,8 +2147,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:45Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:45Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:47Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:47Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2110,7 +2156,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A45Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A45Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A47Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A47Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712328@https://cr-buildbucket.appspot.com/build/13219283712328@@@"
     ]
   },
@@ -2142,7 +2188,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (18)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:47Z\", \"startTime\": \"2012-05-14T04:53:47Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:48Z\", \"startTime\": \"2012-05-14T04:53:48Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2186,8 +2232,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:47Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:47Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:48Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:48Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2195,7 +2241,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A47Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A47Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A48Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A48Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712329@https://cr-buildbucket.appspot.com/build/13219283712329@@@"
     ]
   },
@@ -2227,7 +2273,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (19)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:48Z\", \"startTime\": \"2012-05-14T04:53:48Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:50Z\", \"startTime\": \"2012-05-14T04:53:50Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2271,8 +2317,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:48Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:48Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:50Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:50Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2280,7 +2326,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A48Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A48Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A50Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A50Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712330@https://cr-buildbucket.appspot.com/build/13219283712330@@@"
     ]
   },
@@ -2312,7 +2358,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (20)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:50Z\", \"startTime\": \"2012-05-14T04:53:50Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:51Z\", \"startTime\": \"2012-05-14T04:53:51Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2356,8 +2402,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:50Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:50Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:51Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:51Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2365,7 +2411,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A50Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A50Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A51Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A51Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712331@https://cr-buildbucket.appspot.com/build/13219283712331@@@"
     ]
   },
@@ -2397,7 +2443,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (21)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:51Z\", \"startTime\": \"2012-05-14T04:53:51Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:53Z\", \"startTime\": \"2012-05-14T04:53:53Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2441,8 +2487,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:51Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:51Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:53Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:53Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2450,7 +2496,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A51Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A51Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A53Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A53Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712332@https://cr-buildbucket.appspot.com/build/13219283712332@@@"
     ]
   },
@@ -2482,7 +2528,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (22)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:53Z\", \"startTime\": \"2012-05-14T04:53:53Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:54Z\", \"startTime\": \"2012-05-14T04:53:54Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2526,8 +2572,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:53Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:53Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:54Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:54Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2535,7 +2581,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A53Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A53Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A54Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A54Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712333@https://cr-buildbucket.appspot.com/build/13219283712333@@@"
     ]
   },
@@ -2567,7 +2613,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (23)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:54Z\", \"startTime\": \"2012-05-14T04:53:54Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:56Z\", \"startTime\": \"2012-05-14T04:53:56Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2611,8 +2657,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:54Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:54Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:56Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:56Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2620,7 +2666,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A54Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A54Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A56Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A56Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712334@https://cr-buildbucket.appspot.com/build/13219283712334@@@"
     ]
   },
@@ -2652,7 +2698,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (24)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:56Z\", \"startTime\": \"2012-05-14T04:53:56Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:57Z\", \"startTime\": \"2012-05-14T04:53:57Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2696,8 +2742,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:56Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:56Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:57Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:57Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2705,7 +2751,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A56Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A56Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A57Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A57Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712335@https://cr-buildbucket.appspot.com/build/13219283712335@@@"
     ]
   },
@@ -2737,7 +2783,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (25)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:57Z\", \"startTime\": \"2012-05-14T04:53:57Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:59Z\", \"startTime\": \"2012-05-14T04:53:59Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2781,8 +2827,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:57Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:57Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:59Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:59Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2790,7 +2836,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A57Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A57Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A59Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A59Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712336@https://cr-buildbucket.appspot.com/build/13219283712336@@@"
     ]
   },
@@ -2822,7 +2868,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (26)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:59Z\", \"startTime\": \"2012-05-14T04:53:59Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:00Z\", \"startTime\": \"2012-05-14T04:54:00Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2866,8 +2912,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:53:59Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:53:59Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:00Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:00Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2875,7 +2921,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A53%3A59Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A53%3A59Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A00Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712337@https://cr-buildbucket.appspot.com/build/13219283712337@@@"
     ]
   },
@@ -2907,7 +2953,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (27)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:00Z\", \"startTime\": \"2012-05-14T04:54:00Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:02Z\", \"startTime\": \"2012-05-14T04:54:02Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2951,8 +2997,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:00Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:00Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:02Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:02Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -2960,7 +3006,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A00Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A00Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A02Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A02Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712338@https://cr-buildbucket.appspot.com/build/13219283712338@@@"
     ]
   },
@@ -2992,7 +3038,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (28)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:02Z\", \"startTime\": \"2012-05-14T04:54:02Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:03Z\", \"startTime\": \"2012-05-14T04:54:03Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3036,8 +3082,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:02Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:02Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:03Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:03Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -3045,7 +3091,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A02Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A02Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A03Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A03Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712339@https://cr-buildbucket.appspot.com/build/13219283712339@@@"
     ]
   },
@@ -3077,7 +3123,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (29)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:03Z\", \"startTime\": \"2012-05-14T04:54:03Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:05Z\", \"startTime\": \"2012-05-14T04:54:05Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3121,8 +3167,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:03Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:03Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:05Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:05Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -3130,7 +3176,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A03Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A03Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A05Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A05Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712340@https://cr-buildbucket.appspot.com/build/13219283712340@@@"
     ]
   },
@@ -3162,7 +3208,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (30)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:05Z\", \"startTime\": \"2012-05-14T04:54:05Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:06Z\", \"startTime\": \"2012-05-14T04:54:06Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3206,8 +3252,8 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:05Z\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:05Z\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"2012-05-14T12:54:06Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T04:54:06Z\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
@@ -3215,7 +3261,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A05Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A05Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22official.infra%22%2C+%22builder%22%3A+%22chrome-best-revision-continuous%22%7D%2C+%22createTime%22%3A+%7B%22startTime%22%3A+%222012-05-14T04%3A54%3A06Z%22%2C+%22endTime%22%3A+%222012-05-14T12%3A54%3A06Z%22%7D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput.properties%2Cstatus%22%7D%7D@@@",
       "@@@STEP_LINK@13219283712341@https://cr-buildbucket.appspot.com/build/13219283712341@@@"
     ]
   },
