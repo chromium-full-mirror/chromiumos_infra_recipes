@@ -25,7 +25,6 @@ CHROMITE_ANDROID = 'lib/constants.py'
 
 ANDROID_BRANCH_FORMAT = {
     'android-container-rvc': 'git_rvc-arc-m%s',
-    'android-vm-rvc': 'git_rvc-arc-m%s',
     'android-vm-tm': 'git_tm-arc-m%s',
 }
 
