@@ -41,7 +41,7 @@ DEPS = [
 
 
 def RunSteps(api: RecipeApi):
-  with api.build_menu.configure_builder(), \
+  with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot(force_update=True):
     dep_graph = api.build_menu.get_dep_graph_and_validate_sdk_reuse()
 
@@ -80,6 +80,8 @@ def RunSteps(api: RecipeApi):
             api.workspace_util.patch_sets, include_rev_deps=True)
       api.image_builder_failures.set_test_failed_packages(
           step, pkgs, cl_affected_packages)
+
+    api.build_menu.upload_artifacts(config)
 
     # SDK has been modified, so ensure it is not reused.
     api.cros_sdk.mark_sdk_as_dirty()

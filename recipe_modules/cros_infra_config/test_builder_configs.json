@@ -3351,6 +3351,25 @@
       }
     },
     {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "toolchain": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CLANG_CRASH_DIAGNOSES"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "NONE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
       "build": {
         "applyGerritChanges": true
       },
