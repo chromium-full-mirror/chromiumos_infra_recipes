@@ -417,7 +417,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         config), then it will setup toolchains instead.
       force_update: Pass force_update to chroot update.
       force_no_chroot_upgrade: If True, chroot update is skipped, regardless of
-        the builder config.
+        the builder config and CLs applied.
       no_delete_out_dir: If True, `out` directory will be preserved.
 
     Returns:
@@ -474,10 +474,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return relevance != Relevance.POINTLESS
 
   def _should_update_chroot(self) -> bool:
-    """Return whether to update chroot, based on builder config."""
-    return self.m.cros_infra_config.should_run(
-        self.config_or_default.build.sdk_update.sdk_update_run_spec,
-        default=True)
+    """Return whether to update chroot, based on builder config and CLs."""
+    return (self.m.cros_relevance.toolchain_cls_applied or
+            self.m.cros_infra_config.should_run(
+                self.config_or_default.build.sdk_update.sdk_update_run_spec,
+                default=True))
 
   def setup_toolchains(self) -> None:
     """Setup toolchains on the builder.
@@ -1515,7 +1516,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.cros_prebuilts.upload_target_prebuilts(
           self.build_target, self.sysroot, self.chroot, profile, config.id.type,
           artifacts.prebuilts_gs_bucket,
-          private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+          private=artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE)
 
   def upload_devinstall_prebuilts(self, config=None):
     """Upload dev_install prebuilts from the build.
@@ -1546,7 +1547,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.cros_prebuilts.upload_chrome_prebuilts(
           self.build_target, self.sysroot, self.chroot, profile,
           self.config.id.type, artifacts.prebuilts_gs_bucket,
-          private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+          private=artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE)
 
   def upload_host_prebuilts(self,
                             config: Optional[BuilderConfig] = None) -> None:

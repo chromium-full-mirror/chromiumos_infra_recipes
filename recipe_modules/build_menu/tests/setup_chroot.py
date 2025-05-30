@@ -21,6 +21,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_infra_config',
+    'cros_relevance',
 ]
 
 PROPERTIES = SetupChrootProperties
@@ -55,6 +56,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           BuilderConfig.RunSpec.RUN_SPEC_UNSPECIFIED),
       build_target: Optional[str] = None,
       status: str = 'SUCCESS',
+      toolchain_cls_applied: bool = False,
   ) -> TestData:
     """Test whether setup_chroot updates the SDK.
 
@@ -112,11 +114,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     check_setup_toolchains = api.post_check(
         _get_run_checker(expect_setup_toolchains), 'setup toolchains')
 
-    return api.test(name, use_custom_builder_config,
-                    api.properties(**properties), check_replace,
-                    check_update_sdk, check_setup_toolchains, *args,
-                    api.post_process(post_process.DropExpectation),
-                    status=status)
+    return api.test(
+        name, use_custom_builder_config, api.properties(**properties),
+        check_replace, check_update_sdk, check_setup_toolchains,
+        api.cros_relevance.toolchain_cls_applied(toolchain_cls_applied), *args,
+        api.post_process(post_process.DropExpectation), status=status)
 
   yield _sdk_update_test_case('default', True)
   yield _sdk_update_test_case('default-with-build-target', True,
@@ -131,7 +133,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       build_target='amd64-generic',
   )
 
-  # force_no_chroot_upgrade should override the run_spec.
+  yield _sdk_update_test_case(
+      'perform-update-sdk-with-toolchain-cls-despite-run-spec',
+      expect_update_sdk=True,
+      sdk_update_run_spec=BuilderConfig.RunSpec.NO_RUN,
+      build_target='amd64-generic',
+      toolchain_cls_applied=True,
+  )
+
+  # force_no_chroot_upgrade should override the run_spec and toolchain CLs.
   yield _sdk_update_test_case(
       'force-no-chroot-upgrade',
       False,
@@ -140,6 +150,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       expect_replace=True,
       expect_setup_toolchains=True,
       build_target='amd64-generic',
+      toolchain_cls_applied=True,
   )
 
   yield _sdk_update_test_case(
