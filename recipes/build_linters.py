@@ -186,6 +186,25 @@ def _GetLints(api: RecipeApi, linter: str,
             'line_start': 1,
             'line_end': 1
         }],
+        'suggestedFixes': [{
+            'location': {
+                'col_end': 3,
+                'col_start': 2,
+                'filepath': 'path/file.cpp',
+                'line_end': 1,
+                'line_start': 1
+            },
+            'replacement': 'foo'
+        }, {
+            'location': {
+                'col_end': 5,
+                'col_start': 4,
+                'filepath': 'path/file.cpp',
+                'line_end': 1,
+                'line_start': 1
+            },
+            'replacement': 'bar'
+        }],
         'linter': LinterFinding.Linters.CLANG_TIDY
     }, {
         'message': 'test message',
@@ -213,6 +232,53 @@ def _GetLints(api: RecipeApi, linter: str,
         test_output_data=test_data).findings
 
 
+def _BuildFindingsForLint(
+    gerrit_change_ref: findings_pb.Location.GerritChangeReference,
+    category_names: Dict[int, str],
+    finding: LinterFinding) -> List[findings_pb.Finding]:
+  # The `findings.proto` Finding contains a list of Fixes, and each Fix contains
+  # a list of Replacements. The idea is that each Fix is an _alternative_ to
+  # other Fixes. `LinterFinding` only has one fix that may have multiple
+  # Replacements, so there can be at most one Fix per lint.
+  fixes = []
+  if finding.suggested_fixes:
+    replacements = [
+        findings_pb.Fix.Replacement(
+            location=findings_pb.Location(
+                gerrit_change_ref=gerrit_change_ref,
+                file_path=suggested_fix.location.filepath,
+                range=findings_pb.Location.Range(
+                    start_line=suggested_fix.location.line_start,
+                    start_column=suggested_fix.location.col_start,
+                    end_line=suggested_fix.location.line_end,
+                    end_column=suggested_fix.location.col_end,
+                ),
+            ),
+            new_content=suggested_fix.replacement,
+        ) for suggested_fix in finding.suggested_fixes
+    ]
+    fixes.append(findings_pb.Fix(replacements=replacements))
+
+  return [
+      findings_pb.Finding(
+          category=category_names[finding.linter],
+          location=findings_pb.Location(
+              gerrit_change_ref=gerrit_change_ref,
+              file_path=location.filepath,
+              range=findings_pb.Location.Range(
+                  start_line=location.line_start,
+                  end_line=location.line_start + 1,
+              ),
+          ),
+          message=finding.message,
+          fixes=fixes,
+          severity_level=findings_pb.Finding.SEVERITY_LEVEL_WARNING,
+      )
+      for location in finding.locations
+      if not location.filepath.startswith('/')
+  ]
+
+
 def _UploadFindings(api: RecipeApi, findings: List[LinterFinding]) -> int:
   """Upload linter findings"""
   category_names = {
@@ -221,29 +287,18 @@ def _UploadFindings(api: RecipeApi, findings: List[LinterFinding]) -> int:
       LinterFinding.Linters.CARGO_CLIPPY: 'chromeos_cargo_clippy',
       LinterFinding.Linters.GO_LINT: 'chromeos_static_check',
   }
-  to_upload = [
-      findings_pb.Finding(
-          category=category_names[finding.linter],
-          location=findings_pb.Location(
-              gerrit_change_ref=findings_pb.Location.GerritChangeReference(
-                  host=api.src_state.gerrit_changes[0].host,
-                  project=api.src_state.gerrit_changes[0].project,
-                  change=api.src_state.gerrit_changes[0].change,
-                  patchset=api.src_state.gerrit_changes[0].patchset,
-              ),
-              file_path=location.filepath,
-              range=findings_pb.Location.Range(
-                  start_line=location.line_start,
-                  end_line=location.line_start + 1,
-              ),
-          ),
-          message=finding.message,
-          severity_level=findings_pb.Finding.SEVERITY_LEVEL_WARNING,
-      )
-      for finding in findings
-      for location in finding.locations
-      if not location.filepath.startswith('/')
-  ]
+
+  gerrit_change_ref = findings_pb.Location.GerritChangeReference(
+      host=api.src_state.gerrit_changes[0].host,
+      project=api.src_state.gerrit_changes[0].project,
+      change=api.src_state.gerrit_changes[0].change,
+      patchset=api.src_state.gerrit_changes[0].patchset,
+  )
+
+  to_upload = []
+  for finding in findings:
+    to_upload += _BuildFindingsForLint(gerrit_change_ref, category_names,
+                                       finding)
   api.findings.upload_findings(to_upload, 'upload linter findings')
   return len(to_upload)
 
