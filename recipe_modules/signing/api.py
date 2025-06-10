@@ -541,7 +541,7 @@ class SigningApi(recipe_api.RecipeApi):
 
     def _get_gs_artifact_name_wrapper(image_type: 'common_pb2.ImageType',
                                       is_attestation: bool = False):
-      return lambda build_target, version: self._get_gs_artifact_name(
+      return lambda build_target, version: self.get_gs_artifact_name(
           build_target, version, image_type, is_attestation)
 
     files_to_copy = {
@@ -562,7 +562,7 @@ class SigningApi(recipe_api.RecipeApi):
       for channel in channels:
         with self.m.step.nest(
             f'for channel {common_pb2.Channel.Name(channel)}'):
-          dest_gs_dir = self._get_gs_path_for_channel(channel)
+          dest_gs_dir = self.get_gs_path_for_channel(channel)
           gs_dirs.append(dest_gs_dir)
           for src_file, upload_path in files_to_copy.items():
 
@@ -818,7 +818,7 @@ class SigningApi(recipe_api.RecipeApi):
       with self.m.step.nest(
           f'upload signed artifact to {self.gs_upload_bucket} bucket') as pres:
         gs_dir = os.path.join(
-            self._get_gs_path_for_channel(common_pb2.CHANNEL_AGNOSTIC))
+            self.get_gs_path_for_channel(common_pb2.CHANNEL_AGNOSTIC))
         self.m.gsutil([
             'cp',
             '-n',
@@ -844,19 +844,21 @@ class SigningApi(recipe_api.RecipeApi):
         log_contents = self.m.file.read_text(f'read {filename}', log_file)
         presentation.logs[filename] = log_contents
 
-  def _get_gs_path_for_channel(self, channel: common_pb2.Channel) -> str:
+  def get_gs_path_for_channel(self, channel: common_pb2.Channel,
+                              maybe_build_target: Optional[str] = None) -> str:
     """Get the gs path for the given channel.
 
     Example:
       gs://{bucket}/dev-channel/atlas-signingnext/123.0.0/
     """
     bucket = self.gs_upload_bucket
-    gs_dir = self.m.signing_utils.get_gs_dir_for_channel(channel)
+    gs_dir = self.m.signing_utils.get_gs_dir_for_channel(
+        channel, maybe_build_target=maybe_build_target)
     return f'gs://{bucket}/{gs_dir}/'
 
-  def _get_gs_artifact_name(self, build_target: str, version: str,
-                            image_type: common_pb2.ImageType,
-                            is_attestation: bool = False) -> str:
+  def get_gs_artifact_name(self, build_target: str, version: str,
+                           image_type: common_pb2.ImageType,
+                           is_attestation: bool = False) -> str:
     """Map artifacts to versioned name expected for paygen signing.
     """
     img_type = None
@@ -884,7 +886,7 @@ class SigningApi(recipe_api.RecipeApi):
       build_target = self.m.build_menu.build_target.name
       gs_dirs = []
       for channel in channels:
-        gs_dir = self._get_gs_path_for_channel(channel)
+        gs_dir = self.get_gs_path_for_channel(channel)
         gs_dirs.append(gs_dir)
 
         with self.m.step.nest(
@@ -902,10 +904,10 @@ class SigningApi(recipe_api.RecipeApi):
           files_to_copy = (
               # (<src>, <dst>, <suffix>),
               ('image.zip',
-               self._get_gs_artifact_name(build_target, version, None), 'zip'),
+               self.get_gs_artifact_name(build_target, version, None), 'zip'),
               ('chromiumos_test_image.tar.xz',
-               self._get_gs_artifact_name(build_target, version,
-                                          common_pb2.IMAGE_TYPE_TEST), None),
+               self.get_gs_artifact_name(build_target, version,
+                                         common_pb2.IMAGE_TYPE_TEST), None),
               ('debug.tgz', f'debug-{build_target.replace("_", "-")}', 'tgz'),
               ('chromeos-hwqual-%s-%s.tar.bz2' % (build_target, version), None,
                None),
@@ -915,16 +917,14 @@ class SigningApi(recipe_api.RecipeApi):
               ('full_dev_part_ROOT.bin.gz', None, None),
               ('full_dev_part_MINIOS.bin.gz', None, None),
               ('recovery_image.tar.xz',
-               self._get_gs_artifact_name(build_target, version,
-                                          common_pb2.IMAGE_TYPE_RECOVERY),
-               None),
+               self.get_gs_artifact_name(build_target, version,
+                                         common_pb2.IMAGE_TYPE_RECOVERY), None),
               ('factory_image.zip',
-               self._get_gs_artifact_name(build_target, version,
-                                          common_pb2.IMAGE_TYPE_FACTORY), None),
+               self.get_gs_artifact_name(build_target, version,
+                                         common_pb2.IMAGE_TYPE_FACTORY), None),
               ('firmware_from_source.tar.bz2',
-               self._get_gs_artifact_name(build_target, version,
-                                          common_pb2.IMAGE_TYPE_FIRMWARE),
-               None),
+               self.get_gs_artifact_name(build_target, version,
+                                         common_pb2.IMAGE_TYPE_FIRMWARE), None),
           )
           for src, dst, suffix in files_to_copy:
             if dst is None:
@@ -946,7 +946,7 @@ class SigningApi(recipe_api.RecipeApi):
 
           # Files to sign are copied.
           for signing_config in signing_configs:
-            artifact_upload_name = self._get_gs_artifact_name(
+            artifact_upload_name = self.get_gs_artifact_name(
                 build_target, version, signing_config.image_type)
             uploaded.add(signing_config.archive_path)
             # -n so we don't clobber existing destination artifacts.
@@ -1010,7 +1010,7 @@ class SigningApi(recipe_api.RecipeApi):
       # Upload the artifacts for each channel.
       signed_upload_paths = {}
       for channel, artifacts in to_upload_by_channel.items():
-        gs_dir = self._get_gs_path_for_channel(channel)
+        gs_dir = self.get_gs_path_for_channel(channel)
         signed_upload_paths[self.m.cros_release_util.channel_to_long_string(
             channel)] = gs_dir
 

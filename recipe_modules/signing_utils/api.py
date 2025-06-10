@@ -156,14 +156,15 @@ class SigningUtilsApi(recipe_api.RecipeApi):
                 value=f'{archive.keyset_versions.kernel_version}'),
     ]
 
-  def get_gs_dir_for_channel(self, channel: common_pb2.Channel) -> str:
+  def get_gs_dir_for_channel(self, channel: common_pb2.Channel,
+                             maybe_build_target: Optional[str] = None) -> str:
     """Get the gs dir for the given channel.
 
     Example:
       dev-channel/atlas-signingnext/123.0.0/
     """
     channel = self.m.cros_release_util.channel_to_long_string(channel)
-    build_target = self.m.build_menu.build_target.name
+    build_target = maybe_build_target or self.m.build_menu.build_target.name
     version = self.m.cros_version.version.platform_version
     build_target_str = ''
     if build_target:

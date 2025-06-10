@@ -37,6 +37,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
+    'depot_tools/gsutil',
     'build_menu',
     'build_reporting',
     'cros_artifacts',
@@ -51,6 +52,7 @@ DEPS = [
     'git',
     'metadata_json',
     'repo',
+    'signing',
     'src_state',
     'test_util',
 ]
@@ -686,56 +688,29 @@ class FirmwareBuilder():
             ok_ret=(0, 1, _GCS_PRECONDITION_FAILURE),
         )
 
-  def _push_image(self, build_target):
+  def _push_image(self, build_target, artifact_dir):
     """Push images."""
-    # TODO(b/181786185): As cros_artifacts.push_image evolves, this code should
-    # be updated to use that where the Build API exists.
-    #
-    # For now, call `pushimage` directly:
-    # - Rubik will be completely restructuring that workflow (moving the
-    #   uploads and such to the recipes side of the API boundary)
-    # - most firmware branches lack the Build API.
-    with self.m.step.nest('push image'):
-      self._ensure_chromite_main()
-      board = build_target.name
-      staging = self._is_staging
-      # Defaults have changed over time. Other types are only signed based on
-      # builder config.
-      default_types = [common_pb2.IMAGE_TYPE_FIRMWARE]
-      if self._is_after('7618.0.0'):
-        default_types.append(common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG)
-      sign_types = self.properties.sign_types or default_types
+    with self.m.step.nest('upload image to GS (formerly "push image")') as pres:
+      # Seems like we always just do canary channel.
+      gs_dir = self.m.signing.get_gs_path_for_channel(
+          common_pb2.Channel.CHANNEL_CANARY,
+          maybe_build_target=build_target.name)
+      gs_path = self.m.path.join(
+          gs_dir,
+          self.m.signing.get_gs_artifact_name(
+              build_target.name, self.m.cros_version.version.legacy_version,
+              common_pb2.IMAGE_TYPE_FIRMWARE))
 
-      dest = ('gs://chromeos-throw-away-bucket'
-              if staging else 'gs://chromeos-releases')
-      profile = lambda x: ['--profile={}'.format(x)] if x else []
-      has_dest_bucket = self._is_after('13682.0.0')
-      dry_run = self.m.cv.active or not self.properties.bump_version
-      dry_run = dry_run or (staging and not has_dest_bucket)
+      self.m.gsutil([
+          'cp',
+          '-n',
+          '-r',
+          self.m.path.join(artifact_dir, 'firmware_from_source.tar.bz2'),
+          gs_path,
+      ], multithreaded=True, timeout=30 * 60)
 
-      image_dir = 'gs://{}/{}/{}'.format(
-          self._config.artifacts.artifacts_gs_bucket,
-          self.m.cros_artifacts.artifacts_gs_path(self._config.id.name,
-                                                  build_target,
-                                                  self._config.id.type), board)
-      cmd = [
-          self._tot_chromite / 'bin' / 'pushimage', image_dir, '--yes',
-          '--board={}'.format(board),
-          '--version={}'.format(self._bcs_version.legacy_version),
-          '--buildroot', self.m.src_state.workspace_path
-      ]
-      if dry_run:
-        cmd.append('-n')
-      cmd.extend(profile(self._config.build.portage_profile.profile))
-      if sign_types:
-        cmd.append('--sign-types')
-        cmd.extend(
-            common_pb2.ImageType.Name(x).lower().replace('image_type_', '')
-            for x in sign_types)
-      if has_dest_bucket:
-        cmd.append('--dest-bucket={}'.format(dest))
-
-      self.m.step('call pushimage', cmd=cmd, infra_step=True)
+      pres.links[
+          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{gs_dir.removeprefix("gs://")}'
 
   @contextmanager
   def _maybe_step(self, name, cond):
@@ -804,7 +779,7 @@ class FirmwareBuilder():
                 step_failures.append(e)
                 continue
               all_uploaded.append(bt_uploaded)
-              self._push_image(bt)
+              self._push_image(bt, artifact_dir)
               self._push_to_firmware_bucket(bt, branch)
 
     with self.m.failures.ignore_exceptions():
@@ -890,9 +865,8 @@ def GenTests(api):
                      'build target.install packages', ['build_packages']),
       api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
-      api.post_check(post_process.StepCommandContains,
-                     'push image.call pushimage',
-                     ['--dest-bucket=gs://chromeos-releases']),
+      api.post_check(post_process.MustRun,
+                     'upload image to GS (formerly "push image")'),
       api.post_check(post_process.StepCommandDoesNotContain,
                      'upload artifacts.create firmware archive.create tarball',
                      [
@@ -938,9 +912,8 @@ def GenTests(api):
                      'build target.install packages', ['build_packages']),
       api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
-      api.post_check(post_process.StepCommandContains,
-                     'push image.call pushimage',
-                     ['--dest-bucket=gs://chromeos-releases']),
+      api.post_check(post_process.MustRun,
+                     'upload image to GS (formerly "push image")'),
       api.post_check(post_process.StepCommandContains,
                      'upload artifacts.create firmware archive.create tarball',
                      [
@@ -966,10 +939,8 @@ def GenTests(api):
                      'build target.install packages', ['build_packages']),
       api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
-      api.post_check(StepCommandLacks, 'push image.call pushimage', ['-n']),
-      api.post_check(post_process.StepCommandContains,
-                     'push image.call pushimage',
-                     ['--dest-bucket=gs://chromeos-throw-away-bucket']),
+      api.post_check(post_process.MustRun,
+                     'upload image to GS (formerly "push image")'),
       bucket='staging', input_properties={
           'bump_version': True,
           'set_suite_scheduling': True,
@@ -987,10 +958,8 @@ def GenTests(api):
                      'build target.install packages', ['./build_packages']),
       api.post_check(StepCommandLacks, 'build target.install packages',
                      ['--withdebugsymbols']),
-      api.post_check(post_process.StepCommandContains,
-                     'push image.call pushimage', ['-n']),
-      api.post_check(StepCommandLacks, 'push image.call pushimage',
-                     ['--dest-bucket=gs://chromeos-throw-away-bucket']),
+      api.post_check(post_process.MustRun,
+                     'upload image to GS (formerly "push image")'),
       bucket='staging', version='R39-6301.202.44', input_properties={
           'bump_version': True,
           'set_suite_scheduling': True,
@@ -1079,7 +1048,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.bundle tarball'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts.gsutil rsync'),
-      api.post_check(post_process.DoesNotRun, 'push image'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload image to GS (formerly "push image")'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
       status='FAILURE',
   )
@@ -1093,9 +1063,11 @@ def GenTests(api):
       api.post_check(post_process.StepFailure, 'board1.upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'board1.upload artifacts.bundle tarball'),
-      api.post_check(post_process.DoesNotRun, 'board1.push image'),
+      api.post_check(post_process.DoesNotRun,
+                     'board1.upload image to GS (formerly "push image")'),
       api.post_check(post_process.StepSuccess, 'board2.upload artifacts'),
-      api.post_check(post_process.MustRun, 'board2.push image'),
+      api.post_check(post_process.MustRun,
+                     'board2.upload image to GS (formerly "push image")'),
       build_targets=[{
           'name': 'board1'
       }, {
@@ -1112,7 +1084,8 @@ def GenTests(api):
                      'upload artifacts.create firmware archive'),
       api.post_check(post_process.StepSuccess,
                      'upload artifacts.bundle tarball'),
-      api.post_check(post_process.MustRun, 'push image'),
+      api.post_check(post_process.MustRun,
+                     'upload image to GS (formerly "push image")'),
       version='R122-15709.22.0',
   )
 
@@ -1124,7 +1097,8 @@ def GenTests(api):
                      'upload artifacts.create firmware archive'),
       api.post_check(post_process.StepSuccess,
                      'upload artifacts.bundle tarball'),
-      api.post_check(post_process.MustRun, 'push image'),
+      api.post_check(post_process.MustRun,
+                     'upload image to GS (formerly "push image")'),
       version='R115-15460.22.0',
   )
 

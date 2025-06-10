@@ -3835,22 +3835,25 @@
   },
   {
     "cmd": [],
-    "name": "push image"
+    "name": "upload image to GS (formerly \"push image\")",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throw-away-bucket/canary-channel/target/15236.0.0/@@@"
+    ]
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
-      "gs://chromeos-image-archive/fw-atlas-cq/R109-15236.0.0-101-8945511751514863184/target",
-      "--yes",
-      "--board=target",
-      "--version=R109-15236.0.0",
-      "--buildroot",
-      "[CLEANUP]/chromiumos_workspace",
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
       "-n",
-      "--sign-types",
-      "firmware",
-      "accessory_rwsig",
-      "--dest-bucket=gs://chromeos-releases"
+      "-r",
+      "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2",
+      "gs://chromeos-throw-away-bucket/canary-channel/target/15236.0.0/ChromeOS-firmware-R109-15236.0.0-target.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3874,7 +3877,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "push image.call pushimage",
+    "name": "upload image to GS (formerly \"push image\").gsutil cp",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
