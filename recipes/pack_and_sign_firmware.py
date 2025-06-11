@@ -29,6 +29,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'depot_tools/gsutil',
+    'recipe_engine/archive',
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/cv',
@@ -108,8 +109,10 @@ def create_manifest(api: RecipeApi, directory: Path, shellball: str):
              stdout=manifest_file)
 
 def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
-                              shellball_path: Path, target: str, version: str,
-                              keyset_is_mp: bool, fw_config_path: Path,
+                              shellball_path: Path,
+                              ec_component_manifest_path: Path, target: str,
+                              version: str, keyset_is_mp: bool,
+                              fw_config_path: Path,
                               abandon: bool = True) -> result_pb2.RawResult:
   """Uploads the firmware prebuilts to the android repo."""
   # Skip upload in CQ.
@@ -150,6 +153,19 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
 
     create_manifest(api, checkout / f'firmware/{directory}',
                     f'chromeos-firmwareupdate_{version}')
+
+    # Copy the EC component manifest zip into the firmware prebuild repo.
+    if ec_component_manifest_path:
+      api.file.ensure_directory(
+          'make sure ec_component_manifest dir exists',
+          api.path.join(checkout, 'firmware', 'ec_component_manifest'))
+      api.file.copy(
+          'copy ec_component_manifest.zip to repo', ec_component_manifest_path,
+          api.path.join(checkout, 'firmware', 'ec_component_manifest',
+                        f'ec_component_manifest_{version}.zip'))
+      create_or_update_symlink(api, checkout / 'firmware/ec_component_manifest',
+                               f'ec_component_manifest_{version}.zip',
+                               'ec_component_manifest_LATEST.zip')
 
     # Check to make sure there was actually a change.
     diff_lines = api.git.get_working_dir_diff_files()
@@ -234,8 +250,10 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
           base_target_name = api.build_menu.build_target.name.split(
               'android-')[-1]
           output_artifact_dir = api.path.mkdtemp('shellball-dir')
-          output_artifact_name = api.cros_artifacts.artifacts_by_image_type.get(
+          output_shellball_name = api.cros_artifacts.artifacts_by_image_type.get(
               common_pb2.IMAGE_TYPE_SHELLBALL, 'chromeos-firmwareupdate')
+          output_artifact_shellball = output_artifact_dir / output_shellball_name
+          output_artifact_eccm_dir = output_artifact_dir / 'ec_component_manifest'
 
           pack_fw_cmd = [
               'vpython3',
@@ -245,11 +263,21 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
               '--config',
               fw_config_path / base_target_name,
               '--output',
-              output_artifact_dir / output_artifact_name,
+              output_artifact_shellball,
+              '--ec_component_manifest_output',
+              output_artifact_eccm_dir,
               '--textproto',
               '--download',
           ]
           api.step('call pack_firmware', pack_fw_cmd)
+
+      # Zip EC component manifests.
+      with api.step.nest('zip EC component manifests'):
+        output_artifact_eccm_zip = None
+        if api.path.exists(output_artifact_eccm_dir):
+          output_artifact_eccm_zip = api.archive.package(output_artifact_eccm_dir.parent) \
+              .with_dir(output_artifact_eccm_dir) \
+              .archive('compress ec component manifest', output_artifact_eccm_dir / 'ec_component_manifest.zip', 'zip')
 
       # Get shellball version for target.
       new_shellball_version = api.signing.get_shellball_version()
@@ -274,11 +302,12 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
       api.signing.upload_shellball_latest_file(new_shellball_version)
 
       # Open a cl with the new firmware prebuilts.
-      return upload_firmware_prebuilts(
-          api, output_artifact_dir / output_artifact_name, shellball_path,
-          base_target_name, new_shellball_version,
-          get_keyset_is_mp(signed_image_response), fw_config_path,
-          abandon=api.cros_infra_config.is_staging)
+      return upload_firmware_prebuilts(api, output_artifact_shellball,
+                                       shellball_path, output_artifact_eccm_zip,
+                                       base_target_name, new_shellball_version,
+                                       get_keyset_is_mp(signed_image_response),
+                                       fw_config_path,
+                                       abandon=api.cros_infra_config.is_staging)
 
 
 # Sample SignImageResponse for testing.
@@ -331,6 +360,8 @@ def GenTests(api: RecipeTestApi):
       api.step_data(
           'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
+      api.path.dirs_exist(api.path.cleanup_dir /
+                          'shellball-dir_tmp_1/ec_component_manifest'),
       api.post_check(
           post_process.DoesNotRun,
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
