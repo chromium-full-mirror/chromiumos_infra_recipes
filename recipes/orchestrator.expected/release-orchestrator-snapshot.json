@@ -13784,9 +13784,7 @@
       "1234.56.0",
       "--buildbucket-id",
       "8945511751514863184",
-      "--debug",
-      "--force-overriding-user",
-      "test-account@test-project.iam.gserviceaccount.com"
+      "--debug"
     ],
     "luci_context": {
       "realm": {

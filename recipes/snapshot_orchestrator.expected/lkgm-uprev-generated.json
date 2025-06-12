@@ -11537,8 +11537,6 @@
       "--buildbucket-id",
       "8945511751514863184",
       "--debug",
-      "--force-overriding-user",
-      "test-account@test-project.iam.gserviceaccount.com",
       "--internal-manifest-position",
       "101",
       "--external-manifest-position",
