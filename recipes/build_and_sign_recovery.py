@@ -26,6 +26,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -40,6 +41,7 @@ DEPS = [
     'git',
     'mutable_output',
     'signing',
+    'src_state',
 ]
 
 TEST_SIGNING_CONFIG = '''build_target_signing_configs {
@@ -117,6 +119,12 @@ def upload_recovery_prebuilts(api: RecipeTestApi, checkout: Path,
           summary_markdown='No recovery kernel images changed.',
           status=bb_common_pb2.SUCCESS,
       )
+    # Skip upload in CQ.
+    if api.cv.active:
+      api.step.empty('Skipping CL upload in CQ')
+      return result_pb2.RawResult(
+          status=bb_common_pb2.SUCCESS,
+      )
     # Create a cl updating the file.
     api.git.add_all()
     bbid = api.buildbucket.build_url()
@@ -179,6 +187,24 @@ def RunSteps(api: RecipeApi):
         api.file.copy('copy prebuild recovery image into temp dir',
                       api.path.join(checkout, 'recovery', 'vmlinuz.image'),
                       recovery_local_path)
+
+      # In staging, allow cherry picking chromite CLs for testing.
+      chromite_path = api.src_state.workspace_path / 'chromite'
+      if api.cros_infra_config.is_staging:
+        with api.step.nest('apply gerrit changes') as pres, api.context(
+            cwd=chromite_path):
+          relevant_changes = [
+              x for x in api.buildbucket.build.input.gerrit_changes
+              if x.project == 'chromiumos/chromite'
+          ]
+          if relevant_changes:
+            patch_sets = api.gerrit.fetch_patch_sets(relevant_changes)
+            for patch_set in patch_sets:
+              commit_id = api.git.fetch_ref(patch_set.git_fetch_url,
+                                            patch_set.git_fetch_ref)
+              api.git.cherry_pick(commit_id)
+          else:
+            pres.step_text = 'No chromiumos/chromite changes to apply.'
 
       # Sign recovery kernel image and upload to GS.
       if api._test_data.enabled:  # pylint: disable=protected-access
@@ -461,4 +487,62 @@ def GenTests(api: RecipeTestApi):
       build_target='kukui',
       bucket='staging',
       builder='recovery-android-kukui-main',
+  )
+
+  test_gerrit_changes = [
+      bb_common_pb2.GerritChange(host='chromium-review.googlesource.com',
+                                 change=1, project='chromiumos/chromite',
+                                 patchset=1),
+      bb_common_pb2.GerritChange(host='chromium-review.googlesource.com',
+                                 change=2, project='some-other-project',
+                                 patchset=1),
+  ]
+  fetch_changes_response = {
+      101: {
+          'change_id': '101',
+          'revision_info': {
+              'commit': {
+                  'message': 'test commit',
+              },
+          },
+      }
+  }
+  yield api.build_menu.test(
+      'cq',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_CANARY],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware',
+                                        use_dev_keys=True)),
+          }),
+      api.gerrit.set_gerrit_fetch_changes_response('apply gerrit changes',
+                                                   test_gerrit_changes,
+                                                   fetch_changes_response),
+      # Only cherry pick the chromite change.
+      api.post_check(post_process.MustRun,
+                     'apply gerrit changes.git cherry-pick'),
+      api.post_check(post_process.DoesNotRun,
+                     'apply gerrit changes.git cherry-pick (2)'),
+      api.cros_build_api.set_api_return(
+          'sign recovery kernel image.sign artifacts.call BAPI',
+          'ImageService/SignImage', MessageToJson(sample_response())),
+      api.post_check(
+          post_process.LogContains,
+          'sign recovery kernel image.sign artifacts.call BAPI.call chromite.api.'
+          'ImageService/SignImage', 'request',
+          ['\"keyset\": \"DevPreMPKeys\"']),
+      # Skip CL upload.
+      api.post_check(post_process.DoesNotRun, 'git commit'),
+      api.post_check(post_process.MustRun, 'Skipping CL upload in CQ'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      bucket='staging',
+      builder='recovery-android-kukui-main',
+      cq=True,
+      gerrit_changes=test_gerrit_changes,
   )
