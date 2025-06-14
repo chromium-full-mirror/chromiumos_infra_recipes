@@ -677,7 +677,12 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-kernelnext-snapshot', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-snapshot', GreennessTuple(score=0, build_score=0, critical=True, relevant=False))])@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@# Failing builders (non-bazel)@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@eve-snapshot GreennessTuple(score=0, build_score=0, critical=True, relevant=False)@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@# Full log@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@eve-kernelnext-snapshot GreennessTuple(score=100, build_score=100, critical=True, relevant=True)@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@eve-snapshot GreennessTuple(score=0, build_score=0, critical=True, relevant=False)@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },

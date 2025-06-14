@@ -15339,7 +15339,8 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@# Full log@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@test-builder GreennessTuple(score=100, build_score=100, critical=True, relevant=True)@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },

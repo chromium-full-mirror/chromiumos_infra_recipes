@@ -7,7 +7,7 @@
 
 import collections
 
-from typing import List, OrderedDict
+from typing import List, OrderedDict, Tuple
 
 from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -194,7 +194,26 @@ class GreennessApi(recipe_api.RecipeApi):
   def print_step(self) -> None:
     """Print comprehensive greenness info in a step."""
     with self.m.step.nest('print greenness') as pres:
-      pres.logs['builder_greenness'] = str(self.builder_greenness_dict)
+      if self.builder_greenness_dict:
+        log = ''
+
+        # Format the output for humans to quickly check.
+        for bazel, text in ((False, 'non-bazel'), (True, 'bazel')):
+          if not self.is_green_for_local(bazel):
+            builds = sorted(self._get_local_build_greenness(bazel))
+            log += '# Failing builders (' + text + ')\n' + ''.join(
+                '%s %s\n' % (k, v)
+                for k, v in builds
+                if v.build_score != 100 and v.critical)
+            log += '\n'
+
+        log += '# Full log\n' + ''.join(
+            '%s %s\n' % (k, v)
+            for k, v in sorted(self.builder_greenness_dict.items()))
+      else:
+        log = '<no entries>'
+
+      pres.logs['builder_greenness'] = log
       if self._publish_property:
         self.publish_step()
 
@@ -235,20 +254,21 @@ class GreennessApi(recipe_api.RecipeApi):
     builder_greenness_dict is prepopulated (i.e. update_build_info was
     previously called); otherwise, a false positive will be returned.
     """
-    local_build_greenness = self.get_local_build_greenness(is_bazel)
-    return not any(gt.build_score != 100 and gt.critical is True
-                   for gt in local_build_greenness)
+    builds = self._get_local_build_greenness(is_bazel)
+    return not any(
+        gt.build_score != 100 and gt.critical is True for _, gt in builds)
 
-  def get_local_build_greenness(self, is_bazel: bool) -> List[GreennessTuple]:
+  def _get_local_build_greenness(
+      self,
+      is_bazel: bool,
+  ) -> List[Tuple[str, GreennessTuple]]:
     """Returns a filtered list of greenness tuples for local builds.
 
     It is assumed that builder_greenness_dict is prepopulated (i.e.
     update_build_info was previously called); otherwise, an empty list will
     be returned.
     """
-    included_builders = [
-        (b, gt)
-        for (b, gt) in self._builder_greenness_dict.items()
-        if not self._is_excluded(b, self._llfg_exclude_variants)
-    ]
-    return [gt for (b, gt) in included_builders if ('-bazel-' in b) == is_bazel]
+    builds = [(b, gt)
+              for (b, gt) in self._builder_greenness_dict.items()
+              if not self._is_excluded(b, self._llfg_exclude_variants)]
+    return [(b, gt) for (b, gt) in builds if ('-bazel-' in b) == is_bazel]

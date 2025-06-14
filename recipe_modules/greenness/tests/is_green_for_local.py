@@ -39,7 +39,11 @@ def RunSteps(api):
     for build in builds:
       build.status = 20
 
+  if api.properties['no_builds']:
+    builds = []
+
   api.greenness.update_build_info(builds)
+  api.greenness.print_step()
 
   api.assertions.assertEqual(
       api.greenness.is_green_for_local(is_bazel=api.properties['is_bazel']),
@@ -56,7 +60,7 @@ def GenTests(api):
                   'publish_property': True,
                   'llfg_exclude_variants': ['-kernelnext'],
               }
-          }, test_failed_builds=False, is_bazel=False,
+          }, test_failed_builds=False, is_bazel=False, no_builds=False,
           expected_is_green_for_local=True),
       api.post_process(post_process.DropExpectation),
   )
@@ -69,7 +73,7 @@ def GenTests(api):
                   'publish_property': True,
                   'llfg_exclude_variants': ['-kernelnext'],
               }
-          }, test_failed_builds=True, is_bazel=False,
+          }, test_failed_builds=True, is_bazel=False, no_builds=False,
           expected_is_green_for_local=False),
       api.post_process(post_process.DropExpectation),
   )
@@ -82,7 +86,7 @@ def GenTests(api):
                   'publish_property': True,
                   'llfg_exclude_variants': ['-kernelnext'],
               }
-          }, test_failed_builds=False, is_bazel=True,
+          }, test_failed_builds=False, is_bazel=True, no_builds=False,
           expected_is_green_for_local=True),
       api.post_process(post_process.DropExpectation),
   )
@@ -95,7 +99,20 @@ def GenTests(api):
                   'publish_property': True,
                   'llfg_exclude_variants': ['-kernelnext'],
               }
-          }, test_failed_builds=True, is_bazel=True,
+          }, test_failed_builds=True, is_bazel=True, no_builds=False,
           expected_is_green_for_local=False),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'no-builds',
+      api.properties(
+          **{
+              '$chromeos/greenness': {
+                  'publish_property': True,
+                  'llfg_exclude_variants': ['-kernelnext'],
+              }
+          }, test_failed_builds=True, is_bazel=False, no_builds=True,
+          expected_is_green_for_local=True),
       api.post_process(post_process.DropExpectation),
   )
