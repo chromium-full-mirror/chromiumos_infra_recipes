@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -10,4 +9,3 @@ DEPS = [
     'cros_sdk',
     'recipe_engine/raw_io',
 ]
-

@@ -2665,9 +2665,9 @@
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
       "    return callable_obj(*props, **additional_args)",
       "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/tests/upload_cq.py\", line 35, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/tests/upload_cq.py\", line 34, in RunSteps",
       "    api.cros_prebuilts.upload_target_prebuilts(",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 527, in upload_target_prebuilts",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 526, in upload_target_prebuilts",
       "    raise ValueError('CQ should not set the binhost.')",
       "ValueError: CQ should not set the binhost."
     ]

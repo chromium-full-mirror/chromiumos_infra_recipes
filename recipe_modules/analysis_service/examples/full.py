@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -140,7 +139,6 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.ci_build(),
       api.step_data(
           'basic_with_stdout',
-          # coding: utf8
           stdout=api.raw_io.output('國華'),
           stderr=api.raw_io.output('Errors')),
       api.properties(FullProperties(max_stdout_stderr_bytes=1024)),
