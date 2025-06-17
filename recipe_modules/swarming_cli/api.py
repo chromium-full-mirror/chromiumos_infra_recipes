@@ -6,7 +6,6 @@
 
 """Wrapper functions for calling the swarming CLI."""
 
-import datetime
 from typing import Iterable, Optional
 
 from recipe_engine import config_types
@@ -77,55 +76,6 @@ class SwarmingCli(recipe_api.RecipeApi):
     step = self._run_bin(
         step_name, cmd, test_stdout=lambda: self.test_api.
         swarming_bot_step_test_data(dimensions))
-    return step
-
-  def _swarming_time_to_datetime(self, time_str):
-    format_str = '%Y-%m-%dT%H:%M:%S.%fZ'
-    return datetime.datetime.strptime(time_str, format_str)
-
-  def get_max_pending_time(self, dimensions, lookback_hours, swarming_instance):
-    """Retrieves the list of tasks from Swarming based on dimensions.
-
-    Args:
-      dimensions (iterable): strings formatted as "key:value" to query Swarming.
-      lookback_hours (int): Number of hours to query swarming on.
-      swarming_instance(str): string containing the name of the Swarming
-        instance to query.
-
-    Returns:
-      (float) Max pending time in hours.
-    """
-    tasks = self.get_task_list(dimensions, 'PENDING', lookback_hours,
-                               swarming_instance, limit=1000)
-    now = self.m.time.utcnow()
-    oldest_time = now
-    if tasks:
-      oldest_time = self._swarming_time_to_datetime(tasks[-1]['created_ts'])
-    # Hopefully there won't be tasks pending for days.
-    return (now - oldest_time).seconds / 3600.0
-
-  def get_task_list(self, dimensions, state, lookback_hours, swarming_instance,
-                    limit=None):
-    """Retrieves the list of tasks from Swarming based on dimensions and state.
-
-    Args:
-      dimensions (iterable): strings formatted as "key:value" to query Swarming.
-      state (str): state of the tasks to query
-      lookback_hours (int): Number of hours to query swarming on.
-      swarming_instance(str): string containing the name of the Swarming
-        instance to query.
-      limit (int): Number of tasks to return.
-    """
-    cmd = ['tasks', '-S', swarming_instance]
-    cmd.extend(['-start', str(self._calculate_epoch_start(lookback_hours))])
-    cmd.extend(['-state', state])
-    for dim in dimensions:
-      cmd.extend(['-tag', dim])
-    if limit:
-      cmd.extend(['-limit', str(limit)])
-    step = self._run_bin(
-        'get task list query result', cmd,
-        test_stdout=lambda: self.test_api.swarming_task_list_test_data(self.m))
     return step
 
   def get_task_counts(self, dimensions: Iterable[str], state: str,

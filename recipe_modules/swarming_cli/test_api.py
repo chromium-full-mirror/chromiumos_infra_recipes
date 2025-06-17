@@ -3,10 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import datetime
+"""Testing module for swarming_cli."""
 
 from recipe_engine import recipe_test_api
-
 
 class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the swarming CLI module."""
@@ -39,25 +38,3 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
       if 'cq' in dim:
         task_counts = {'count': '23', 'now': '2020-03-27T19:08:08.207587'}
     return task_counts
-
-  def swarming_task_list_test_data(self, api):
-    """Returns list of bots based on provided dimensions.
-
-    Args:
-      api: The recipes API containing callable recipe modules.
-
-    Return:
-      list(dicts): Mock tasks, as from Swarming
-    """
-    fmt = '%Y-%m-%dT%H:%M:%S.%fZ'
-    now = api.time.utcnow()
-    one_hour_ago = now - datetime.timedelta(hours=1)
-    two_hours_ago = now - datetime.timedelta(hours=2)
-    return [
-        {
-            'created_ts': one_hour_ago.strftime(fmt),
-        },
-        {
-            'created_ts': two_hours_ago.strftime(fmt),
-        },
-    ]

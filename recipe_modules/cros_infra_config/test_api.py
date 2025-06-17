@@ -12,7 +12,6 @@ from google.protobuf import message
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.builder_config import BuilderConfigs
-from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.chromiumos.test.api import pre_test_service as pre_request
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
@@ -134,12 +133,6 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     """A function for step_test_data to generate blocked pools config."""
     # Humans can edit the txt file for test data.
     return self._read_txt('test_blocked_pools_config.txt')
-
-  def dut_tracking_test_data(self) -> recipe_test_api.StepTestData:
-    """A function for step_test_data to generate TrackingPolicyCfg."""
-    # Humans can edit the JSON file for test data, impl reads binary proto.
-    return self._read_config('test_dut_tracking_config.json',
-                             TrackingPolicyCfg())
 
   def override_builder_configs_test_data(
       self, msg: BuilderConfigs, iteration: int = 1, ref: str = 'HEAD',

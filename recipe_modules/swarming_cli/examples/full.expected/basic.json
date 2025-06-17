@@ -131,37 +131,6 @@
     ]
   },
   {
-    "cmd": [
-      "[START_DIR]/cipd/swarming",
-      "tasks",
-      "-S",
-      "chromeos-swarming.appspot.com",
-      "-start",
-      "1336827204.5",
-      "-state",
-      "PENDING",
-      "-tag",
-      "role:cq",
-      "-tag",
-      "bot_size:large",
-      "-limit",
-      "1000"
-    ],
-    "infra_step": true,
-    "name": "get task list query result",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"created_ts\": \"2012-05-14T11:53:26.000000Z\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  },@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"created_ts\": \"2012-05-14T10:53:26.000000Z\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
     "name": "$result"
   }
 ]

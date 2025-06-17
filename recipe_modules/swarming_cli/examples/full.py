@@ -52,10 +52,6 @@ def RunSteps(api):
           bot_group=api.properties.get('bot_group'))
   api.assertions.assertEqual(int(task_count.get('busy', 0)), 0)
 
-  pend_time = api.swarming_cli.get_max_pending_time(query_dim[0], -48,
-                                                    swarming_instance)
-  api.assertions.assertLess(pend_time, 2.1)
-  api.assertions.assertGreater(pend_time, 1.9)
 
 
 def GenTests(api):

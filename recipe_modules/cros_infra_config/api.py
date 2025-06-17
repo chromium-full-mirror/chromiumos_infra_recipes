@@ -21,7 +21,6 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfigs
-from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
@@ -462,17 +461,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         'testingconfig/blocked_pools',
         step_test_data=self.test_api.blocked_pools_test_data).decode(
             'utf-8').strip().split(',')
-
-  def get_dut_tracking_config(self) -> TrackingPolicyCfg:
-    """Get TrackingPolicyCfg as defined in infra/config.
-
-    Returns:
-      TrackingPolicyCfg as defined in the config repo.
-    """
-    return TrackingPolicyCfg.FromString(
-        self.download_binproto('testingconfig/generated/dut_tracking',
-                               self.test_api.dut_tracking_test_data,
-                               msg=TrackingPolicyCfg()))
 
   def _has_valid_commit(self, config: Optional[BuilderConfig],
                         commit: GitilesCommit,
