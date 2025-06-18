@@ -701,16 +701,21 @@ class FirmwareBuilder():
               build_target.name, self.m.cros_version.version.legacy_version,
               common_pb2.IMAGE_TYPE_FIRMWARE))
 
-      self.m.gsutil([
-          'cp',
-          '-n',
-          '-r',
-          self.m.path.join(artifact_dir, 'firmware_from_source.tar.bz2'),
-          gs_path,
-      ], multithreaded=True, timeout=30 * 60)
+      artifact_path = self.m.path.join(artifact_dir,
+                                       'firmware_from_source.tar.bz2')
+      if self.m.path.isfile(artifact_path):
+        self.m.gsutil([
+            'cp',
+            '-n',
+            '-r',
+            artifact_path,
+            gs_path,
+        ], multithreaded=True, timeout=30 * 60)
 
-      pres.links[
-          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{gs_dir.removeprefix("gs://")}'
+        pres.links[
+            "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{gs_dir.removeprefix("gs://")}'
+      else:
+        pres.step_text = "nothing to upload!"
 
   @contextmanager
   def _maybe_step(self, name, cond):
@@ -929,6 +934,8 @@ def GenTests(api):
 
   yield test(
       'staging-release',
+      api.path.exists(api.path.cleanup_dir /
+                      'artifacts_tmp_1/firmware_from_source.tar.bz2'),
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.StepTextEquals, 'bump version',
