@@ -279,6 +279,7 @@ def _update_android_config(api, properties, _project_infos, dry_run):
 
       project_to_hal_xml_path = {}
       project_to_feature_xml_output_dir = {}
+      project_to_media_profiles_output_dir = {}
       for jsonproto_path in jsonproto_files:
         # config.jsonproto paths end with patterns like
         # chromeos-config-bsp-private-0.0.1/<program>/generated/config.jsonproto.
@@ -325,6 +326,22 @@ def _update_android_config(api, properties, _project_infos, dry_run):
           project_to_feature_xml_output_dir[project_name] = (
               feature_xml_output_dir)
 
+          media_profiles_output_dir = api.path.mkdtemp("output_feature_xml")
+          dtd_schema = cros_to_android_script.parent / "media_profiles.dtd"
+          api.step(
+              f"Run generate-media-profiles for {project_name}",
+              [
+                  cros_to_android_script,
+                  "generate-media-profiles",
+                  "-o",
+                  media_profiles_output_dir,
+                  "-d",
+                  dtd_schema,
+                  jsonproto_path,
+              ],
+          )
+          project_to_media_profiles_output_dir[
+              project_name] = media_profiles_output_dir
 
       commit_message = f'''Automatic config update.
 
@@ -358,6 +375,13 @@ Flag: EXEMPT desktop only
           api.file.copytree(f"copy feature XMLs for {project}",
                             feature_xml_output_dir,
                             program_path / 'configs/features' / project,
+                            allow_override=True)
+
+        for project, media_profiles_output_dir in project_to_media_profiles_output_dir.items(
+        ):
+          api.file.copytree(f"copy media profile XMLs for {project}",
+                            media_profiles_output_dir,
+                            program_path / 'configs/media_profiles',
                             allow_override=True)
 
         project_info_test_data = api.repo.test_api.project_infos_test_data([{
