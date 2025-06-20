@@ -53,6 +53,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'cros_version',
+    'deferrals',
     'easy',
     'failures',
     'mutable_output',
@@ -275,16 +276,17 @@ def RunSteps(api, properties):
       if properties.pao_signing_config.key and uploaded_artifacts and len(
           uploaded_artifacts) > 2:
         with api.step.nest("signing PAOs in artifact"):
-          for artifact_name in [
-              a
-              for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-              if GENERATE_PAOS_RE.match(a)
-          ]:
-            api.signing.sign_ti50_paos(artifact_dir,
-                                       properties.pao_signing_config.project,
-                                       properties.pao_signing_config.keyring,
-                                       properties.pao_signing_config.key,
-                                       artifact_name)
+          with api.deferrals.raise_exceptions_at_end():
+            for artifact_name in [
+                a for a in
+                uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
+                if GENERATE_PAOS_RE.match(a)
+            ]:
+              with api.deferrals.defer_exceptions():
+                api.signing.sign_ti50_paos(
+                    artifact_dir, properties.pao_signing_config.project,
+                    properties.pao_signing_config.keyring,
+                    properties.pao_signing_config.key, artifact_name)
 
       # Publish tar files to pubsub.
       if not api.cv.active:
