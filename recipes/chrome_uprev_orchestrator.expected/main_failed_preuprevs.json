@@ -3,27 +3,22 @@
     "cmd": [],
     "name": "extracting Chrome version",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Chrome version: 98.0.1234.0@@@"
+      "@@@STEP_SUMMARY_TEXT@Chrome version: None@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Fetch ToT version",
+    "name": "fetch commit metadata",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@data@MAJOR=98@@@",
-      "@@@STEP_LOG_LINE@data@MINOR=0@@@",
-      "@@@STEP_LOG_LINE@data@BUILD=1234@@@",
-      "@@@STEP_LOG_LINE@data@PATCH=0@@@",
-      "@@@STEP_LOG_END@data@@@"
+      "@@@STEP_LOG_LINE@response@)]}'@@@",
+      "@@@STEP_LOG_LINE@response@{\"message\": \"Roll Chrome Android ARM32 PGO Profile\\n\\nChange-Id: I7e2a0277a1cff4551f4ee17edab0b56d0a20486e\\nCr-Commit-Position: refs/heads/main@{#1397757}\\n\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
     "cmd": [
       "curl",
-      "-f",
-      "--write-out",
-      "HTTP_CODE=%{http_code}",
-      "https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/VERSION?format=TEXT"
+      "https://chromium.googlesource.com/chromium/src/+/8302b1a80de0995f146605740417cdf78e381157?format=JSON"
     ],
     "luci_context": {
       "realm": {
@@ -36,9 +31,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Fetch ToT version.curl https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/VERSION?format=TEXT",
+    "name": "fetch commit metadata.curl https://chromium.googlesource.com/chromium/src/+/8302b1a80de0995f146605740417cdf78e381157?format=JSON",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set_output_gitiles_commit",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"position\": 1397757, \"project\": \"chromium/src\", \"ref\": \"refs/heads/main\"}@@@"
     ]
   },
   {
@@ -65,7 +67,7 @@
       }
     },
     "name": "trigger puprs.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"lacros-ash-atomic-pupr-generator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"properties\": {\"triggers\": [{\"gitiles\": {\"ref\": \"refs/tags/98.0.1234.0\", \"repo\": \"https://chromium.googlesource.com/chromium/src\", \"revision\": \"8302b1a80de0995f146605740417cdf78e381157\"}}]}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"chrome-main-pupr-generator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"triggers\": [{\"gitiles\": {\"ref\": \"refs/heads/main\", \"repo\": \"https://chromium.googlesource.com/chromium/src\", \"revision\": \"8302b1a80de0995f146605740417cdf78e381157\"}}]}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -74,7 +76,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"pupr\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"lacros-ash-atomic-pupr-generator\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chrome-main-pupr-generator\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
@@ -89,7 +91,7 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"pupr\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"lacros-ash-atomic-pupr-generator\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"chrome-main-pupr-generator\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\",@@@",
@@ -101,13 +103,13 @@
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/tags/98.0.1234.0\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"triggers\": [@@@",
       "@@@STEP_LOG_LINE@request@            {@@@",
       "@@@STEP_LOG_LINE@request@              \"gitiles\": {@@@",
-      "@@@STEP_LOG_LINE@request@                \"ref\": \"refs/tags/98.0.1234.0\",@@@",
+      "@@@STEP_LOG_LINE@request@                \"ref\": \"refs/heads/main\",@@@",
       "@@@STEP_LOG_LINE@request@                \"repo\": \"https://chromium.googlesource.com/chromium/src\",@@@",
       "@@@STEP_LOG_LINE@request@                \"revision\": \"8302b1a80de0995f146605740417cdf78e381157\"@@@",
       "@@@STEP_LOG_LINE@request@              }@@@",
@@ -164,7 +166,7 @@
       }
     },
     "name": "Run preuprev chromeos-betty-chrome-preuprev.run chrome builder.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-betty-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-betty-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/heads/main\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -207,7 +209,7 @@
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/tags/98.0.1234.0\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133a\",@@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
@@ -324,7 +326,11 @@
   },
   {
     "cmd": [],
-    "name": "Run preuprev chromeos-brya-chrome-preuprev"
+    "name": "Run preuprev chromeos-brya-chrome-preuprev",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Test FAILURE@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -353,7 +359,7 @@
       }
     },
     "name": "Run preuprev chromeos-brya-chrome-preuprev.run chrome builder.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-brya-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-brya-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/heads/main\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -396,7 +402,7 @@
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/tags/98.0.1234.0\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"1231231231-00000000-0000-0000-0000-00000000133d\",@@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
@@ -490,8 +496,8 @@
       "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-284564751-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -542,7 +548,7 @@
       }
     },
     "name": "Run preuprev chromeos-jacuzzi-chrome-preuprev.run chrome builder.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-jacuzzi-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001340\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-jacuzzi-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/heads/main\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001340\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -585,7 +591,7 @@
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/tags/98.0.1234.0\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001340\",@@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
@@ -731,7 +737,7 @@
       }
     },
     "name": "Run preuprev chromeos-volteer-chrome-preuprev.run chrome builder.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-volteer-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001343\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"chromeos-volteer-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/heads/main\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001343\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -774,7 +780,7 @@
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/tags/98.0.1234.0\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001343\",@@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
@@ -920,7 +926,7 @@
       }
     },
     "name": "Run preuprev linux-chromeos-chrome-preuprev.run chrome builder.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"linux-chromeos-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/98.0.1234.0\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001346\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"ci\", \"builder\": \"linux-chromeos-chrome-preuprev\", \"project\": \"chrome\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/heads/main\"}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001346\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -963,7 +969,7 @@
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"8302b1a80de0995f146605740417cdf78e381157\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/tags/98.0.1234.0\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001346\",@@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
@@ -1079,7 +1085,10 @@
     ]
   },
   {
-    "name": "$result",
-    "summaryMarkdown": "On trunk (at the root of non-release branch)\n\n- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n"
+    "failure": {
+      "failure": {},
+      "humanReason": "Testing on main\n\n- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n- chromeos-brya-chrome-preuprev: [FAILURE](https://ci.chromium.org/ui/b/284564751)\n- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n"
+    },
+    "name": "$result"
   }
 ]

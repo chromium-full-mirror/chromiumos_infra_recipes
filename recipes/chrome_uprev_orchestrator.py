@@ -200,30 +200,19 @@ def RunChromeBuild(api: RecipeApi, builder: str,
 
 
 def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
-  # * On a first commit of Chrome branch, equivalent to trunk
-  #   -> triggers the atomic uprev (to the main branch)
+  # * On refs/heads/main
+  #   -> run preuprev testing
+  #   -> triggers the chrome-main uprev (to the main branch)
   # * On a release branches:
-  #   - at the root (the last segment in the version string is zero):
-  #     -> triggers both the atomic uprev (to the main branch) and the chrome
-  #        branch (to the release branch if any).
-  #   - at the other points:
-  #     -> triggers the chrome uprev (to the release branch) only.
+  #   -> skip preuprev testing
+  #   -> triggers the chrome uprev (to the release branch) only
+  # * On a non-release branches:
+  #   -> do nothing
 
-  # The last number of 4 segments of the chrome version. This is called "build
-  # number" or "patch number" (varies with document). This code uses
-  # |patch_number|.
   buildset = api.buildbucket.build.input.gitiles_commit
   with api.step.nest('extracting Chrome version') as step:
     chrome_version = ChromeVersion(buildset)
     step.step_summary_text = f'Chrome version: {chrome_version}'
-  try:
-    patch_number = None
-    if chrome_version:
-      patch_number = int(chrome_version.split('.')[3])
-  except (IndexError, ValueError, AttributeError):  # pragma: nocover
-    return result_pb2.RawResult(
-        status=common_pb2.INFRA_FAILURE,
-        summary_markdown=f'Invalid chrome version {chrome_version}')
 
   puprs = []
   run_preuprevs = False
@@ -253,27 +242,9 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
     # On release branch, we do Chrome (non-atomic) uprev to the branch on CrOS
     # repo.
     puprs.append('chrome')
-
-    # If |patch_number| is zero, it's the root of branches and it's ok to
-    # uprev.
-    if patch_number == 0:
-      # Even on a release branch, if it's at the root of the release branch, we
-      # do Chrome (non-atomic) uprev to the ToT on CrOS repo.
-      puprs.append('lacros-ash-atomic')
-      run_preuprevs = True
-      summary_markdown = 'On trunk (at the root of release branch)'
-    else:
-      summary_markdown = 'On release branches'
+    summary_markdown = 'On release branches'
   else:
-    # On a non-release branch, we do Chrome (non-atomic) uprev to the ToT on CrOS
-    # repo.
-    puprs.append('lacros-ash-atomic')
-    run_preuprevs = True
-
-    if patch_number == 0:
-      summary_markdown = 'On trunk (at the root of non-release branch)'
-    else:
-      summary_markdown = 'On non-release branches'
+    summary_markdown = 'No uprev on non-release branch release (daily canary)'
 
   builds = DoUprev(api, buildset, puprs, run_preuprevs)
 
@@ -440,22 +411,6 @@ def GenTests(api: RecipeTestApi):
     return r
 
   yield api.test(
-      'version_at_root_on_release_branches',
-      trigger(chrome_version='97.0.1290.0'),
-      preuprevs(api, chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
-                chromeos_brya_chrome_preuprev=common_pb2.SUCCESS),
-      api.post_process(post_process.LogContains,
-                       'trigger puprs.buildbucket.schedule', 'request', [
-                           '"builder": "chrome-pupr-generator"',
-                       ]),
-      api.post_process(post_process.LogContains,
-                       'trigger puprs.buildbucket.schedule (2)', 'request', [
-                           '"builder": "lacros-ash-atomic-pupr-generator"',
-                       ]),
-      api.post_process(post_process.StatusSuccess),
-  )
-
-  yield api.test(
       'version_on_release_branches',
       trigger(chrome_version='97.0.1290.1'),
       api.post_process(post_process.LogContains,
@@ -468,12 +423,18 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'version_on_non_release_branch',
       trigger(chrome_version='98.0.1234.1'),
-      preuprevs(api, chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
-                chromeos_brya_chrome_preuprev=common_pb2.SUCCESS),
-      api.post_process(post_process.LogContains,
-                       'trigger puprs.buildbucket.schedule', 'request', [
-                           '"builder": "lacros-ash-atomic-pupr-generator"',
-                       ]),
+      api.post_process(post_process.DoesNotRun,
+                       'Run preuprev chromeos-betty-chrome-preuprev'),
+      api.post_process(post_process.DoesNotRun,
+                       'Run preuprev chromeos-brya-chrome-preuprev'),
+      api.post_process(post_process.DoesNotRun,
+                       'Run preuprev chromeos-jacuzzi-chrome-preuprev'),
+      api.post_process(post_process.DoesNotRun,
+                       'Run preuprev chromeos-volteer-chrome-preuprev'),
+      api.post_process(post_process.DoesNotRun,
+                       'Run preuprev linux-chromeos-chrome-preuprev'),
+      api.post_process(post_process.DoesNotRun,
+                       'trigger puprs.buildbucket.schedule'),
       api.post_process(post_process.StatusSuccess),
   )
 
@@ -489,45 +450,38 @@ def GenTests(api: RecipeTestApi):
               '"ref": "refs/heads/main"',
               '"revision": "8302b1a80de0995f146605740417cdf78e381157"',
           ]),
+      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
-      'version_on_trunk',
-      trigger(chrome_version='98.0.1234.0'),
-      preuprevs(api, chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
-                chromeos_brya_chrome_preuprev=common_pb2.SUCCESS),
-      api.post_process(post_process.LogContains,
-                       'trigger puprs.buildbucket.schedule', 'request', [
-                           '"builder": "lacros-ash-atomic-pupr-generator"',
-                           '"ref": "refs/tags/98.0.1234.0"',
-                       ]),
-  )
-
-  yield api.test(
-      'version_on_trunk_failed_preuprevs',
-      trigger(chrome_version='98.0.1234.0'),
+      'main_failed_preuprevs',
+      trigger(chrome_version=None),
       preuprevs(api, chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
                 chromeos_brya_chrome_preuprev=common_pb2.FAILURE),
-      api.post_process(post_process.LogContains,
-                       'trigger puprs.buildbucket.schedule', 'request', [
-                           '"builder": "lacros-ash-atomic-pupr-generator"',
-                           '"ref": "refs/tags/98.0.1234.0"',
-                       ]),
+      api.post_process(
+          post_process.LogContains, 'trigger puprs.buildbucket.schedule',
+          'request', [
+              '"builder": "chrome-main-pupr-generator"',
+              '"ref": "refs/heads/main"',
+              '"revision": "8302b1a80de0995f146605740417cdf78e381157"',
+          ]),
       status='FAILURE',
   )
 
   yield api.test(
-      'version_on_trunk_failed_preuprevs_retried',
-      trigger(chrome_version='98.0.1234.0'),
+      'main_failed_preuprevs_retried',
+      trigger(chrome_version=None),
       preuprevs(
           api, chromeos_betty_chrome_preuprev=common_pb2.FAILURE,
           chromeos_brya_chrome_preuprev=[
               common_pb2.INFRA_FAILURE, common_pb2.SUCCESS
           ]),
-      api.post_process(post_process.LogContains,
-                       'trigger puprs.buildbucket.schedule', 'request', [
-                           '"builder": "lacros-ash-atomic-pupr-generator"',
-                           '"ref": "refs/tags/98.0.1234.0"',
-                       ]),
+      api.post_process(
+          post_process.LogContains, 'trigger puprs.buildbucket.schedule',
+          'request', [
+              '"builder": "chrome-main-pupr-generator"',
+              '"ref": "refs/heads/main"',
+              '"revision": "8302b1a80de0995f146605740417cdf78e381157"',
+          ]),
       status='FAILURE',
   )
