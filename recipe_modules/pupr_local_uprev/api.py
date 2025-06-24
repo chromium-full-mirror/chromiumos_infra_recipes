@@ -281,7 +281,9 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     ]
 
     if self._additional_commit_message:
-      commit_lines.append(self._additional_commit_message)
+      commit_lines.append(
+          self._additional_commit_message.format(versions=uprevved_versions,
+                                                 refs=target_refs))
     if additional_msg:
       commit_lines.append(additional_msg)
 
