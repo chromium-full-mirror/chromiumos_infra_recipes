@@ -475,8 +475,15 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       if not patch_set_to_retry:
         return
       if self.rebase_before_retry:
+        changes_to_retry = [
+            change for change in open_changes
+            if change.host == patch_set_to_retry.host and
+            change.change == patch_set_to_retry.change_id and
+            change.project == patch_set_to_retry.project
+        ]
         mergeable = self.m.gerrit.get_change_mergeable(
-            patch_set_to_retry.change_id, patch_set_to_retry.host)
+            patch_set_to_retry.change_id, patch_set_to_retry.host
+        ) and self.m.gerrit.changes_submittable(changes_to_retry)
         if not mergeable:
           self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
                                             patch_set_to_retry.change_id)
