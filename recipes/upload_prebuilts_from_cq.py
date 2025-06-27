@@ -57,7 +57,7 @@ DEPS = {
 
 PROPERTIES = UploadPrebuiltsFromCqProperties
 
-GERRIT_TOPIC = 'chromeos-base/lacros-ash-atomic'
+GERRIT_TOPIC = 'chromeos-base/chromeos-chrome'
 GERRIT_HOST = 'chromium-review.googlesource.com'
 GERRIT_HOST_URL = 'https://' + GERRIT_HOST
 

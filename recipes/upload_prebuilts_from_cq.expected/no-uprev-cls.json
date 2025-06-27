@@ -63,7 +63,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "-p",
-      "topic=chromeos-base/lacros-ash-atomic",
+      "topic=chromeos-base/chromeos-chrome",
       "-p",
       "project=chromiumos/overlays/chromiumos-overlay",
       "-p",
