@@ -282,7 +282,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
               .archive('compress ec component manifest', output_artifact_eccm_dir / 'ec_component_manifest.zip', 'zip')
 
       # Get shellball version for target.
-      new_shellball_version = api.signing.get_shellball_version()
+      new_shellball_version = api.signing.get_prebuilt_version(
+          latest_filename='LATEST-SHELLBALL')
       api.signing_utils.custom_artifact_version = new_shellball_version
 
       # Sign shellball.
@@ -301,7 +302,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
         pres.logs['signed builds'] = shellball_path
 
       # Advance LATEST-SHELLBALL for each version.
-      api.signing.upload_shellball_latest_file(new_shellball_version)
+      api.signing.upload_prebuilt_latest_file(
+          new_shellball_version, latest_filename='LATEST-SHELLBALL')
 
       # Open a cl with the new firmware prebuilts.
       return upload_firmware_prebuilts(api, output_artifact_shellball,
@@ -318,7 +320,7 @@ sample_response = SignImageResponse(
     signed_artifacts=signing_pb2.BuildTargetSignedArtifacts(archive_artifacts=[
         signing_pb2.ArchiveArtifacts(
             build_target='android-kukui',
-            channel=common_pb2.CHANNEL_CANARY,
+            channel=common_pb2.CHANNEL_AGNOSTIC,
             image_type=common_pb2.IMAGE_TYPE_SHELLBALL,
             signed_artifacts=[
                 signing_pb2.SignedArtifact(
@@ -349,7 +351,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_CANARY],
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
               },
               '$chromeos/signing':
                   MessageToDict(
@@ -360,14 +362,14 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response)),
       api.step_data(
-          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
       api.path.dirs_exist(api.path.cleanup_dir /
                           'shellball-dir_tmp_1/ec_component_manifest'),
       api.post_check(
           post_process.DoesNotRun,
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
-          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
+          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_AGNOSTIC'
       ),
       api.post_check(post_process.MustRun, 'pack firmware'),
       api.post_check(
@@ -377,7 +379,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains,
           'sign firmware shellball.sign artifacts.upload signed artifacts to '
-          'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY.'
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.'
           'gsutil cp', [
               'gs://signed-firmware/kukui/4.0/',
           ]),
@@ -409,7 +411,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_CANARY],
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
               },
               '$chromeos/signing':
                   MessageToDict(
@@ -420,12 +422,12 @@ def GenTests(api: RecipeTestApi):
   build_target: "kukui"
 }"""),
       api.step_data(
-          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
       api.post_check(
           post_process.DoesNotRun,
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
-          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
+          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_AGNOSTIC'
       ),
       api.post_check(post_process.MustRun, 'pack firmware'),
       api.post_check(
@@ -443,7 +445,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_CANARY],
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
               },
               '$chromeos/signing':
                   MessageToDict(
@@ -454,7 +456,7 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response)),
       api.step_data(
-          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
       api.path.exists(
           api.path.cleanup_dir /
@@ -464,7 +466,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.DoesNotRun,
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
-          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
+          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_AGNOSTIC'
       ),
       api.post_check(post_process.MustRun, 'pack firmware'),
       api.post_check(
@@ -474,7 +476,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains,
           'sign firmware shellball.sign artifacts.upload signed artifacts to '
-          'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY.'
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.'
           'gsutil cp', [
               'gs://signed-firmware/kukui/4.0/',
           ]),
@@ -494,7 +496,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_CANARY],
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
               },
               '$chromeos/signing':
                   MessageToDict(
@@ -503,7 +505,7 @@ def GenTests(api: RecipeTestApi):
                                         use_dev_keys=True)),
           }),
       api.step_data(
-          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
           retcode=1),
       api.step_data('git status', stdout=api.raw_io.output('')),
       api.post_check(
@@ -523,7 +525,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_CANARY],
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
               },
               '$chromeos/signing':
                   MessageToDict(
@@ -532,7 +534,7 @@ def GenTests(api: RecipeTestApi):
                                         use_dev_keys=True)),
           }),
       api.step_data(
-          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
           retcode=1),
       api.post_check(
           post_process.LogContains,
@@ -577,7 +579,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_CANARY],
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
               },
               '$chromeos/signing':
                   MessageToDict(
@@ -594,7 +596,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      'apply gerrit changes.git cherry-pick (2)'),
       api.step_data(
-          'get latest shellball version for kukui.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
           retcode=1),
       api.post_check(
           post_process.LogContains,

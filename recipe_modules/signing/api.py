@@ -1062,21 +1062,20 @@ class SigningApi(recipe_api.RecipeApi):
       if ex:
         raise ex
 
-  def get_shellball_version(self) -> str:
-    """Returns shellball version.
+  def get_prebuilt_version(self, latest_filename: str) -> str:
+    """Returns prebuilt version.
 
-    Fetch LATEST-SHELLBALL from GS and increment to return the new version.
-    Shellball versions are separate from platform version since they are based
-    on pinned config.
+    Fetch latest_filename from GS and increment to return the new version.
+    Prebuilt versions are separate from platform version.
     """
-    current_shellball_version = self.m.signing_utils.get_current_shellball_version(
-        self.gs_upload_bucket)
-    return self.m.signing_utils.increment_shellball_major_version(
-        current_shellball_version)
+    current_prebuilt_version = self.m.signing_utils.get_current_prebuilt_version(
+        self.gs_upload_bucket, latest_filename)
+    return self.m.signing_utils.increment_prebuilt_major_version(
+        current_prebuilt_version)
 
-  def upload_shellball_latest_file(self, version: str) -> None:
-    """Upload LATEST-SHELLBALL file."""
-    latest_filename = 'LATEST-SHELLBALL'
+  def upload_prebuilt_latest_file(self, version: str,
+                                  latest_filename: str) -> None:
+    """Upload latest_filename file to GS."""
     local_version_file_path = self.m.path.cleanup_dir / f'{latest_filename}'
     self.m.file.write_text(f'write latest file for version {version}',
                            local_version_file_path, version)

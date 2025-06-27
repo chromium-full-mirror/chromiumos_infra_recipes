@@ -28,9 +28,11 @@ PROPERTIES = {
 
 
 def RunSteps(api: RecipeApi, expected_gs_dir: str):
-  gs_bucket = 'shellball-bucket'
-  current_version = api.signing_utils.get_current_shellball_version(gs_bucket)
-  new_version = api.signing_utils.increment_shellball_major_version(
+  gs_bucket = 'prebuilt-bucket'
+  latest_filename = 'LATEST-SHELLBALL'
+  current_version = api.signing_utils.get_current_prebuilt_version(
+      gs_bucket, latest_filename)
+  new_version = api.signing_utils.increment_prebuilt_major_version(
       current_version)
   api.signing_utils.custom_artifact_version = new_version
   gs_dir = api.signing_utils.get_gs_dir_for_channel(common_pb2.CHANNEL_AGNOSTIC)
@@ -39,37 +41,37 @@ def RunSteps(api: RecipeApi, expected_gs_dir: str):
 
 def GenTests(api: RecipeTestApi):
   yield api.test(
-      'increment-shellball-version',
+      'increment-prebuilt-version',
       api.properties(
-          expected_gs_dir='shellball-target/4.0', **{
+          expected_gs_dir='prebuilt-target/4.0', **{
               '$chromeos/build_menu': {
                   'build_target': {
-                      'name': 'shellball-target',
+                      'name': 'prebuilt-target',
                   },
               },
           }),
       api.step_data(
-          'get latest shellball version for shellball-target.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for prebuilt-target.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
       api.post_check(post_process.MustRun,
-                     'get latest shellball version for shellball-target'),
+                     'get latest prebuilt version for prebuilt-target'),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'start-new-shellball-version',
       api.properties(
-          expected_gs_dir='shellball-target/1.0', **{
+          expected_gs_dir='prebuilt-target/1.0', **{
               '$chromeos/build_menu': {
                   'build_target': {
-                      'name': 'shellball-target',
+                      'name': 'prebuilt-target',
                   },
               },
           }),
       api.step_data(
-          'get latest shellball version for shellball-target.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for prebuilt-target.gsutil reading LATEST-SHELLBALL version',
           retcode=1),
       api.post_check(post_process.MustRun,
-                     'get latest shellball version for shellball-target'),
+                     'get latest prebuilt version for prebuilt-target'),
       api.post_process(post_process.DropExpectation),
   )

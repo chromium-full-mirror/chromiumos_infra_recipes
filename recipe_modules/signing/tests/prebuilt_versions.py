@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Verify methods for shellball versions."""
+"""Verify methods for prebuilt versions."""
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
@@ -19,16 +19,17 @@ DEPS = [
 PROPERTIES = {
     'expected_version':
         Property(
-            help='Expected shellball version returned in test.',
+            help='Expected prebuilt version returned in test.',
             kind=str,
         )
 }
 
 
 def RunSteps(api: RecipeApi, expected_version: str):
-  shellball_version = api.signing.get_shellball_version()
+  latest_filename = 'LATEST-SHELLBALL'
+  shellball_version = api.signing.get_prebuilt_version(latest_filename)
   api.assertions.assertEqual(expected_version, shellball_version)
-  api.signing.upload_shellball_latest_file(shellball_version)
+  api.signing.upload_prebuilt_latest_file(shellball_version, latest_filename)
 
 
 def GenTests(api: RecipeTestApi):
@@ -43,7 +44,7 @@ def GenTests(api: RecipeTestApi):
               },
           }),
       api.step_data(
-          'get latest shellball version for shellball-target.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for shellball-target.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
       api.post_check(post_process.MustRun, 'gsutil upload LATEST-SHELLBALL'),
       api.post_process(post_process.DropExpectation),
@@ -60,7 +61,7 @@ def GenTests(api: RecipeTestApi):
               },
           }),
       api.step_data(
-          'get latest shellball version for shellball-target.gsutil reading LATEST-SHELLBALL version',
+          'get latest prebuilt version for shellball-target.gsutil reading LATEST-SHELLBALL version',
           retcode=1),
       api.post_check(post_process.MustRun, 'gsutil upload LATEST-SHELLBALL'),
       api.post_process(post_process.DropExpectation),

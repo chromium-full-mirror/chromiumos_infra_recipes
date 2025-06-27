@@ -228,15 +228,15 @@ class SigningUtilsApi(recipe_api.RecipeApi):
 
       return signed_builds
 
-  def get_current_shellball_version(self, gs_bucket: str) -> str:
-    """Return the current LATEST-SHELLBALL version.
+  def get_current_prebuilt_version(self, gs_bucket: str,
+                                   latest_filename: str) -> str:
+    """Return the current latest_filename version.
 
     Starting counting from 1.0 (after increment) if not found.
     """
     target_name = self.m.build_menu.build_target.name
     with self.m.step.nest(
-        f'get latest shellball version for {target_name}') as pres:
-      latest_filename = 'LATEST-SHELLBALL'
+        f'get latest prebuilt version for {target_name}') as pres:
       result = self.m.gsutil.cat(
           f'gs://{gs_bucket}/{target_name}/{latest_filename}',
           name=f'reading {latest_filename} version',
@@ -253,11 +253,11 @@ class SigningUtilsApi(recipe_api.RecipeApi):
 
     return latest
 
-  def increment_shellball_major_version(self, shellball_version: str) -> str:
-    """Increment the major atom of a shellball version.
+  def increment_prebuilt_major_version(self, prebuilt_version: str) -> str:
+    """Increment the major atom of a prebuilt version.
 
-    e.g. 1.0 -> 2.0. The major atom denotes a new shellball. The minor atom is
+    e.g. 1.0 -> 2.0. The major atom denotes a new prebuilt. The minor atom is
     currently unused but created for extensibility."""
-    shellball_version_parts = shellball_version.split('.')
-    shellball_version_parts[0] = str(int(shellball_version_parts[0]) + 1)
-    return '.'.join(shellball_version_parts)
+    prebuilt_version_parts = prebuilt_version.split('.')
+    prebuilt_version_parts[0] = str(int(prebuilt_version_parts[0]) + 1)
+    return '.'.join(prebuilt_version_parts)
