@@ -139,7 +139,8 @@ def upload_recovery_prebuilts(api: RecipeTestApi, checkout: Path,
     change = api.gerrit.create_change(
         f'/device/google/desktop/{target}-kernels/6.6',
         ref=api.git.get_branch_ref('main'), project_path=checkout,
-        reviewers=CL_REVIEWERS, non_repo_checkout=True)
+        reviewers=CL_REVIEWERS if not api.cros_infra_config.is_staging else [],
+        non_repo_checkout=True)
     if abandon:
       api.gerrit.abandon_change(change)
     return result_pb2.RawResult(
@@ -483,6 +484,11 @@ def GenTests(api: RecipeTestApi):
           ]),
       api.post_check(post_process.MustRun, 'git commit'),
       api.post_check(post_process.MustRun, 'abandon CL 1'),
+      # Omit reviewers in staging.
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          'create gerrit change for /device/google/desktop/kukui-kernels/6.6.git_cl upload',
+          '--reviewers'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       bucket='staging',

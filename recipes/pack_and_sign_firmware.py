@@ -183,7 +183,9 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
     change = api.gerrit.create_change(
         f'/device/google/desktop/{target}-prebuilts/',
         ref=api.git.get_branch_ref('main'), project_path=checkout,
-        reviewers=CL_REVIEWERS, ccs=ccs, non_repo_checkout=True)
+        reviewers=CL_REVIEWERS if not api.cros_infra_config.is_staging else [],
+        ccs=ccs if not api.cros_infra_config.is_staging else [],
+        non_repo_checkout=True)
     if abandon:
       api.gerrit.abandon_change(change)
     return result_pb2.RawResult(
@@ -539,6 +541,15 @@ def GenTests(api: RecipeTestApi):
           ['\"keyset\": \"DevPreMPKeys\"']),
       api.post_check(post_process.MustRun, 'git commit'),
       api.post_check(post_process.MustRun, 'abandon CL 1'),
+      # Omit reviewers and cc in staging.
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          'create gerrit change for /device/google/desktop/kukui-prebuilts/.git_cl upload',
+          '--reviewers'),
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          'create gerrit change for /device/google/desktop/kukui-prebuilts/.git_cl upload',
+          '--cc'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       bucket='staging',
