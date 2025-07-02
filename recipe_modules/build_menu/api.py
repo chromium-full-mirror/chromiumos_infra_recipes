@@ -72,6 +72,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._override_prebuilts_config = props.override_prebuilts_config
     self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
     self._resultdb_gitiles_commit = None
+    self._extend_install_packages_timeout = props.extend_install_packages_timeout
 
     self._cl_affected_sysroot_packages = None
     # Installed packages can be a prereq for methods in other modules, such as
@@ -231,6 +232,22 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if not self.build_target.name or self._force_empty_toolchain_targets:
       return None
     return [self.build_target]
+
+  @property
+  def extend_install_packages_timeout(self):
+    """Return whether to use longer timeout for the "install packages"
+    build step.
+
+    """
+    return self._extend_install_packages_timeout
+
+  @extend_install_packages_timeout.setter
+  def extend_install_packages_timeout(self, value):
+    """Set extend_install_packages_timeout.
+
+    This boolean is sticky.
+    """
+    self._extend_install_packages_timeout |= value
 
   # TODO(b/189363718): This function is catered towards the slim build use case.
   # Refactor so that it can be applied to other use cases. For example, the

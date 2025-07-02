@@ -60,4 +60,7 @@ message BuildMenuProperties {
 
   // Whether we want to skip the unit tests step.
   bool skip_unit_tests = 9;
+
+  // Whether we need a longer timeout for the "install packages" build step.
+  bool extend_install_packages_timeout = 10;
 }
