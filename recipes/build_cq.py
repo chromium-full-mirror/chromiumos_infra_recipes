@@ -244,14 +244,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.step_data(
           'upload prebuilts.Check if the CQ uploads the prebuilts.' + \
               'read git footers',
-          stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
+          stdout=api.raw_io.output('pupr:chromeos-base/chromeos-chrome')),
       api.gerrit.set_gerrit_fetch_changes_response(
           'upload prebuilts.Check if the CQ uploads the prebuilts',
           [GERRIT_CHANGE], {
               CHANGE_NUM: {
                   'project': PROJECT_NAME,
                   'branch': 'main',
-                  'topic': 'chromeos-base/lacros-ash-atomic',
+                  'topic': 'chromeos-base/chromeos-chrome',
                   'files': {
                       EBUILD_PATH: {},
                   }

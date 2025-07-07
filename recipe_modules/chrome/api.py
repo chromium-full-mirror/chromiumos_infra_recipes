@@ -60,9 +60,9 @@ CHROMIUM_REBUILD_REGEXES = {
 }
 
 # Gerrit topic for the chrome atomic uprev CLs
-TOPIC_CHROME_UPREV_LACROS_ASH_ATOMIC = 'chromeos-base/lacros-ash-atomic'
+TOPIC_CHROME_UPREV_LACROS_ASH_ATOMIC = 'chromeos-base/chromeos-chrome'
 # Cq-Cl-Tag footer value for the chrome atomic uprev CLs
-CL_TAG_CHROME_UPREV_LACROS_ASH_ATOMIC = 'pupr:chromeos-base/lacros-ash-atomic'
+CL_TAG_CHROME_UPREV_LACROS_ASH_ATOMIC = 'pupr:chromeos-base/chromeos-chrome'
 
 CHROME_PACKAGE = PackageInfo(category='chromeos-base',
                              package_name='chromeos-chrome')

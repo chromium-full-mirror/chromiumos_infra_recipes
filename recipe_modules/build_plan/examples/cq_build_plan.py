@@ -519,7 +519,7 @@ def GenTests(api):
       ),
       api.step_data(
           'filter additional chrome pupr builds.read git footers',
-          stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
+          stdout=api.raw_io.output('pupr:chromeos-base/chromeos-chrome')),
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter additional chrome pupr builds', [
               GerritChange(host='chromium-review.googlesource.com',
@@ -528,7 +528,7 @@ def GenTests(api):
               123456: {
                   'project': 'chromiumos/overlays/chromiumos-overlay',
                   'branch': 'main',
-                  'topic': 'chromeos-base/lacros-ash-atomic',
+                  'topic': 'chromeos-base/chromeos-chrome',
                   'files': {
                       'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild':
                           {},

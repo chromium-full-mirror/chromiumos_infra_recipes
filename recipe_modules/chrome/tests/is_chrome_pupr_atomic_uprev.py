@@ -48,13 +48,13 @@ def GenTests(api):
       api.properties(expected_result=True),
       api.step_data(
           'read git footers',
-          stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
+          stdout=api.raw_io.output('pupr:chromeos-base/chromeos-chrome')),
       api.gerrit.set_gerrit_fetch_changes_response(
           '', [GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)], {
               CHANGE_NUM: {
                   'project': PROJECT_NAME,
                   'branch': 'main',
-                  'topic': 'chromeos-base/lacros-ash-atomic',
+                  'topic': 'chromeos-base/chromeos-chrome',
                   'files': {
                       'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild':
                           {},
@@ -73,7 +73,7 @@ def GenTests(api):
       api.properties(expected_result=False),
       api.step_data(
           'read git footers',
-          stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
+          stdout=api.raw_io.output('pupr:chromeos-base/chromeos-chrome')),
       api.gerrit.set_gerrit_fetch_changes_response(
           '', [GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)], {
               CHANGE_NUM: {
@@ -105,13 +105,13 @@ def GenTests(api):
       api.properties(expected_result=False),
       api.step_data(
           'read git footers',
-          stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
+          stdout=api.raw_io.output('pupr:chromeos-base/chromeos-chrome')),
       api.gerrit.set_gerrit_fetch_changes_response(
           '', [GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)], {
               CHANGE_NUM: {
                   'project': PROJECT_NAME,
                   'branch': 'main',
-                  'topic': 'chromeos-base/lacros-ash-atomic',
+                  'topic': 'chromeos-base/chromeos-chrome',
                   'files': {
                       'foo/bar/bar.ebuild': {},
                   }
