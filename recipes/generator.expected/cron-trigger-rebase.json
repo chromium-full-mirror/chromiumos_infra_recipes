@@ -2298,7 +2298,7 @@
       "--bypass-hooks",
       "--force",
       "--send-mail",
-      "--message",
+      "--title",
       "rebased by https://cr-buildbucket.appspot.com/build/0"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",

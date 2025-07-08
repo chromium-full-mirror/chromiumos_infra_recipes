@@ -11,6 +11,6 @@ message UploadProperties {
   bytes expected_output = 1;
   // Whether to upload local diff instead of tip-of-branch diff
   bool use_local_diff = 2;
-  // Message for the patchset
-  string message = 3;
+  // Title for the patchset
+  string title = 3;
 }

@@ -20,7 +20,7 @@
       "--target-branch",
       "HEAD",
       "--cq-dry-run",
-      "--message",
+      "--title",
       ""
     ],
     "env_suffixes": {

@@ -45,7 +45,7 @@ class GitClApi(recipe_api.RecipeApi):
              ccs: Optional[List[str]] = None,
              hashtags: Optional[List[str]] = None, send_mail: bool = False,
              target_branch: Optional[str] = None, dry_run: bool = False,
-             use_local_diff: bool = False, message: Optional[str] = None,
+             use_local_diff: bool = False, title: Optional[str] = None,
              **kwargs) -> str:
     """Run `git cl upload`.
 
@@ -64,7 +64,7 @@ class GitClApi(recipe_api.RecipeApi):
       dry_run: If true, set --cq-dry-run.
       use_local_diff: If true, use git diff args to upload the local diff
         instead of diff taken against tip-of-branch.
-      message: Message for patchset. (-m)
+      title: Title for patchset. (-m)
 
     Returns:
       The command output.
@@ -104,9 +104,9 @@ class GitClApi(recipe_api.RecipeApi):
       args.append('HEAD~')
       args.append('HEAD')
 
-    if message is not None:
-      args.append('--message')
-      args.append(message)
+    if title is not None:
+      args.append('--title')
+      args.append(title)
 
     return self('upload', args, **kwargs).stdout.strip()
 

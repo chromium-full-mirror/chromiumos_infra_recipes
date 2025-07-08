@@ -403,7 +403,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       return 'created ' + ' '.join(gerrit_url(c) for c in changes)
 
   def upload_new_patch_set(self, gerrit_patch_set: PatchSet,
-                           message: Optional[str] = None):
+                           title: Optional[str] = None):
     """Upload a new revision onto an existing Gerrit PatchSet."""
     step_name = f'upload patch set for Change-Id {gerrit_patch_set.change_id}'
     with self.m.step.nest(step_name), self.m.context(cwd=self.workspace_path):
@@ -411,7 +411,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       project = self.m.repo.project_info(gerrit_change.project)
       repo_path = self.m.path.join(self.workspace_path, project.path)
       with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
-        self.m.git_cl.upload(send_mail=True, message=message)
+        self.m.git_cl.upload(send_mail=True, title=title)
 
   def retry_cl(self, patch_set: PatchSet, cq_label: int):
     """Retry sending the CL through CQ by setting its Gerrit labels."""
@@ -486,8 +486,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         if not mergeable:
           self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
                                             patch_set_to_retry.change_id)
-          message = 'rebased by {}'.format(self.m.buildbucket.build_url())
-          self.upload_new_patch_set(patch_set_to_retry, message=message)
+          title = 'rebased by {}'.format(self.m.buildbucket.build_url())
+          self.upload_new_patch_set(patch_set_to_retry, title=title)
           # A new patchset upload resets CQ+1/+2 status.
           running = False
 
