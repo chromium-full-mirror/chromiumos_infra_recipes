@@ -57,6 +57,7 @@ def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
         Branch.RELEASE,
         Branch.STABILIZE,
         Branch.FIRMWARE,
+        Branch.CUSTOM,
     ]:
       raise StepFailure('unsupported branch type: {}'.format(
           properties.branch_info.type))
