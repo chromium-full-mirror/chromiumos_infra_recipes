@@ -350,50 +350,94 @@ Flag: EXEMPT desktop only
 '''
 
       with api.context(cwd=api.src_state.android_workspace_path):
-        # All the XMLs translated from a given CrOS build ('example-snapshot')
-        # are committed to the same Android repo
-        # ('device/google/desktop/example'). In the future each project in the
-        # CrOS build will get its own repo.
-        program_name = builder_name.removesuffix('-snapshot')
-        api.repo.sync(projects=[f'device/google/desktop/{program_name}'],
-                      current_branch=True)
+        # If the builder is in project_repo_snapshot_builders, then each
+        # project repo gets its own commit. Otherwise all configs are committed
+        # to the program repo.
+        #
+        # Note that the configs go to slightly different places depending on
+        # whether the builder is in project_repo_snapshot_builders, so we need
+        # fully separate logic. For example, hal_config.xml is in a
+        # project-specific directory in the program repo.
+        if builder_name in properties.project_repo_snapshot_builders:
+          for project_name, hal_xml_path in project_to_hal_xml_path.items():
+            repo_path_str = f'device/google/desktop/{project_name}'
+            api.repo.sync(projects=[repo_path_str], current_branch=True)
 
-        program_path = api.context.cwd / f'device/google/desktop/{program_name}'
-        for project, xml_path in project_to_hal_xml_path.items():
-          final_xml_path = program_path / f'configs/hal_configs/{project}/hal_config.xml'
-          api.file.ensure_directory("ensure HAL XML path",
-                                    final_xml_path.parent)
-          api.file.move(
-              f'move HAL XML for {project}',
-              xml_path,
-              final_xml_path,
-          )
+            project_path = api.context.cwd / repo_path_str
+            final_xml_path = project_path / 'configs/hal_config.xml'
+            api.file.ensure_directory("ensure HAL XML path",
+                                      final_xml_path.parent)
+            api.file.move(
+                f'move HAL XML for {project_name}',
+                hal_xml_path,
+                final_xml_path,
+            )
 
-        for project, feature_xml_output_dir in project_to_feature_xml_output_dir.items(
-        ):
-          api.file.copytree(f"copy feature XMLs for {project}",
-                            feature_xml_output_dir,
-                            program_path / 'configs/features' / project,
-                            allow_override=True)
+            if project_name in project_to_feature_xml_output_dir:
+              api.file.copytree(f"copy feature XMLs for {project_name}",
+                                project_to_feature_xml_output_dir[project_name],
+                                project_path / 'configs/features',
+                                allow_override=True)
 
-        for project, media_profiles_output_dir in project_to_media_profiles_output_dir.items(
-        ):
-          api.file.copytree(f"copy media profile XMLs for {project}",
-                            media_profiles_output_dir,
-                            program_path / 'configs/media_profiles',
-                            allow_override=True)
+            if project_name in project_to_media_profiles_output_dir:
+              api.file.copytree(
+                  f"copy media profile XMLs for {project_name}",
+                  project_to_media_profiles_output_dir[project_name],
+                  project_path / 'configs/media_profiles', allow_override=True)
 
-        project_info_test_data = api.repo.test_api.project_infos_test_data([{
-            'project': 'device/google/desktop/example_program',
-            'path': 'device/google/desktop/example_program',
-            'remote': 'goog',
-        }])
-        commit_infos.append(
-            CommitInfo(
-                api,
-                api.repo.project_info(program_path,
-                                      test_data=project_info_test_data),
-                commit_message))
+            project_info_test_data = api.repo.test_api.project_infos_test_data(
+                [{
+                    'project': repo_path_str,
+                    'path': repo_path_str,
+                    'remote': 'goog',
+                }])
+            commit_infos.append(
+                CommitInfo(
+                    api,
+                    api.repo.project_info(project_path,
+                                          test_data=project_info_test_data),
+                    commit_message))
+        else:
+          program_name = builder_name.removesuffix('-snapshot')
+          api.repo.sync(projects=[f'device/google/desktop/{program_name}'],
+                        current_branch=True)
+
+          program_path = api.context.cwd / f'device/google/desktop/{program_name}'
+          for project, xml_path in project_to_hal_xml_path.items():
+            final_xml_path = program_path / f'configs/hal_configs/{project}/hal_config.xml'
+            api.file.ensure_directory("ensure HAL XML path",
+                                      final_xml_path.parent)
+            api.file.move(
+                f'move HAL XML for {project}',
+                xml_path,
+                final_xml_path,
+            )
+
+          for project, feature_xml_output_dir in project_to_feature_xml_output_dir.items(
+          ):
+            api.file.copytree(f"copy feature XMLs for {project}",
+                              feature_xml_output_dir,
+                              program_path / 'configs/features' / project,
+                              allow_override=True)
+
+          for project, media_profiles_output_dir in project_to_media_profiles_output_dir.items(
+          ):
+            api.file.copytree(f"copy media profile XMLs for {project}",
+                              media_profiles_output_dir,
+                              program_path / 'configs/media_profiles',
+                              allow_override=True)
+
+          project_info_test_data = api.repo.test_api.project_infos_test_data([{
+              'project': 'device/google/desktop/example_program',
+              'path': 'device/google/desktop/example_program',
+              'remote': 'goog',
+          }])
+          commit_infos.append(
+              CommitInfo(
+                  api,
+                  api.repo.project_info(program_path,
+                                        test_data=project_info_test_data),
+                  commit_message))
 
   return commit_infos
 
@@ -555,12 +599,16 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def default_properties(allowed_projects=None, allowed_programs=None,
-                         abandon: bool = False, skip_upload: bool = False):
+                         abandon: bool = False, skip_upload: bool = False,
+                         snapshot_builders_to_monitor=None):
     if allowed_projects is None:
       allowed_projects = [{'repo_name': 'chromeos/project/galaxy/milkyway'}]
 
     if allowed_programs is None:
       allowed_programs = [{'repo_name': 'chromeos/program/galaxy'}]
+
+    if snapshot_builders_to_monitor is None:
+      snapshot_builders_to_monitor = ['example-snapshot']
 
     aclc = PROPERTIES.ActionCLConfig(
         reviewers=['test1@google.com'],
@@ -578,7 +626,8 @@ def GenTests(api):
             },
             allowed_programs=allowed_programs,
             allowed_projects=allowed_projects,
-            snapshot_builders_to_monitor=['example-snapshot'],
+            snapshot_builders_to_monitor=snapshot_builders_to_monitor,
+            project_repo_snapshot_builders=['example-snapshot-project-repo'],
         ))
 
   def config_dlm_step_data(api):
@@ -620,10 +669,11 @@ def GenTests(api):
                 ]),
         ))
 
-  def snapshot_build_step_data(api, include_artifacts=True):
+  def snapshot_build_step_data(api, builder='example-snapshot',
+                               include_artifacts=True):
     output = build_pb2.Build.Output()
     output.properties['artifact_link'] = (
-        'gs://chromeos-image-archive/example-snapshot/R123-45678.0.0-123')
+        f'gs://chromeos-image-archive/{builder}/R123-45678.0.0-123')
     if include_artifacts:
       output.properties['artifacts'] = {
           'files_by_artifact': {
@@ -636,7 +686,7 @@ def GenTests(api):
             status='SUCCESS',
             output=output,
         )],
-        step_name='Do update_android_config and create CL.Process builder example-snapshot.Find latest successful build for example-snapshot',
+        step_name=f'Do update_android_config and create CL.Process builder {builder}.Find latest successful build for {builder}',
     )
 
   def existing_changes_step_data(api, action, host_url, changes=None):
@@ -723,6 +773,28 @@ def GenTests(api):
       ),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'update_android_config_project_repo',
+      default_properties(
+          snapshot_builders_to_monitor=['example-snapshot-project-repo']),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api, 'example-snapshot-project-repo'),
+      config_dlm_step_data(api),
+      existing_changes_step_data(
+          api, action=_update_android_config,
+          host_url="https://googleplex-android-review.googlesource.com"),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot-project-repo.repo sync',
+          [
+              'sync', '--current-branch', '--verbose', '--force-checkout',
+              'device/google/desktop/example_project'
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

@@ -77,4 +77,9 @@ message ConfigPostsubmitProperties {
 
   // List of snapshot builders to monitor for the UPDATE_ANDROID_CONFIG action.
   repeated string snapshot_builders_to_monitor = 5;
+
+  // List of snapshot builders that should have their generated configs written
+  // to project repos. Otherwise all configs for the builder are written to a
+  // single program repo.
+  repeated string project_repo_snapshot_builders = 6;
 }
