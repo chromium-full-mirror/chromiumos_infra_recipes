@@ -2299,7 +2299,9 @@
       "--force",
       "--send-mail",
       "--title",
-      "rebased by https://cr-buildbucket.appspot.com/build/0"
+      "rebased by https://cr-buildbucket.appspot.com/build/0",
+      "--commit-description",
+      "+"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {

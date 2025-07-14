@@ -13,4 +13,6 @@ message UploadProperties {
   bool use_local_diff = 2;
   // Title for the patchset
   string title = 3;
+  // Commit description for the patchset.
+  string description = 4;
 }

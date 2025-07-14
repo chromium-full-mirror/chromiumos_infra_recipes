@@ -30,7 +30,8 @@ def RunSteps(api: RecipeApi, properties: UploadProperties) -> None:
                                  ], hashtags=['foo-refactoring', 'bar-feature'],
                              send_mail=True, target_branch='HEAD', dry_run=True,
                              use_local_diff=properties.use_local_diff,
-                             title=properties.title)
+                             title=properties.title,
+                             description=properties.description)
   api.assertions.assertEqual(output, properties.expected_output)
 
 
@@ -50,10 +51,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(post_process.DropExpectation),
   )
   yield api.test(
-      'title',
+      'title-and-description',
       api.properties(
           UploadProperties(use_local_diff=True, expected_output=b'success',
-                           title='the second patchset')),
+                           title='the second patchset', description='+')),
       api.git_cl.output('git_cl upload', 'success'),
       api.post_check(post_process.StepCommandContains, 'git_cl upload',
                      ['--title', 'the second patchset']),

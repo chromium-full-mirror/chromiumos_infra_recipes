@@ -21,6 +21,8 @@
       "HEAD",
       "--cq-dry-run",
       "--title",
+      "",
+      "--commit-description",
       ""
     ],
     "env_suffixes": {
