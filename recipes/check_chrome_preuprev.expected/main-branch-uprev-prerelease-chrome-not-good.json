@@ -3268,7 +3268,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "ABSOLUTELY DO NOT CHUMP THIS CL\n\nTo disable a failed tests at this builder, disable at [chromium/src/chromeos/tast_control.gni](https://source.chromium.org/chromium/chromium/src/+/main:chromeos/tast_control.gni) instead.\n\nQuestions to this builder goes to g/chromeos-velocity or g/chromeos-chrome-build, instead of CI oncall.\n\n1 errors checking Chrome uprev criteria:\n\n\n\nChrome best revision is currently at 1100000, want >=1122332\nChromeOS preuprev may have passed but on other platforms Chrome best revision is behind current version.\nThis usually catches up in less than 2 hours, check https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous and try again. You can also just wait for next uprev."
+      "humanReason": "ABSOLUTELY DO NOT CHUMP THIS CL\n\n1 errors checking Chrome uprev criteria:\n\n\n\nChrome best revision is currently at 1100000, want >=1122332\nChromeOS preuprev may have passed but on other platforms Chrome best revision is behind current version.\nThis usually catches up in less than 2 hours, check https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous, https://ci.chromium.org/p/chrome/g/chrome.release-ready/console and try again. You can also just wait for next uprev.\n\nQuestions to this builder goes to g/chromeos-velocity or g/chromeos-chrome-build, instead of CI oncall.\n\n"
     },
     "name": "$result"
   }

@@ -58,11 +58,7 @@ NO_CL_FOUND_SUMMARY = 'No CL found.'
 NOT_AN_UPREV_CL_SUMMARY = 'Not Chrome uprev CL.'
 PRE_UPREV_PASS_SUMMARY = 'Pre-uprev testing passed. \n\nDetails: \n\n{}\n'
 DO_NOT_CHUMP_THIS_CL = "ABSOLUTELY DO NOT CHUMP THIS CL\n\n"
-OVERALL_FAILURE_MESSAGE = (
-    "To disable a failed tests at this builder, disable at "
-    "[chromium/src/chromeos/tast_control.gni]"
-    "(https://source.chromium.org/chromium/chromium/src/+/main:"
-    "chromeos/tast_control.gni) instead.\n\n"
+ASK_QUESTIONS_SUMMARY = (
     "Questions to this builder goes to g/chromeos-velocity or "
     "g/chromeos-chrome-build, instead of CI oncall.\n\n")
 FAILED_PRE_UPREVS_SUMMARY = (
@@ -70,7 +66,11 @@ FAILED_PRE_UPREVS_SUMMARY = (
     'Pre-uprev testing not passed, details:\n\n{}\n\n'
     # Possible action items
     'Please check the test failures, fix the failures (land a fix or revert '
-    'culprit on Chromium) and wait for next pre-uprev.')
+    'culprit on Chromium) and wait for next pre-uprev.\n\n'
+    "To disable a failed tests at this builder, disable at "
+    "[chromium/src/chromeos/tast_control_disabled_tests.txt]"
+    "(https://source.chromium.org/chromium/chromium/src/+/main:"
+    "chromeos/tast_control_disabled_tests.txt) instead.\n\n")
 REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY = (
     # Error notice
     'Failed to find required pre-uprev builders\n'
@@ -83,14 +83,15 @@ CHROME_CI_NOT_GOOD = (
     'Chrome best revision is behind current version.\n'
     # Possible action items
     'This usually catches up in less than 2 hours, check '
-    'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
-    ' and try again. You can also just wait for next uprev.')
+    'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous, '
+    'https://ci.chromium.org/p/chrome/g/chrome.release-ready/console'
+    ' and try again. You can also just wait for next uprev.\n\n')
 CHROME_BRANCHED_DURING_UPREV = (
     # Error notice
     'Chrome created the beta branch candidate during uprev\n'
     'Submitting this CL may cause newer Chrome have smaller version number.\n'
     # Possible action items
-    'Abandon this uprev CL and wait for the next one.\n')
+    'Abandon this uprev CL and wait for the next one.\n\n')
 
 
 
@@ -298,9 +299,9 @@ def RunSteps(api: RecipeApi):
     return RawResult(
         status=common_pb2.FAILURE,
         summary_markdown=((DO_NOT_CHUMP_THIS_CL if error_do_no_chump else '') +
-                          OVERALL_FAILURE_MESSAGE +
                           '%d errors checking Chrome uprev criteria:\n\n\n\n' %
-                          (len(errors)) + '\n\n\n\n'.join(errors)))
+                          (len(errors)) + '\n\n\n\n'.join(errors)) +
+        ASK_QUESTIONS_SUMMARY)
 
   return RawResult(
       status=common_pb2.SUCCESS, summary_markdown=PRE_UPREV_PASS_SUMMARY.format(
@@ -466,19 +467,16 @@ def GenTests(api: RecipeTestApi):
                            (FETCH_BEST_CHROME_REVISION_TIMES - 1)),
       api.post_check(post_process.SummaryMarkdown, (
           'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
-          "To disable a failed tests at this builder, disable at "
-          "[chromium/src/chromeos/tast_control.gni]"
-          "(https://source.chromium.org/chromium/chromium/src/+/main:"
-          "chromeos/tast_control.gni) instead.\n\n"
-          "Questions to this builder goes to g/chromeos-velocity or "
-          "g/chromeos-chrome-build, instead of CI oncall.\n\n"
           '1 errors checking Chrome uprev criteria:\n\n\n\n'
           'Chrome best revision is currently at 1100000, want >=1122332\n'
           'ChromeOS preuprev may have passed but on other platforms '
           'Chrome best revision is behind current version.\n'
           'This usually catches up in less than 2 hours, check '
-          'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
-          ' and try again. You can also just wait for next uprev.')),
+          'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous, '
+          'https://ci.chromium.org/p/chrome/g/chrome.release-ready/console'
+          ' and try again. You can also just wait for next uprev.\n\n'
+          "Questions to this builder goes to g/chromeos-velocity or "
+          "g/chromeos-chrome-build, instead of CI oncall.\n\n")),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
       api.post_check(post_process.DoesNotRun, 'Fetch ToT version'),
@@ -495,16 +493,12 @@ def GenTests(api: RecipeTestApi):
       chrome_best_revision(api, [1100000, 1122332]),
       api.post_check(post_process.SummaryMarkdown, (
           'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
-          "To disable a failed tests at this builder, disable at "
-          "[chromium/src/chromeos/tast_control.gni]"
-          "(https://source.chromium.org/chromium/chromium/src/+/main:"
-          "chromeos/tast_control.gni) instead.\n\n"
-          "Questions to this builder goes to g/chromeos-velocity or "
-          "g/chromeos-chrome-build, instead of CI oncall.\n\n"
           '1 errors checking Chrome uprev criteria:\n\n\n\n'
           'Chrome created the beta branch candidate during uprev\n'
           'Submitting this CL may cause newer Chrome have smaller version number.\n'
-          'Abandon this uprev CL and wait for the next one.\n')),
+          'Abandon this uprev CL and wait for the next one.\n\n'
+          "Questions to this builder goes to g/chromeos-velocity or "
+          "g/chromeos-chrome-build, instead of CI oncall.\n\n")),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
       api.post_check(post_process.MustRun, 'Fetch ToT version'),
@@ -553,17 +547,17 @@ def GenTests(api: RecipeTestApi):
            ('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)]),
       api.post_check(
           post_process.SummaryMarkdown,
-          ("To disable a failed tests at this builder, disable at "
-           "[chromium/src/chromeos/tast_control.gni]"
-           "(https://source.chromium.org/chromium/chromium/src/+/main:"
-           "chromeos/tast_control.gni) instead.\n\n"
-           "Questions to this builder goes to g/chromeos-velocity or "
-           "g/chromeos-chrome-build, instead of CI oncall.\n\n"
-           '1 errors checking Chrome uprev criteria:\n\n\n\n'
+          ('1 errors checking Chrome uprev criteria:\n\n\n\n'
            'Pre-uprev testing not passed, details:\n\n'
            '[Orchestrator](http://go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.\n\n'
            'Please check the test failures, fix the failures (land a fix or revert culprit on Chromium) '
-           'and wait for next pre-uprev.'),
+           'and wait for next pre-uprev.\n\n'
+           "To disable a failed tests at this builder, disable at "
+           "[chromium/src/chromeos/tast_control_disabled_tests.txt]"
+           "(https://source.chromium.org/chromium/chromium/src/+/main:"
+           "chromeos/tast_control_disabled_tests.txt) instead.\n\n"
+           "Questions to this builder goes to g/chromeos-velocity or "
+           "g/chromeos-chrome-build, instead of CI oncall.\n\n"),
       ),
       api.post_check(post_process.DoesNotRun,
                      'Wait chrome-best-revision-continuous'),
