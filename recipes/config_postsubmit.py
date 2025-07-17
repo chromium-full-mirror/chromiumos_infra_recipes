@@ -17,6 +17,8 @@ returns a list of repos to make commits to.
 from collections import OrderedDict
 import dataclasses
 import re
+import xml.etree.ElementTree as ET
+
 
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
@@ -403,15 +405,47 @@ Flag: EXEMPT desktop only
                         current_branch=True)
 
           program_path = api.context.cwd / f'device/google/desktop/{program_name}'
-          for project, xml_path in project_to_hal_xml_path.items():
-            final_xml_path = program_path / f'configs/hal_configs/{project}/hal_config.xml'
+          if project_to_hal_xml_path:
+            # Combine the hal_config.xmls from eacn project into one XML file,
+            # because the Makefile is expecting a single XML file. Eventually
+            # all projects should be migrated to project_repo_snapshot_builders
+            # and this can be removed.
+            #
+            # The root of the first XML file is used as the root of the combined
+            # file. All children of the root element of the other files are
+            # appended to this root.
+            # This assumes that all hal_config.xml files have the same root
+            # element name.
+
+            # Read the first XML file to establish the root of the combined file.
+            projects = list(project_to_hal_xml_path.keys())
+            first_project = projects[0]
+            first_xml_path = project_to_hal_xml_path[first_project]
+            first_xml_content = api.file.read_text(
+                f'read first hal_config.xml for {first_project}',
+                first_xml_path,
+                test_data='''<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>''',
+            )
+            root = ET.fromstring(first_xml_content)
+
+            # Append the children of the root element of the other XML files.
+            for project in projects[1:]:
+              xml_path = project_to_hal_xml_path[project]
+              xml_content = api.file.read_text(
+                  f'read hal_config.xml for {project}', xml_path,
+                  test_data='''<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>'''
+              )
+              other_root = ET.fromstring(xml_content)
+              for child in other_root:
+                root.append(child)
+
+            # The combined file is written to the program's config directory.
+            final_xml_path = program_path / 'configs/hal_config.xml'
             api.file.ensure_directory("ensure HAL XML path",
                                       final_xml_path.parent)
-            api.file.move(
-                f'move HAL XML for {project}',
-                xml_path,
-                final_xml_path,
-            )
+            combined_xml_content = ET.tostring(root, encoding='unicode')
+            api.file.write_text(f'write combined HAL XML for {program_name}',
+                                final_xml_path, combined_xml_content)
 
           for project, feature_xml_output_dir in project_to_feature_xml_output_dir.items(
           ):
@@ -845,6 +879,30 @@ def GenTests(api):
       config_repos_step_data(api),
       snapshot_build_step_data(api, include_artifacts=False),
       config_dlm_step_data(api),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'update_android_config_multiple_projects',
+      default_properties(
+          snapshot_builders_to_monitor=['example-snapshot', 'other-builder']),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api, builder='example-snapshot'),
+      snapshot_build_step_data(api, builder='other-builder'),
+      config_dlm_step_data(api),
+      existing_changes_step_data(
+          api, action=_update_android_config,
+          host_url="https://googleplex-android-review.googlesource.com"),
+      api.step_data(
+          'Do update_android_config and create CL.Process builder example-snapshot.find jsonproto files',
+          api.file.glob_paths([
+              '[CLEANUP]/unzip_example-snapshot/example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto',
+              '[CLEANUP]/unzip_example-snapshot/example_program/chromeos-config-bsp-private-0.0.1/another_project/generated/config.jsonproto',
+          ])),
+      api.post_process(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Process builder example-snapshot.write combined HAL XML for example'
+      ),
       api.post_process(post_process.DropExpectation),
   )
 

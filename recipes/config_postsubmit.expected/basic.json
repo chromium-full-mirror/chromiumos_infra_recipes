@@ -2882,10 +2882,30 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/output_hal_xml_tmp_1/hal_config.xml",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/android_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.read first hal_config.xml for example_project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>@@@",
+      "@@@STEP_LOG_END@hal_config.xml@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
       "0o777",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_configs/example_project"
+      "[CLEANUP]/android_workspace/device/google/desktop/example/configs"
     ],
     "cwd": "[CLEANUP]/android_workspace",
     "infra_step": true,
@@ -2901,15 +2921,17 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "move",
-      "[CLEANUP]/output_hal_xml_tmp_1/hal_config.xml",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_configs/example_project/hal_config.xml"
+      "copy",
+      "<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>",
+      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_config.xml"
     ],
     "cwd": "[CLEANUP]/android_workspace",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.Process builder example-snapshot.move HAL XML for example_project",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.write combined HAL XML for example",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>@@@",
+      "@@@STEP_LOG_END@hal_config.xml@@@"
     ]
   },
   {
