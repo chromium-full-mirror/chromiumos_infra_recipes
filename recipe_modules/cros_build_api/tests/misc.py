@@ -24,6 +24,7 @@ from PB.chromite.api import packages
 from PB.chromite.api import payload
 from PB.chromite.api import portage_explorer
 from PB.chromite.api import qualbot
+from PB.chromite.api import recovery
 from PB.chromite.api import relevancy
 from PB.chromite.api import sdk
 from PB.chromite.api import sdk_subtools
@@ -198,6 +199,9 @@ def RunSteps(api):
       },
       'QualbotService': {
           'RunQualbot': qualbot.RunQualbotResponse,
+      },
+      'RecoveryService': {
+          'CreateRecoveryKernel': recovery.CreateRecoveryKernelResponse,
       },
       'RelevancyService': {
           'GetRelevantBuildTargets': relevancy.GetRelevantBuildTargetsResponse,

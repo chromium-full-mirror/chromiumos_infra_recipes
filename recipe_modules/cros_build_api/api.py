@@ -189,6 +189,10 @@ class PortageExplorerService(Stub):
   """Stub for PortageExplorerService."""
 
 
+class RecoveryService(Stub):
+  """Stub for RecoveryService."""
+
+
 class RelevancyService(Stub):
   """Stub for RelevancyService."""
 
