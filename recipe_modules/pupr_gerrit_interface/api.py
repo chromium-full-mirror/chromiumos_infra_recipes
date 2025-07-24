@@ -479,13 +479,19 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         changes_to_retry = [
             change for change in open_changes
             if change.host == patch_set_to_retry.host and
-            change.change == patch_set_to_retry.change_id and
-            change.project == patch_set_to_retry.project
+            change.change == patch_set_to_retry.change_id
         ]
-        mergeable = self.m.gerrit.get_change_mergeable(
-            patch_set_to_retry.change_id, patch_set_to_retry.host
-        ) and self.m.gerrit.changes_submittable(changes_to_retry)
-        if not mergeable:
+        with self.m.step.nest('test gerrit mergeable'):
+          gerrit_mergeable = self.m.gerrit.get_change_mergeable(
+              patch_set_to_retry.change_id, patch_set_to_retry.host)
+        with self.m.step.nest('test cq-orchestrator mergeable') as cqstep:
+          cq_mergable = self.m.gerrit.changes_submittable(changes_to_retry)
+          # gerrit.changes_submittable generates non-critical StepFailure.
+          # Set cqstep.status to SUCCESS to avoid parent being StepFailure
+          cqstep.status = 'SUCCESS'
+        if gerrit_mergeable and not cq_mergable:
+          self.m.gerrit.rebase_change_remote(changes_to_retry[0])
+        elif not gerrit_mergeable:
           self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
                                             patch_set_to_retry.change_id)
           title = 'rebased by {}'.format(self.m.buildbucket.build_url())

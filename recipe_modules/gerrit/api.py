@@ -1025,6 +1025,20 @@ class GerritApi(RecipeApi):
             raise StepFailure('Failed to land change (retcode: %d)' %
                               cmd.retcode)
 
+  def rebase_change_remote(self, gerrit_change: GerritChange,
+                           base: Optional[str] = None):
+    """Rebase change by Gerrit.
+
+    Args:
+      gerrit_change: the change to rebase.
+      base: new parent revision. Default: top of target branch.
+    """
+    with self.m.step.nest(f'rebase CL {gerrit_change.change}'):
+      self._do_post(
+          f'https://{gerrit_change.host}/changes/{gerrit_change.change}/rebase',
+          {'base': base if base else ''}, test_output_data='{}')
+
+
   def _query_changes(self, host: str, query_params: List[Tuple[str, str]],
                      label_constraints: Optional[List[LabelConstraint]] = None,
                      o_params: Optional[List[str]] = None,

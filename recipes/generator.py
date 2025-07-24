@@ -1418,7 +1418,7 @@ def GenTests(
           value_dict,
       ),
       api.gerrit.set_get_change_mergeable(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.test gerrit mergeable',
           'chromium-review.googlesource.com',
           1,
           'current',
