@@ -157,17 +157,12 @@ def RunSteps(api: RecipeApi):
       api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
       api.cros_source.ensure_synced_cache()
 
-      # TODO(b/352625756): Remove prefix handling after consolidating config
-      # with base targets.
-      # Signing uses config for the base target. Remove prefix if present.
-      target = api.build_menu.build_target.name.split('android-')[-1]
-
       # TODO(b/371248376): Remove when we can create our own recovery image.
       # For now, just get the image from the android prebuild repo.
       checkout = api.path.mkdtemp()
       with api.context(cwd=checkout):
         api.git.clone(
-            f'https://googleplex-android.googlesource.com/device/google/desktop/{target}-kernels/6.6',
+            f'https://googleplex-android.googlesource.com/device/google/desktop/{api.build_menu.build_target.name}-kernels/6.6',
             depth=1)
 
         recovery_dir = api.path.mkdtemp(prefix='recovery')
@@ -222,7 +217,8 @@ def RunSteps(api: RecipeApi):
 
       # Open a cl with the new recovery kernel prebuilts.
       return upload_recovery_prebuilts(api, checkout, recovery_local_path,
-                                       signed_recovery_path, target,
+                                       signed_recovery_path,
+                                       api.build_menu.build_target.name,
                                        get_keyset_is_mp(signed_image_response),
                                        new_recovery_version,
                                        abandon=api.cros_infra_config.is_staging)

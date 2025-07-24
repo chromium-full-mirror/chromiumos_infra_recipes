@@ -246,11 +246,6 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
         with api.context(env={
             'PATH': api.path.pathsep.join([str(cipd_path / 'bin'), '%(PATH)s'])
         }):
-          # TODO(b/352625756): Remove prefix handling after consolidating config
-          # with base targets.
-          # Pack firmware uses config for the base target. Remove prefix if present.
-          base_target_name = api.build_menu.build_target.name.split(
-              'android-')[-1]
           output_artifact_dir = api.path.mkdtemp('shellball-dir')
           output_shellball_name = api.cros_artifacts.artifacts_by_image_type.get(
               common_pb2.IMAGE_TYPE_SHELLBALL, 'chromeos-firmwareupdate')
@@ -263,7 +258,7 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
               '--imagedir',
               'tmp/distfiles',
               '--config',
-              fw_config_path / base_target_name,
+              fw_config_path / api.build_menu.build_target.name,
               '--output',
               output_artifact_shellball,
               '--ec_component_manifest_output',
@@ -308,7 +303,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
       # Open a cl with the new firmware prebuilts.
       return upload_firmware_prebuilts(api, output_artifact_shellball,
                                        shellball_path, output_artifact_eccm_zip,
-                                       base_target_name, new_shellball_version,
+                                       api.build_menu.build_target.name,
+                                       new_shellball_version,
                                        get_keyset_is_mp(signed_image_response),
                                        fw_config_path,
                                        abandon=api.cros_infra_config.is_staging)
