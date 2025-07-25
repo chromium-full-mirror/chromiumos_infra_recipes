@@ -24,6 +24,7 @@ from PB.chromite.api.artifacts import FetchCentralizedSuitesRequest
 from PB.chromite.api.toolchain import SetupToolchainsRequest
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos import builder_config as builder_config_pb2
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as rdb_common_pb2
@@ -474,6 +475,21 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def _should_update_chroot(self) -> bool:
     """Return whether to update chroot, based on builder config and CLs."""
+    install_packages = self.config_or_default.build.install_packages
+
+    # bazel-lite builders specifically do not benefit from chroot updates, even
+    # on toolchain CLs. They use bazel-built host packages (incl. toolchain
+    # packages), so updating the SDK on them is pointless.
+    #
+    # It's unclear whether bazel builders use non-bazel-built SDK packages (esp.
+    # in build_image), so conservatively still run the update there.
+    is_bazel_lite = (
+        install_packages.install_packages_orchestrator
+        == builder_config_pb2.BuilderConfig.BAZEL and
+        install_packages.bazel_targets == builder_config_pb2.BuilderConfig.LITE)
+    if is_bazel_lite:
+      return False
+
     return (self.m.cros_relevance.toolchain_cls_applied or
             self.m.cros_infra_config.should_run(
                 self.config_or_default.build.sdk_update.sdk_update_run_spec,

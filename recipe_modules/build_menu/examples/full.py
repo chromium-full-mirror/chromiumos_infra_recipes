@@ -306,6 +306,23 @@ def GenTests(api):
     cq=True,
   )
 
+  yield api.build_menu.test(
+      'cq-build-bazel-does-update-sdk-with-toolchain-change',
+      api.build_menu.set_toolchain_cls_return(True),
+      api.post_check(post_process.MustRun, 'update sdk'),
+      api.post_process(post_process.DropExpectation),
+      builder_name='amd64-generic-bazel-cq',
+      cq=True,
+  )
+
+  yield api.build_menu.test(
+      'cq-build-bazel-lite-doesnt-update-sdk-with-toolchain-change',
+      api.build_menu.set_toolchain_cls_return(True),
+      api.post_check(post_process.DoesNotRun, 'update sdk'),
+      api.post_process(post_process.DropExpectation),
+      builder_name='amd64-generic-bazel-lite-cq',
+      cq=True,
+  )
 
   # Slim CQ build, with one gerrit_change.
   yield api.build_menu.test('slim-cq-build',
