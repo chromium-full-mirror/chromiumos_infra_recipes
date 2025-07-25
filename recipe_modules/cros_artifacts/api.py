@@ -964,24 +964,16 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           for abspath, basepath in paths_to_hash.items():
             file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
 
-            # Retry reports up to three times before considering it failed.
-            # This helps to deal with Snoopy flakes like `Deadline Exceeded`
-            # which may otherwise cause us to fail a build.
-            for bcid_retries in range(3):
-              try:
-                self.m.bcid_reporter.report_gcs(
-                    file_hash, '{uri}/{item}'.format(uri=upload_uri,
-                                                     item=basepath))
-                break
-              except recipe_api.StepFailure as exp:
-                if bcid_retries < 2:
-                  continue
+            try:
+              self.m.bcid_reporter.report_gcs(
+                  file_hash, '{uri}/{item}'.format(uri=upload_uri,
+                                                   item=basepath))
+            except recipe_api.StepFailure as exp:
+              prov_gen.status = self.m.step.FAILURE
+              prov_gen.step_summary_text = 'Unable to generate all BCID provenance'
 
-                prov_gen.status = self.m.step.FAILURE
-                prov_gen.step_summary_text = 'Unable to generate all BCID provenance'
-
-                if self.upload_artifact_prov_generation_fatal:
-                  raise exp
+              if self.upload_artifact_prov_generation_fatal:
+                raise exp
 
       for retries in range(3):
         try:

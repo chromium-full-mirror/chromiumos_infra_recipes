@@ -1070,6 +1070,21 @@
   },
   {
     "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
+    ],
+    "name": "upload artifacts.generate provenance.snoop: report_gcs (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -1094,7 +1109,7 @@
       "-gcs-uri",
       "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"
     ],
-    "name": "upload artifacts.generate provenance.snoop: report_gcs (5)",
+    "name": "upload artifacts.generate provenance.snoop: report_gcs (6)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1125,7 +1140,7 @@
       "-gcs-uri",
       "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake4/dlc.img"
     ],
-    "name": "upload artifacts.generate provenance.snoop: report_gcs (6)",
+    "name": "upload artifacts.generate provenance.snoop: report_gcs (7)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
