@@ -458,7 +458,10 @@ def download_and_verify_paygen_inputs(
   """
   failed_artifact_verification = set()
   for unsigned_payload in unsigned_payloads:
+
+    # list of tuples (local_path, remote_path)
     artifacts_to_verify = []
+
     # Download attestations for input artifacts.
     for payload_input in unsigned_payload.payload_inputs:
       artifact_path = payload_input.path.path
@@ -471,7 +474,8 @@ def download_and_verify_paygen_inputs(
         try:
           api.gcloud.download_file(attestation_path_remote,
                                    attestation_path_local)
-          artifacts_to_verify.append(artifact_path)
+          artifacts_to_verify.append(
+              (artifact_path, payload_input.gs_path.replace("gs://", "")))
         except StepFailure as step_failure:
           pres.step_summary_text = 'attestation download failed'
           failed_artifact_verification.add(payload_input.gs_path)
@@ -482,7 +486,8 @@ def download_and_verify_paygen_inputs(
           continue
 
       failed_verification = api.signing.verify_bcid_attestations_for_artifacts(
-          artifacts_to_verify, True, paygen_input_provenance_verification_fatal)
+          artifacts_to_verify, True, paygen_input_provenance_verification_fatal,
+          resource_prefix="paygen")
       if failed_verification:
         failed_artifact_verification.add(payload_input.gs_path)
     with api.step.nest('clean up payload input archives'):

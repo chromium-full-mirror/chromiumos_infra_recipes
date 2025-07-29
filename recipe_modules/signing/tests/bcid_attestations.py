@@ -126,6 +126,18 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(
           post_process.StepCommandContains,
+          'sign artifacts.verify provenance.verifying provenance for recovery_image.tar.xz.bcid_verifier: verify provenance',
+          [
+              "-bcid-policy",
+              "chromeosimage://presigned/chromeos-releases/dev-channel/kukui/1234.56.0/recovery_image.tar.xz",
+              "-artifact-path",
+              "[CLEANUP]/signing-dir_tmp_1/recovery_image.tar.xz",
+              "-attestation-path",
+              "[CLEANUP]/signing-dir_tmp_1/recovery_image.tar.xz.intoto.jsonl",
+              "verification-mode", "VERIFY_FOR_ENFORCEMENT"
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.snoop: report_gcs',
           [
               '-report-gcs', '-digest', 'deadbeef', '-gcs-uri',

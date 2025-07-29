@@ -578,7 +578,8 @@ class SigningApi(recipe_api.RecipeApi):
 
   def verify_bcid_attestations_for_artifacts(
       self, artifacts: List[Path], attestation_eligible: bool = False,
-      provenance_verification_fatal: bool = False) -> set:
+      provenance_verification_fatal: bool = False,
+      resource_prefix: str = "luci") -> set:
     """
     Takes a list of artifacts we plan to use for signing or paygen,and attempts to
     find their matching attestation files, which should have been downloaded
@@ -586,7 +587,13 @@ class SigningApi(recipe_api.RecipeApi):
     BCID verification is fatal, these steps will fail the build. Otherwise,
     everything will continue as normal.
 
-      artifacts: List of Paths to local artifacts for attesations.
+    Args:
+      artifacts: List of tuples (local_artifact_path, resource_identifier)
+      attestation_eligible: Whether BCID provenance should be generated or verified
+      provenance_verification_fatal: If a failure to generate or verify BCID provenance
+        should be considered fatal, and fail the build.
+      resource_prefix: A resource prefix to append to the BCID policy when calling
+        bcid_verifier, to identify signing stages and artifacts.
 
     Returns: A list of artifacts that failed verification.
     """
@@ -595,9 +602,9 @@ class SigningApi(recipe_api.RecipeApi):
       return failed_verifications
 
     with self.m.step.nest('verify provenance'):
-      for artifact_path in artifacts:
-        artifact_name = self.m.path.basename(artifact_path)
-        artifact_dir = self.m.path.dirname(artifact_path)
+      for artifact_local_path, artifact_remote_path in artifacts:
+        artifact_name = self.m.path.basename(artifact_local_path)
+        artifact_dir = self.m.path.dirname(artifact_local_path)
 
         with self.m.step.nest(
             f'verifying provenance for {artifact_name}') as verify_step:
@@ -617,8 +624,9 @@ class SigningApi(recipe_api.RecipeApi):
             continue
 
           try:
-            self.m.bcid_verifier.verify_provenance(self.get_bcid_policy,
-                                                   artifact_path,
+            resource_uri = f"{self.get_bcid_policy}{resource_prefix}/{artifact_remote_path}"
+            self.m.bcid_verifier.verify_provenance(resource_uri,
+                                                   artifact_local_path,
                                                    attestation_path)
           except StepFailure as step_failure:
             failed_verifications.add(artifact_name)
@@ -664,12 +672,20 @@ class SigningApi(recipe_api.RecipeApi):
       # see in the signing_dir with verifiable BCID attestations.
       artifacts = []
       for signing_config in signing_configs:
-        artifacts.append(
-            self.m.path.join(archive_dir, signing_config.archive_path))
+        remote_artifact_path = "{}{}".format(
+            self.get_gs_path_for_channel(signing_config.channel).replace(
+                "gs://", ""),
+            signing_config.archive_path,
+        )
+        artifacts.append((
+            self.m.path.join(archive_dir, signing_config.archive_path),
+            remote_artifact_path,
+        ))
 
       failed_unsigned_verifications = self.verify_bcid_attestations_for_artifacts(
           artifacts, attestation_eligible,
-          self.unsigned_provenance_verification_fatal)
+          self.unsigned_provenance_verification_fatal,
+          resource_prefix="presigned")
 
       gs_dirs = set()
       if include_paygen:
