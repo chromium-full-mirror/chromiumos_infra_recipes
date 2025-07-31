@@ -577,7 +577,8 @@ class SigningApi(recipe_api.RecipeApi):
       return gs_dirs
 
   def verify_bcid_attestations_for_artifacts(
-      self, artifacts: List[Path], attestation_eligible: bool = False,
+      self, artifacts: List[Tuple[str,
+                                  str]], attestation_eligible: bool = False,
       provenance_verification_fatal: bool = False,
       resource_prefix: str = "luci") -> set:
     """
@@ -588,7 +589,7 @@ class SigningApi(recipe_api.RecipeApi):
     everything will continue as normal.
 
     Args:
-      artifacts: List of tuples (local_artifact_path, resource_identifier)
+      artifacts: List of tuples (local_artifact_path, remote resource_identifier)
       attestation_eligible: Whether BCID provenance should be generated or verified
       provenance_verification_fatal: If a failure to generate or verify BCID provenance
         should be considered fatal, and fail the build.
@@ -624,7 +625,7 @@ class SigningApi(recipe_api.RecipeApi):
             continue
 
           try:
-            resource_uri = f"{self.get_bcid_policy}{resource_prefix}/{artifact_remote_path}"
+            resource_uri = f'{self.get_bcid_policy}{resource_prefix}/{artifact_remote_path}'
             self.m.bcid_verifier.verify_provenance(resource_uri,
                                                    artifact_local_path,
                                                    attestation_path)
