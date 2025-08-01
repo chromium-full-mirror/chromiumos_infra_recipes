@@ -174,24 +174,6 @@ def RunSteps(api: RecipeApi):
         api.file.copy('copy prebuild recovery image into temp dir',
                       response_path, recovery_local_path)
 
-        # In staging, allow cherry picking chromite CLs for testing.
-        chromite_path = api.src_state.workspace_path / 'chromite'
-        if api.cros_infra_config.is_staging:
-          with api.step.nest('apply gerrit changes') as pres, api.context(
-              cwd=chromite_path):
-            relevant_changes = [
-                x for x in api.buildbucket.build.input.gerrit_changes
-                if x.project == 'chromiumos/chromite'
-            ]
-            if relevant_changes:
-              patch_sets = api.gerrit.fetch_patch_sets(relevant_changes)
-              for patch_set in patch_sets:
-                commit_id = api.git.fetch_ref(patch_set.git_fetch_url,
-                                              patch_set.git_fetch_ref)
-                api.git.cherry_pick(commit_id)
-            else:
-              pres.step_text = 'No chromiumos/chromite changes to apply.'
-
         # Get prebuilt version for target.
         new_recovery_version = api.signing.get_prebuilt_version(
             latest_filename='LATEST-RECOVERYKERNEL')
@@ -471,22 +453,9 @@ def GenTests(api: RecipeTestApi):
 
   test_gerrit_changes = [
       bb_common_pb2.GerritChange(host='chromium-review.googlesource.com',
-                                 change=1, project='chromiumos/chromite',
-                                 patchset=1),
-      bb_common_pb2.GerritChange(host='chromium-review.googlesource.com',
-                                 change=2, project='some-other-project',
+                                 change=1234, project='chromiumos/chromite',
                                  patchset=1),
   ]
-  fetch_changes_response = {
-      101: {
-          'change_id': '101',
-          'revision_info': {
-              'commit': {
-                  'message': 'test commit',
-              },
-          },
-      }
-  }
   yield api.build_menu.test(
       'cq',
       api.properties(
@@ -500,17 +469,16 @@ def GenTests(api: RecipeTestApi):
                                         gs_upload_bucket='signed-firmware',
                                         use_dev_keys=True)),
           }),
-      api.gerrit.set_gerrit_fetch_changes_response('apply gerrit changes',
-                                                   test_gerrit_changes,
-                                                   fetch_changes_response),
       api.step_data(
           'get latest prebuilt version for kukui.gsutil reading LATEST-RECOVERYKERNEL version',
           stdout=api.raw_io.output('3.0')),
-      # Only cherry pick the chromite change.
-      api.post_check(post_process.MustRun,
-                     'apply gerrit changes.git cherry-pick'),
-      api.post_check(post_process.DoesNotRun,
-                     'apply gerrit changes.git cherry-pick (2)'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch', [
+              "git", "fetch",
+              "https://chromium.googlesource.com/chromiumos/chromite",
+              "refs/changes/34/1234/1:"
+          ]),
       api.cros_build_api.set_api_return(
           'sign recovery kernel image.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response())),
