@@ -122,28 +122,52 @@ def parse_chrome_uprev_change_info(
     # matches the expected pattern for extracting chrome version.
     # Any one of the chrome-base/{chrome-icu, chromeos-chrome, chromium-source}
     # ebuilds should work and provide identical result.
+    old_version = None
+    old_chrome_commit = None
+    new_version = None
+    new_chrome_commit = None
     for new_filename, changes in revision['files'].items():
-      if changes['status'] and changes['status'] == 'R':
+      if not changes.get('status'):
+        continue
+      old_version_match = new_version_match = old_path = None
+      if changes['status'] == 'D':
+        old_version_match = CHROME_VERSION_FROM_EBUILD_FILENAME_RE.match(
+            new_filename)
+        old_path = new_filename
+      if changes['status'] == 'R':
         new_version_match = CHROME_VERSION_FROM_EBUILD_FILENAME_RE.match(
             new_filename)
         if new_version_match:
           old_version_match = CHROME_VERSION_FROM_EBUILD_FILENAME_RE.match(
               changes['old_path'])
-          if old_version_match:
-            result.old_version = old_version_match.group(
-                'position') or old_version_match.group('version')
-            result.new_version = new_version_match.group(
-                'position') or new_version_match.group('version')
-            old_chrome_commit = get_chrome_commit_from_ebuild(
-                api, revision['commit']['parents'][0]['commit'],
-                changes['old_path'])
-            new_chrome_commit = get_chrome_commit_from_ebuild(
-                api, revision_hash, new_filename)
-            if old_chrome_commit:
-              result.old_version += f'@{old_chrome_commit}'
-            if new_chrome_commit:
-              result.new_version += f'@{new_chrome_commit}'
-            return result
+          old_path = changes['old_path']
+      if old_version_match:
+        file_old_version = old_version_match.group(
+            'position') or old_version_match.group('version')
+        # Raw string version comparison has bugs but it happens very rare in
+        # only following cases:
+        # 1. Two main old branch uprev bumps commit position's digit count.
+        # 2. Old version has both canary and main branch uprev.
+        # 3. Two canary old version bumps either MAJOR or BUILD's digit count.
+        # Instead of handling version carefully (especially case 2), leave the
+        # bug here.
+        if old_version is None or file_old_version > old_version:
+          old_version = file_old_version
+          old_chrome_commit = get_chrome_commit_from_ebuild(
+              api, revision['commit']['parents'][0]['commit'], old_path)
+      if new_version_match:
+        new_version = new_version_match.group(
+            'position') or new_version_match.group('version')
+        new_chrome_commit = get_chrome_commit_from_ebuild(
+            api, revision_hash, new_filename)
+    if old_version and new_version:
+      result.old_version = old_version
+      result.new_version = new_version
+      if old_chrome_commit:
+        result.old_version += f'@{old_chrome_commit}'
+      if new_chrome_commit:
+        result.new_version += f'@{new_chrome_commit}'
+      return result
   # Return result without uprev version range if failed to find them.
   return result  # pragma: nocover
 
@@ -385,6 +409,93 @@ def GenTests(api: recipe_api.RecipeApi):
       'messages': [],
   }
 
+  chrome_uprev_gerrit_change_info_multiple_old = {
+      'project':
+          'chromiumos/overlays/chromiumos-overlay',
+      'branch':
+          'main',
+      'change_id':
+          'I29cf31ceeea219231177258a7bf87cb5d56d4a27',
+      'subject':
+          'chromeos-chrome: Automatic uprev to 133.0.6862.0.',
+      'status':
+          'NEW',
+      'created':
+          '2024-11-27 04:13:33.000000000',
+      '_number':
+          6047779,
+      'revisions': {
+          'c89a0ff2988dbd697d4375924dadec75832c79f3': {
+              'commit': {
+                  'parents': [{
+                      'commit': 'deadbeef',
+                  }],
+              },
+              'files': {
+                  'chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild':
+                      {
+                          'status':
+                              'R',
+                          'old_mode':
+                              33188,
+                          'new_mode':
+                              33188,
+                          'old_path':
+                              'chromeos-base/chromium-source/chromium-source-133.0.6860.0_rc-r1.ebuild',
+                          'size_delta':
+                              0,
+                          'size':
+                              494
+                      },
+                  'chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild':
+                      {
+                          'status': 'D',
+                          'old_mode': 33188,
+                          'size_delta': -123456,
+                          'size': 0,
+                      }
+              }
+          }
+      },
+      'messages': [
+          {
+              'id':
+                  '59cf36a6bf221ebbd133d35c2da786a2107d395f',
+              'tag':
+                  'autogenerated:gerrit:code-owners:addReviewer',
+              'author': {
+                  '_account_id': 1347071
+              },
+              'date':
+                  '2024-11-27 04:13:36.000000000',
+              'message':
+                  '<GERRIT_ACCOUNT_1513692>, who was added as reviewer owns the following files:\n* `chromeos-base/chromeos-chrome/chromeos-chrome-133.0.6861.0_rc-r1.ebuild`\n* `chromeos-base/chromeos-chrome/chromeos-chrome-133.0.6862.0_rc-r1.ebuild`\n* `chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild`\n* `chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild`\n',
+              'accounts_in_message': [{
+                  '_account_id': 1513692
+              }],
+              '_revision_number':
+                  1
+          },
+          {
+              'id':
+                  'fdd27b2724acde316dbfb261afa7cfdf6b514303',
+              'tag':
+                  'autogenerated:cq:dry-run',
+              'author': {
+                  '_account_id': 1530088
+              },
+              'date':
+                  '2024-11-27 04:18:44.000000000',
+              'message':
+                  'Patch Set 1:\n\nDry run: CV is trying the patch.\n\nBot data: {\"action\":\"start\",\"triggered_at\":\"2024-11-27T04:13:41Z\",\"revision\":\"c89a0ff2988dbd697d4375924dadec75832c79f3\"}',
+              'accounts_in_message': [],
+              '_revision_number':
+                  1
+          },
+      ],
+  }
+
+
   # A simplified returned json object for the LKGM commits query.
   lkgm_gerrit_change_info_good = {
       'project': 'chromium/src',
@@ -505,6 +616,33 @@ def GenTests(api: recipe_api.RecipeApi):
               'Revert \"chromeos-chrome, chromeos-lacros-parallel: Automatic uprev to 112.0.5589.0.\"',
           'submitted':
               '2023-02-12 03:45:17.000000000',
+      }]),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'chrome-uprevs-mutliple-old-version',
+      api.properties(
+          GardenerDataCollectorProperties(disable_lkgm_uprev_commits=True)),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day Chrome uprev (chromeos-base/chromeos-chrome) CLs', [
+              chrome_uprev_gerrit_change_info_multiple_old,
+          ], 'https://chromium-review.googlesource.com'),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day Chrome uprev (chromeos-base/lacros-ash-atomic) CLs',
+          [], 'https://chromium-review.googlesource.com'),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day Chrome main uprev (chrome-main) CLs', [],
+          'https://chromium-review.googlesource.com'),
+      api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', [{
+          'branch': 'main',
+          'cq_tries': '1',
+          'created': '2024-11-27 04:13:33.000000000',
+          'new_version': '133.0.6862.0@deadbeef',
+          'number': '6047779',
+          'old_version': '133.0.6861.0@deadbeef',
+          'status': 'NEW',
+          'subject': 'chromeos-chrome: Automatic uprev to 133.0.6862.0.',
       }]),
       status='SUCCESS',
   )
