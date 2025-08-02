@@ -1830,6 +1830,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Created branch: firmware-R126-15885.B"
   }
 ]

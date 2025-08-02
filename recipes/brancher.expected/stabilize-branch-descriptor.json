@@ -1468,6 +1468,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Created branch: release-R89-13729.B"
   }
 ]

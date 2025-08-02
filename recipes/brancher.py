@@ -6,8 +6,11 @@
 
 from typing import Generator
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 from PB.chromiumos.branch import Branch
 from PB.recipes.chromeos.brancher import BrancherProperties
+from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import CrosReleaseConfigProperties, Email
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -94,6 +97,15 @@ def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
         api.cros_release_config.update_config(
             branch_name, auto_submit=properties.autosubmit_config,
             dryrun=properties.abandon_cl)
+      return result_pb2.RawResult(
+          summary_markdown=f'Created branch: {branch_name}',
+          status=common_pb2.SUCCESS,
+      )
+
+  return result_pb2.RawResult(
+      summary_markdown='No new branch created',
+      status=common_pb2.SUCCESS,
+  )
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -337,4 +349,40 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepFailure,
                      'validate branch.validate firmware branch'),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'no-branch_util_push',
+      api.step_data(
+          'create branch.'
+          'create branch from buildspec manifest 126/15886.2.0.xml',
+          stdout=api.raw_io.output_text('''
+2024/06/03 19:49:23.411775 Fetched working manifest.
+2024/06/03 19:49:23.411876 Using sourceRevision 96fa0117101484ffc5c92138bdf4ad1b84b476fe for manifestInternal
+2024/06/03 19:49:23.411883 Using sourceUpstream main for manifestInternal
+2024/06/03 19:49:23.570772 Version found: 15886.2.0.
+2024/06/03 19:49:23.570798 Have manifest = &{manifest-internal chromeos/manifest-internal 96fa0117101484ffc5c92138bdf4ad1b84b476fe refs/heads/main cros-internal [{no-branch-suffix true}]   []}
+2024/06/03 19:49:24.517851 No branch exists for version 15886.2.0. Continuing...
+2024/06/03 19:49:24.527978 Creating branch: firmware-ec-R126-15886.2.B
+2024/06/03 19:49:25.320741 Repairing manifest project chromiumos/manifest
+2024/06/03 19:49:28.993146 Repairing manifest project chromeos/manifest-internal
+2024/06/03 19:53:14.208866 Created 1040 of 1040 remote branches
+2024/06/03 20:07:04.208732 Bump CHROMEOS_BRANCH number after creating branch firmware-ec-R126-15886.2.B
+2024/06/03 20:07:04.208788 Bump CHROMEOS_BUILD number for source branch main after creating branch firmware-ec-R126-15886.2.B
+2024/06/03 20:07:04.208796 completed successfully
+''')),
+      api.properties(
+          **{
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email='jbettis@google.com')], ccs=[
+                          Email(email='chromeos-firmware@google.com')
+                      ], keep_n_milestones=3),
+              'source_version':
+                  'R126-15886.2.0',
+              'branch_info':
+                  Branch(type=Branch.FIRMWARE, descriptor='R126'),
+              'branch_util_push':
+                  False,
+          }),
   )
