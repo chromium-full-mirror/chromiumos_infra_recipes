@@ -64,42 +64,84 @@ _FAILED_ALREADY_EXISTS_COMPLETE = {
 }
 
 
+def _flatten_dict(d):
+  """Flatten a dictionary.
+
+  Specifically, this means converting an input like this:
+
+  {'a': 1, 'b': {'c': 2, 'd': {'e': 3, 'f': 4}}}
+
+  To this:
+
+  {'a': 1, 'b.c': 2, 'b.d.e': 3, 'b.d.f': 4}
+
+  An exception will be thrown if there's a collision in the keys.
+  """
+
+  result = {}
+  for key, value in d.items():
+    if isinstance(value, dict):
+      for k, v in _flatten_dict(value).items():
+        new_key = f'{key}.{k}'
+        assert new_key not in result
+        result[new_key] = v
+    elif isinstance(value, (str, int)):
+      result[key] = str(value)
+    else:
+      raise api.step.InfraFailure(  # pragma: no cover
+          f'unexpected type: {value!r}')
+  return result
+
+
 def RunSteps(api: RecipeApi):
   metadata = api.signing.wait_for_signing([
       'gs://bucket/directory1/directory2/releases/file1.instructions',
       'gs://bucket/directory1/directory2/releases/file2.instructions',
   ])
   with api.step.nest('verify results') as child_step:
-    child_step.step_summary_text = api.signing.get_signed_build_metadata(
-        metadata)
+    signed_builds = api.signing.get_signed_build_metadata(metadata)
+
+    for i, build in enumerate(signed_builds):
+      pres = api.step.empty(str(i)).presentation
+      if build:
+        pres.tags.update(_flatten_dict(build))
+
     api.signing.verify_signing_success(metadata, child_step)
 
 
 def GenTests(api: RecipeTestApi):
 
-  def StepMetaEquals(check: Callable[[bool], bool], step_odict: Dict[str, Step],
-                     step: str, expected: List[Dict[str, Any]]):
+  def check_metadata(step: str, expected: List[Dict[str, Any]]):
     """Check that the step's meta_list equals given value.
 
     Assumes order does not matter.
 
     Args:
-      check (function) - the check function as provided by the recipes engine.
-      step_odict (dict) - dict of steps that have run.
       step (str) - The step to check the meta_list of.
       expected (array) - The expected value of the meta_list.
 
     Usage:
-      yield TEST + \
-          api.post_process(StepMetaEquals, 'step-name', 'expected-text')
+      yield TEST + check_metadata('step-name', 'expected-text')
     """
-    # Verify arrays same size.
-    check(len(step_odict[step].step_summary_text) == len(expected))
-    # Verify arrays same contents.
-    for elem in expected:
-      check(
-          expected.count(elem) == step_odict[step].step_summary_text.count(
-              elem))
+
+    result = api.post_check(post_process.MustRun, step)
+
+    for i, elem in enumerate(expected):
+      step_i = f'{step}.{i}'
+      result += api.post_check(post_process.MustRun, step_i)
+
+      if expected[i] is None:
+        result += api.post_check(post_process.NumTagsEquals, step_i, 0)
+        continue
+
+      expected_tags = _flatten_dict(expected[i])
+      result += api.post_check(post_process.NumTagsEquals, step_i,
+                               len(expected_tags))
+      for tag, value in expected_tags.items():
+        result += api.post_check(post_process.TagEquals, step_i, tag, value)
+
+    return result
+
 
   step_passed = functools.partial(api.post_check, post_process.StepSuccess)
   step_failed = functools.partial(api.post_check, post_process.StepFailure)
@@ -123,8 +165,7 @@ def GenTests(api: RecipeTestApi):
           'gs://bucket/directory1/directory2/releases/file2.instructions.json',
           _PASSED, run=3),
       step_passed('verify results.parse metadata'),
-      api.post_check(StepMetaEquals, 'verify results',
-                     [_PASSED_COMPLETE, _PASSED_COMPLETE]),
+      check_metadata('verify results', [_PASSED_COMPLETE, _PASSED_COMPLETE]),
       api.post_check(
           post_process.PropertyEquals, 'signing_summary', {
               'gs://bucket/directory1/directory2/releases/file1.instructions':
@@ -145,8 +186,7 @@ def GenTests(api: RecipeTestApi):
           'gs://bucket/directory1/directory2/releases/file2.instructions.json'
       ]),
       step_passed('verify results.parse metadata'),
-      api.post_check(StepMetaEquals, 'verify results',
-                     [_PASSED_COMPLETE, _PASSED_COMPLETE]),
+      check_metadata('verify results', [_PASSED_COMPLETE, _PASSED_COMPLETE]),
       api.post_check(post_process.DoesNotRun,
                      'wait for signing to complete.sleep 300'),
       api.post_process(post_process.DropExpectation),
@@ -164,8 +204,7 @@ def GenTests(api: RecipeTestApi):
           'gs://bucket/directory1/directory2/releases/file2.instructions.json',
           None),  # Never starts.
       step_passed('verify results.parse metadata'),
-      api.post_check(
-          StepMetaEquals,
+      check_metadata(
           'verify results',
           # Until a signing is finalized it won't populate the meta map.
           [None, None]),
@@ -198,8 +237,7 @@ def GenTests(api: RecipeTestApi):
           'gs://bucket/directory1/directory2/releases/file2.instructions.json',
           _FAILED, run=2),
       step_passed('verify results.parse metadata'),
-      api.post_check(StepMetaEquals, 'verify results',
-                     [_PASSED_COMPLETE, _FAILED_COMPLETE]),
+      check_metadata('verify results', [_PASSED_COMPLETE, _FAILED_COMPLETE]),
       step_failed('verify results'),
       api.post_check(
           post_process.PropertyEquals, 'signing_summary', {
@@ -234,7 +272,7 @@ def GenTests(api: RecipeTestApi):
           'gs://bucket/directory1/directory2/releases/file2.instructions.json',
           _FAILED_ALREADY_EXISTS, run=2),
       step_passed('verify results.parse metadata'),
-      api.post_check(StepMetaEquals, 'verify results',
+      check_metadata('verify results',
                      [_PASSED_COMPLETE, _FAILED_ALREADY_EXISTS_COMPLETE]),
       step_passed('verify results'),
       api.post_check(
@@ -260,8 +298,7 @@ def GenTests(api: RecipeTestApi):
           _PASSED),
       step_passed('verify results.parse metadata'),
       # Verify that the good metadata makes it way in.
-      api.post_check(StepMetaEquals, 'verify results',
-                     [_PASSED_COMPLETE, None]),
+      check_metadata('verify results', [None, _PASSED_COMPLETE]),
       step_failed('verify results'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
