@@ -288,6 +288,7 @@ def GenTests(api: RecipeTestApi):
               '/archive_dir/bar.bin',
               'gs://chromeos-releases/canary-channel/kukui/1234.56.0/'
           ]),
+      api.post_check(post_process.MustRun, 'sign artifacts.call BAPI (2)'),
       api.post_process(
           post_process.PropertyEquals, 'bcid', {
               "failed_signed_prov_generation": [],
@@ -298,7 +299,7 @@ def GenTests(api: RecipeTestApi):
               "canary-channel":
                   "gs://chromeos-releases/canary-channel/kukui/1234.56.0/"
           }), api.post_process(post_process.DropExpectation),
-      build_target='kukui', builder='kukui-release-main', status='FAILURE')
+      build_target='kukui', builder='kukui-release-main')
 
   yield api.build_menu.test(
       'cq',
@@ -332,9 +333,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'sign artifacts.call BAPI.call chromite.api.ImageService/SignImage'),
+      api.post_check(post_process.MustRun, 'sign artifacts.call BAPI (2)'),
       api.post_process(
           post_process.PropertyEquals, 'signed_upload_paths', {
               "canary-channel":
                   "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/"
           }), api.post_process(post_process.DropExpectation),
-      build_target='kukui', builder='fwpackager-cq', status='FAILURE')
+      build_target='kukui', builder='fwpackager-cq')

@@ -750,6 +750,7 @@ class SigningApi(recipe_api.RecipeApi):
     yield
     docker_prune()
 
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def signing_operation(
       self, config: BuildTargetSigningConfigs, archive_dir: Path = None,
       local_artifact_dir: Optional[Path] = None,
@@ -772,21 +773,22 @@ class SigningApi(recipe_api.RecipeApi):
 
       docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
 
-      with self.m.step.nest('call BAPI') as presentation:
-        request = SignImageRequest(
-            signing_configs=config, archive_dir=str(archive_dir),
-            result_path=common_pb2.ResultPath(
-                path=common_pb2.Path(
-                    path=self.m.path.abspath(archive_dir),
-                    location=common_pb2.Path.Location.OUTSIDE,
-                )), tmp_path=self.m.path.abspath(docker_tmp_dir),
-            docker_image=self.signing_docker_image)
-        response = self.m.cros_build_api.ImageService.SignImage(request)
-        self.add_kms_logs_as_step_logs(archive_dir)
-        # Turn the step red if any failures are present.
-        for archive in response.signed_artifacts.archive_artifacts:
-          if archive.signing_status != PASSED:
-            presentation.status = self.m.step.FAILURE
+      with self.m.time.timeout(datetime.timedelta(hours=3)):
+        with self.m.step.nest('call BAPI') as presentation:
+          request = SignImageRequest(
+              signing_configs=config, archive_dir=str(archive_dir),
+              result_path=common_pb2.ResultPath(
+                  path=common_pb2.Path(
+                      path=self.m.path.abspath(archive_dir),
+                      location=common_pb2.Path.Location.OUTSIDE,
+                  )), tmp_path=self.m.path.abspath(docker_tmp_dir),
+              docker_image=self.signing_docker_image)
+          response = self.m.cros_build_api.ImageService.SignImage(request)
+          self.add_kms_logs_as_step_logs(archive_dir)
+          # Turn the step red if any failures are present.
+          for archive in response.signed_artifacts.archive_artifacts:
+            if archive.signing_status != PASSED:
+              presentation.status = self.m.step.FAILURE
 
       self.upload_signed_artifacts(response, attestation_eligible,
                                    failed_unsigned_verifications)

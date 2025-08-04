@@ -350,6 +350,7 @@ def GenTests(api: RecipeTestApi):
               '/archive_dir/bar.bin',
               'gs://chromeos-releases/canary-channel/kukui/1234.56.0/'
           ]),
+      api.post_check(post_process.MustRun, 'sign artifacts.call BAPI (2)'),
       api.post_check(post_process.PropertyEquals, 'upload_size', [
           {
               'gs_path':
@@ -362,7 +363,7 @@ def GenTests(api: RecipeTestApi):
               'gb': 1337.0,
           },
       ]), api.post_process(post_process.DropExpectation), build_target='kukui',
-      builder='kukui-release-main', status='FAILURE')
+      builder='kukui-release-main')
 
   yield api.build_menu.test(
       'staging',
@@ -380,8 +381,7 @@ def GenTests(api: RecipeTestApi):
       # Don't need to repeat the same checks as `basic`.
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
-      builder='staging-kukui-release-main',
-      status='FAILURE')
+      builder='staging-kukui-release-main')
 
   yield api.build_menu.test(
       'no-signed-artifacts',

@@ -5098,6 +5098,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337010827.0
+      },
       "realm": {
         "name": "chromeos:postsubmit"
       },
@@ -5128,6 +5132,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337010827.0
+      },
       "realm": {
         "name": "chromeos:postsubmit"
       },
@@ -5153,6 +5161,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
     "infra_step": true,
     "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337010827.0
+      },
       "realm": {
         "name": "chromeos:postsubmit"
       },
@@ -5188,6 +5200,10 @@
       ]
     },
     "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337010827.0
+      },
       "realm": {
         "name": "chromeos:postsubmit"
       },
@@ -5223,6 +5239,10 @@
     },
     "infra_step": true,
     "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337010827.0
+      },
       "realm": {
         "name": "chromeos:postsubmit"
       },
@@ -5268,6 +5288,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337010827.0
+      },
       "realm": {
         "name": "chromeos:postsubmit"
       },
@@ -6315,7 +6339,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0033@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0034@@@"
     ]
   },
   {

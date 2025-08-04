@@ -215,6 +215,12 @@ def GenTests(api: RecipeTestApi):
       api.override_step_data(
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.Compute file hash',
           retcode=1),
+      api.override_step_data(
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket (2).upload signed artifacts for CHANNEL_CANARY.generate signed provenance.Compute file hash',
+          retcode=1),
+      api.override_step_data(
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket (3).upload signed artifacts for CHANNEL_CANARY.generate signed provenance.Compute file hash',
+          retcode=1),
       api.post_check(
           post_process.DoesNotRun,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.snoop: report_gcs'
