@@ -443,6 +443,7 @@ Flag: EXEMPT desktop only
             final_xml_path = program_path / 'configs/hal_config.xml'
             api.file.ensure_directory("ensure HAL XML path",
                                       final_xml_path.parent)
+            ET.indent(root, space='  ')
             combined_xml_content = ET.tostring(root, encoding='unicode')
             api.file.write_text(f'write combined HAL XML for {program_name}',
                                 final_xml_path, combined_xml_content)

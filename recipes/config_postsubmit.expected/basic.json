@@ -2922,7 +2922,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>",
+      "<HalConfigurations>\n  <HalConfig>\n    <Identity>\n      <sku-id>1</sku-id>\n      <model>project-model</model>\n    </Identity>\n  </HalConfig>\n</HalConfigurations>",
       "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_config.xml"
     ],
     "cwd": "[CLEANUP]/android_workspace",
@@ -2930,7 +2930,14 @@
     "name": "Do update_android_config and create CL.Process builder example-snapshot.write combined HAL XML for example",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@hal_config.xml@<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@<HalConfigurations>@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@  <HalConfig>@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@    <Identity>@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@      <sku-id>1</sku-id>@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@      <model>project-model</model>@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@    </Identity>@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@  </HalConfig>@@@",
+      "@@@STEP_LOG_LINE@hal_config.xml@</HalConfigurations>@@@",
       "@@@STEP_LOG_END@hal_config.xml@@@"
     ]
   },
