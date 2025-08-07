@@ -547,7 +547,7 @@
       }
     },
     "name": "Wait chrome-uprev-orchestrator.buildbucket.collect.wait",
-    "timeout": 36000,
+    "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
