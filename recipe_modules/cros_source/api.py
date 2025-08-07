@@ -905,7 +905,7 @@ class CrosSourceApi(RecipeApi):
     paths = []
     with self.m.context(cwd=self.workspace_path):
       for project_info in self.m.repo.project_infos([project]):
-        if project_info.branch == branch:
+        if project_info.branch is None or project_info.branch == branch:
           paths.append(project_info.path)
 
       if not paths and not empty_ok:
