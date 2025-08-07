@@ -380,7 +380,6 @@ def CreateTi50TastArtifacts(api, config):
   with api.step.nest('Create Ti50 Tast artifacts'):
 
     artifacts_gs_bucket = config.artifacts.artifacts_gs_bucket
-    signed_artifacts_gs_bucket = _to_signed_gs_bucket(artifacts_gs_bucket)
     artifacts_gs_path = _artifacts_gs_path(api, config)
 
     tars = _find_files_with_suffix(api, artifacts_gs_bucket, artifacts_gs_path,
@@ -388,17 +387,11 @@ def CreateTi50TastArtifacts(api, config):
     if len(tars) == 0:
       return
 
-    # CTP builder is not able to access releases bucket, therefore the
-    # signed .bin files are copied back to the chromeos-image-archive bucket.
-    bins = _find_files_with_suffix(api, signed_artifacts_gs_bucket,
-                                   artifacts_gs_path, '.bin')
-
     temp_dir = api.path.mkdtemp()
     tast_dir = api.path.join(temp_dir, 'tast')
     tast_dir_empty = True
     download_dir = api.path.join(temp_dir, 'download')
     api.file.ensure_directory('Create download directory', download_dir)
-    signing_re = re.compile(r'.*/ti50_Unknown_(.*).bin')
     for tar_file in tars:
       api.gsutil.download(artifacts_gs_bucket, tar_file, download_dir,
                           name='download tarfile')
@@ -424,16 +417,6 @@ def CreateTi50TastArtifacts(api, config):
           tast_dir_empty = False
         except api.step.StepFailure:
           presentation.step_text = 'No interesting files in archive.'
-      for bin_file in bins:
-        if bin_file.find(base) >= 0:
-          dest_path = tast_subdir
-          signing_info = signing_re.match(bin_file)
-          if signing_info:
-            dest_path = os.path.join(tast_subdir,
-                                     'image_' + signing_info[1] + '.bin')
-          api.gsutil.download(signed_artifacts_gs_bucket, bin_file, dest_path,
-                              name='download signed image')
-          tast_dir_empty = False
     if not tast_dir_empty:
       api.gsutil.upload(tast_dir, artifacts_gs_bucket, artifacts_gs_path,
                         ['-r'])
@@ -474,13 +457,6 @@ def _artifacts_gs_path(api, config):
   return api.cros_artifacts.artifacts_gs_path(config.id.name, target,
                                               config.id.type,
                                               template='{gs_path}')
-
-
-def _to_signed_gs_bucket(gs_bucket):
-  """Convert a gs bucket to the corresponding signed bucket."""
-  gs_bucket = gs_bucket.replace('staging-chromeos-image-archive',
-                                'chromeos-releases-test')
-  return gs_bucket.replace('chromeos-image-archive', 'chromeos-releases')
 
 
 def _find_files_with_suffix(api, bucket, path, suffix):
@@ -961,25 +937,21 @@ def GenTests(api):
           'Create Ti50 Tast artifacts.gsutil list',
           stdout=api.raw_io.output_text(
               'gs://chromeos-image-archive/build0/ti50.tar.bz2')),
-      api.step_data(
-          'Create Ti50 Tast artifacts.gsutil list (2)',
-          stdout=api.raw_io.output_text(
-              'gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin'
-          )), builder='firmware-ti50-postsubmit', input_properties={
-              '$chromeos/build_menu': {
-                  'container_version_format':
-                      '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
-              },
-              '$chromeos/cros_relevance': {
-                  'force_postsubmit_relevance': True
-              },
-              'firmware_location':
-                  common_pb2.PLATFORM_TI50,
-              'signing_allowed_builder_names': [
-                  'staging-firmware-ti50-postsubmit',
-                  'firmware-ti50-postsubmit',
-              ],
-          })
+      builder='firmware-ti50-postsubmit', input_properties={
+          '$chromeos/build_menu': {
+              'container_version_format':
+                  '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
+          'firmware_location':
+              common_pb2.PLATFORM_TI50,
+          'signing_allowed_builder_names': [
+              'staging-firmware-ti50-postsubmit',
+              'firmware-ti50-postsubmit',
+          ],
+      })
 
   yield test(
       'create tast artifacts missing tar files',
@@ -1006,11 +978,6 @@ def GenTests(api):
           'Create Ti50 Tast artifacts.gsutil list',
           stdout=api.raw_io.output_text(
               'gs://chromeos-image-archive/build0/ti50.tar.bz2')),
-      api.step_data(
-          'Create Ti50 Tast artifacts.gsutil list (2)',
-          stdout=api.raw_io.output_text(
-              'gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin'
-          )),
       api.step_data('Create Ti50 Tast artifacts.Extract archive.untar',
                     retcode=2), builder='firmware-ti50-postsubmit',
       input_properties={
