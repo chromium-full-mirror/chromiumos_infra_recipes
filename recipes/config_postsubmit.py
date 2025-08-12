@@ -48,6 +48,7 @@ DEPS = [
     'recipe_engine/step',
     'bot_scaling',
     'cros_source',
+    'deferrals',
     'easy',
     'failures',
     'future_utils',
@@ -198,281 +199,286 @@ def _update_android_config(api, properties, _project_infos, dry_run):
 
   commit_infos = []
 
-  for builder_name in properties.snapshot_builders_to_monitor:
-    with api.step.nest(f"Process builder {builder_name}"):
-      builds = api.buildbucket.search(
-          builds_service_pb2.BuildPredicate(
-              builder=builder_common_pb2.BuilderID(
-                  project="chromeos",
-                  bucket="postsubmit",
-                  builder=builder_name,
-              ),
-              tags=api.buildbucket.tags(relevance="relevant"),
-              status=common_pb2.SUCCESS,
-          ),
-          fields=["id", "output.properties"],
-          limit=1,
-          step_name=f"Find latest successful build for {builder_name}",
-      )
+  with api.deferrals.raise_exceptions_at_end():
+    for builder_name in properties.snapshot_builders_to_monitor:
+      with api.step.nest(
+          f"Process builder {builder_name}"), api.deferrals.defer_exceptions():
+        builds = api.buildbucket.search(
+            builds_service_pb2.BuildPredicate(
+                builder=builder_common_pb2.BuilderID(
+                    project="chromeos",
+                    bucket="postsubmit",
+                    builder=builder_name,
+                ),
+                tags=api.buildbucket.tags(relevance="relevant"),
+                status=common_pb2.SUCCESS,
+            ),
+            fields=["id", "output.properties"],
+            limit=1,
+            step_name=f"Find latest successful build for {builder_name}",
+        )
 
-      if not builds:
+        if not builds:
+          api.step.active_result.presentation.step_text = (
+              "No successful build found")
+          continue
+
+        build = builds[0]
+        output_props = json_format.MessageToDict(build.output.properties)
+
+        artifact_base_link = output_props.get("artifact_link")
+        artifacts_info = output_props.get("artifacts",
+                                          {}).get("files_by_artifact", {})
+        if "config_protos.zip" not in artifacts_info.get("CHROMEOS_CONFIG", []):
+          api.step.active_result.presentation.step_text = (
+              "No config_protos.zip found")
+          continue
+
+        gs_path = f"{artifact_base_link}/config_protos.zip"
         api.step.active_result.presentation.step_text = (
-            "No successful build found")
-        continue
+            f"Found artifact {gs_path} from build {build.id}")
 
-      build = builds[0]
-      output_props = json_format.MessageToDict(build.output.properties)
+        dl_dir = api.path.mkdtemp(f"download_{builder_name}")
+        unzip_dir = api.path.mkdtemp(f"unzip_{builder_name}")
+        zip_local_path = dl_dir / "config_protos.zip"
 
-      artifact_base_link = output_props.get("artifact_link")
-      artifacts_info = output_props.get("artifacts",
-                                        {}).get("files_by_artifact", {})
-      if "config_protos.zip" not in artifacts_info.get("CHROMEOS_CONFIG", []):
-        api.step.active_result.presentation.step_text = (
-            "No config_protos.zip found")
-        continue
+        api.gsutil.download_url(gs_path, dl_dir)
+        api.step(
+            "unzip config_protos.zip",
+            ["unzip", "-q", zip_local_path, "-d", unzip_dir],
+        )
 
-      gs_path = f"{artifact_base_link}/config_protos.zip"
-      api.step.active_result.presentation.step_text = (
-          f"Found artifact {gs_path} from build {build.id}")
+        jsonproto_files = api.file.glob_paths(
+            name="find jsonproto files",
+            source=unzip_dir,
+            pattern="**/config.jsonproto",
+            test_data=[
+                unzip_dir /
+                ("example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto"
+                ),
+                unzip_dir /
+                ("example_program/chromeos-config-bsp-private-0.0.1/program/example_program/generated/config.jsonproto"
+                ),
+            ],
+        )
 
-      dl_dir = api.path.mkdtemp(f"download_{builder_name}")
-      unzip_dir = api.path.mkdtemp(f"unzip_{builder_name}")
-      zip_local_path = dl_dir / "config_protos.zip"
-
-      api.gsutil.download_url(gs_path, dl_dir)
-      api.step(
-          "unzip config_protos.zip",
-          ["unzip", "-q", zip_local_path, "-d", unzip_dir],
-      )
-
-      jsonproto_files = api.file.glob_paths(
-          name="find jsonproto files",
-          source=unzip_dir,
-          pattern="**/config.jsonproto",
-          test_data=[
-              unzip_dir /
-              ("example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto"
-              ),
-              unzip_dir /
-              ("example_program/chromeos-config-bsp-private-0.0.1/program/example_program/generated/config.jsonproto"
-              ),
-          ],
-      )
-
-      xsd_schema_path = api.path.mkdtemp("xsd_schema") / "hal_config.xsd"
-      xsd_bytes = api.gitiles.download_file(
-          "https://googleplex-android.googlesource.com/device/google/desktop/common",
-          "config/hal_config.xsd",
-          step_test_data=lambda: api.gitiles.test_api.make_encoded_file("""
+        xsd_schema_path = api.path.mkdtemp("xsd_schema") / "hal_config.xsd"
+        xsd_bytes = api.gitiles.download_file(
+            "https://googleplex-android.googlesource.com/device/google/desktop/common",
+            "config/hal_config.xsd",
+            step_test_data=lambda: api.gitiles.test_api.make_encoded_file("""
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 </xs:schema>
             """),
-      )
-
-      api.file.write_raw(
-          "write hal_config.xsd",
-          xsd_schema_path,
-          xsd_bytes,
-      )
-
-      cros_to_android_script = (
-          api.context.cwd / "src/config/payload_utils/cros_to_android.py")
-
-      project_to_hal_xml_path = {}
-      project_to_feature_xml_output_dir = {}
-      project_to_media_profiles_output_dir = {}
-      for jsonproto_path in jsonproto_files:
-        # config.jsonproto paths end with patterns like
-        # chromeos-config-bsp-private-0.0.1/<program>/generated/config.jsonproto.
-        # Extract the project name with a regex.
-        match = re.search(
-            r"chromeos-config-bsp-private-[\d\.]+/([^/]+)/generated/config.jsonproto",
-            str(jsonproto_path),
         )
-        if not match:
-          continue
 
-        project_name = match.group(1)
+        api.file.write_raw(
+            "write hal_config.xsd",
+            xsd_schema_path,
+            xsd_bytes,
+        )
 
-        with api.step.nest(
-            f"Process {project_name} from {api.path.basename(jsonproto_path)}"):
-          output_xml_path = api.path.mkdtemp(
-              "output_hal_xml") / "hal_config.xml"
-          api.step(
-              f"Run generate-hal-xml for {project_name}",
-              [
-                  cros_to_android_script,
-                  "generate-hal-xml",
-                  "-o",
-                  output_xml_path,
-                  "-x",
-                  xsd_schema_path,
-                  jsonproto_path,
-              ],
+        cros_to_android_script = (
+            api.context.cwd / "src/config/payload_utils/cros_to_android.py")
+
+        project_to_hal_xml_path = {}
+        project_to_feature_xml_output_dir = {}
+        project_to_media_profiles_output_dir = {}
+        for jsonproto_path in jsonproto_files:
+          # config.jsonproto paths end with patterns like
+          # chromeos-config-bsp-private-0.0.1/<program>/generated/config.jsonproto.
+          # Extract the project name with a regex.
+          match = re.search(
+              r"chromeos-config-bsp-private-[\d\.]+/([^/]+)/generated/config.jsonproto",
+              str(jsonproto_path),
           )
+          if not match:
+            continue
 
-          project_to_hal_xml_path[project_name] = output_xml_path
+          project_name = match.group(1)
 
-          feature_xml_output_dir = api.path.mkdtemp("output_feature_xml")
-          api.step(
-              f"Run generate-feature-xml for {project_name}",
-              [
-                  cros_to_android_script,
-                  "generate-feature-xml",
-                  "-o",
-                  feature_xml_output_dir,
-                  jsonproto_path,
-              ],
-          )
-          project_to_feature_xml_output_dir[project_name] = (
-              feature_xml_output_dir)
+          with api.step.nest(
+              f"Process {project_name} from {api.path.basename(jsonproto_path)}"
+          ):
+            output_xml_path = api.path.mkdtemp(
+                "output_hal_xml") / "hal_config.xml"
+            api.step(
+                f"Run generate-hal-xml for {project_name}",
+                [
+                    cros_to_android_script,
+                    "generate-hal-xml",
+                    "-o",
+                    output_xml_path,
+                    "-x",
+                    xsd_schema_path,
+                    jsonproto_path,
+                ],
+            )
 
-          media_profiles_output_dir = api.path.mkdtemp("output_feature_xml")
-          dtd_schema = cros_to_android_script.parent / "media_profiles.dtd"
-          api.step(
-              f"Run generate-media-profiles for {project_name}",
-              [
-                  cros_to_android_script,
-                  "generate-media-profiles",
-                  "-o",
-                  media_profiles_output_dir,
-                  "-d",
-                  dtd_schema,
-                  jsonproto_path,
-              ],
-          )
-          project_to_media_profiles_output_dir[
-              project_name] = media_profiles_output_dir
+            project_to_hal_xml_path[project_name] = output_xml_path
 
-      commit_message = f'''Automatic config update.
+            feature_xml_output_dir = api.path.mkdtemp("output_feature_xml")
+            api.step(
+                f"Run generate-feature-xml for {project_name}",
+                [
+                    cros_to_android_script,
+                    "generate-feature-xml",
+                    "-o",
+                    feature_xml_output_dir,
+                    jsonproto_path,
+                ],
+            )
+            project_to_feature_xml_output_dir[project_name] = (
+                feature_xml_output_dir)
+
+            media_profiles_output_dir = api.path.mkdtemp("output_feature_xml")
+            dtd_schema = cros_to_android_script.parent / "media_profiles.dtd"
+            api.step(
+                f"Run generate-media-profiles for {project_name}",
+                [
+                    cros_to_android_script,
+                    "generate-media-profiles",
+                    "-o",
+                    media_profiles_output_dir,
+                    "-d",
+                    dtd_schema,
+                    jsonproto_path,
+                ],
+            )
+            project_to_media_profiles_output_dir[
+                project_name] = media_profiles_output_dir
+
+        commit_message = f'''Automatic config update.
 
 - Generated by {api.buildbucket.build_url()}.
 
 Flag: EXEMPT desktop only
 '''
 
-      with api.context(cwd=api.src_state.android_workspace_path):
-        # If the builder is in project_repo_snapshot_builders, then each
-        # project repo gets its own commit. Otherwise all configs are committed
-        # to the program repo.
-        #
-        # Note that the configs go to slightly different places depending on
-        # whether the builder is in project_repo_snapshot_builders, so we need
-        # fully separate logic. For example, hal_config.xml is in a
-        # project-specific directory in the program repo.
-        if builder_name in properties.project_repo_snapshot_builders:
-          for project_name, hal_xml_path in project_to_hal_xml_path.items():
-            repo_path_str = f'device/google/desktop/{project_name}'
-            api.repo.sync(projects=[repo_path_str], current_branch=True)
+        with api.context(cwd=api.src_state.android_workspace_path):
+          # If the builder is in project_repo_snapshot_builders, then each
+          # project repo gets its own commit. Otherwise all configs are committed
+          # to the program repo.
+          #
+          # Note that the configs go to slightly different places depending on
+          # whether the builder is in project_repo_snapshot_builders, so we need
+          # fully separate logic. For example, hal_config.xml is in a
+          # project-specific directory in the program repo.
+          if builder_name in properties.project_repo_snapshot_builders:
+            for project_name, hal_xml_path in project_to_hal_xml_path.items():
+              repo_path_str = f'device/google/desktop/{project_name}'
+              api.repo.sync(projects=[repo_path_str], current_branch=True)
 
-            project_path = api.context.cwd / repo_path_str
-            final_xml_path = project_path / 'configs/hal_config.xml'
-            api.file.ensure_directory("ensure HAL XML path",
-                                      final_xml_path.parent)
-            api.file.move(
-                f'move HAL XML for {project_name}',
-                hal_xml_path,
-                final_xml_path,
-            )
+              project_path = api.context.cwd / repo_path_str
+              final_xml_path = project_path / 'configs/hal_config.xml'
+              api.file.ensure_directory("ensure HAL XML path",
+                                        final_xml_path.parent)
+              api.file.move(
+                  f'move HAL XML for {project_name}',
+                  hal_xml_path,
+                  final_xml_path,
+              )
 
-            if project_name in project_to_feature_xml_output_dir:
-              api.file.copytree(f"copy feature XMLs for {project_name}",
-                                project_to_feature_xml_output_dir[project_name],
-                                project_path / 'configs/features',
+              if project_name in project_to_feature_xml_output_dir:
+                api.file.copytree(
+                    f"copy feature XMLs for {project_name}",
+                    project_to_feature_xml_output_dir[project_name],
+                    project_path / 'configs/features', allow_override=True)
+
+              if project_name in project_to_media_profiles_output_dir:
+                api.file.copytree(
+                    f"copy media profile XMLs for {project_name}",
+                    project_to_media_profiles_output_dir[project_name],
+                    project_path / 'configs/media_profiles',
+                    allow_override=True)
+
+              project_info_test_data = api.repo.test_api.project_infos_test_data(
+                  [{
+                      'project': repo_path_str,
+                      'path': repo_path_str,
+                      'remote': 'goog',
+                  }])
+              commit_infos.append(
+                  CommitInfo(
+                      api,
+                      api.repo.project_info(project_path,
+                                            test_data=project_info_test_data),
+                      commit_message))
+          else:
+            program_name = builder_name.removesuffix('-snapshot')
+            api.repo.sync(projects=[f'device/google/desktop/{program_name}'],
+                          current_branch=True)
+
+            program_path = api.context.cwd / f'device/google/desktop/{program_name}'
+            if project_to_hal_xml_path:
+              # Combine the hal_config.xmls from eacn project into one XML file,
+              # because the Makefile is expecting a single XML file. Eventually
+              # all projects should be migrated to project_repo_snapshot_builders
+              # and this can be removed.
+              #
+              # The root of the first XML file is used as the root of the combined
+              # file. All children of the root element of the other files are
+              # appended to this root.
+              # This assumes that all hal_config.xml files have the same root
+              # element name.
+
+              # Read the first XML file to establish the root of the combined file.
+              projects = list(project_to_hal_xml_path.keys())
+              first_project = projects[0]
+              first_xml_path = project_to_hal_xml_path[first_project]
+              first_xml_content = api.file.read_text(
+                  f'read first hal_config.xml for {first_project}',
+                  first_xml_path,
+                  test_data='''<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>''',
+              )
+              root = ET.fromstring(first_xml_content)
+
+              # Append the children of the root element of the other XML files.
+              for project in projects[1:]:
+                xml_path = project_to_hal_xml_path[project]
+                xml_content = api.file.read_text(
+                    f'read hal_config.xml for {project}', xml_path,
+                    test_data='''<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>'''
+                )
+                other_root = ET.fromstring(xml_content)
+                for child in other_root:
+                  root.append(child)
+
+              # The combined file is written to the program's config directory.
+              final_xml_path = program_path / 'configs/hal_config.xml'
+              api.file.ensure_directory("ensure HAL XML path",
+                                        final_xml_path.parent)
+              ET.indent(root, space='  ')
+              combined_xml_content = ET.tostring(root, encoding='unicode')
+              api.file.write_text(f'write combined HAL XML for {program_name}',
+                                  final_xml_path, combined_xml_content)
+
+            for project, feature_xml_output_dir in project_to_feature_xml_output_dir.items(
+            ):
+              api.file.copytree(f"copy feature XMLs for {project}",
+                                feature_xml_output_dir,
+                                program_path / 'configs/features' / project,
                                 allow_override=True)
 
-            if project_name in project_to_media_profiles_output_dir:
-              api.file.copytree(
-                  f"copy media profile XMLs for {project_name}",
-                  project_to_media_profiles_output_dir[project_name],
-                  project_path / 'configs/media_profiles', allow_override=True)
+            for project, media_profiles_output_dir in project_to_media_profiles_output_dir.items(
+            ):
+              api.file.copytree(f"copy media profile XMLs for {project}",
+                                media_profiles_output_dir,
+                                program_path / 'configs/media_profiles',
+                                allow_override=True)
 
             project_info_test_data = api.repo.test_api.project_infos_test_data(
                 [{
-                    'project': repo_path_str,
-                    'path': repo_path_str,
+                    'project': 'device/google/desktop/example_program',
+                    'path': 'device/google/desktop/example_program',
                     'remote': 'goog',
                 }])
             commit_infos.append(
                 CommitInfo(
                     api,
-                    api.repo.project_info(project_path,
+                    api.repo.project_info(program_path,
                                           test_data=project_info_test_data),
                     commit_message))
-        else:
-          program_name = builder_name.removesuffix('-snapshot')
-          api.repo.sync(projects=[f'device/google/desktop/{program_name}'],
-                        current_branch=True)
-
-          program_path = api.context.cwd / f'device/google/desktop/{program_name}'
-          if project_to_hal_xml_path:
-            # Combine the hal_config.xmls from eacn project into one XML file,
-            # because the Makefile is expecting a single XML file. Eventually
-            # all projects should be migrated to project_repo_snapshot_builders
-            # and this can be removed.
-            #
-            # The root of the first XML file is used as the root of the combined
-            # file. All children of the root element of the other files are
-            # appended to this root.
-            # This assumes that all hal_config.xml files have the same root
-            # element name.
-
-            # Read the first XML file to establish the root of the combined file.
-            projects = list(project_to_hal_xml_path.keys())
-            first_project = projects[0]
-            first_xml_path = project_to_hal_xml_path[first_project]
-            first_xml_content = api.file.read_text(
-                f'read first hal_config.xml for {first_project}',
-                first_xml_path,
-                test_data='''<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>''',
-            )
-            root = ET.fromstring(first_xml_content)
-
-            # Append the children of the root element of the other XML files.
-            for project in projects[1:]:
-              xml_path = project_to_hal_xml_path[project]
-              xml_content = api.file.read_text(
-                  f'read hal_config.xml for {project}', xml_path,
-                  test_data='''<HalConfigurations><HalConfig><Identity><sku-id>1</sku-id><model>project-model</model></Identity></HalConfig></HalConfigurations>'''
-              )
-              other_root = ET.fromstring(xml_content)
-              for child in other_root:
-                root.append(child)
-
-            # The combined file is written to the program's config directory.
-            final_xml_path = program_path / 'configs/hal_config.xml'
-            api.file.ensure_directory("ensure HAL XML path",
-                                      final_xml_path.parent)
-            ET.indent(root, space='  ')
-            combined_xml_content = ET.tostring(root, encoding='unicode')
-            api.file.write_text(f'write combined HAL XML for {program_name}',
-                                final_xml_path, combined_xml_content)
-
-          for project, feature_xml_output_dir in project_to_feature_xml_output_dir.items(
-          ):
-            api.file.copytree(f"copy feature XMLs for {project}",
-                              feature_xml_output_dir,
-                              program_path / 'configs/features' / project,
-                              allow_override=True)
-
-          for project, media_profiles_output_dir in project_to_media_profiles_output_dir.items(
-          ):
-            api.file.copytree(f"copy media profile XMLs for {project}",
-                              media_profiles_output_dir,
-                              program_path / 'configs/media_profiles',
-                              allow_override=True)
-
-          project_info_test_data = api.repo.test_api.project_infos_test_data([{
-              'project': 'device/google/desktop/example_program',
-              'path': 'device/google/desktop/example_program',
-              'remote': 'goog',
-          }])
-          commit_infos.append(
-              CommitInfo(
-                  api,
-                  api.repo.project_info(program_path,
-                                        test_data=project_info_test_data),
-                  commit_message))
 
   return commit_infos
 
@@ -905,6 +911,26 @@ def GenTests(api):
           'Do update_android_config and create CL.Process builder example-snapshot.write combined HAL XML for example'
       ),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'update_android_config_one_builder_fails',
+      default_properties(snapshot_builders_to_monitor=[
+          'failing-builder', 'successful-builder'
+      ]),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api, builder='failing-builder'),
+      snapshot_build_step_data(api, builder='successful-builder'),
+      config_dlm_step_data(api),
+      api.step_data(
+          'Do update_android_config and create CL.Process builder failing-builder.unzip config_protos.zip',
+          retcode=1),
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Process builder successful-builder.unzip config_protos.zip'
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
