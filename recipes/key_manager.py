@@ -6,6 +6,7 @@
 
 
 from PB.chromite.api.signing import CreateAccessoryKeyRequest
+from PB.chromite.api.signing import CreateCertRequest
 from PB.chromite.api.signing import CreatePreMPKeysRequest
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import (
@@ -23,8 +24,11 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     "recipe_engine/buildbucket",
     "recipe_engine/context",
+    'recipe_engine/file',
+    'recipe_engine/path',
     "recipe_engine/properties",
     "recipe_engine/step",
+    "build_menu",
     "cros_build_api",
     "cros_debug",
     "cros_try",
@@ -70,6 +74,8 @@ def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
     create_premp_keys(api, properties, release_keys_path)
   elif properties.HasField("create_accessory_keys_request"):
     create_accessory_keys(api, properties, release_keys_path)
+  elif properties.HasField("create_cert_request"):
+    create_cert(api, properties, release_keys_path)
   else:
     raise StepFailure(
         "Properties must include either an accessory or PreMP key request.")
@@ -95,7 +101,7 @@ def create_premp_keys(api: RecipeApi, properties: KeyManagerProperties,
             api.signing.signing_docker_image,
         ],
     )
-    is_staging = api.buildbucket.build.builder.bucket == "staging"
+    is_staging = api.build_menu.is_staging
     create_premp_keys_request = properties.create_premp_keys_request
     add_loem = create_premp_keys_request.add_loem
     # These fields shouldn't be set by the user, but in any case
@@ -158,7 +164,7 @@ def create_accessory_keys(api: RecipeApi, properties: KeyManagerProperties,
             api.signing.signing_docker_image,
         ],
     )
-    is_staging = api.buildbucket.build.builder.bucket == "staging"
+    is_staging = api.build_menu.is_staging
     create_accessory_keys_request = properties.create_accessory_keys_request
     # These fields shouldn't be set by the user, but in any case
     # set them here (potentially overwriting existing values).
@@ -201,6 +207,40 @@ def create_accessory_keys(api: RecipeApi, properties: KeyManagerProperties,
       # Abandon dry run changes so they don't accidentally get submitted.
       if create_accessory_keys_request.dry_run or is_staging:
         api.gerrit.abandon_change(change)
+
+
+def create_cert(api: RecipeApi, properties: KeyManagerProperties,
+                release_keys_path: str):
+  with api.step.nest("create cert"):
+    api.step(
+        "docker auth",
+        [
+            "gcloud",
+            "auth",
+            "configure-docker",
+            "us-docker.pkg.dev",
+        ],
+    )
+    api.step(
+        "docker pull",
+        [
+            "docker",
+            "pull",
+            api.signing.signing_docker_image,
+        ],
+    )
+    create_cert_request = properties.create_cert_request
+    result_dir = api.cros_build_api.new_result_path()
+    create_cert_request.result_path.CopyFrom(result_dir)
+    # These fields shouldn't be set by the user, but in any case
+    # set them here (potentially overwriting existing values).
+    create_cert_request.docker_image =\
+        api.signing.signing_docker_image
+    create_cert_request.release_keys_checkout = str(release_keys_path)
+    create_cert_request.is_staging = api.build_menu.is_staging
+    api.cros_build_api.SigningService.CreateCert(create_cert_request)
+
+    # TODO(b/409824047): Output the cert.
 
 
 def get_gerrit_change(api: RecipeApi, release_keys_path: str,
@@ -545,4 +585,55 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_process(post_process.DropExpectation),
       status="FAILURE",
+  )
+
+  yield api.test(
+      "cert-basic",
+      api.properties(
+          KeyManagerProperties(
+              create_cert_request=CreateCertRequest(keyring='myring',
+                                                    key_name='key_name',
+                                                    out_path='/out'),
+              bug=1337,
+          ),
+          **{
+              "$recipe_engine/buildbucket":
+                  InputProperties(
+                      build=build_pb2.Build(tags=[
+                          common_pb2.StringPair(
+                              key="tryjob-launcher",
+                              value="hardtmad@google.com",
+                          )
+                      ])),
+          },
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "create cert.docker pull",
+          [
+              "docker",
+              "pull",
+              "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:",
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "create cert.docker pull",
+          [
+              "docker",
+              "pull",
+              "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:",
+          ],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "create cert.call chromite.api.SigningService/CreateCert",
+          "request",
+          ["us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:"],
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create cert.call chromite.api.SigningService/CreateCert",
+      ),
+      api.post_process(post_process.DropExpectation),
   )

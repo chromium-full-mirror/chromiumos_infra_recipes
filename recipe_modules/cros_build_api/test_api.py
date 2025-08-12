@@ -801,6 +801,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses = {}
     responses['CreatePreMPKeys'] = '{}'
     responses['CreateAccessoryKeys'] = '{}'
+    responses['CreateCert'] = '{}'
     responses['SignTi50Paos'] = '{}'
     return responses
 
