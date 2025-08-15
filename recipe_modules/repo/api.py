@@ -277,7 +277,8 @@ class RepoApi(recipe_api.RecipeApi):
            no_manifest_update: bool = False, force_remove_dirty: bool = False,
            force_checkout: bool = True, prune: bool = None,
            repo_event_log: bool = True, manifest_branch_state: bool = True,
-           test_manifest_branch_state_failure: bool = False) -> None:
+           test_manifest_branch_state_failure: bool = False,
+           step_name: Optional[str] = None) -> None:
     """Execute 'repo sync' with the given arguments.
 
     Args:
@@ -301,6 +302,7 @@ class RepoApi(recipe_api.RecipeApi):
       manifest_branch_state: Write `repo info` to stdout.
       test_manifest_branch_state_failure: Raise StepFailure in repo-info step
         and confirm it does not fail the entire build.
+      step_name: The name of the step. If None, generate from the args.
     """
     cmd = ['sync']
     if force_sync:
@@ -341,7 +343,7 @@ class RepoApi(recipe_api.RecipeApi):
     # Run repo sync. Capture failure and try to export stats, then reraise.
     step_exception = None
     try:
-      self._step(cmd, name=None, timeout=timeout)
+      self._step(cmd, name=step_name, timeout=timeout)
     except StepFailure as e:
       step_exception = e
     finally:

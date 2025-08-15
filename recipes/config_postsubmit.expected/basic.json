@@ -2790,7 +2790,7 @@
       ]
     },
     "infra_step": true,
-    "name": "Do update_android_config and create CL.Process builder example-snapshot.repo sync",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.repo sync device/google/desktop/example",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -367,7 +367,8 @@ Flag: EXEMPT desktop only
           if builder_name in properties.project_repo_snapshot_builders:
             for project_name, hal_xml_path in project_to_hal_xml_path.items():
               repo_path_str = f'device/google/desktop/{project_name}'
-              api.repo.sync(projects=[repo_path_str], current_branch=True)
+              api.repo.sync(projects=[repo_path_str], current_branch=True,
+                            step_name=f'repo sync {project_name}')
 
               project_path = api.context.cwd / repo_path_str
               final_xml_path = project_path / 'configs/hal_config.xml'
@@ -406,10 +407,11 @@ Flag: EXEMPT desktop only
                       commit_message))
           else:
             program_name = builder_name.removesuffix('-snapshot')
-            api.repo.sync(projects=[f'device/google/desktop/{program_name}'],
-                          current_branch=True)
+            repo_path_str = f'device/google/desktop/{program_name}'
+            api.repo.sync(projects=[repo_path_str], current_branch=True,
+                          step_name=f'repo sync {repo_path_str}')
 
-            program_path = api.context.cwd / f'device/google/desktop/{program_name}'
+            program_path = api.context.cwd / repo_path_str
             if project_to_hal_xml_path:
               # Combine the hal_config.xmls from eacn project into one XML file,
               # because the Makefile is expecting a single XML file. Eventually
@@ -829,7 +831,7 @@ def GenTests(api):
       api.post_process(
           post_process.StepCommandContains,
           'Do update_android_config and create CL.Process builder '
-          'example-snapshot-project-repo.repo sync',
+          'example-snapshot-project-repo.repo sync example_project',
           [
               'sync', '--current-branch', '--verbose', '--force-checkout',
               'device/google/desktop/example_project'
