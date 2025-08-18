@@ -4,13 +4,9 @@
 
 """Recipe for performing various manipulations on ChromeOS signing keys."""
 
-from google.protobuf import json_format
 
 from PB.chromite.api.signing import CreateAccessoryKeyRequest
 from PB.chromite.api.signing import CreatePreMPKeysRequest
-from PB.chromite.api.signing import CreateAccessoryKeyResponse
-from PB.chromite.api.signing import CreatePreMPKeysResponse
-from PB.chromite.api.signing import RequestStatus
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import (
     builder_common as builder_common_pb2,)
@@ -29,7 +25,6 @@ DEPS = [
     "recipe_engine/context",
     "recipe_engine/properties",
     "recipe_engine/step",
-    "build_menu",
     "cros_build_api",
     "cros_debug",
     "cros_try",
@@ -82,7 +77,7 @@ def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
 
 def create_premp_keys(api: RecipeApi, properties: KeyManagerProperties,
                       release_keys_path: str):
-  with api.step.nest("create PreMP keys") as pres:
+  with api.step.nest("create PreMP keys"):
     api.step(
         "docker auth",
         [
@@ -108,12 +103,7 @@ def create_premp_keys(api: RecipeApi, properties: KeyManagerProperties,
     create_premp_keys_request.docker_image = api.signing.signing_docker_image
     create_premp_keys_request.release_keys_checkout = str(release_keys_path)
     create_premp_keys_request.dry_run = is_staging
-    response = api.cros_build_api.SigningService.CreatePreMPKeys(
-        create_premp_keys_request)
-    if response.request_status != RequestStatus.STATUS_PASS:
-      pres.status = api.step.FAILURE
-      raise StepFailure(
-          "Failed to create PreMP keys. See build API stdout for details")
+    api.cros_build_api.SigningService.CreatePreMPKeys(create_premp_keys_request)
 
     commit_subject = "Add LOEM for" if add_loem else "Create PreMP keys for"
     commit_lines = [
@@ -150,7 +140,7 @@ def create_premp_keys(api: RecipeApi, properties: KeyManagerProperties,
 
 def create_accessory_keys(api: RecipeApi, properties: KeyManagerProperties,
                           release_keys_path: str):
-  with api.step.nest("create accessory keys") as pres:
+  with api.step.nest("create accessory keys"):
     api.step(
         "docker auth",
         [
@@ -176,13 +166,8 @@ def create_accessory_keys(api: RecipeApi, properties: KeyManagerProperties,
         api.signing.signing_docker_image
     create_accessory_keys_request.release_keys_checkout = str(release_keys_path)
     create_accessory_keys_request.is_staging = is_staging
-    response = api.cros_build_api.SigningService.CreateAccessoryKeys(
+    api.cros_build_api.SigningService.CreateAccessoryKeys(
         create_accessory_keys_request)
-
-    if response.request_status != RequestStatus.STATUS_PASS:
-      pres.status = api.step.FAILURE
-      raise StepFailure(
-          "Failed to create PreMP keys. See build API stdout for details")
 
     pre_mp_text = (" PreMP" if create_accessory_keys_request.is_pre_mp else "")
     version_text = (f"-v{create_accessory_keys_request.version}"
@@ -240,8 +225,6 @@ def commit_keyset(api: RecipeApi, commit_message: str):
 
 
 def GenTests(api: RecipeTestApi):
-  premp_pass_response = json_format.MessageToJson(
-      CreatePreMPKeysResponse(request_status=RequestStatus.STATUS_PASS))
   yield api.test(
       "PreMp-basic",
       api.properties(
@@ -261,9 +244,6 @@ def GenTests(api: RecipeTestApi):
                       ])),
           },
       ),
-      api.build_menu.set_build_api_return('create PreMP keys',
-                                          'SigningService/CreatePreMPKeys',
-                                          data=premp_pass_response),
       api.post_check(
           post_process.StepCommandContains,
           "create PreMP keys.docker pull",
@@ -322,9 +302,6 @@ def GenTests(api: RecipeTestApi):
                   build_target=BuildTarget(name="atlas")),
               bug=420,
           )),
-      api.build_menu.set_build_api_return('create PreMP keys',
-                                          'SigningService/CreatePreMPKeys',
-                                          data=premp_pass_response),
       api.post_check(
           post_process.StepCommandContains,
           "create PreMP keys.docker pull",
@@ -369,9 +346,6 @@ def GenTests(api: RecipeTestApi):
                   build_target=BuildTarget(name="atlas"), add_loem=True),
               bug=1337,
           )),
-      api.build_menu.set_build_api_return('create PreMP keys',
-                                          'SigningService/CreatePreMPKeys',
-                                          data=premp_pass_response),
       api.post_check(
           post_process.LogContains,
           "create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys",
@@ -404,8 +378,6 @@ def GenTests(api: RecipeTestApi):
       status="FAILURE",
   )
 
-  acc_pass_response = json_format.MessageToJson(
-      CreateAccessoryKeyResponse(request_status=RequestStatus.STATUS_PASS))
   yield api.test(
       "Accessory-basic",
       api.properties(
@@ -427,9 +399,6 @@ def GenTests(api: RecipeTestApi):
                       ])),
           },
       ),
-      api.build_menu.set_build_api_return('create accessory keys',
-                                          'SigningService/CreateAccessoryKeys',
-                                          data=acc_pass_response),
       api.post_check(
           post_process.StepCommandContains,
           "create accessory keys.docker pull",
@@ -486,9 +455,6 @@ def GenTests(api: RecipeTestApi):
               ),
               bug=1337,
           )),
-      api.build_menu.set_build_api_return('create accessory keys',
-                                          'SigningService/CreateAccessoryKeys',
-                                          data=acc_pass_response),
       api.post_check(
           post_process.StepCommandContains,
           "create accessory keys.docker pull",
@@ -526,9 +492,6 @@ def GenTests(api: RecipeTestApi):
               ),
               bug=1337,
           )),
-      api.build_menu.set_build_api_return('create accessory keys',
-                                          'SigningService/CreateAccessoryKeys',
-                                          data=acc_pass_response),
       api.post_check(
           post_process.StepCommandContains,
           "create accessory keys.docker pull",
@@ -583,47 +546,3 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation),
       status="FAILURE",
   )
-
-  premp_fail_response = json_format.MessageToJson(
-      CreatePreMPKeysResponse(request_status=RequestStatus.STATUS_FAIL))
-  yield api.test(
-      "bapi-failure",
-      api.properties(
-          KeyManagerProperties(
-              create_premp_keys_request=CreatePreMPKeysRequest(
-                  build_target=BuildTarget(name="atlas")),
-              bug=1337,
-          ),
-          **{
-              "$recipe_engine/buildbucket":
-                  InputProperties(
-                      build=build_pb2.Build(tags=[
-                          common_pb2.StringPair(
-                              key="tryjob-launcher",
-                              value="hardtmad@google.com",
-                          )
-                      ])),
-          },
-      ),
-      api.build_menu.set_build_api_return('create PreMP keys',
-                                          'SigningService/CreatePreMPKeys',
-                                          data=premp_fail_response),
-      api.post_process(post_process.DropExpectation), status='FAILURE')
-
-  acc_fail_response = json_format.MessageToJson(
-      CreateAccessoryKeyResponse(request_status=RequestStatus.STATUS_FAIL))
-  yield api.test(
-      "acc-bapi-failure",
-      api.properties(
-          KeyManagerProperties(
-              create_accessory_keys_request=CreateAccessoryKeyRequest(
-                  build_target=BuildTarget(name="atlas"),
-                  accessory="accessory",
-                  dry_run=True,
-              ),
-              bug=1337,
-          )),
-      api.build_menu.set_build_api_return('create accessory keys',
-                                          'SigningService/CreateAccessoryKeys',
-                                          data=acc_fail_response),
-      api.post_process(post_process.DropExpectation), status='FAILURE')
