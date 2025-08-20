@@ -37,6 +37,7 @@ DEPS = [
     "git",
     "signing",
     "src_state",
+    "util",
 ]
 
 PROPERTIES = KeyManagerProperties
@@ -238,9 +239,12 @@ def create_cert(api: RecipeApi, properties: KeyManagerProperties,
         api.signing.signing_docker_image
     create_cert_request.release_keys_checkout = str(release_keys_path)
     create_cert_request.is_staging = api.build_menu.is_staging
+    cert_name = f"{create_cert_request.key_name}.crt"
+    create_cert_request.out_path = f"/out/{cert_name}"
     api.cros_build_api.SigningService.CreateCert(create_cert_request)
 
-    # TODO(b/409824047): Output the cert.
+    cert_path = api.util.proto_path_to_recipes_path(result_dir.path) / cert_name
+    api.file.read_text('cert contents', cert_path, test_data='CERTCONTENTS')
 
 
 def get_gerrit_change(api: RecipeApi, release_keys_path: str,
@@ -592,8 +596,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           KeyManagerProperties(
               create_cert_request=CreateCertRequest(keyring='myring',
-                                                    key_name='key_name',
-                                                    out_path='/out'),
+                                                    key_name='key_name'),
               bug=1337,
           ),
           **{
