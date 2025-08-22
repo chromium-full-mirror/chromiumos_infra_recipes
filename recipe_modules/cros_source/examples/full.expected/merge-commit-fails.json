@@ -3516,6 +3516,7 @@
     "name": "apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

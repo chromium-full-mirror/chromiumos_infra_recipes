@@ -2976,7 +2976,8 @@
     "infra_step": true,
     "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git merge",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -3080,7 +3081,8 @@
     "infra_step": true,
     "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git merge (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -3184,7 +3186,8 @@
     "infra_step": true,
     "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git merge (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

@@ -531,7 +531,8 @@
     },
     "name": "push uprevs.push to ../tmp_tmp_1.retry uprev to ../tmp_tmp_1.git merge",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -721,7 +722,8 @@
     },
     "name": "push uprevs.push to ../tmp_tmp_1.retry uprev to ../tmp_tmp_1.git merge (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -911,7 +913,8 @@
     },
     "name": "push uprevs.push to ../tmp_tmp_1.retry uprev to ../tmp_tmp_1.git merge (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

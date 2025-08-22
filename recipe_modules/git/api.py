@@ -298,7 +298,7 @@ class GitApi(recipe_api.RecipeApi):
       args (tuple): Additional arguments to git merge.
       kwargs (dict): Passed to recipe_engine/step.
     """
-    kwargs.setdefault('stdout', self.m.raw_io.output_text())
+    kwargs.setdefault('stdout', self.m.raw_io.output_text(add_output_log=True))
     self._step(['merge', ref, '-m', message] + list(args), **kwargs)
 
   def cherry_pick(self, commit, **kwargs):

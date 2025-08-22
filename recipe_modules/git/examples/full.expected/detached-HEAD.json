@@ -158,7 +158,10 @@
       "yeet"
     ],
     "infra_step": true,
-    "name": "git merge"
+    "name": "git merge",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "cmd": [
