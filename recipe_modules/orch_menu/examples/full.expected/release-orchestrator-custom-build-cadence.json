@@ -5003,7 +5003,8 @@
     "name": "set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/buildspecbucket/buildspecs/99/1234.56.0.xml@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/buildspecbucket/buildspecs/99/1234.56.0.xml@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"set up orchestrator|create buildspec|upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml|gsutil upload\": \"gs://buildspecbucket/buildspecs/99/1234.56.0.xml\"}@@@"
     ]
   },
   {
@@ -5721,7 +5722,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/release-main-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/release-main-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"aggregating metadata|upload container metadata|gsutil upload\": \"gs://chromeos-image-archive/release-main-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb\"}@@@"
     ]
   },
   {

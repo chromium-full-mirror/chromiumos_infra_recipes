@@ -171,7 +171,8 @@
     "name": "archive sysroot.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/foo/foo/R120-15650.0.0-/sysroot.tar.zst@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/foo/foo/R120-15650.0.0-/sysroot.tar.zst@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"archive sysroot|gsutil upload\": \"gs://foo/foo/R120-15650.0.0-/sysroot.tar.zst\"}@@@"
     ]
   },
   {

@@ -6448,7 +6448,8 @@
     "name": "upload host prebuilts.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/host/amd64/amd64-generic/snapshot-R99-1234.56.0-101-8945511751514863184/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/host/amd64/amd64-generic/snapshot-R99-1234.56.0-101-8945511751514863184/packages@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload host prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/host/amd64/amd64-generic/snapshot-R99-1234.56.0-101-8945511751514863184/packages\"}@@@"
     ]
   },
   {

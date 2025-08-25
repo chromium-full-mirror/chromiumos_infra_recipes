@@ -6648,7 +6648,8 @@
     },
     "name": "gsutil upload kythe index pack",
     "~followup_annotations": [
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"gsutil upload kythe index pack\": \"gs://chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip\"}@@@"
     ]
   },
   {
@@ -6679,7 +6680,8 @@
     },
     "name": "gsutil upload compile_commands.json",
     "~followup_annotations": [
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"gsutil upload compile_commands.json\": \"gs://chrome-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json\"}@@@"
     ]
   },
   {

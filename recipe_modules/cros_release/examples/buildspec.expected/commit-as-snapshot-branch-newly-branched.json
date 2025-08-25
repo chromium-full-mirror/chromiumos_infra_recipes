@@ -3948,7 +3948,8 @@
     "name": "create buildspec (2).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/99/1234.56.0.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/99/1234.56.0.xml@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/99/1234.56.0.xml@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create buildspec (2)|upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/99/1234.56.0.xml|gsutil upload\": \"gs://bucket/foo/99/1234.56.0.xml\"}@@@"
     ]
   },
   {
@@ -5594,7 +5595,8 @@
     "name": "create buildspec (3).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/99/1234.56.0.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/99/1234.56.0.xml@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/99/1234.56.0.xml@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create buildspec (3)|upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/99/1234.56.0.xml|gsutil upload\": \"gs://bucket/foo/99/1234.56.0.xml\"}@@@"
     ]
   },
   {
@@ -7113,7 +7115,8 @@
     "name": "create buildspec (4).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/bar.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/bar.xml@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/bar.xml@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create buildspec (4)|upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/bar.xml|gsutil upload\": \"gs://bucket/foo/bar.xml\"}@@@"
     ]
   },
   {

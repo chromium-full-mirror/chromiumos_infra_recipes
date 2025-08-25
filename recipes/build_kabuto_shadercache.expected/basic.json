@@ -115,7 +115,8 @@
     "name": "upload kabuto logs.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125323.tar@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125323.tar@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload kabuto logs|gsutil upload\": \"gs://kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125323.tar\"}@@@"
     ]
   },
   {

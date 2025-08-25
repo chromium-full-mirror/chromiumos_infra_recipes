@@ -2684,7 +2684,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {
@@ -7292,7 +7293,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create test service containers|upload container metadata|gsutil upload\": \"gs://chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb\"}@@@"
     ]
   },
   {
@@ -7604,7 +7606,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create test service containers|upload test_metadata metadata|gsutil upload\": \"gs://chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb\"}@@@"
     ]
   },
   {
@@ -7920,7 +7923,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create test service containers|upload test_harness_metadata metadata|gsutil upload\": \"gs://chromeos-image-archive/eve-android-uprev/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb\"}@@@"
     ]
   },
   {

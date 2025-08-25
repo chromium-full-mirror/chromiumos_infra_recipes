@@ -32,7 +32,8 @@
     "infra_step": true,
     "name": "gsutil upload test-version-file.txt",
     "~followup_annotations": [
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/test-gs-bucket/test-version-file.txt@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/test-gs-bucket/test-version-file.txt@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"gsutil upload test-version-file.txt\": \"gs://test-gs-bucket/test-version-file.txt\"}@@@"
     ]
   },
   {

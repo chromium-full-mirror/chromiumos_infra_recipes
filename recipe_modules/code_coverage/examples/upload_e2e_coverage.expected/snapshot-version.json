@@ -2497,7 +2497,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {
@@ -7243,7 +7244,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/05-14-2012/metadata.json@@@",
-      "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/05-14-2012/metadata.json@@@"
+      "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/05-14-2012/metadata.json@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload e2e coverage metadata|gsutil upload\": \"gs://e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/05-14-2012/metadata.json\"}@@@"
     ]
   },
   {

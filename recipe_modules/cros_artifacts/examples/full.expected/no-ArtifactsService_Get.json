@@ -923,7 +923,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/metadata/metadata.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/metadata/metadata.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload test metadata|gsutil upload\": \"gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/metadata/metadata.jsonpb\"}@@@"
     ]
   },
   {

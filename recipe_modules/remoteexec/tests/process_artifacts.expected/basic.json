@@ -65,7 +65,8 @@
     "name": "process_remoteexec_artifacts (4).gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-reclient-logs/2012/05/14/mock-amd64-generic/tmp/TEST.log@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-reclient-logs/2012/05/14/mock-amd64-generic/tmp/TEST.log@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"process_remoteexec_artifacts (4)|gsutil upload\": \"gs://chromeos-reclient-logs/2012/05/14/mock-amd64-generic/tmp/TEST.log\"}@@@"
     ]
   },
   {

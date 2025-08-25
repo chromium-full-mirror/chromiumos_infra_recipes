@@ -671,7 +671,8 @@
     "name": "upload image.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload image|gsutil upload\": \"gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip\"}@@@"
     ]
   },
   {

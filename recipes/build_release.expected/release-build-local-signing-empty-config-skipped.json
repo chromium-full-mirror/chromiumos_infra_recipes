@@ -3500,7 +3500,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/sources.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/sources.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sources metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {
@@ -8192,7 +8193,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/containers.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/containers.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"try creating test service containers|create test service containers|upload container metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/containers.jsonpb\"}@@@"
     ]
   },
   {
@@ -8531,7 +8533,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_metadata.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_metadata.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"try creating test service containers|create test service containers|upload test_metadata metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_metadata.jsonpb\"}@@@"
     ]
   },
   {
@@ -8874,7 +8877,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_harness_metadata.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_harness_metadata.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"try creating test service containers|create test service containers|upload test_harness_metadata metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_harness_metadata.jsonpb\"}@@@"
     ]
   },
   {
