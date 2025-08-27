@@ -5640,7 +5640,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"Create Ti50 Tast artifacts|gsutil upload\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"Create Ti50 Tast artifacts|gsutil upload\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184\", \"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {

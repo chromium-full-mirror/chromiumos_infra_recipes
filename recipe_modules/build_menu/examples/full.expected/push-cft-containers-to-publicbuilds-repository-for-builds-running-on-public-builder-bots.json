@@ -12734,7 +12734,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com//eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create test service containers|upload test_metadata metadata|gsutil upload\": \"gs:///eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create test service containers|upload container metadata|gsutil upload\": \"gs:///eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb\", \"create test service containers|upload test_metadata metadata|gsutil upload\": \"gs:///eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb\"}@@@"
     ]
   },
   {
@@ -13051,7 +13051,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com//eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create test service containers|upload test_harness_metadata metadata|gsutil upload\": \"gs:///eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create test service containers|upload container metadata|gsutil upload\": \"gs:///eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb\", \"create test service containers|upload test_harness_metadata metadata|gsutil upload\": \"gs:///eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb\", \"create test service containers|upload test_metadata metadata|gsutil upload\": \"gs:///eve-main-public/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb\"}@@@"
     ]
   },
   {

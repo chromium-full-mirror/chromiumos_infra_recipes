@@ -3698,7 +3698,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/portage_explorer/2012/05/14/8945511751514863184/portage_explorer.json@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"Portage Explorer Service|gsutil upload\": \"gs://portage_explorer/2012/05/14/8945511751514863184/portage_explorer.json\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"Portage Explorer Service|gsutil upload\": \"gs://portage_explorer/2012/05/14/8945511751514863184/portage_explorer.json\", \"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {

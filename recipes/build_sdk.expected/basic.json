@@ -2848,7 +2848,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload prebuilts|upload target prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload prebuilts|upload host prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages\", \"upload prebuilts|upload target prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\"}@@@"
     ]
   },
   {
@@ -2885,7 +2885,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload prebuilts|upload sdk toolchain tarballs|upload foo.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload prebuilts|upload host prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages\", \"upload prebuilts|upload sdk toolchain tarballs|upload foo.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz\", \"upload prebuilts|upload target prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\"}@@@"
     ]
   },
   {
@@ -2915,7 +2915,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload prebuilts|upload sdk toolchain tarballs|upload bar.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload prebuilts|upload host prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages\", \"upload prebuilts|upload sdk toolchain tarballs|upload bar.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz\", \"upload prebuilts|upload sdk toolchain tarballs|upload foo.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz\", \"upload prebuilts|upload target prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\"}@@@"
     ]
   },
   {
@@ -2949,7 +2949,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sdk tarball and manifest|upload sdk tarball|gsutil upload\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload prebuilts|upload host prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages\", \"upload prebuilts|upload sdk toolchain tarballs|upload bar.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz\", \"upload prebuilts|upload sdk toolchain tarballs|upload foo.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz\", \"upload prebuilts|upload target prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\", \"upload sdk tarball and manifest|upload sdk tarball|gsutil upload\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst\"}@@@"
     ]
   },
   {
@@ -2979,7 +2979,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst.Manifest@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sdk tarball and manifest|upload sdk manifest|gsutil upload\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst.Manifest\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload prebuilts|upload host prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages\", \"upload prebuilts|upload sdk toolchain tarballs|upload bar.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz\", \"upload prebuilts|upload sdk toolchain tarballs|upload foo.tar.xz|gsutil upload\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz\", \"upload prebuilts|upload target prebuilts|gsutil upload\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\", \"upload sdk tarball and manifest|upload sdk manifest|gsutil upload\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst.Manifest\", \"upload sdk tarball and manifest|upload sdk tarball|gsutil upload\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst\"}@@@"
     ]
   },
   {

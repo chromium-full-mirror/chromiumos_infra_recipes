@@ -2780,7 +2780,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/eve/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"install packages|process_goma_logs|gsutil upload (2)\": \"gs://chrome-goma-log/2012/05/14/eve/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"install packages|process_goma_logs|gsutil upload\": \"gs://chrome-goma-log/2012/05/14/eve/compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz\", \"install packages|process_goma_logs|gsutil upload (2)\": \"gs://chrome-goma-log/2012/05/14/eve/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz\"}@@@"
     ]
   },
   {
@@ -2815,7 +2815,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/eve/gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"install packages|process_goma_logs|gsutil upload (3)\": \"gs://chrome-goma-log/2012/05/14/eve/gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"install packages|process_goma_logs|gsutil upload\": \"gs://chrome-goma-log/2012/05/14/eve/compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz\", \"install packages|process_goma_logs|gsutil upload (2)\": \"gs://chrome-goma-log/2012/05/14/eve/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz\", \"install packages|process_goma_logs|gsutil upload (3)\": \"gs://chrome-goma-log/2012/05/14/eve/gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz\"}@@@"
     ]
   },
   {
@@ -2850,7 +2850,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-goma-log/2012/05/14/eve/ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"install packages|process_goma_logs|gsutil upload (4)\": \"gs://chrome-goma-log/2012/05/14/eve/ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"install packages|process_goma_logs|gsutil upload\": \"gs://chrome-goma-log/2012/05/14/eve/compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz\", \"install packages|process_goma_logs|gsutil upload (2)\": \"gs://chrome-goma-log/2012/05/14/eve/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz\", \"install packages|process_goma_logs|gsutil upload (3)\": \"gs://chrome-goma-log/2012/05/14/eve/gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz\", \"install packages|process_goma_logs|gsutil upload (4)\": \"gs://chrome-goma-log/2012/05/14/eve/ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz\"}@@@"
     ]
   },
   {

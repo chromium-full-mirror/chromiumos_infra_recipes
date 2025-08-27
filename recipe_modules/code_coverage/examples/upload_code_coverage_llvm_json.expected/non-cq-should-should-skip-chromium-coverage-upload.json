@@ -7225,7 +7225,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/buildername/id/coverage/abcd1234/.json@@@",
       "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/chromeos-image-archive/buildername/id/coverage/abcd1234/.json/index.html@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload code coverage data|upload absolute coverage to Code Search|gsutil upload\": \"gs://chromeos-image-archive/buildername/id/coverage/abcd1234/.json\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload code coverage data|upload absolute coverage to Code Search|gsutil upload\": \"gs://chromeos-image-archive/buildername/id/coverage/abcd1234/.json\", \"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {

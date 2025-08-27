@@ -3572,7 +3572,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-manifest-versions/staging/109/15236.0.0-8945511751514863184.xml@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create buildspec|upload buildspecs/109/15236.0.0-8945511751514863184.xml to gs://chromeos-manifest-versions/staging/109/15236.0.0-8945511751514863184.xml|gsutil upload\": \"gs://chromeos-manifest-versions/staging/109/15236.0.0-8945511751514863184.xml\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"create buildspec|upload buildspecs/109/15236.0.0-8945511751514863184.xml to gs://chromeos-manifest-versions/staging/109/15236.0.0-8945511751514863184.xml|gsutil upload\": \"gs://chromeos-manifest-versions/staging/109/15236.0.0-8945511751514863184.xml\", \"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {
