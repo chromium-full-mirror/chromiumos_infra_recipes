@@ -45,6 +45,7 @@ CHROME_SIDE_BUILDERS = [
     'chromeos-brya-chrome-preuprev',
     'chromeos-jacuzzi-chrome-preuprev',
     'chromeos-volteer-chrome-preuprev',
+    'chromeos-reven-chrome-preuprev',
     'linux-chromeos-chrome-preuprev',
 ]
 
@@ -431,6 +432,8 @@ def GenTests(api: RecipeTestApi):
                        'Run preuprev chromeos-jacuzzi-chrome-preuprev'),
       api.post_process(post_process.DoesNotRun,
                        'Run preuprev chromeos-volteer-chrome-preuprev'),
+      api.post_process(post_process.DoesNotRun,
+                       'Run preuprev chromeos-reven-chrome-preuprev'),
       api.post_process(post_process.DoesNotRun,
                        'Run preuprev linux-chromeos-chrome-preuprev'),
       api.post_process(post_process.DoesNotRun,
