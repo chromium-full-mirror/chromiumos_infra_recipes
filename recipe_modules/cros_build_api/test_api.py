@@ -803,6 +803,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['CreateAccessoryKeys'] = '{}'
     responses['CreateCert'] = '{}'
     responses['SignTi50Paos'] = '{}'
+    responses['SignViaOnlineHsm'] = '{}'
     return responses
 
   @property

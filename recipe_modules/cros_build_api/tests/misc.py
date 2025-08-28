@@ -229,6 +229,7 @@ def RunSteps(api):
           'CreateAccessoryKeys': signing.CreateAccessoryKeyResponse,
           'CreateCert': signing.CreateCertResponse,
           'SignTi50Paos': signing.SignTi50PaosResponse,
+          'SignViaOnlineHsm': signing.SignViaOnlineHsmResponse,
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,
