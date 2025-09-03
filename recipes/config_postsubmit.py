@@ -563,7 +563,8 @@ def _create_cl(
       if cl_config.send_to_cq:
         with api.step.nest('send to CQ'):
           labels = {
-              Label.PRESUBMIT_READY: 1
+              Label.PRESUBMIT_READY: 1,
+              Label.AUTOSUBMIT: 1,
           } if commit_info.android_host else {
               Label.BOT_COMMIT: 1,
               Label.COMMIT_QUEUE: 2,

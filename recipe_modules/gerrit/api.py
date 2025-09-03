@@ -328,6 +328,9 @@ class Label(enum.Enum):
   # Whether the change is ready for presubmit (Android hosts only).
   PRESUBMIT_READY = enum.auto()
 
+  # Whether the change should be automatically submitted.
+  AUTOSUBMIT = enum.auto()
+
   @property
   def key(self) -> str:
     """Return the label in a format readable by the Gerrit API.
