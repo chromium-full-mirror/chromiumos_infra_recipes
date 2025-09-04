@@ -54,10 +54,16 @@
 # >
 # [VPYTHON:END]
 
+"""Mirror lvfs servers.
+
+Download all the cab and xml files from LVFS (fwupd.org) servers.
+Skip the files that already exist on GCS.
+"""
+
 import os
-import sys
 import posixpath
 import re
+import sys
 
 import requests
 
@@ -82,9 +88,13 @@ class Pulp:
           'User-Agent': self.useragent,
       }
       rv = self.session.get(url_fn, headers=headers, timeout=5)
+
+      # This will raise an exception for HTTP error status codes.
+      rv.raise_for_status()
     except (
         requests.exceptions.ConnectionError,
         requests.exceptions.ReadTimeout,
+        requests.exceptions.HTTPError,
     ) as e:
       print(str(e))
     else:
