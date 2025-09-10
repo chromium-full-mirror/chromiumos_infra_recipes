@@ -166,7 +166,9 @@ def RunSteps(api: RecipeApi):
               CreateRecoveryKernelRequest(
                   chroot=api.build_menu.chroot,
                   build_target=api.build_menu.build_target,
-              ))
+                  flags=CreateRecoveryKernelRequest.Flags(
+                      ramfs_type=CreateRecoveryKernelRequest.RamfsType
+                      .DESKTOP_RECOVERY_RAMFS)))
 
         # copy the file in.
         response_path = '%s%s' % (api.build_menu.chroot.out_path,
