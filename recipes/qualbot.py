@@ -7,9 +7,6 @@
 This recipe calls the RunQualbot endpoint from the Build API QualbotService.
 """
 
-import os
-import logging
-
 from PB.recipes.chromeos.qualbot import QualbotProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -33,10 +30,8 @@ PROPERTIES = QualbotProperties
 
 
 def RunSteps(api: RecipeApi, properties: QualbotProperties):
-  protoc_path = api.cipd.ensure_tool('infra/3pp/tools/protoc/${platform}',
-                                     "latest")
-  logging.info("Installed protoc to %s", protoc_path)
-  os.environ["PATH"] = f"{os.environ['PATH']}:{str(protoc_path)}"
+  api.cipd.ensure_tool('infra/3pp/tools/protoc/${platform}', "latest",
+                       executable_path="bin/protoc")
 
   with api.build_menu.configure_builder(missing_ok=True), \
        api.build_menu.setup_workspace():
