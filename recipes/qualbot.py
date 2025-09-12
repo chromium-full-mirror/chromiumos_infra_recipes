@@ -15,6 +15,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -30,12 +31,13 @@ PROPERTIES = QualbotProperties
 
 
 def RunSteps(api: RecipeApi, properties: QualbotProperties):
-  api.cipd.ensure_tool('infra/3pp/tools/protoc/${platform}', "latest",
-                       executable_path="bin/protoc")
-
-  with api.build_menu.configure_builder(missing_ok=True), \
-       api.build_menu.setup_workspace():
-    run_qualbot(api, properties)
+  protoc_path = api.path.dirname(
+      api.cipd.ensure_tool('infra/3pp/tools/protoc/${platform}', "latest",
+                           executable_path="bin/protoc"))
+  with api.context(env_prefixes={'PATH': [protoc_path]}):
+    with api.build_menu.configure_builder(missing_ok=True), \
+        api.build_menu.setup_workspace():
+      run_qualbot(api, properties)
 
 
 def run_qualbot(api: RecipeApi, properties: QualbotProperties):

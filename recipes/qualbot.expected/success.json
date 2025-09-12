@@ -168,6 +168,11 @@
       "--format",
       "text"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -249,6 +254,11 @@
       "RECIPE_REPO[chromeos]/infra/config/infrainfra-golang.version",
       "/path/to/tmp/"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -288,6 +298,11 @@
       "-json-output",
       "[CLEANUP]/cipd.json"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -317,6 +332,11 @@
       "[CLEANUP]/cipd.json",
       "/path/to/tmp/"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -357,6 +377,11 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -390,6 +415,11 @@
     "cmd": [
       "[START_DIR]/cipd/support/gitiles-fetch-ref"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -449,6 +479,11 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "luci_context": {
       "realm": {
         "name": "chromeos:postsubmit"
@@ -499,6 +534,11 @@
       "cat",
       "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -537,6 +577,11 @@
       "--project",
       "chromeos-release-bot"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -583,6 +628,11 @@
       "--project",
       "chromeos-release-bot"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -629,6 +679,11 @@
       "--project",
       "chromeos-release-bot"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -681,6 +736,11 @@
       "--format",
       "json(name)"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -719,6 +779,11 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -751,6 +816,11 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -782,6 +852,11 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "luci_context": {
       "realm": {
         "name": "chromeos:postsubmit"
@@ -808,6 +883,11 @@
     ],
     "env": {
       "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
     },
     "infra_step": true,
     "luci_context": {
@@ -839,6 +919,11 @@
       "main",
       "[CACHE]/infra_versions/overlay_branch.txt"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -873,6 +958,11 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -902,6 +992,11 @@
       "initial-chromeos-source-snapshot",
       "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -940,6 +1035,11 @@
       "[CACHE]/infra_versions/overlay_branch.txt",
       "/path/to/tmp/"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -984,6 +1084,11 @@
       "0o777",
       "[CACHE]/chromeos/upperdir/chromeos"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1014,6 +1119,11 @@
       "0o777",
       "[CACHE]/chromeos/workdir/chromeos"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1044,6 +1154,11 @@
       "0o777",
       "[CACHE]/chromeos"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1074,6 +1189,11 @@
       "overlay",
       "[CACHE]/chromeos"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1104,6 +1224,11 @@
       "0o777",
       "[CACHE]/cros_chroot/chroot"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1130,6 +1255,11 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1181,6 +1311,11 @@
       "0"
     ],
     "cwd": "[CLEANUP]",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1205,6 +1340,11 @@
       "false"
     ],
     "cwd": "[CLEANUP]",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1236,6 +1376,11 @@
       "0o777",
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1266,6 +1411,11 @@
       "0o777",
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1296,6 +1446,11 @@
       "0o777",
       "[CLEANUP]/chromiumos_workspace"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1326,6 +1481,11 @@
       "overlay",
       "[CLEANUP]/chromiumos_workspace"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1356,6 +1516,11 @@
       "0o777",
       "[CACHE]/bazel-cache"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1383,6 +1548,11 @@
       "0o777",
       "[CLEANUP]/chromiumos_workspace/.cache/bazel"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1407,6 +1577,11 @@
       "[CACHE]/bazel-cache",
       "[CLEANUP]/chromiumos_workspace/.cache/bazel"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1440,6 +1615,11 @@
       "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1482,6 +1662,11 @@
       "0o777",
       "[CLEANUP]/chromiumos_workspace"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1514,6 +1699,11 @@
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1554,6 +1744,11 @@
       "version"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1587,6 +1782,11 @@
       "--force"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/.repo/repo",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1611,6 +1811,11 @@
       "selfupdate"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1643,6 +1848,11 @@
       "version"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1681,6 +1891,11 @@
       "-delete"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1717,6 +1932,11 @@
       "-delete"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1763,6 +1983,11 @@
       "--hard"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1805,6 +2030,11 @@
       "-f"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1852,6 +2082,11 @@
       "--prune"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1907,6 +2142,11 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1965,6 +2205,11 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1994,6 +2239,11 @@
       "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2028,6 +2278,11 @@
       "update"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2065,6 +2320,11 @@
       "200,404"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2096,6 +2356,11 @@
       "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2130,6 +2395,11 @@
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2174,6 +2444,11 @@
       "--force-checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2229,6 +2504,11 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2287,6 +2567,11 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2321,6 +2606,11 @@
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2367,6 +2657,11 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2400,6 +2695,11 @@
       "snapshot-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2425,6 +2725,11 @@
       "FETCH_HEAD"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2451,6 +2756,11 @@
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2484,6 +2794,11 @@
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2515,6 +2830,11 @@
       "[CLEANUP]/tmp_tmp_1/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2556,6 +2876,11 @@
       "gs://chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2611,6 +2936,11 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2641,6 +2971,11 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2666,6 +3001,11 @@
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2697,6 +3037,11 @@
       "chromite.api.QualbotService/RunQualbot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2731,6 +3076,11 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2774,6 +3124,11 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2823,6 +3178,11 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2884,6 +3244,11 @@
       "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"amd64-generic\"\n    ],\n    \"bot-config\": \"amd64-generic-snapshot\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"amd64-generic-snapshot\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:27\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false\n}",
       "[CLEANUP]/metadata_tmp_1/metadata.json"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2962,6 +3327,11 @@
       "[CLEANUP]/metadata_tmp_1/metadata.json",
       "gs://chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3019,6 +3389,11 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3048,6 +3423,11 @@
       "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
       "/path/to/tmp/"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3073,6 +3453,11 @@
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3103,6 +3488,11 @@
       "debug",
       "chromite.api.SdkService/Delete"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3136,6 +3526,11 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3184,6 +3579,11 @@
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CACHE]/chromeos"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3209,6 +3609,11 @@
       "-rf",
       "[CACHE]/chromeos/workdir"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3232,6 +3637,11 @@
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CLEANUP]/chromiumos_workspace"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3257,6 +3667,11 @@
       "-rf",
       "[CACHE]/workspace/workdir"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3289,6 +3704,11 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
