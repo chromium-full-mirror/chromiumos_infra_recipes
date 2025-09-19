@@ -25,8 +25,11 @@ class LvfsMirror(recipe_api.RecipeApi):
     gsutil_ls_cmd = ['ls', '-r', self.m.path.join(self.gs_uri, '*.cab')]
     gs_file_list_path = self.m.path.cache_dir / 'gs.txt'
     gsutil_ls_stdout = self.m.raw_io.output_text(leak_to=gs_file_list_path)
-    self.m.gsutil(cmd=gsutil_ls_cmd, name='List files in %s' % self.gs_uri,
-                  stdout=gsutil_ls_stdout)
+    self.m.gsutil(
+        cmd=gsutil_ls_cmd,
+        name='List files in %s' % self.gs_uri,
+        stdout=gsutil_ls_stdout,
+    )
     return gs_file_list_path
 
   def _rsync_to_gs(self):
@@ -40,21 +43,51 @@ class LvfsMirror(recipe_api.RecipeApi):
         self.local_cache,
         self.gs_uri,
     ]
-    self.m.gsutil(cmd=gsutil_rsync_cmd, name='Sync to %s' % self.gs_uri,
-                  parallel_upload=True, multithreaded=True)
+    self.m.gsutil(
+        cmd=gsutil_rsync_cmd,
+        name='Sync to %s' % self.gs_uri,
+        parallel_upload=True,
+        multithreaded=True,
+    )
+
+  def _save_token_to_file(self):
+    project_name = 'chromeos-bot'
+    username_secret = 'fwupd_lvfs_mirror_username'
+    token_secret = 'fwupd_lvfs_mirror_token'
+    file_path = self.m.path.cleanup_dir / 'lvfs_token.txt'
+
+    with self.m.secret_manager.fetch(
+        project=project_name,
+        secret=username_secret,
+        step_name='fetch fwupd lvfs username',
+    ) as username:
+      with self.m.secret_manager.fetch(
+          project=project_name,
+          secret=token_secret,
+          step_name='fetch fwupd lvfs token',
+      ) as token:
+        complete_token = username + ':' + token
+        self.m.file.write_text('write lvfs token', file_path, complete_token)
+    return file_path
 
   def run(self):
     self.m.file.ensure_directory('ensure_local_cache', self.local_cache)
     gs_file = self._get_list_of_gs_files()
-    # sync-pulp.py will update local copy with any new files.
+    token_file_path = self._save_token_to_file()
     # We provide the list of existent files on the third argument to
     # avoid failures due to file changes referenced from any existing
     # repository manifest that we pinned to a given OS release.
-    self.m.step('run sync-pulp.py', [
-        'vpython3',
-        self.resource('sync-pulp.py'), self.mirror_address, self.local_cache,
-        gs_file
-    ])
+    self.m.step(
+        'run sync-pulp.py',
+        [
+            'vpython3',
+            self.resource('sync-pulp.py'),
+            self.mirror_address,
+            self.local_cache,
+            gs_file,
+            token_file_path,
+        ],
+    )
     self._rsync_to_gs()
 
   @property

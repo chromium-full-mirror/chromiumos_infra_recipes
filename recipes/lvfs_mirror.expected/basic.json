@@ -30,12 +30,77 @@
     "name": "gsutil List files in gs://chromeos-localmirror/lvfs"
   },
   {
+    "cmd": [],
+    "name": "fetch fwupd lvfs username"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_MODULE[infra::secret_manager]/resources/cloud_secret_manager.py",
+      "--project",
+      "chromeos-bot",
+      "--secret",
+      "fwupd_lvfs_mirror_username",
+      "--output",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "fetch fwupd lvfs username.get content from secret manager",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "fetch fwupd lvfs username.fetch fwupd lvfs token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_MODULE[infra::secret_manager]/resources/cloud_secret_manager.py",
+      "--project",
+      "chromeos-bot",
+      "--secret",
+      "fwupd_lvfs_mirror_token",
+      "--output",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "fetch fwupd lvfs username.fetch fwupd lvfs token.get content from secret manager",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "abcd1234:abcd1234",
+      "[CLEANUP]/lvfs_token.txt"
+    ],
+    "infra_step": true,
+    "name": "fetch fwupd lvfs username.fetch fwupd lvfs token.write lvfs token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@lvfs_token.txt@abcd1234:abcd1234@@@",
+      "@@@STEP_LOG_END@lvfs_token.txt@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "RECIPE_MODULE[chromeos::cros_lvfs_mirror]/resources/sync-pulp.py",
       "https://fwupd.org/downloads",
       "[CACHE]/lvfs",
-      "[CACHE]/gs.txt"
+      "[CACHE]/gs.txt",
+      "[CLEANUP]/lvfs_token.txt"
     ],
     "name": "run sync-pulp.py"
   },

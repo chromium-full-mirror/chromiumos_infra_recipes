@@ -3,10 +3,10 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'infra/secret_manager',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/gsutil',
 ]
-

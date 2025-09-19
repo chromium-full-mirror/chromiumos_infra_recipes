@@ -60,6 +60,7 @@ Download all the cab and xml files from LVFS (fwupd.org) servers.
 Skip the files that already exist on GCS.
 """
 
+import base64
 import os
 import posixpath
 import re
@@ -72,12 +73,13 @@ import requests
 
 class Pulp:
 
-  def __init__(self, url, existent):
+  def __init__(self, url, existent, token):
     self.url = url
     self.existent = open(existent, 'r', encoding='utf-8')  # pylint: disable=consider-using-with
     self.manifest = 'PULP_MANIFEST'
     self.useragent = os.path.basename(sys.argv[0])
     self.session = requests.Session()
+    self.token = token
 
   def _download_file(self, fn, path):
 
@@ -87,6 +89,9 @@ class Pulp:
       headers = {
           'User-Agent': self.useragent,
       }
+      if self.token:
+        basic_token = base64.b64encode(f'{self.token}'.encode()).decode()
+        headers['Authorization'] = f'Basic {basic_token}'
       rv = self.session.get(url_fn, headers=headers, timeout=5)
 
       # This will raise an exception for HTTP error status codes.
@@ -145,9 +150,17 @@ class Pulp:
 
 if __name__ == '__main__':
 
-  if len(sys.argv) != 4:
-    print('USAGE: URL DIR EXISTENT')
+  if len(sys.argv) != 5:
+    print('USAGE: URL DIR EXISTENT TOKEN')
     sys.exit(2)
 
-  pulp = Pulp(url=sys.argv[1], existent=sys.argv[3])
+  input_token = ''
+  with open(sys.argv[4], 'r', encoding='utf-8') as token_file:
+    input_token = token_file.read()
+
+  pulp = Pulp(
+      url=sys.argv[1],
+      existent=sys.argv[3],
+      token=input_token,
+  )
   sys.exit(pulp.sync(sys.argv[2]))
