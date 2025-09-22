@@ -755,16 +755,16 @@ def GenTests(api):
           'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
           'message', [
               'artifacts',
-              'gs://firmware-image-archive/firmware-ec-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2'
+              'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2'
           ]),
       api.post_check(
           post_process.LogContains,
           'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
           'message', [
               'artifacts',
-              'gs://firmware-image-archive/firmware-ec-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
+              'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
           ]),
-      builder='firmware-ec-R126-15886.2.B-branch',
+      builder='firmware-R126-15886.2.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
           'attestation_eligible': True,
@@ -773,7 +773,7 @@ def GenTests(api):
           'gitiles_commit': {
               'host': 'chrome-internal.googlesource.com',
               'project': 'chromeos/manifest-internal',
-              'ref': 'refs/heads/firmware-ec-R126-15886.2.B',
+              'ref': 'refs/heads/firmware-R126-15886.2.B',
           },
           'set_suite_scheduling': True,
       },

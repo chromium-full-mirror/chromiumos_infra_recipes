@@ -313,6 +313,54 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   )
 
   yield api.test(
+      'firmware-milestone-branch',
+      api.step_data(
+          'create branch.'
+          'create branch from buildspec manifest 126/15886.2.0.xml',
+          stdout=api.raw_io.output_text('''
+2024/06/03 19:49:23.411775 Fetched working manifest.
+2024/06/03 19:49:23.411876 Using sourceRevision 96fa0117101484ffc5c92138bdf4ad1b84b476fe for manifestInternal
+2024/06/03 19:49:23.411883 Using sourceUpstream main for manifestInternal
+2024/06/03 19:49:23.570772 Version found: 15886.2.0.
+2024/06/03 19:49:23.570798 Have manifest = &{manifest-internal chromeos/manifest-internal 96fa0117101484ffc5c92138bdf4ad1b84b476fe refs/heads/main cros-internal [{no-branch-suffix true}]   []}
+2024/06/03 19:49:24.517851 No branch exists for version 15886.2.0. Continuing...
+2024/06/03 19:49:24.527978 Creating branch: firmware-R126-15886.2.B
+2024/06/03 19:49:25.320741 Repairing manifest project chromiumos/manifest
+2024/06/03 19:49:28.993146 Repairing manifest project chromeos/manifest-internal
+2024/06/03 19:53:14.208866 Created 1040 of 1040 remote branches
+2024/06/03 20:07:04.208732 Bump CHROMEOS_BRANCH number after creating branch firmware-R126-15886.2.B
+2024/06/03 20:07:04.208788 Bump CHROMEOS_BUILD number for source branch main after creating branch firmware-R126-15886.2.B
+2024/06/03 20:07:04.208796 completed successfully
+''')),
+      api.properties(
+          **{
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email='jbettis@google.com')], ccs=[
+                          Email(email='chromeos-firmware@google.com')
+                      ], keep_n_milestones=3),
+              'source_version':
+                  'R126-15886.2.0',
+              'branch_info':
+                  Branch(type=Branch.FIRMWARE, descriptor='R126'),
+              'branch_util_push':
+                  True,
+          }),
+      api.post_check(
+          post_process.StepCommandContains, 'create branch.'
+          'create branch from buildspec manifest 126/15886.2.0.xml', [
+              'create',
+              '--buildspec-manifest',
+              '126/15886.2.0.xml',
+              '--firmware',
+              '--descriptor',
+              'R126',
+              '--skip-group-check',
+              '--push',
+          ]),
+  )
+
+  yield api.test(
       'firmware-branch-no-descriptor',
       api.step_data(
           'create branch.'
@@ -363,12 +411,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 2024/06/03 19:49:23.570772 Version found: 15886.2.0.
 2024/06/03 19:49:23.570798 Have manifest = &{manifest-internal chromeos/manifest-internal 96fa0117101484ffc5c92138bdf4ad1b84b476fe refs/heads/main cros-internal [{no-branch-suffix true}]   []}
 2024/06/03 19:49:24.517851 No branch exists for version 15886.2.0. Continuing...
-2024/06/03 19:49:24.527978 Creating branch: firmware-ec-R126-15886.2.B
+2024/06/03 19:49:24.527978 Creating branch: firmware-R126-15886.2.B
 2024/06/03 19:49:25.320741 Repairing manifest project chromiumos/manifest
 2024/06/03 19:49:28.993146 Repairing manifest project chromeos/manifest-internal
 2024/06/03 19:53:14.208866 Created 1040 of 1040 remote branches
-2024/06/03 20:07:04.208732 Bump CHROMEOS_BRANCH number after creating branch firmware-ec-R126-15886.2.B
-2024/06/03 20:07:04.208788 Bump CHROMEOS_BUILD number for source branch main after creating branch firmware-ec-R126-15886.2.B
+2024/06/03 20:07:04.208732 Bump CHROMEOS_BRANCH number after creating branch firmware-R126-15886.2.B
+2024/06/03 20:07:04.208788 Bump CHROMEOS_BUILD number for source branch main after creating branch firmware-R126-15886.2.B
 2024/06/03 20:07:04.208796 completed successfully
 ''')),
       api.properties(

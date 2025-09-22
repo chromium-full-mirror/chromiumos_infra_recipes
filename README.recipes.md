@@ -4153,7 +4153,7 @@ config in chromite as well as the Rubik starlark config in infra/config.
 Args:
   branch: Release, stabilize or firmware branch, e.g. "release-R89-13729.B",
     "stabilize-15129.B", or "firmware-R126-12345.B",
-    or "firmware-ec-R126-12345.2.B".
+    or "firmware-R126-12345.2.B".
   auto_submit: Whether to autosubmit the config change.
   dryrun: If in dryrun mode, we'll abandon the change.
 ### *recipe_modules* / [cros\_release\_util](/recipe_modules/cros_release_util)

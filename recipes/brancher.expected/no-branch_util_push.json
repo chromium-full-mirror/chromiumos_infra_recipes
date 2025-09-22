@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "create branch",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Created branch firmware-ec-R126-15886.2.B@@@"
+      "@@@STEP_TEXT@Created branch firmware-R126-15886.2.B@@@"
     ]
   },
   {
@@ -145,12 +145,12 @@
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 19:49:23.570772 Version found: 15886.2.0.@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 19:49:23.570798 Have manifest = &{manifest-internal chromeos/manifest-internal 96fa0117101484ffc5c92138bdf4ad1b84b476fe refs/heads/main cros-internal [{no-branch-suffix true}]   []}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 19:49:24.517851 No branch exists for version 15886.2.0. Continuing...@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 19:49:24.527978 Creating branch: firmware-ec-R126-15886.2.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 19:49:24.527978 Creating branch: firmware-R126-15886.2.B@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 19:49:25.320741 Repairing manifest project chromiumos/manifest@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 19:49:28.993146 Repairing manifest project chromeos/manifest-internal@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 19:53:14.208866 Created 1040 of 1040 remote branches@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 20:07:04.208732 Bump CHROMEOS_BRANCH number after creating branch firmware-ec-R126-15886.2.B@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 20:07:04.208788 Bump CHROMEOS_BUILD number for source branch main after creating branch firmware-ec-R126-15886.2.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 20:07:04.208732 Bump CHROMEOS_BRANCH number after creating branch firmware-R126-15886.2.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 20:07:04.208788 Bump CHROMEOS_BUILD number for source branch main after creating branch firmware-R126-15886.2.B@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 20:07:04.208796 completed successfully@@@",
       "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
@@ -160,7 +160,7 @@
     "name": "create branch.set branch_name",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@branch_name@\"firmware-ec-R126-15886.2.B\"@@@"
+      "@@@SET_BUILD_PROPERTY@branch_name@\"firmware-R126-15886.2.B\"@@@"
     ]
   },
   {

@@ -3867,7 +3867,7 @@
                   "FIRMWARE_TOKEN_DATABASE"
                 ],
                 "gsLocations": [
-                  "firmware-image-archive/firmware-ec-R126-15886.2.B/{platform_version}"
+                  "firmware-image-archive/firmware-R126-15886.2.B/{platform_version}"
                 ]
               }
             ]
@@ -3881,7 +3881,7 @@
       },
       "id": {
         "bucket": "firmware",
-        "name": "firmware-ec-R126-15886.2.B-branch",
+        "name": "firmware-R126-15886.2.B-branch",
         "type": "POSTSUBMIT"
       }
     },
