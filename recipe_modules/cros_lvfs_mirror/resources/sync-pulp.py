@@ -154,13 +154,10 @@ if __name__ == '__main__':
     print('USAGE: URL DIR EXISTENT TOKEN')
     sys.exit(2)
 
-  input_token = ''
-  with open(sys.argv[4], 'r', encoding='utf-8') as token_file:
-    input_token = token_file.read()
+  inp_token = sys.argv[4]
+  if not inp_token:
+    print('No token found...')
+    sys.exit(2)
 
-  pulp = Pulp(
-      url=sys.argv[1],
-      existent=sys.argv[3],
-      token=input_token,
-  )
+  pulp = Pulp(url=sys.argv[1], existent=sys.argv[3], token=inp_token)
   sys.exit(pulp.sync(sys.argv[2]))

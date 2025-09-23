@@ -50,11 +50,10 @@ class LvfsMirror(recipe_api.RecipeApi):
         multithreaded=True,
     )
 
-  def _save_token_to_file(self):
+  def _get_token(self):
     project_name = 'chromeos-bot'
     username_secret = 'fwupd_lvfs_mirror_username'
     token_secret = 'fwupd_lvfs_mirror_token'
-    file_path = self.m.path.cleanup_dir / 'lvfs_token.txt'
 
     with self.m.secret_manager.fetch(
         project=project_name,
@@ -67,13 +66,12 @@ class LvfsMirror(recipe_api.RecipeApi):
           step_name='fetch fwupd lvfs token',
       ) as token:
         complete_token = username + ':' + token
-        self.m.file.write_text('write lvfs token', file_path, complete_token)
-    return file_path
+        return complete_token
 
   def run(self):
     self.m.file.ensure_directory('ensure_local_cache', self.local_cache)
     gs_file = self._get_list_of_gs_files()
-    token_file_path = self._save_token_to_file()
+    token = self._get_token()
     # We provide the list of existent files on the third argument to
     # avoid failures due to file changes referenced from any existing
     # repository manifest that we pinned to a given OS release.
@@ -85,7 +83,7 @@ class LvfsMirror(recipe_api.RecipeApi):
             self.mirror_address,
             self.local_cache,
             gs_file,
-            token_file_path,
+            token,
         ],
     )
     self._rsync_to_gs()
