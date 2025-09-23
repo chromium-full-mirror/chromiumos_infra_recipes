@@ -70,4 +70,7 @@ message BuildFirmwareProperties {
 
   // PAO signing config.
   PaoSigningConfigProperties pao_signing_config = 14;
+
+  // Build target with avb.
+  bool avb_enabled = 15;
 }

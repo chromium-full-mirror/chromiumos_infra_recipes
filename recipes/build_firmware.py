@@ -159,7 +159,8 @@ def RunSteps(api, properties):
       response = service.BuildAllFirmware(
           BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                   code_coverage=properties.code_coverage,
-                                  firmware_targets=firmware_targets),
+                                  firmware_targets=firmware_targets,
+                                  avb_enabled=properties.avb_enabled),
           name='build firmware')
       binary_sizes = {}
       if response.metrics and response.metrics.value:
@@ -190,7 +191,8 @@ def RunSteps(api, properties):
         service.TestAllFirmware(
             TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                    code_coverage=properties.code_coverage,
-                                   firmware_targets=firmware_targets),
+                                   firmware_targets=firmware_targets,
+                                   avb_enabled=properties.avb_enabled),
             name='test firmware')
       except StepFailure as ex:
         UploadTestResults(api, location, build.builder.builder)
@@ -642,6 +644,7 @@ def GenTests(api):
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
           'bump_version': False,
           'set_suite_scheduling': True,
+          'avb_enabled': True,
       })
 
   yield test(
@@ -665,6 +668,7 @@ def GenTests(api):
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
           'bump_version': False,
           'set_suite_scheduling': True,
+          'avb_enabled': False,
       })
 
   yield test(
