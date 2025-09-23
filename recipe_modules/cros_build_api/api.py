@@ -15,7 +15,7 @@ from google.protobuf import descriptor
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
 from google.protobuf import message
-from google.protobuf import reflection
+from google.protobuf import message_factory
 from google.protobuf import timestamp_pb2
 
 from PB.chromite.api import api as meta_api
@@ -55,7 +55,7 @@ def _verify_proto_endpoint(
   # Check that the service and method exist.
   service_descriptor = descriptor_pool.Default().FindServiceByName(service_id)
   method_descriptor = service_descriptor.FindMethodByName(method)
-  if not method_descriptor:
+  if not method_descriptor:  # pragma: no cover
     raise KeyError('no such method %s in service %s' % (method, service_id))
   return service_id, method_descriptor
 
@@ -611,6 +611,25 @@ class CrosBuildApiApi(RecipeApi):
       ])
       file_contents = None
 
+      # protobuf 4 -> 6 managed to deprecate THREE different APIs for getting
+      # proto message constructors.
+      #
+      #   * `reflection` library is deprecated in 4, removed in 5
+      #   * `message_factory.MessageFactory` is available in 4, deprecated in
+      #     5 and removed in 6.
+      #   * `message_factory.GetMessageClass` is only added in 5.
+      #
+      # Of course, this means that during the migration, one of these two
+      # branches will be uncovered.
+      #
+      # TODO: Once recipe engine's .vpython3 spec has protobuf > 6.x, just use
+      # the new-new way directly.
+      mkMsg = getattr(message_factory, 'GetMessageClass', None)
+      if not mkMsg:  # pragma: no cover
+        # Old-new way (which replaces the previous `reflection` way).
+        mf = message_factory.MessageFactory()
+        mkMsg = mf.GetPrototype
+
       # build_api needs to invoke other chromite/bin binaries, hence this dir
       # needs to be on the PATH.
       # There is a good chance this will not work with chromite-HEAD because the
@@ -620,7 +639,7 @@ class CrosBuildApiApi(RecipeApi):
       chromite_bin_dir = self.m.src_state.workspace_path / 'chromite/bin'
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
         try:
-          output_proto = reflection.MakeClass(output_type)()
+          output_proto = mkMsg(output_type)()
           # For Build API retcode 2 indicates that the invocation failed in some
           # way but a consumable response has been produced.
           request_time = timestamp_pb2.Timestamp()

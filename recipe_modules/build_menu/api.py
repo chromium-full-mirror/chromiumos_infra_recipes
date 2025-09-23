@@ -11,6 +11,7 @@ import re
 
 from typing import Iterable, Iterator, List, Optional, Tuple
 
+from google import protobuf
 from google.protobuf import json_format
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
@@ -583,8 +584,13 @@ class BuildMenuApi(recipe_api.RecipeApi):
               chroot=self.m.cros_sdk.chroot, build_target=self.build_target,
               packages=config.build.install_packages.packages))
 
-      target_versions = json_format.MessageToDict(
-          self.target_versions, including_default_value_fields=True)
+      kwargs = {'always_print_fields_with_no_presence': True}
+      if protobuf.__version__.startswith('4'):  # pragma: no cover
+        # Old spelling of this option
+        kwargs = {'including_default_value_fields': True}
+
+      target_versions = json_format.MessageToDict(self.target_versions,
+                                                  **kwargs)
       self.m.easy.set_properties_step(target_versions=target_versions)
       if self.m.cros_artifacts.has_output_artifacts(artifacts.artifacts_info):
         self.m.metadata_json.add_version_entries(target_versions)

@@ -164,7 +164,10 @@ def GenTests(api: RecipeTestApi):
       builder={
           'builder': 'artifact-verify-orchestrator',
           'bucket': 'toolchain',
-      }, status='FAILURE', critical=True)
+          # FIXME: `critical` is type Trinary, not bool
+      },
+      status='FAILURE',
+      critical=True)
   yield api.orch_menu.test(
       'orchestrator-with-failing-followon', data.ctp_normal,
       api.properties(process_child='benchmark-afdo-process'),

@@ -87,7 +87,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
 
   def test_build(self, cq=False, dry_run=False, bot_size='large',
                  extra_changes=None, exe=None, input_properties=None,
-                 experiments=None, create_time=None, start_time=None,
+                 experiments=(), create_time=None, start_time=None,
                  update_time=None, end_time=None, critical=None,
                  output_properties=None, output_gitiles_commit=None, tags=None,
                  created_by=None, **kwargs):
@@ -167,6 +167,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     msg.created_by = created_by if created_by else msg.created_by
 
     if critical:
+      # FIXME: msg.critical is type Trinary, but `critical` is bool.
       msg.critical = (
           Trinary.Value(critical) if isinstance(critical, str) else critical)
 
