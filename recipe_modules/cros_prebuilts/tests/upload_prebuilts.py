@@ -136,6 +136,16 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   )
 
   yield api.test(
+      'upload-devinstall-prebuilts-staging',
+      api.buildbucket.generic_build(bucket='staging'),
+      api.properties(upload_devinstall_prebuilts=True, gs_bucket='test_bucket'),
+      api.post_check(post_process.MustRun, 'upload devinstall prebuilts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload devinstall prebuilts.read gs acls'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'upload-devinstall-prebuilts-no-gs-bucket',
       api.properties(upload_devinstall_prebuilts=True, gs_bucket=None),
       api.post_check(post_process.StepTextEquals, 'upload devinstall prebuilts',

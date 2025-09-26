@@ -436,6 +436,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       symlink_tree.create_links('link files to upload')
       self.m.gsutil(['rsync', '-r', symlink_tree.root, uri],
                     parallel_upload=True, multithreaded=True)
+      if not acls:
+        return
       cmd = ['acl', 'ch', '-r']
       self._add_acls(acls, cmd)
       cmd.append(uri)
@@ -452,13 +454,15 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       cmd.append(acl.arg)
       cmd.append(acl.value)
 
-  def _get_acls(self, private: bool,
-                target: BuildTarget) -> List[binhost_pb.AclArgsResponse.AclArg]:
+  def _get_acls(
+      self, private: bool, target: BuildTarget,
+      staging: bool = False) -> List[binhost_pb.AclArgsResponse.AclArg]:
     """Returns private or public acls.
 
     Args:
       private: Whether or not the target prebuilts are private.
       target: The build target to get acls for.
+      staging: Whether or not the build is in a staging environment.
 
     Returns:
       acls: A list of acls to use when interacting with Google
@@ -467,8 +471,10 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     Raises:
       ValueError: If there are no acls for a private build target.
     """
-    if not private:
+    if not private and not staging:
       return [binhost_pb.AclArgsResponse.AclArg(arg='-u', value='AllUsers:R')]
+    if not private and staging:
+      return []
     acls = self.m.cros_build_api.BinhostService.GetPrivatePrebuiltAclArgs(
         binhost_pb.AclArgsRequest(build_target=target), infra_step=True,
         name='read gs acls').args
@@ -495,7 +501,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     binhost_key = self._binhost_key(kind)
     with self.m.step.nest('upload prebuilts') as pres:
       # Set up the ACLs.
-      acls = self._get_acls(private, target)
+      acls = self._get_acls(private, target,
+                            staging=self.m.cros_infra_config.is_staging)
 
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
       package_index_files = self._get_binhosts(target, chroot, private)
@@ -549,7 +556,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         presentation.step_text = 'no bucket specified, skipping'
         return
       # First, set up the ACLs. dev_install prebuilts should always be public.
-      acls = self._get_acls(False, target)
+      acls = self._get_acls(False, target, self.m.cros_infra_config.is_staging)
 
       # Next, craft the uri where these prebuilts will end up, so it can be
       # passed to the build-api to live in the metadata.
@@ -587,7 +594,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         raise ValueError('A gs bucket was not specified for the upload.')
 
       # Set up the ACLs.
-      acls = self._get_acls(private, target)
+      acls = self._get_acls(private, target,
+                            staging=self.m.cros_infra_config.is_staging)
 
       # Get the upload targets from the build API.
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket, profile)
