@@ -90,6 +90,7 @@ class Pulp:
           'User-Agent': self.useragent,
       }
       if self.token:
+        url_fn += '/auth'
         basic_token = base64.b64encode(f'{self.token}'.encode()).decode()
         headers['Authorization'] = f'Basic {basic_token}'
       rv = self.session.get(url_fn, headers=headers, timeout=5)
