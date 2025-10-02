@@ -8,3 +8,5 @@ DEPS = [
     'recipe_engine/step',
 ]
 
+from .api import CrosStorageApi as API
+from .test_api import CrosStorageTestApi as TEST_API

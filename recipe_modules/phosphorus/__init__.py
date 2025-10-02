@@ -21,3 +21,6 @@ DEPS = [
 
 PROPERTIES = PhosphorusProperties
 ENV_PROPERTIES = PhosphorusEnvProperties
+
+from .api import PhosphorusCommand as API
+from .test_api import PhosphorusTestApi as TEST_API

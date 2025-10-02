@@ -14,3 +14,5 @@ DEPS = [
     'cros_release_util',
     'cros_version',
 ]
+
+from .api import SigningUtilsApi as API

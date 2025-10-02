@@ -17,3 +17,5 @@ DEPS = [
 
 
 PROPERTIES = ResultFlowModuleProperties
+
+from .api import ResultFlowCommand as API

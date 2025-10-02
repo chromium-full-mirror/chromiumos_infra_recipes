@@ -22,3 +22,6 @@ DEPS = [
 
 
 PROPERTIES = RepoProperties
+
+from .api import RepoApi as API
+from .test_api import RepoTestApi as TEST_API

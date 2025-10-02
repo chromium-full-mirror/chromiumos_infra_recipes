@@ -19,3 +19,5 @@ DEPS = [
 
 
 PROPERTIES = GreennessProperties
+
+from .api import GreennessApi as API

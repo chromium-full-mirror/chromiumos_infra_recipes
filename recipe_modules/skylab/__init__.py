@@ -23,3 +23,5 @@ DEPS = [
 
 
 PROPERTIES = SkylabProperties
+
+from .api import SkylabApi as API

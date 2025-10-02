@@ -7,3 +7,6 @@ DEPS = [
     'easy',
     'deferrals',
 ]
+
+from .api import GceProvider as API
+from .test_api import GceProviderTestApi as TEST_API

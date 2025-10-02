@@ -13,3 +13,5 @@ DEPS = [
 
 
 PROPERTIES = ServiceVersionProperties
+
+from .api import ServiceVersionCommand as API

@@ -19,3 +19,5 @@ DEPS = [
 
 
 PROPERTIES = GomaProperties
+
+from .api import GomaApi as API

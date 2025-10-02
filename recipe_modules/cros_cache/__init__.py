@@ -9,3 +9,5 @@ DEPS = [
     'easy',
 ]
 
+from .api import CrosCacheApi as API
+from .test_api import CrosCacheTestApi as TEST_API

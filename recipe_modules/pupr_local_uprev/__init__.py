@@ -24,3 +24,6 @@ DEPS = [
 
 
 PROPERTIES = PuprLocalUprevProperties
+
+from .api import PuprLocalUprevApi as API
+from .test_api import PuprLocalUprevTestApi as TEST_API

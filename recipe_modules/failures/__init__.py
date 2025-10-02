@@ -21,3 +21,5 @@ DEPS = [
     'src_state',
     'urls',
 ]
+
+from .api import FailuresApi as API

@@ -9,3 +9,6 @@ DEPS = [
     'depot_tools/gsutil',
     'cros_release_util',
 ]
+
+from .api import PaygenTestingApi as API
+from .test_api import PaygenTestingTestApi as TEST_API

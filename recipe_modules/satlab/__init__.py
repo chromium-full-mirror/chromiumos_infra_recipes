@@ -10,3 +10,5 @@ DEPS = [
     'recipe_engine/service_account',
     'recipe_engine/step',
 ]
+
+from .api import Satlab as API

@@ -8,3 +8,6 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
 ]
+
+from .api import GitFootersApi as API
+from .test_api import GitFootersTestApi as TEST_API

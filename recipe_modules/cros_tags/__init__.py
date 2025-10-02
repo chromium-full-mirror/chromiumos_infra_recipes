@@ -8,3 +8,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cv',
 ]
+
+from .api import CrosTagsApi as API
+from .test_api import CrosTagsTestApi as TEST_API

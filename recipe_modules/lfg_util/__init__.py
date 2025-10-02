@@ -13,3 +13,5 @@ DEPS = {
     'gerrit': 'gerrit',
     'git_footers': 'git_footers',
 }
+
+from .api import LFGUtilApi as API

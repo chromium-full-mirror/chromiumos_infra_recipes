@@ -23,3 +23,6 @@ DEPS = [
 
 
 PROPERTIES = TastExecProperties
+
+from .api import TastExecApi as API
+from .test_api import TastExecTestApi as TEST_API

@@ -15,3 +15,6 @@ DEPS = [
 ]
 
 PROPERTIES = MetadataProperties
+
+from .api import MetadataApi as API
+from .test_api import MetadataTestApi as TEST_API

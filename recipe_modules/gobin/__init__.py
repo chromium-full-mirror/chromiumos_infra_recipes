@@ -13,3 +13,5 @@ DEPS = [
     'recipe_engine/step',
     'git',
 ]
+
+from .api import GobinAPI as API

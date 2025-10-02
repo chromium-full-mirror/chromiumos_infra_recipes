@@ -21,3 +21,5 @@ DEPS = [
 
 
 PROPERTIES = IncrementalProperties
+
+from .api import IncrementalApi as API

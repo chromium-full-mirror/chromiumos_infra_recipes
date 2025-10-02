@@ -16,3 +16,6 @@ DEPS = [
 ]
 
 PROPERTIES = CrosSnapshotProperties
+
+from .api import CrosSnapshotApi as API
+from .test_api import CrosSnapshotTestApi as TEST_API

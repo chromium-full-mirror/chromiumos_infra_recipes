@@ -36,3 +36,6 @@ DEPS = [
 
 
 PROPERTIES = ProctorProperties
+
+from .api import CrosTestProctorApi as API
+from .test_api import CrosTestProctorTestApi as TEST_API

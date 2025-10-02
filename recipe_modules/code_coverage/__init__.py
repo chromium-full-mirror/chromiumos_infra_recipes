@@ -27,3 +27,5 @@ DEPS = [
 
 
 PROPERTIES = CodeCoverageProperties
+
+from .api import CodeCoverageApi as API

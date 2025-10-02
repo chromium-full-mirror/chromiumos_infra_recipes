@@ -11,3 +11,5 @@ DEPS = [
     'git',
     'repo',
 ]
+
+from .api import GitTxnApi as API

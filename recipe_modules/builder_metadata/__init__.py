@@ -9,3 +9,6 @@ DEPS = [
     'cros_sdk',
     'recipe_engine/raw_io',
 ]
+
+from .api import BuilderMetadataApi as API
+from .test_api import BuilderMetadataTestApi as TEST_API

@@ -21,3 +21,6 @@ DEPS = {
     'src_state': 'src_state',
     'support': 'support',
 }
+
+from .api import GerritApi as API
+from .test_api import ChangesTestApi as TEST_API

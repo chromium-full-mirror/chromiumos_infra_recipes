@@ -22,3 +22,6 @@ DEPS = [
 
 
 PROPERTIES = GcloudProperties
+
+from .api import GcloudApi as API
+from .test_api import GcloudApiTestApi as TEST_API

@@ -56,3 +56,6 @@ DEPS = [
 ]
 
 PROPERTIES = SnapshotOrchMenuProperties
+
+from .api import SnapshotOrchMenuApi as API
+from .test_api import SnapshotOrchMenuTestApi as TEST_API

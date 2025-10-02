@@ -14,3 +14,5 @@ DEPS = [
     'src_state',
     'urls',
 ]
+
+from .api import ImageBuilderFailuresApi as API

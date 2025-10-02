@@ -9,6 +9,7 @@ such as listing available DLCs in a path (local or GS), retrieving DLC artifact
 locations and corresponding file hashes, and copying prebuilt DLCs to a specified
 bucket.
 """
+
 from PB.recipe_modules.chromeos.dlc_utils.dlc_utils import (DlcUtilsProperties)
 
 DEPS = [
@@ -24,3 +25,5 @@ DEPS = [
 
 
 PROPERTIES = DlcUtilsProperties
+
+from .api import DlcUtilsApi as API

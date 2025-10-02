@@ -28,3 +28,6 @@ DEPS = [
 
 
 PROPERTIES = CrosSdkProperties
+
+from .api import CrosSdkApi as API
+from .test_api import CrosSdkApi as TEST_API

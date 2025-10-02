@@ -28,3 +28,6 @@ DEPS = [
 
 
 PROPERTIES = BuildReportingProperties
+
+from .api import BuildReportingApi as API
+from .test_api import BuildReportingTestApi as TEST_API

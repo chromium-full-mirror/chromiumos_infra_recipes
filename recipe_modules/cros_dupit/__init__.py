@@ -12,3 +12,4 @@ DEPS = [
     'easy',
 ]
 
+from .api import DupItApi as API

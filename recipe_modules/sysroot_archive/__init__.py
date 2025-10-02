@@ -19,3 +19,6 @@ DEPS = [
 
 
 PROPERTIES = SysrootArchiveApiProperties
+
+from .api import SysrootArchiveApi as API
+from .test_api import SysrootArchiveTestApi as TEST_API

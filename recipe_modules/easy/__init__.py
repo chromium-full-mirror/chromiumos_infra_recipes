@@ -9,3 +9,6 @@ DEPS = [
     'recipe_engine/step',
     'cros_tags',
 ]
+
+from .api import EasyApi as API
+from .test_api import EasyTestApi as TEST_API

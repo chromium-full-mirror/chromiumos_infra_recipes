@@ -17,3 +17,5 @@ DEPS = [
 
 
 PROPERTIES = CTSResultsArchiveProperties
+
+from .api import CTSResultsArchive as API

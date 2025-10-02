@@ -10,3 +10,5 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/gsutil',
 ]
+
+from .api import LvfsMirror as API

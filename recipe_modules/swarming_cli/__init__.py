@@ -12,3 +12,6 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
 ]
+
+from .api import SwarmingCli as API
+from .test_api import SwarmingCliTestApi as TEST_API

@@ -7,3 +7,5 @@
 DEPS = [
     'recipe_engine/futures',
 ]
+
+from .api import FutureUtilsApi as API

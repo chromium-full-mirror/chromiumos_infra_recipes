@@ -15,3 +15,4 @@ DEPS = [
     'cros_version',
 ]
 
+from .api import FactoryUtilApi as API

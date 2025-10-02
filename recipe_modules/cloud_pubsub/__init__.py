@@ -2,9 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Cloud_pubsub module.
-
-"""
+"""Cloud_pubsub module."""
 
 DEPS = [
     'recipe_engine/context',
@@ -12,3 +10,5 @@ DEPS = [
     'recipe_engine/time',
     'support',
 ]
+
+from .api import CloudPubsubApi as API

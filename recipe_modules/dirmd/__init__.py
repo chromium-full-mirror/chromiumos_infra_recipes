@@ -18,3 +18,5 @@ DEPS = [
 
 
 PROPERTIES = DirmdProperties
+
+from .api import DirmdApi as API

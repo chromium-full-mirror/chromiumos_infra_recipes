@@ -7,3 +7,5 @@ DEPS = [
     'cros_build_api',
 ]
 
+from .api import AndroidApi as API
+from .test_api import AndroidApiTestApi as TEST_API

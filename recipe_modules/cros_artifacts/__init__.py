@@ -31,3 +31,6 @@ DEPS = [
 
 
 PROPERTIES = CrosArtifactsProperties
+
+from .api import CrosArtifactsApi as API
+from .test_api import CrosArtifactsTestApi as TEST_API

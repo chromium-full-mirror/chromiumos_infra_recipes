@@ -32,3 +32,6 @@ DEPS = [
 
 
 PROPERTIES = SigningProperties
+
+from .api import SigningApi as API
+from .test_api import SigningTestApi as TEST_API

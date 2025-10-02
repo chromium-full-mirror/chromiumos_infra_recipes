@@ -11,3 +11,5 @@ DEPS = [
 
 
 PROPERTIES = CrosTryProperties
+
+from .api import CrosTryApi as API

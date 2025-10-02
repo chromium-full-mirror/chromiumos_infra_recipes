@@ -7,3 +7,5 @@
 DEPS = [
     'easy',
 ]
+
+from .api import MutableOutputApi as API

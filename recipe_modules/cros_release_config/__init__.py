@@ -21,3 +21,5 @@ DEPS = [
 
 
 PROPERTIES = CrosReleaseConfigProperties
+
+from .api import CrosReleaseConfigApi as API

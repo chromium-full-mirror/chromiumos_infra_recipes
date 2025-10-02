@@ -19,3 +19,6 @@ DEPS = [
 
 
 PROPERTIES = CrosHistoryProperties
+
+from .api import CrosHistoryApi as API
+from .test_api import CrosHistoryTestApi as TEST_API

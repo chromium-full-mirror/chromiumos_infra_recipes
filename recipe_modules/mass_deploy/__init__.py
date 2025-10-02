@@ -7,3 +7,5 @@ DEPS = [
     'recipe_engine/step',
     'build_menu',
 ]
+
+from .api import MassDeployApi as API

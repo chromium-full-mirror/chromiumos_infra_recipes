@@ -13,3 +13,5 @@ DEPS = [
     'recipe_engine/time',
     'easy',
 ]
+
+from .api import BotCostApi as API

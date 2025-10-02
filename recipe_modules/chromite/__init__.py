@@ -25,3 +25,5 @@ DEPS = {
 
 # TODO(phajdan.jr): provide coverage (http://crbug.com/693058).
 DISABLE_STRICT_COVERAGE = True
+
+from .api import ChromiteApi as API

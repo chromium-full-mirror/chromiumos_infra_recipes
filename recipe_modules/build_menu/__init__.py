@@ -47,3 +47,6 @@ DEPS = [
 
 
 PROPERTIES = BuildMenuProperties
+
+from .api import BuildMenuApi as API
+from .test_api import BuildMenuTestApi as TEST_API

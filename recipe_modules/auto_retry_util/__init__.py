@@ -30,3 +30,6 @@ DEPS = [
 
 
 PROPERTIES = AutoRetryUtilProperties
+
+from .api import AutoRetryUtilApi as API
+from .test_api import AutoRetryUtilTestApi as TEST_API

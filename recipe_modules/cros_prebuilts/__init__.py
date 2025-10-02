@@ -30,3 +30,5 @@ DEPS = [
 
 
 PROPERTIES = CrosPrebuiltsProperties
+
+from .api import CrosPrebuiltsApi as API

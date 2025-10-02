@@ -32,3 +32,5 @@ DEPS = [
 
 
 PROPERTIES = SysrootUtilProperties
+
+from .api import SysrootUtilApi as API

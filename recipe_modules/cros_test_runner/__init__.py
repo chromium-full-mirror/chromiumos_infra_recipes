@@ -17,3 +17,6 @@ DEPS = [
 
 
 PROPERTIES = CrosTestRunnerModuleProperties
+
+from .api import CrosTestRunnerCommand as API
+from .test_api import CrosTestRunnerTestApi as TEST_API

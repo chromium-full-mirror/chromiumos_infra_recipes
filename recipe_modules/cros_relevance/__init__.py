@@ -24,3 +24,6 @@ DEPS = [
 
 
 PROPERTIES = CrosRelevanceProperties
+
+from .api import CrosRelevanceApi as API
+from .test_api import CrosRelevanceTestApi as TEST_API

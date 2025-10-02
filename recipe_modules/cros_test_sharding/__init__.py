@@ -8,3 +8,5 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/raw_io',
 ]
+
+from .api import CrosTestShardingAPI as API

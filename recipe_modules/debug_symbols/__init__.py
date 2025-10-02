@@ -17,3 +17,5 @@ DEPS = [
 
 
 PROPERTIES = DebugSymbolsProperties
+
+from .api import DebugSymbols as API

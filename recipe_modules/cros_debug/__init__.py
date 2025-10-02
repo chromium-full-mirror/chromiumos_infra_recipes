@@ -13,3 +13,5 @@ DEPS = [
     'cros_infra_config',
     'easy',
 ]
+
+from .api import CrosDebugApi as API

@@ -8,3 +8,5 @@ DEPS = [
     'easy',
     'gobin',
 ]
+
+from .api import SupportApi as API

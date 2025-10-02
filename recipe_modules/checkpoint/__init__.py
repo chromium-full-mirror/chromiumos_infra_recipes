@@ -12,3 +12,5 @@ DEPS = [
 
 
 PROPERTIES = CheckpointProperties
+
+from .api import CheckpointApi as API

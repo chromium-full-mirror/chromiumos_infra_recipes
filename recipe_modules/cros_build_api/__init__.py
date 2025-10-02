@@ -22,3 +22,6 @@ DEPS = [
 
 
 PROPERTIES = CrosBuildApiProperties
+
+from .api import CrosBuildApiApi as API
+from .test_api import CrosBuildApiTestApi as TEST_API

@@ -18,3 +18,6 @@ DEPS = [
 
 
 PROPERTIES = Ctpv2ModuleProperties
+
+from .api import Ctpv2Command as API
+from .test_api import Ctpv2TestApi as TEST_API

@@ -16,3 +16,5 @@ DEPS = [
 
 
 PROPERTIES = OverlayfsProperties
+
+from .api import OverlayfsApi as API

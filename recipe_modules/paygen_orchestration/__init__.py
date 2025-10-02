@@ -23,3 +23,6 @@ DEPS = [
 
 
 PROPERTIES = PaygenOrchestrationProperties
+
+from .api import PaygenOrchestrationApi as API
+from .test_api import PaygenOrchestrationTestApi as TEST_API

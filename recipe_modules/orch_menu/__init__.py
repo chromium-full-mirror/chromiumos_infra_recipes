@@ -54,3 +54,6 @@ DEPS = [
 
 
 PROPERTIES = OrchMenuProperties
+
+from .api import OrchMenuApi as API
+from .test_api import OrchMenuTestApi as TEST_API

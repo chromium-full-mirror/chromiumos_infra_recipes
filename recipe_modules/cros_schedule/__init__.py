@@ -7,3 +7,6 @@ DEPS = [
     'recipe_engine/time',
     'easy',
 ]
+
+from .api import CrosScheduleApi as API
+from .test_api import CrosScheduleTestApi as TEST_API

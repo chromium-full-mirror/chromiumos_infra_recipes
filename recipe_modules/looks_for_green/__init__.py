@@ -26,3 +26,5 @@ DEPS = {
 
 
 PROPERTIES = LooksForGreenProperties
+
+from .api import LooksForGreenApi as API

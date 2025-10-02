@@ -24,3 +24,6 @@ DEPS = [
 
 
 PROPERTIES = TastResultsProperties
+
+from .api import TastResultsApi as API
+from .test_api import TastResultsTestApi as TEST_API

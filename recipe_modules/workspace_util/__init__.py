@@ -20,3 +20,5 @@ DEPS = [
 
 
 PROPERTIES = WorkspaceUtilProperties
+
+from .api import WorkspaceUtilApi as API

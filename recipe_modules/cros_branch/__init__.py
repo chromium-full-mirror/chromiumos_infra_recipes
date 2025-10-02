@@ -14,3 +14,5 @@ DEPS = [
     'cros_version',
     'gobin',
 ]
+
+from .api import CrosBranchApi as API

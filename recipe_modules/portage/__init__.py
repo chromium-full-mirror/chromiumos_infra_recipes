@@ -13,3 +13,6 @@ DEPS = [
     'easy',
     'util',
 ]
+
+from .api import PortageApi as API
+from .test_api import PortageTestApi as TEST_API

@@ -17,3 +17,6 @@ DEPS = [
     'gce_provider',
     'swarming_cli',
 ]
+
+from .api import BotScalingApi as API
+from .test_api import BotScalingTestApi as TEST_API

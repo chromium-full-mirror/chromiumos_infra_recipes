@@ -27,3 +27,5 @@ DEPS = [
 
 
 PROPERTIES = ChromeProperties
+
+from .api import ChromeApi as API

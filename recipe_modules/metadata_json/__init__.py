@@ -23,3 +23,6 @@ DEPS = [
 
 
 PROPERTIES = MetadataJsonProperties
+
+from .api import MetadataJsonApi as API
+from .test_api import MetadataJsonTestApi as TEST_API

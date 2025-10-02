@@ -8,3 +8,5 @@ DEPS = {
     'raw_io': 'recipe_engine/raw_io',
 }
 
+from .api import GitClApi as API
+from .test_api import GitClTestApi as TEST_API

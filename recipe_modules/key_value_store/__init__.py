@@ -5,3 +5,5 @@
 DEPS = [
     'recipe_engine/step',
 ]
+
+from .api import KeyValueStoreApi as API

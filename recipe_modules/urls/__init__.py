@@ -5,3 +5,5 @@
 DEPS = [
     'recipe_engine/buildbucket',
 ]
+
+from .api import UrlsApi as API

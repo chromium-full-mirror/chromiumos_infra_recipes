@@ -8,3 +8,5 @@ DEPS = [
     'recipe_engine/json',
     'recipe_engine/step',
 ]
+
+from .api import RecipeAnalyzeApi as API

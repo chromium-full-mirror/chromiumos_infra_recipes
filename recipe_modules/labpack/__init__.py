@@ -15,3 +15,5 @@ DEPS = [
 
 
 PROPERTIES = labpackpb.LabpackProperties
+
+from .api import LabpackCommand as API

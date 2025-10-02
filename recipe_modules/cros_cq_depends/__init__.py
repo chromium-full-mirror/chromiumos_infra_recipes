@@ -18,3 +18,5 @@ DEPS = [
 
 
 PROPERTIES = CrosCqDependsProperties
+
+from .api import CrosCqDependsApi as API

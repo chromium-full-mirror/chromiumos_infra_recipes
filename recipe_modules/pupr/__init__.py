@@ -5,3 +5,5 @@
 """Setup for the pupr module."""
 
 DEPS = []
+
+from .api import PuprApi as API

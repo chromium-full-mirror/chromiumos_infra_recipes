@@ -21,3 +21,6 @@ assert [x for x in DEPS if '/' not in x] == [], \
     'src_state depends on CrOS modules'
 
 PROPERTIES = SrcStateProperties
+
+from .api import SrcStateApi as API
+from .test_api import SrcStateApi as TEST_API

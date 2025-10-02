@@ -14,3 +14,5 @@ DEPS = [
     'recipe_engine/step',
 ]
 
+from .api import BreakpadApi as API
+from .test_api import BreakpadTestApi as TEST_API

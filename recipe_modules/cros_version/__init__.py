@@ -24,3 +24,6 @@ DEPS = [
 
 
 PROPERTIES = CrosVersionProperties
+
+from .api import CrosVersionApi as API
+from .test_api import CrosVersionTestApi as TEST_API

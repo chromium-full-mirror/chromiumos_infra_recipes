@@ -14,3 +14,6 @@ DEPS = [
 
 
 PROPERTIES = CrosSomProperties
+
+from .api import CrosSomApi as API
+from .test_api import CrosSomTestApi as TEST_API

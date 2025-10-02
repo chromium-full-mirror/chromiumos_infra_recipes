@@ -12,3 +12,6 @@ DEPS = [
     'easy',
     'support',
 ]
+
+from .api import GitilesApi as API
+from .test_api import GitilesTestApi as TEST_API

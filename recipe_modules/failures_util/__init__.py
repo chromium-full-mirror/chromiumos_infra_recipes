@@ -7,3 +7,5 @@
 DEPS = [
     'recipe_engine/step',
 ]
+
+from .api import FailuresUtilApi as API

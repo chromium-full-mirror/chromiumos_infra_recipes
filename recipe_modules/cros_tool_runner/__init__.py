@@ -23,3 +23,6 @@ DEPS = [
 
 PROPERTIES = CrosToolRunnerProperties
 ENV_PROPERTIES = CrosToolRunnerEnvProperties
+
+from .api import CrosToolRunnerCommand as API
+from .test_api import CrosToolRunnerTestApi as TEST_API

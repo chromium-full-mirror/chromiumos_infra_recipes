@@ -3,3 +3,5 @@
 # found in the LICENSE file.
 
 DEPS = []
+
+from .api import NamingApi as API

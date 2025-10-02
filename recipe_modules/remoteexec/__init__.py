@@ -19,3 +19,5 @@ DEPS = [
 
 
 PROPERTIES = RemoteexecProperties
+
+from .api import RemoteexecApi as API

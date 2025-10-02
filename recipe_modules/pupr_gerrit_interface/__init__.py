@@ -20,3 +20,5 @@ DEPS = [
     'pupr_local_uprev',
     'repo',
 ]
+
+from .api import PuprGerritInterfaceApi as API

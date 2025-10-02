@@ -24,3 +24,6 @@ DEPS = [
 
 
 PROPERTIES = CrosTestPlanV2Properties
+
+from .api import CrosTestPlanV2Api as API
+from .test_api import CrosTestPlanV2TestApi as TEST_API

@@ -12,3 +12,6 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/file',
 ]
+
+from .api import GoLuciBinAPI as API
+from .test_api import GoLuciBinTestApi as TEST_API

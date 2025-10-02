@@ -16,3 +16,6 @@ DEPS = [
 
 
 PROPERTIES = CrosCQAdditionalTestsProperties
+
+from .api import CrosCqAdditionalTests as API
+from .test_api import CrosCqAdditionalTestsTestApi as TEST_API

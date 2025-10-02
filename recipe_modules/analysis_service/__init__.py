@@ -12,3 +12,6 @@ DEPS = [
 
 
 PROPERTIES = AnalysisServiceProperties
+
+from .api import AnalysisServiceApi as API
+from .test_api import AnalysisServiceApi as TEST_API

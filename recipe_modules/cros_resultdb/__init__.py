@@ -16,3 +16,6 @@ DEPS = [
     'cros_infra_config',
     'exonerate',
 ]
+
+from .api import ResultDBCommand as API
+from .test_api import CrosResultdbTestApi as TEST_API

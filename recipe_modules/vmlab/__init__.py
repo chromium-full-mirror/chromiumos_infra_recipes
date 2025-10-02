@@ -14,3 +14,5 @@ DEPS = [
 
 
 PROPERTIES = VmlabProperties
+
+from .api import VmlabApi as API

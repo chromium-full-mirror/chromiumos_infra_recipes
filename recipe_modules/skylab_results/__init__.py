@@ -7,3 +7,5 @@ DEPS = [
     'recipe_engine/step',
 ]
 
+from .api import SkylabResultsApi as API
+from .test_api import SkylabResultsTestApi as TEST_API

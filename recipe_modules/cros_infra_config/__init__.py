@@ -23,3 +23,6 @@ DEPS = {
 
 
 PROPERTIES = CrosInfraConfigProperties
+
+from .api import CrosInfraConfigApi as API
+from .test_api import CrosInfraConfigTestApi as TEST_API

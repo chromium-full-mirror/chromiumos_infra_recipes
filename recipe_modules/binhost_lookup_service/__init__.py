@@ -15,3 +15,6 @@ DEPS = [
 
 
 PROPERTIES = binhost_lookup_service_pb2.BinhostLookupServiceProperties
+
+from .api import BinhostLookupServiceApi as API
+from .test_api import BinhostLookupServiceTestApi as TEST_API

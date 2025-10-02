@@ -20,3 +20,5 @@ DEPS = [
 
 
 PROPERTIES = CrosLkgmProperties
+
+from .api import CrosLkgmApi as API

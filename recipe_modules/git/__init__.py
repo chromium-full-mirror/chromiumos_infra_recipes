@@ -13,3 +13,6 @@ DEPS = [
     'recipe_engine/time',
     'src_state',
 ]
+
+from .api import GitApi as API
+from .test_api import GitTestApi as TEST_API

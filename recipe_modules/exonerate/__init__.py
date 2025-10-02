@@ -21,3 +21,6 @@ DEPS = [
 
 
 PROPERTIES = ExonerateProperties
+
+from .api import ExonerateApi as API
+from .test_api import ExonerateTestApi as TEST_API

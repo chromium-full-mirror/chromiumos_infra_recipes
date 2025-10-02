@@ -16,3 +16,6 @@ DEPS = [
 
 
 PROPERTIES = ConductorProperties
+
+from .api import ConductorApi as API
+from .test_api import ConductorTest as TEST_API

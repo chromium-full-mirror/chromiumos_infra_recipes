@@ -8,3 +8,5 @@ DEPS = [
     'recipe_engine/time',
     'cros_infra_config',
 ]
+
+from .api import BuildbucketStatsApi as API

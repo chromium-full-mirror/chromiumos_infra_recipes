@@ -15,3 +15,5 @@ DEPS = [
     'src_state',
     'urls',
 ]
+
+from .api import TestFailuresApi as API

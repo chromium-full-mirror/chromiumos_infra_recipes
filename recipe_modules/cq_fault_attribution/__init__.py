@@ -19,3 +19,5 @@ DEPS = [
 
 
 PROPERTIES = CqFaultAttributionApiProperties
+
+from .api import CqFailureAttributionApi as API

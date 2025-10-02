@@ -18,3 +18,5 @@ DEPS = [
 
 
 PROPERTIES = ObservabilityImageSizeProperties
+
+from .api import ObservabilityImageSizeApi as API

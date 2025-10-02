@@ -10,3 +10,5 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
 ]
+
+from .api import GSStepLoggingApi as API

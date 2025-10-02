@@ -35,3 +35,6 @@ DEPS = {
 
 
 PROPERTIES = CrosSourceProperties
+
+from .api import CrosSourceApi as API
+from .test_api import CrosSourceTestApi as TEST_API

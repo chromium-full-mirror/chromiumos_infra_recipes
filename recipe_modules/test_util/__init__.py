@@ -10,3 +10,6 @@ DEPS = [
     'recipe_engine/properties',
     'cros_tags',
 ]
+
+from .api import TestUtilApi as API
+from .test_api import TestUtilApi as TEST_API
