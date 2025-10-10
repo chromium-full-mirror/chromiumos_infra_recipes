@@ -501,11 +501,23 @@ def GenTests(api):
           },
           {
             "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/brox.EC_elf.tar.bz2"
+          },
+          {
+            "location": 2,
             "path": "[CLEANUP]/artifacts_tmp_1/karis.EC.tar.bz2"
           },
           {
             "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/karis.EC_elf.tar.bz2"
+          },
+          {
+            "location": 2,
             "path": "[CLEANUP]/artifacts_tmp_1/screebo.EC.tar.bz2"
+          },
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/screebo.EC_elf.tar.bz2"
           },
           {
             "location": 2,
@@ -535,10 +547,19 @@ def GenTests(api):
           file_name='brox.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
           .TarballInfo(type='EC', board=['brox'])),
       FirmwareArtifactInfo.ObjectInfo(
+          file_name='brox.EC_elf.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='EC', board=['brox'])),
+      FirmwareArtifactInfo.ObjectInfo(
           file_name='karis.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
           .TarballInfo(type='EC', board=['rex'])),
       FirmwareArtifactInfo.ObjectInfo(
+          file_name='karis.EC_elf.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='EC', board=['rex'])),
+      FirmwareArtifactInfo.ObjectInfo(
           file_name='screebo.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='EC', board=['rex'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='screebo.EC_elf.tar.bz2', tarball_info=FirmwareArtifactInfo
           .TarballInfo(type='EC', board=['rex'])),
       FirmwareArtifactInfo.ObjectInfo(
           file_name='brox/firmware_from_source.tar.bz2',
@@ -697,15 +718,27 @@ def GenTests(api):
           'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
           'message', ['artifacts']),
       api.post_check(
-          post_process.LogContains,
+          post_process.LogDoesNotContain,
           'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogContains,
+          'sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update',
           'message', [
               'artifacts',
               'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/brox/firmware_from_source.tar.bz2'
           ]),
       api.post_check(
           post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
+          'sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update',
           'message', [
               'artifacts',
               'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/rex/firmware_from_source.tar.bz2'
@@ -751,15 +784,27 @@ def GenTests(api):
           'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
           'message', ['artifacts']),
       api.post_check(
-          post_process.LogContains,
+          post_process.LogDoesNotContain,
           'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogContains,
+          'sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update',
           'message', [
               'artifacts',
               'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2'
           ]),
       api.post_check(
           post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
+          'sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update',
           'message', [
               'artifacts',
               'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
