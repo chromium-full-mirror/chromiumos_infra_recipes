@@ -438,10 +438,14 @@ class FirmwareBuilder():
           'list files', firmware_dir, recursive=True, test_data=[
               'image-brya.bin',
               'brya/ec.bin',
+              'brya/ec.RO.elf',
+              'brya/ec.RW.elf',
               'image-redrix.serial.bin',
               'firmware/brya0/coreboot.rom',
               'build/poppy/firmware/image.bin',
               'build/reef/firmware/ec.bin',
+              'build/reef/firmware/ec.RO.elf',
+              'build/reef/firmware/ec.RW.elf',
               'build/reef/firmware/ec.config',
               'build/reef/firmware/npcx_monitor.bin',
               'build/reef/firmware/component_manifest.json',
@@ -479,6 +483,19 @@ class FirmwareBuilder():
             board_name = relative_file_path.parts[-3]
 
           output_name = f'{board_name}.EC.{build_version}.tar.bz2'
+
+          # If there are elf files present, create an EC_elf archive also.
+          elf_files = []
+          for elf_path in ["ec.RO.elf", "ec.RW.elf"]:
+            elf_files.append(elf_path)
+          if elf_files:
+            tarball_full_path = out_path / f'{board_name}.EC_elf.{build_version}.tar.bz2'
+            create_tarball_cmd = [
+                'tar', 'cvjf',
+                str(tarball_full_path), '-C', file.parent
+            ] + elf_files
+
+          self.m.step('create EC elf tarball', cmd=create_tarball_cmd)
 
         # In case File is not AP or EC firmware, skip the compression
         # and go to next file.
