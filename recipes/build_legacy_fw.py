@@ -486,8 +486,9 @@ class FirmwareBuilder():
 
           # If there are elf files present, create an EC_elf archive also.
           elf_files = []
-          for elf_path in ["ec.RO.elf", "ec.RW.elf"]:
-            elf_files.append(elf_path)
+          for maybe_elf_file in files_list:
+            if file.parent == maybe_elf_file.parent and maybe_elf_file.suffix == ".elf":
+              elf_files.append(maybe_elf_file.name)
           if elf_files:
             tarball_full_path = out_path / f'{board_name}.EC_elf.{build_version}.tar.bz2'
             create_tarball_cmd = [
