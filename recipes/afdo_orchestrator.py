@@ -9,6 +9,7 @@ All builders run against the same source tree.
 
 from PB.chromiumos.common import ArtifactsByService
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.afdo_orchestrator import AfdoOrchestratorProperties
 from recipe_engine import post_process
@@ -167,7 +168,7 @@ def GenTests(api: RecipeTestApi):
           # FIXME: `critical` is type Trinary, not bool
       },
       status='FAILURE',
-      critical=True)
+      critical=Trinary.YES)
   yield api.orch_menu.test(
       'orchestrator-with-failing-followon', data.ctp_normal,
       api.properties(process_child='benchmark-afdo-process'),

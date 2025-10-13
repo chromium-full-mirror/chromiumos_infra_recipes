@@ -7,6 +7,7 @@
 from typing import Generator
 
 from PB.recipe_engine import result as result_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from recipe_engine.post_process import PropertyEquals
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -62,7 +63,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   def test(name, *args, **kwargs):
     status = kwargs.pop('status', 'SUCCESS')
     kwargs.setdefault('cq', True)
-    kwargs.setdefault('critical', True)
+    kwargs.setdefault('critical', Trinary.YES)
     kwargs.setdefault('revision', None)
     kwargs.setdefault('builder', 'firmware-cq-orchestrator')
     branch = kwargs.pop('branch', test_branch)
