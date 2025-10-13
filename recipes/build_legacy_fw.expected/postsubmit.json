@@ -4290,6 +4290,9 @@
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/firmware/brya0/coreboot.rom@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/image-brya.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/image-redrix.serial.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/rex/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/rex/zephyr.ro.elf@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/rex/zephyr.rw.elf@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -4504,6 +4507,77 @@
       }
     },
     "name": "push per device FW.create per device firmware archives.create device tarball (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "cvjf",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/rex.EC_elf.15236.0.0.tar.bz2",
+      "-C",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/rex",
+      "zephyr.ro.elf",
+      "zephyr.rw.elf"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push per device FW.create per device firmware archives.create EC elf tarball (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "cvjf",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/rex.EC.15236.0.0.tar.bz2",
+      "-C",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/rex",
+      "ec.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push per device FW.create per device firmware archives.create device tarball (5)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
