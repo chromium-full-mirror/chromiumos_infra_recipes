@@ -63,7 +63,10 @@ TEST_SIGNING_CONFIG = '''build_target_signing_configs {
     }'''
 
 CL_REVIEWERS = [
-    'dabros@google.com', 'konrada@google.com', 'bernacki@google.com'
+    'dabros@google.com',
+    'konrada@google.com',
+    'bernacki@google.com',
+    "bensonchen@google.com",
 ]
 
 
