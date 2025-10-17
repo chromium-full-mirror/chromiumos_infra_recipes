@@ -32,8 +32,8 @@ PROPERTIES = QualbotProperties
 
 def RunSteps(api: RecipeApi, properties: QualbotProperties):
   protoc_path = api.path.dirname(
-      api.cipd.ensure_tool('infra/3pp/tools/protoc/${platform}', "latest",
-                           executable_path="bin/protoc"))
+      api.cipd.ensure_tool('infra/3pp/tools/protoc/${platform}',
+                           "version:3@32.1", executable_path="bin/protoc"))
   with api.context(env_prefixes={'PATH': [protoc_path]}):
     with api.build_menu.configure_builder(missing_ok=True), \
         api.build_menu.setup_workspace():

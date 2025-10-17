@@ -17,7 +17,7 @@
       "ensure-directory",
       "--mode",
       "0o777",
-      "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8"
+      "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0"
     ],
     "infra_step": true,
     "luci_context": {
@@ -42,9 +42,9 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8",
+      "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0",
       "-ensure-file",
-      "infra/3pp/tools/protoc/${platform} latest",
+      "infra/3pp/tools/protoc/${platform} version:3@32.1",
       "-max-threads",
       "0",
       "-json-output",
@@ -70,7 +70,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-version:3@32.1--\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/3pp/tools/protoc/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -170,7 +170,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -256,7 +256,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -300,7 +300,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -334,7 +334,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -379,7 +379,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -417,7 +417,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -481,7 +481,7 @@
     },
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "luci_context": {
@@ -536,7 +536,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -579,7 +579,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -630,7 +630,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -681,7 +681,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -738,7 +738,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -781,7 +781,7 @@
     },
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -818,7 +818,7 @@
     },
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -854,7 +854,7 @@
     },
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "luci_context": {
@@ -886,7 +886,7 @@
     },
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -921,7 +921,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -960,7 +960,7 @@
     },
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -994,7 +994,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1037,7 +1037,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1086,7 +1086,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1121,7 +1121,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1156,7 +1156,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1191,7 +1191,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1226,7 +1226,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1257,7 +1257,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1313,7 +1313,7 @@
     "cwd": "[CLEANUP]",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1342,7 +1342,7 @@
     "cwd": "[CLEANUP]",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1378,7 +1378,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1413,7 +1413,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1448,7 +1448,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1483,7 +1483,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1518,7 +1518,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1550,7 +1550,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1579,7 +1579,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1617,7 +1617,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1664,7 +1664,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1701,7 +1701,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -1746,7 +1746,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -1784,7 +1784,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/.repo/repo",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1813,7 +1813,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -1850,7 +1850,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -1893,7 +1893,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -1934,7 +1934,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -1985,7 +1985,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -2032,7 +2032,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -2084,7 +2084,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -2144,7 +2144,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2207,7 +2207,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2241,7 +2241,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2280,7 +2280,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2322,7 +2322,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2358,7 +2358,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2397,7 +2397,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -2446,7 +2446,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -2506,7 +2506,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2569,7 +2569,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2608,7 +2608,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -2659,7 +2659,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2697,7 +2697,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2727,7 +2727,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2758,7 +2758,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2796,7 +2796,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2832,7 +2832,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2878,7 +2878,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2937,7 +2937,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -2972,7 +2972,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3002,7 +3002,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3038,7 +3038,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -3077,7 +3077,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3131,7 +3131,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3197,7 +3197,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3280,7 +3280,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3349,7 +3349,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3383,7 +3383,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3413,7 +3413,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3448,7 +3448,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -3486,7 +3486,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "env_suffixes": {
@@ -3539,7 +3539,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3569,7 +3569,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3597,7 +3597,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3627,7 +3627,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
@@ -3664,7 +3664,7 @@
     ],
     "env_prefixes": {
       "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/bin"
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
       ]
     },
     "infra_step": true,
