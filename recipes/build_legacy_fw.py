@@ -499,7 +499,7 @@ class FirmwareBuilder():
                 str(tarball_full_path), '-C', file.parent
             ] + elf_files
 
-          self.m.step('create EC elf tarball', cmd=create_tarball_cmd)
+            self.m.step('create EC elf tarball', cmd=create_tarball_cmd)
 
         # In case File is not AP or EC firmware, skip the compression
         # and go to next file.
