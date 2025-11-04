@@ -141,7 +141,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
       # b/321760005: toolchain files like `package.provided` may need to be
       # updated.
-      api.build_menu.bootstrap_sysroot(config=config)
+      api.build_menu.bootstrap_sysroot(config=config,
+                                       force_toolchain_update=True)
       api.build_menu.install_packages(config=config)
     except StepFailure as sf:
       failing_build_exception = sf

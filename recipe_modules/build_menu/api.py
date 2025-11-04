@@ -684,18 +684,21 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.cros_sdk.mark_sdk_as_dirty()
     self._sdk_reuse_checked = True
 
-  def bootstrap_sysroot(self, config=None):
+  def bootstrap_sysroot(self, config=None, force_toolchain_update=False):
     """Bootstrap the sysroot by installing the toolchain.
 
     Args:
       config (BuilderConfig): The Builder Config for the build. If none, will
         attempt to get the BuilderConfig whose id.name matches the specified
         Buildbucket builder from HEAD.
+      force_toolchain_update (bool): if true, force the emerge of toolchain
+        packages.
     """
     # Make sure we have a valid config
     config = config or self.config_or_default
     self.m.sysroot_util.bootstrap_sysroot(
-        compile_source=config.build.install_toolchain.compile_source)
+        compile_source=config.build.install_toolchain.compile_source,
+        force_toolchain_update=force_toolchain_update)
 
   def install_packages(self, config=None, packages=None, timeout_sec='DEFAULT',
                        name=None, force_all_deps=False, include_rev_deps=False,

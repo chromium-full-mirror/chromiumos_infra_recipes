@@ -142,7 +142,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       return self.sysroot
 
   def bootstrap_sysroot(self, compile_source=False, response_lambda=None,
-                        timeout_sec='DEFAULT', test_data=None, name=None):
+                        timeout_sec='DEFAULT', test_data=None, name=None,
+                        force_toolchain_update=False):
     """Bootstrap the sysroot by calling InstallToolchain.
 
     Args:
@@ -156,6 +157,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         SysrootService/InstallToolchain call, or None to use the default in
         cros_build_api/test_api.py.
       name (str): Step name to use, or None for the default name.
+      force_toolchain_update (bool): If true, force the emerge of toolchain
+        packages.
     """
     # If no timeout was given, it is either unlimited, or 30 minutes.
     if timeout_sec == 'DEFAULT':
@@ -168,8 +171,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         pres.step_text = 'Forcing toolchain_changed=False'
         toolchain_cls = False
 
-      flags = InstallToolchainRequest.Flags(compile_source=compile_source,
-                                            toolchain_changed=toolchain_cls)
+      flags = InstallToolchainRequest.Flags(
+          compile_source=compile_source, toolchain_changed=toolchain_cls,
+          force_toolchain_update=force_toolchain_update)
       request = InstallToolchainRequest(
           sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot, flags=flags,
           result_path=common_pb2.ResultPath(
