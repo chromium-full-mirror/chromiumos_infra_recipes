@@ -324,9 +324,10 @@ class SigningApi(recipe_api.RecipeApi):
       build_target = self.m.build_menu.build_target.name
       for config in signing_config.build_target_signing_configs:
         if config.build_target == build_target:
-          # If we're staging or if we specify by property, override the keyset
-          # to be the staging keyset.
-          if self.m.cros_infra_config.is_staging or self.get_use_dev_keys:
+          # If we're staging or led or if we specify by property, override the
+          # keyset to be the staging keyset.
+          if (self.m.cros_infra_config.is_staging or self.m.led.led_build or
+              self.get_use_dev_keys):
             config.keyset = STAGING_KEYSET
             for signing_config in config.signing_configs:
               if signing_config.image_type in STAGING_KEYSET_TYPE_OVERRIDE:
@@ -335,8 +336,8 @@ class SigningApi(recipe_api.RecipeApi):
               elif signing_config.keyset:
                 signing_config.keyset = STAGING_KEYSET
             pres.logs['override keyset'] = (
-                f'Now using: {STAGING_KEYSET} because this is staging or '
-                'use_dev_keys property was specified.')
+                f'Now using: {STAGING_KEYSET} because this is staging, led,'
+                ' or use_dev_keys property was specified.')
           self._signing_config = config
           return self._signing_config
       raise StepFailure(

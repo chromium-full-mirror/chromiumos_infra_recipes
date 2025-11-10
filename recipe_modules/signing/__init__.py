@@ -5,6 +5,8 @@
 """Module providing signing functionality."""
 
 from PB.recipe_modules.chromeos.signing.signing import (SigningProperties)
+from .api import SigningApi as API
+from .test_api import SigningTestApi as TEST_API
 
 DEPS = [
     'recipe_engine/bcid_reporter',
@@ -12,6 +14,7 @@ DEPS = [
     'depot_tools/gitiles',
     'depot_tools/gsutil',
     'recipe_engine/file',
+    'recipe_engine/led',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -32,6 +35,3 @@ DEPS = [
 
 
 PROPERTIES = SigningProperties
-
-from .api import SigningApi as API
-from .test_api import SigningTestApi as TEST_API
