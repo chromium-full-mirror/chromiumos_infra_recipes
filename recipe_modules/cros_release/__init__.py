@@ -5,12 +5,14 @@
 """An API for providing release related operations (e.g. paygen, signing)."""
 
 from PB.recipe_modules.chromeos.cros_release.cros_release import CrosReleaseProperties
+from .api import CrosReleaseApi as API
 
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/led',
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -40,5 +42,3 @@ DEPS = [
 
 
 PROPERTIES = CrosReleaseProperties
-
-from .api import CrosReleaseApi as API

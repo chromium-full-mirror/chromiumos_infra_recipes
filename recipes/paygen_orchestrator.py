@@ -34,6 +34,7 @@ from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/led',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',

@@ -434,7 +434,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """
     pg_orch_builder = ('staging-paygen-orchestrator' if
                        self.m.build_menu.is_staging else 'paygen-orchestrator')
-    bucket = self.m.buildbucket.build.builder.bucket
+    bucket = (
+        self.m.buildbucket.build.builder.bucket
+        if not self.m.led.led_build else "try-dev")
 
     version = self.m.cros_version.version
     with self.m.step.nest('generate payloads'):
@@ -448,7 +450,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'dryrun': self._paygen_dryrun,
           'minios': not self._minios_unsupported,
       }
-      if self._paygen_mpa:
+      if self._paygen_mpa and not self.m.led.led_build:
         paygen_properties['paygen_mpa'] = True
         pg_orch_builder = ('staging-paygen-orchestrator-mpa'
                            if self.m.build_menu.is_staging else
