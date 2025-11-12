@@ -5,7 +5,6 @@
 """Verify methods for shellball versions."""
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -18,16 +17,9 @@ DEPS = [
     'signing_utils',
 ]
 
-PROPERTIES = {
-    'expected_gs_dir':
-        Property(
-            help='Expected GS dir returned in test.',
-            kind=str,
-        )
-}
 
-
-def RunSteps(api: RecipeApi, expected_gs_dir: str):
+def RunSteps(api: RecipeApi):
+  expected_gs_dir = api.properties['expected_gs_dir']
   gs_bucket = 'prebuilt-bucket'
   latest_filename = 'LATEST-SHELLBALL'
   current_version = api.signing_utils.get_current_prebuilt_version(

@@ -4,8 +4,6 @@
 
 """Test against private methods in the cros_test_sharding module"""
 
-from recipe_engine.recipe_api import Property
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -14,28 +12,14 @@ DEPS = [
     'cros_test_sharding',
 ]
 
-PROPERTIES = {
-    'shard_count': Property(
-        kind=int,
-    ),
-    'expected_shard_count': Property(
-        kind=int,
-    ),
-    'test_suite_token': Property(
-        kind=str,
-    ),
-    'expected_bucket_count': Property(
-        kind=int,
-    ),
-    'bucket_shard_count': Property(
-        kind=int,
-    ),
-}
 
-
-def RunSteps(api, shard_count, expected_shard_count, test_suite_token,
-             expected_bucket_count, bucket_shard_count):
+def RunSteps(api):
   #  Define some example tests
+  shard_count = api.properties['shard_count']
+  expected_shard_count = api.properties['expected_shard_count']
+  test_suite_token = api.properties['test_suite_token']
+  expected_bucket_count = api.properties['expected_bucket_count']
+  bucket_shard_count = api.properties['bucket_shard_count']
   test_suite = None
   if test_suite_token == '_gen_generic_test_suites':
     test_suite = _gen_generic_test_suites()

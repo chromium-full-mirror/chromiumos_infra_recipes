@@ -4,8 +4,6 @@
 
 """Test against public methods in the cros_test_sharding module"""
 
-from recipe_engine.recipe_api import Property
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -15,15 +13,8 @@ DEPS = [
 ]
 
 
-PROPERTIES = {
-    'shard_count': Property(
-        kind=int,
-    ),
-}
-
-
-def RunSteps(api, shard_count):
-  total_shards = shard_count
+def RunSteps(api):
+  total_shards = api.properties['shard_count']
   #  Define some example tests
   test_suite = _gen_generic_test_suites()
   board = 'drallion'

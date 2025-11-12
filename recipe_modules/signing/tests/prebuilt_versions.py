@@ -5,7 +5,6 @@
 """Verify methods for prebuilt versions."""
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -16,16 +15,9 @@ DEPS = [
     'signing',
 ]
 
-PROPERTIES = {
-    'expected_version':
-        Property(
-            help='Expected prebuilt version returned in test.',
-            kind=str,
-        )
-}
 
-
-def RunSteps(api: RecipeApi, expected_version: str):
+def RunSteps(api: RecipeApi):
+  expected_version = api.properties['expected_version']
   latest_filename = 'LATEST-SHELLBALL'
   shellball_version = api.signing.get_prebuilt_version(latest_filename)
   api.assertions.assertEqual(expected_version, shellball_version)

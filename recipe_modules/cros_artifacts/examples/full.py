@@ -9,7 +9,6 @@ from PB.chromite.api import sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
-from recipe_engine.recipe_api import Property
 
 from recipe_engine import post_process
 
@@ -23,15 +22,10 @@ DEPS = [
     'cros_build_api',
 ]
 
-PROPERTIES = {
-    'use_file_paths':
-        Property(kind=bool,
-                 help='Turn the use_file_paths flag on (default off)',
-                 default=False),
-}
 
-
-def RunSteps(api, use_file_paths):
+def RunSteps(api):
+  use_file_paths = 'use_file_paths' in api.properties and api.properties[
+      'use_file_paths']
   api.assertions.assertEqual(
       api.cros_artifacts.artifacts_by_image_type[common.IMAGE_TYPE_RECOVERY],
       'recovery_image.tar.xz',

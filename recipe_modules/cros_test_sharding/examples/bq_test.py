@@ -4,8 +4,6 @@
 
 """Test against public methods in the cros_test_sharding module"""
 
-from recipe_engine.recipe_api import Property
-
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
@@ -13,28 +11,19 @@ DEPS = [
     'cros_test_sharding',
 ]
 
-PROPERTIES = {
-    'board': Property(
-        kind=str,
-        default=None,
-    ),
-    'suite': Property(
-        kind=str,
-        default=None,
-    ),
-    'test_timing_query_results': Property(
-        kind=dict,
-        default=None,
-    )
-}
 
-
-def RunSteps(api, suite, board, test_timing_query_results):
-  if not suite:
+def RunSteps(api):
+  if 'suite' in api.properties:
+    suite = api.properties['suite']
+  else:
     suite = 'bvt-tast-cq'
-  if not board:
+  if 'board' in api.properties:
+    board = api.properties['board']
+  else:
     board = 'drallion'
-  if not test_timing_query_results:
+  if api.properties['test_timing_query_results']:
+    test_timing_query_results = {'foo': 20, 'bar': 21, 'buz': 22}
+  else:
     test_timing_query_results = api.cros_test_sharding.TestCase.test_times
 
   # pylint: disable=protected-access
@@ -60,9 +49,7 @@ foo,20
 bar,21
 buz,22
 '''
-OUTPUT_TEXT_RESULTS_EXPECTED = {'foo': 20, 'bar': 21, 'buz': 22}
 OUTPUT_TEXT_NOROWS = '''name,default_timing_dict'''
-OUTPUT_TEXT_NORESULTS_EXPECTED = None
 
 OUTPUT_TEXT_NORESULTS = ''''''
 
@@ -82,7 +69,7 @@ def GenTests(api):
           retcode=0,
       ),
       api.properties(board='drallion', suite='bvt-tast-cq',
-                     test_timing_query_results=OUTPUT_TEXT_RESULTS_EXPECTED))
+                     test_timing_query_results=True))
 
   yield api.test(
       'drallion_bvt-tast-cq-noresults',
@@ -93,7 +80,7 @@ def GenTests(api):
           retcode=0,
       ),
       api.properties(board='drallion', suite='bvt-tast-cq',
-                     test_timing_query_results=OUTPUT_TEXT_NORESULTS_EXPECTED))
+                     test_timing_query_results=False))
 
   yield api.test(
       'failure-query',
@@ -104,7 +91,7 @@ def GenTests(api):
           retcode=4,
       ),
       api.properties(board='drallion', suite='bvt-tast-cq',
-                     test_timing_query_results=OUTPUT_TEXT_NORESULTS_EXPECTED))
+                     test_timing_query_results=False))
 
   yield api.test(
       'messedup-query',
@@ -115,7 +102,7 @@ def GenTests(api):
           retcode=0,
       ),
       api.properties(board='drallion', suite='bvt-tast-cq',
-                     test_timing_query_results=OUTPUT_TEXT_NORESULTS_EXPECTED))
+                     test_timing_query_results=False))
 
   yield api.test(
       'empty-query',
@@ -126,7 +113,7 @@ def GenTests(api):
           retcode=0,
       ),
       api.properties(board='drallion', suite='bvt-tast-cq',
-                     test_timing_query_results=OUTPUT_TEXT_NORESULTS_EXPECTED))
+                     test_timing_query_results=False))
 
   yield api.test(
       'none-properties',
@@ -135,4 +122,4 @@ def GenTests(api):
           stdout=api.raw_io.output_text(OUTPUT_TEXT_NORESULTS),
           stderr=api.raw_io.output_text(''),
           retcode=0,
-      ), api.properties())
+      ), api.properties(test_timing_query_results=False))
