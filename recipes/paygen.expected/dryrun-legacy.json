@@ -2731,7 +2731,7 @@
     "cmd": [],
     "name": "doing paygen",
     "~followup_annotations": [
-      "@@@STEP_TEXT@number of concurrent requests: 8@@@"
+      "@@@STEP_TEXT@max number of concurrent requests: 8@@@"
     ]
   },
   {
