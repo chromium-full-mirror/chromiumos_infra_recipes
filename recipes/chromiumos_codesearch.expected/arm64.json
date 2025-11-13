@@ -6724,8 +6724,7 @@
       "main",
       "--progress",
       "--depth",
-      "1",
-      "--no-guto-gc"
+      "1"
     ],
     "cwd": "[CACHE]/generated",
     "env": {
