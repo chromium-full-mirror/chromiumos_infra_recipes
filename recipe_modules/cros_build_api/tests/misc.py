@@ -31,6 +31,7 @@ from PB.chromite.api import sdk_subtools
 from PB.chromite.api import signing
 from PB.chromite.api import sysroot
 from PB.chromite.api import test
+from PB.chromite.api import third_party_inventory
 from PB.chromite.api import toolchain
 from PB.chromiumos.common import BuildTarget
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import CrosBuildApiProperties
@@ -247,6 +248,10 @@ def RunSteps(api):
           'ChromiteUnitTest': empty_pb2.Empty,
           'RulesCrosUnitTest': empty_pb2.Empty,
           'VmTest': empty_pb2.Empty,
+      },
+      'ThirdPartyInventoryService': {
+          'CollectPackageMetadata':
+              third_party_inventory.CollectPackageMetadataResponse,
       },
       'ToolchainService': {
           'PrepareForBuild': toolchain.PrepareForToolchainBuildResponse,

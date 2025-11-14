@@ -853,6 +853,19 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def third_party_inventory_service_responses(
+      self) -> Dict[_MethodName, _ResponseJson]:
+    """Generate responses for ThirdPartyInventoryService."""
+    responses = {}
+
+    pkg1 = jsonify(category='dev-libs', name='test-library', version='1.0.0_p1')
+    pkg2 = jsonify(category='app-shells', name='bash', version='2.0.0_p2')
+    responses['CollectPackageMetadata'] = jsonify(
+        success=True, metadata_protojson=[pkg1, pkg2])
+
+    return responses
+
+  @property
   def toolchain_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for ToolchainService."""
     responses = {}
@@ -897,29 +910,54 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       A dict of {service_name: {endpoint_name: sample_response_json}}.
     """
     result = {
-        'AndroidService': self.android_service_responses,
-        'ApiService': self.api_service_responses,
-        'ArtifactsService': self.artifact_service_responses,
-        'BinhostService': self.binhost_service_responses,
-        'CopybotService': self.copybot_service_responses,
-        'DependencyService': self.dependency_service_responses,
-        'DlcService': self.dlc_service_responses,
-        'FirmwareService': self.firmware_service_responses,
-        'ImageService': self.image_service_responses,
-        'ObservabilityService': self.observability_service_responses,
-        'PackageService': self.package_service_responses,
-        'PayloadService': self.payload_service_responses,
-        'PortageExplorerService': self.portage_explorer_service_responses,
-        'QualbotService': self.qualbot_service_responses,
-        'RecoveryService': self.recovery_service_responses,
-        'RelevancyService': self.relevancy_service_responses,
-        'SdkService': self.sdk_service_responses,
-        'SdkSubtoolsService': self.sdk_subtools_service_responses,
-        'SigningService': self.signing_service_responses,
-        'SysrootService': self.sysroot_service_responses,
-        'TestService': self.test_service_responses,
-        'ToolchainService': self.toolchain_service_responses,
-        'VersionService': self.version_service_responses,
+        'AndroidService':
+            self.android_service_responses,
+        'ApiService':
+            self.api_service_responses,
+        'ArtifactsService':
+            self.artifact_service_responses,
+        'BinhostService':
+            self.binhost_service_responses,
+        'CopybotService':
+            self.copybot_service_responses,
+        'DependencyService':
+            self.dependency_service_responses,
+        'DlcService':
+            self.dlc_service_responses,
+        'FirmwareService':
+            self.firmware_service_responses,
+        'ImageService':
+            self.image_service_responses,
+        'ObservabilityService':
+            self.observability_service_responses,
+        'PackageService':
+            self.package_service_responses,
+        'PayloadService':
+            self.payload_service_responses,
+        'PortageExplorerService':
+            self.portage_explorer_service_responses,
+        'QualbotService':
+            self.qualbot_service_responses,
+        'RecoveryService':
+            self.recovery_service_responses,
+        'RelevancyService':
+            self.relevancy_service_responses,
+        'SdkService':
+            self.sdk_service_responses,
+        'SdkSubtoolsService':
+            self.sdk_subtools_service_responses,
+        'SigningService':
+            self.signing_service_responses,
+        'SysrootService':
+            self.sysroot_service_responses,
+        'TestService':
+            self.test_service_responses,
+        'ThirdPartyInventoryService':
+            self.third_party_inventory_service_responses,
+        'ToolchainService':
+            self.toolchain_service_responses,
+        'VersionService':
+            self.version_service_responses,
     }
     if include_method_service:
       result['MethodService'] = self.method_service_responses

@@ -217,6 +217,10 @@ class TestService(Stub):
   """Stub for TestService."""
 
 
+class ThirdPartyInventoryService(Stub):
+  """Stub for ThirdPartyInventoryService."""
+
+
 class ToolchainService(Stub):
   """Stub for ToolchainService."""
 
