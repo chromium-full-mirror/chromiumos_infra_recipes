@@ -4,8 +4,11 @@
 
 """API for working with SSCI."""
 
+from datetime import datetime
+from urllib.parse import quote as url_quote
 from typing import List
 from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.config_types import Path
 from google.protobuf.message import Message
 from google.protobuf import json_format
 
@@ -14,6 +17,11 @@ from PB.chromite.api.third_party_inventory import CollectPackageMetadataRequest
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.build.api.third_party_inventory import PackageMetadata
 
+# SPDX consts.
+_SPDX_DOCUMENT_ID = "SPDXRef-DOCUMENT"
+_SPDX_ORGANIZATION = "Google LLC"
+_SPDX_TOOL_NAME = "ChromeOS Release Recipe"
+
 
 def _parse_protojson(s: str, proto_class: type[Message]) -> Message:
   """Parse a protojson `s` into a message of `proto_class`."""
@@ -21,8 +29,97 @@ def _parse_protojson(s: str, proto_class: type[Message]) -> Message:
   return json_format.Parse(s, msg, ignore_unknown_fields=True)
 
 
+def _to_spdx_id(p: PackageMetadata) -> str:
+  """Construct a stable SPDXID for package."""
+  return f'SPDXRef-Package-{p.category}-{p.name}-{p.version}-{p.revision}'
+
+
+def _to_spdx_package(p: PackageMetadata) -> dict:
+  """Construct a SPDX package."""
+  return {
+      "SPDXID": _to_spdx_id(p),
+      # Use Portage category + name to avoid name collisions.
+      "name": f'{p.category}-{p.name}',
+      "versionInfo": p.version,
+      "description": p.description,
+      "originator": "NOASSERTION",
+      "supplier": f"Organization: {_SPDX_ORGANIZATION}",
+      "downloadLocation": "NONE",
+      "externalRefs": [{
+          "referenceCategory": "OTHER",
+          "referenceLocator": "NOASSERTION",
+          "referenceType": "NOASSERTION"
+      }],
+      "filesAnalyzed": False,
+  }
+
+
+def _to_spdx_package_relationship(p: PackageMetadata) -> dict:
+  """Construct a SPDX relationship entry of a package."""
+  return {
+      "spdxElementId": _SPDX_DOCUMENT_ID,
+      "relatedSpdxElement": _to_spdx_id(p),
+      "relationshipType": "DESCRIBES"
+  }
+
+
+# For now, we hardcode SPDX fields to generate a minimal SBOM.
+#
+# In the future, this will becomes its own tooling and ingest PackageMetadata
+# protojson directly to produce a SPDX file (using SDPX tooling).
+def _build_spdx_dict(name: str, unique_id: str, creation_time: datetime,
+                     packages: List[PackageMetadata]) -> dict:
+  """Construct a SPDX JSON file based on PackageMetadata.
+
+  Args:
+      name: A human readable name of the SPDX document
+      unique_id: An unique id for constructing SPDX document namespace
+      creation_time: A datatime object
+      packages: A list of package metadata that should be included
+
+  Returns:
+      A dict that can be serialized into a SPDX JSON document.
+  """
+  spdx_dict = {
+      "SPDXID": _SPDX_DOCUMENT_ID,
+      "creationInfo": {
+          "created":
+              creation_time.isoformat(),
+          "creators": [
+              f"Organization: {_SPDX_ORGANIZATION}",
+              f"Tool: {_SPDX_TOOL_NAME}",
+          ]
+      },
+      "dataLicense": "CC0-1.0",
+      "name": f"ChromeOS SBOM: {name}",
+      "spdxVersion": "SPDX-2.3",
+      "documentNamespace": f"https://spdx.google/{url_quote(unique_id)}",
+      "packages": list(map(_to_spdx_package, packages)),
+      "relationships": list(map(_to_spdx_package_relationship, packages)),
+  }
+  return spdx_dict
+
+
 class CrosSsciApi(RecipeApi):
   """API for working with SSCI."""
+
+  def generate_sbom(self, out_path: Path) -> bool:
+    """Generate SBOM and write SPDX JSON to out_path."""
+    with self.m.step.nest('generate and report SBOM'):
+      packages = self.collect_package_metadata(
+          sysroot=self.m.build_menu.sysroot, chroot=self.m.build_menu.chroot)
+
+      with self.m.step.nest('generate a baseline SBOM'):
+        builder_full_name = self.m.buildbucket.builder_full_name
+        build_id = self.m.buildbucket.build.id
+        version = self.m.cros_version.version
+        spdx_dict = _build_spdx_dict(
+            name=f"{builder_full_name} {version}",
+            unique_id=f'{builder_full_name}/{build_id}',
+            creation_time=self.m.time.utcnow(), packages=packages)
+
+      self.m.file.write_json("write SPDX SBOM", out_path, data=spdx_dict,
+                             indent=2)
 
   def collect_package_metadata(self, chroot: Chroot,
                                sysroot: Sysroot) -> List[PackageMetadata]:

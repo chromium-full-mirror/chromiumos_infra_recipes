@@ -7,5 +7,12 @@
 from .api import CrosSsciApi as API
 
 DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/time',
+    'recipe_engine/step',
+    'build_menu',
     'cros_build_api',
+    'cros_version',
 ]
