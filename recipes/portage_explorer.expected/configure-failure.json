@@ -87,12 +87,12 @@
     "cmd": [],
     "name": "failure",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Infra Failure: Step('set build cost.buildbucket.search') (canceled) (retcode: None)@@@"
+      "@@@STEP_TEXT@The build was cancelled: Step('set build cost.buildbucket.search')<br/>@@@"
     ]
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('set build cost.buildbucket.search') (canceled) (retcode: None)"
+      "humanReason": "The build was cancelled: Step('set build cost.buildbucket.search')\n"
     },
     "name": "$result"
   }

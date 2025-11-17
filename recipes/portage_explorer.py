@@ -14,6 +14,7 @@ from google.protobuf import json_format
 
 from PB.chromite.api.portage_explorer import RunSpidersRequest
 from recipe_engine import post_process
+from recipe_engine.recipe_api import CancelledBuild
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -40,7 +41,7 @@ def RunSteps(api: RecipeApi):
     with api.build_menu.configure_builder(missing_ok=True), \
         api.build_menu.setup_workspace_and_chroot():
       RunSpiders(api)
-  except StepFailure as sf:
+  except (StepFailure, CancelledBuild) as sf:
     with api.step.nest('failure') as presentation:
       presentation.step_text = str(sf)
     raise sf
@@ -88,10 +89,8 @@ def GenTests(api: RecipeTestApi):
       api.runtime.global_shutdown_on_step(
           'configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto'
       ),
-      api.post_check(
-          post_process.StepTextEquals, 'failure',
-          "Infra Failure: Step('set build cost.buildbucket.search') (canceled) (retcode: None)"
-      ),
+      api.post_check(post_process.StepTextContains, 'failure',
+                     ('The build was cancelled',)),
       # TODO (b/275363240): is this status code wrong?
       status='CANCELED',
   )
