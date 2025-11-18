@@ -929,7 +929,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "ABSOLUTELY DO NOT CHUMP THIS CL\n\n1 errors checking Chrome uprev criteria:\n\n\n\nChrome created the beta branch candidate during uprev\nSubmitting this CL may cause newer Chrome have smaller version number.\nAbandon this uprev CL and wait for the next one.\n\nQuestions to this builder goes to g/chromeos-velocity or g/chromeos-chrome-build, instead of CI oncall.\n\n"
+      "humanReason": "ABSOLUTELY DO NOT CHUMP THIS CL\n\n1 errors checking Chrome uprev criteria:\n\n\n\nChrome created the beta branch candidate during uprev\nSubmitting this CL may cause newer Chrome have smaller version number.\nAbandon this uprev CL and wait for the next one.\n\nQuestions to this builder goes to g/chromeos-chrome-build, instead of CI oncall.\n\n"
     },
     "name": "$result"
   }

@@ -749,7 +749,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 errors checking Chrome uprev criteria:\n\n\n\nPre-uprev testing not passed, details:\n\n[Orchestrator](http://go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.\n\nPlease check the test failures, fix the failures (land a fix or revert culprit on Chromium) and wait for next pre-uprev.\n\nTo disable a failed tests at this builder, disable at [chromium/src/chromeos/tast_control_disabled_tests.txt](https://source.chromium.org/chromium/chromium/src/+/main:chromeos/tast_control_disabled_tests.txt) instead.\n\nQuestions to this builder goes to g/chromeos-velocity or g/chromeos-chrome-build, instead of CI oncall.\n\n"
+      "humanReason": "1 errors checking Chrome uprev criteria:\n\n\n\nPre-uprev testing not passed, details:\n\n[Orchestrator](http://go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.\n\nPlease check the test failures, fix the failures (land a fix or revert culprit on Chromium) and wait for next pre-uprev.\n\nTo disable a failed tests at this builder, disable at [chromium/src/chromeos/tast_control_disabled_tests.txt](https://source.chromium.org/chromium/chromium/src/+/main:chromeos/tast_control_disabled_tests.txt) instead.\n\nQuestions to this builder goes to g/chromeos-chrome-build, instead of CI oncall.\n\n"
     },
     "name": "$result"
   }

@@ -60,9 +60,8 @@ NO_CL_FOUND_SUMMARY = 'No CL found.'
 NOT_AN_UPREV_CL_SUMMARY = 'Not Chrome uprev CL.'
 PRE_UPREV_PASS_SUMMARY = 'Pre-uprev testing passed. \n\nDetails: \n\n{}\n'
 DO_NOT_CHUMP_THIS_CL = "ABSOLUTELY DO NOT CHUMP THIS CL\n\n"
-ASK_QUESTIONS_SUMMARY = (
-    "Questions to this builder goes to g/chromeos-velocity or "
-    "g/chromeos-chrome-build, instead of CI oncall.\n\n")
+ASK_QUESTIONS_SUMMARY = ("Questions to this builder goes to "
+                         "g/chromeos-chrome-build, instead of CI oncall.\n\n")
 FAILED_PRE_UPREVS_SUMMARY = (
     # Error notice
     'Pre-uprev testing not passed, details:\n\n{}\n\n'
@@ -80,7 +79,8 @@ REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY = (
     'Please retry later or wait for next uprev\n.')
 CHROME_CI_NOT_GOOD = (
     # Error notice
-    'Chrome best revision is currently at {}, want >={}\n'
+    'Chrome best revision (canary releasable revision) '
+    'is currently at r{}, want >=r{}.\n'
     'ChromeOS preuprev may have passed but on other platforms '
     'Chrome best revision is behind current version.\n'
     # Possible action items
@@ -88,6 +88,17 @@ CHROME_CI_NOT_GOOD = (
     'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous, '
     'https://ci.chromium.org/p/chrome/g/chrome.release-ready/console'
     ' and try again. You can also just wait for next uprev.\n\n')
+CHROME_CI_NOT_IDENTIFIED = (
+    # Error notice
+    'Cannot identify canary releasable Chrome revision, want >=r{}.\n'
+    'Chrome release-ready builders may have been failing for many hours.\n'
+    # Possible action items
+    'Check '
+    'https://ci.chromium.org/p/chrome/g/chrome.release-ready/console, '
+    'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
+    ' for latest status and retry later. You can also just wait for next uprev.\n\n'
+    'You may also reach to go/chrome-trunk-gardening for any release-ready builder failures.\n\n'
+)
 CHROME_BRANCHED_DURING_UPREV = (
     # Error notice
     'Chrome created the beta branch candidate during uprev\n'
@@ -212,8 +223,12 @@ def WaitChromeBestRevision(api: RecipeApi,
       if i < FETCH_BEST_CHROME_REVISION_TIMES - 1:
         api.time.sleep(FETCH_BEST_CHROME_REVISION_INTERVAL)
 
-    step.step_summary_text = (f'Best revision at {got_best_revision} '
-                              f'but want {target_chrome_revision}')
+    if got_best_revision:
+      step.step_summary_text = CHROME_CI_NOT_GOOD.format(
+          got_best_revision, target_chrome_revision)
+    else:
+      step.step_summary_text = CHROME_CI_NOT_IDENTIFIED.format(
+          target_chrome_revision)
     step.status = api.step.FAILURE
     return got_best_revision
 
@@ -274,7 +289,10 @@ def RunSteps(api: RecipeApi):
             orchestrator.summary_markdown))
 
   if target_chrome_revision:
-    if best_revision is None or best_revision < target_chrome_revision:
+    if best_revision is None:
+      error_do_no_chump = True
+      errors.append(CHROME_CI_NOT_IDENTIFIED.format(target_chrome_revision))
+    elif best_revision < target_chrome_revision:
       error_do_no_chump = True
       errors.append(
           CHROME_CI_NOT_GOOD.format(best_revision, target_chrome_revision))
@@ -470,14 +488,41 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.SummaryMarkdown, (
           'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
           '1 errors checking Chrome uprev criteria:\n\n\n\n'
-          'Chrome best revision is currently at 1100000, want >=1122332\n'
+          'Chrome best revision (canary releasable revision) is '
+          'currently at r1100000, want >=r1122332.\n'
           'ChromeOS preuprev may have passed but on other platforms '
           'Chrome best revision is behind current version.\n'
           'This usually catches up in less than 2 hours, check '
           'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous, '
           'https://ci.chromium.org/p/chrome/g/chrome.release-ready/console'
           ' and try again. You can also just wait for next uprev.\n\n'
-          "Questions to this builder goes to g/chromeos-velocity or "
+          "Questions to this builder goes to "
+          "g/chromeos-chrome-build, instead of CI oncall.\n\n")),
+      api.post_check(post_process.MustRun,
+                     'Wait chrome-best-revision-continuous'),
+      api.post_check(post_process.DoesNotRun, 'Fetch ToT version'),
+      cq=True,
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'main-branch-uprev-prerelease-chrome-not-identified',
+      try_build_with_cl('130.0.6699.0_pre1122332'),
+      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
+                   [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+                    ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
+      chrome_best_revision(api, [None] * FETCH_BEST_CHROME_REVISION_TIMES),
+      api.post_check(post_process.SummaryMarkdown, (
+          'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
+          '1 errors checking Chrome uprev criteria:\n\n\n\n'
+          'Cannot identify canary releasable Chrome revision, want >=r1122332.\n'
+          'Chrome release-ready builders may have been failing for many hours.\n'
+          'Check '
+          'https://ci.chromium.org/p/chrome/g/chrome.release-ready/console, '
+          'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
+          ' for latest status and retry later. You can also just wait for next uprev.\n\n'
+          'You may also reach to go/chrome-trunk-gardening for any release-ready builder failures.\n\n'
+          "Questions to this builder goes to "
           "g/chromeos-chrome-build, instead of CI oncall.\n\n")),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
@@ -499,7 +544,7 @@ def GenTests(api: RecipeTestApi):
           'Chrome created the beta branch candidate during uprev\n'
           'Submitting this CL may cause newer Chrome have smaller version number.\n'
           'Abandon this uprev CL and wait for the next one.\n\n'
-          "Questions to this builder goes to g/chromeos-velocity or "
+          "Questions to this builder goes to "
           "g/chromeos-chrome-build, instead of CI oncall.\n\n")),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
@@ -558,7 +603,7 @@ def GenTests(api: RecipeTestApi):
            "[chromium/src/chromeos/tast_control_disabled_tests.txt]"
            "(https://source.chromium.org/chromium/chromium/src/+/main:"
            "chromeos/tast_control_disabled_tests.txt) instead.\n\n"
-           "Questions to this builder goes to g/chromeos-velocity or "
+           "Questions to this builder goes to "
            "g/chromeos-chrome-build, instead of CI oncall.\n\n"),
       ),
       api.post_check(post_process.DoesNotRun,
