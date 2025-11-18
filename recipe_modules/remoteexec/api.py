@@ -82,12 +82,13 @@ class RemoteexecApi(recipe_api.RecipeApi):
             today.strftime('%Y/%m/%d'),
             self.m.properties.get('bot_id', build_target_name),
         )
+        builder_id = self.m.buildbucket.build.builder
         gs_bucket = ('staging-chromeos-reclient-logs'
-                     if is_staging else 'chromeos-reclient-logs')
+                     if is_staging or builder_id.bucket == 'release.shadow' else
+                     'chromeos-reclient-logs')
         presentation.logs['gs_bucket'] = gs_bucket
         presentation.logs['gs_path'] = gs_path_base
         num_logs_uploaded = 0
-        builder_id = self.m.buildbucket.build.builder
         metadata = {
             'x-goog-meta-builderinfo':
                 json.dumps(

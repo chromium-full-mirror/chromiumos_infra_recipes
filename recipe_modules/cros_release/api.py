@@ -432,8 +432,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     Args:
       use_split_paygen: Whether to use the new split paygen flow.
     """
-    pg_orch_builder = ('staging-paygen-orchestrator' if
-                       self.m.build_menu.is_staging else 'paygen-orchestrator')
+    pg_orch_builder = ('staging-paygen-orchestrator'
+                       if self.m.build_menu.is_staging or self.m.led.led_build
+                       else 'paygen-orchestrator')
     bucket = (
         self.m.buildbucket.build.builder.bucket
         if not self.m.led.led_build else "try-dev")
