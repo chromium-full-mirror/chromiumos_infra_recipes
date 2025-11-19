@@ -179,11 +179,7 @@ def DoRunSteps(api, config, properties):
           api.build_menu.build_images(config, include_version=True)
 
           with api.failures.ignore_exceptions():
-            baseline_sbom_path = api.path.mkdtemp(
-                'cros_ssci') / 'baseline-sbom-spdx.json'
-            api.cros_ssci.generate_sbom(baseline_sbom_path)
-            # TODO(b/438233315): Upload SBOM to GCS, so they can be referenced
-            # later when we upload artifacts.
+            api.cros_ssci.generate_and_upload_sbom()
 
           # Now that the image is built, we should have all metadata available.
           with api.step.nest('determine build and model metadata'):

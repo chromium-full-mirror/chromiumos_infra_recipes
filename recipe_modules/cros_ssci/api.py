@@ -4,9 +4,11 @@
 
 """API for working with SSCI."""
 
+from dataclasses import dataclass
 from datetime import datetime
 from urllib.parse import quote as url_quote
 from typing import List
+from recipe_engine import step_data
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.config_types import Path
 from google.protobuf.message import Message
@@ -16,6 +18,12 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.third_party_inventory import CollectPackageMetadataRequest
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.build.api.third_party_inventory import PackageMetadata
+
+
+@dataclass
+class UploadedSBOM:
+  digest: str
+  gs_url: str
 
 # SPDX consts.
 _SPDX_DOCUMENT_ID = "SPDXRef-DOCUMENT"
@@ -103,23 +111,48 @@ def _build_spdx_dict(name: str, unique_id: str, creation_time: datetime,
 class CrosSsciApi(RecipeApi):
   """API for working with SSCI."""
 
-  def generate_sbom(self, out_path: Path) -> bool:
-    """Generate SBOM and write SPDX JSON to out_path."""
+  def generate_and_upload_sbom(self) -> UploadedSBOM:
+    """Generate and upload SBOM to GCS."""
     with self.m.step.nest('generate and report SBOM'):
-      packages = self.collect_package_metadata(
-          sysroot=self.m.build_menu.sysroot, chroot=self.m.build_menu.chroot)
+      name = 'baseline-sbom.spdx.json'
+      local_path = self.m.path.mkdtemp('cros_ssci') / name
 
-      with self.m.step.nest('generate a baseline SBOM'):
-        builder_full_name = self.m.buildbucket.builder_full_name
-        build_id = self.m.buildbucket.build.id
-        version = self.m.cros_version.version
-        spdx_dict = _build_spdx_dict(
-            name=f"{builder_full_name} {version}",
-            unique_id=f'{builder_full_name}/{build_id}',
-            creation_time=self.m.time.utcnow(), packages=packages)
+      self.generate_sbom(local_path)
+      return self.upload_sbom(local_path, name)
 
-      self.m.file.write_json("write SPDX SBOM", out_path, data=spdx_dict,
-                             indent=2)
+  def generate_sbom(self, out_path: Path) -> step_data.StepData:
+    """Generate SBOM and write SPDX JSON to out_path."""
+    packages = self.collect_package_metadata(sysroot=self.m.build_menu.sysroot,
+                                             chroot=self.m.build_menu.chroot)
+
+    with self.m.step.nest('generate a baseline SBOM'):
+      builder_full_name = self.m.buildbucket.builder_full_name
+      build_id = self.m.buildbucket.build.id
+      version = self.m.cros_version.version
+      spdx_dict = _build_spdx_dict(name=f"{builder_full_name} {version}",
+                                   unique_id=f'{builder_full_name}/{build_id}',
+                                   creation_time=self.m.time.utcnow(),
+                                   packages=packages)
+
+    return self.m.file.write_json("write SPDX SBOM", out_path, data=spdx_dict,
+                                  indent=2)
+
+  def upload_sbom(self, local_path: Path, gs_file_name: str) -> UploadedSBOM:
+    """Upload SBOM at `local_path` to GCS under this build's artifact path using `gs_file_name`.
+
+    Returns `UploadedSBOM`, which can be passed to a later report_sbom() call.
+    """
+    digest = self.m.file.file_hash(local_path,
+                                   test_data='{"SPDXID": "Test-Document"}')
+
+    config = self.m.build_menu.config_or_default
+    gs_bucket = config.artifacts.artifacts_gs_bucket
+    gs_path = f'{self.m.build_menu.artifacts_build_path()}/{gs_file_name}'
+    self.m.gsutil.upload(source=local_path, bucket=gs_bucket, dest=gs_path)
+
+    gs_url = f'gs://{gs_bucket}/{gs_path}'
+    return UploadedSBOM(digest=digest, gs_url=gs_url)
+
 
   def collect_package_metadata(self, chroot: Chroot,
                                sysroot: Sysroot) -> List[PackageMetadata]:

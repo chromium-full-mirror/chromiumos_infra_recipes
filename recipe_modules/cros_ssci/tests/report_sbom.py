@@ -2,12 +2,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Tests collect_and_report_sbom call."""
+"""Tests generate_sbom and upload_sbom."""
 
 from recipe_engine import post_process
 
 DEPS = [
     'cros_ssci',
+    'test_util',
     'recipe_engine/buildbucket',
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -17,12 +18,20 @@ DEPS = [
 
 
 def RunSteps(api):
-  out_path = api.path.mkdtemp('cros_ssci') / 'out.json'
-  api.cros_ssci.generate_sbom(out_path)
+  result = api.cros_ssci.generate_and_upload_sbom()
+  api.assertions.assertRegexpMatches(
+      result.gs_url,
+      'gs://chromeos-releases-test/kukui-release-main/R[^/]+/baseline-sbom.spdx.json',
+  )
 
 
 def GenTests(api):
   yield api.test(
       'report_sbom',
+      api.test_util.test_child_build(
+          'kukui',
+          builder_name='kukui-release-main',
+          git_repo='https://chrome-internal.googlesource.com/chromeos/manifest-internal',
+      ).build,
       api.post_check(post_process.StatusSuccess),
-  ) + api.buildbucket.ci_build(project="chromeos", builder="amd64")
+  )
