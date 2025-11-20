@@ -167,6 +167,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               source_version="R89-13729.0.0",
               branch_info=Branch(type=Branch.RELEASE),
               branch_util_push=True,
+              autosubmit_config=True,
           )),
       api.post_check(
           post_process.StepCommandContains,
@@ -174,8 +175,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           "create branch from buildspec manifest 89/13729.0.0.xml",
           ["create", "--buildspec-manifest", "89/13729.0.0.xml", "--release"],
       ),
-      # TODO (b/275363240): audit this test.
-      status="FAILURE",
+      api.post_check(post_process.MustRun, "update config"),
   )
 
   yield api.test(
@@ -235,7 +235,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           BrancherProperties(branch_info=Branch(type=Branch.RELEASE))),
       api.post_check(post_process.StepFailure, "validate properties"),
-      # TODO (b/275363240): audit this test.
       status="FAILURE",
   )
 
@@ -247,7 +246,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               branch_info=Branch(type=Branch.FACTORY),
           )),
       api.post_check(post_process.StepFailure, "validate properties"),
-      # TODO (b/275363240): audit this test.
       status="FAILURE",
   )
 
@@ -260,7 +258,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               branch_info=Branch(type=Branch.STABILIZE),
           )),
       api.post_check(post_process.StepFailure, "validate properties"),
-      # TODO (b/275363240): audit this test.
       status="FAILURE",
   )
 
@@ -271,6 +268,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               source_version="R109-15194.0.0",
               branch_info=Branch(type=Branch.STABILIZE),
               branch_util_push=True,
+              autosubmit_config=True,
           )),
       api.step_data(
           "create branch"
@@ -278,8 +276,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           stdout=api.raw_io.output_text(TEST_STDOUT),
       ),
       api.post_check(post_process.StepSuccess, "validate properties"),
-      # TODO (b/275363240): audit this test.
-      status="FAILURE",
   )
 
   yield api.test(
@@ -290,7 +286,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               branch_info=Branch(type=Branch.RELEASE),
           )),
       api.post_check(post_process.StepFailure, "create branch"),
-      # TODO (b/275363240): audit this test.
       status="FAILURE",
   )
 
