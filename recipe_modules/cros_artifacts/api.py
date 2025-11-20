@@ -830,7 +830,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       self, builder_name, kind, gs_bucket, *, artifacts_info=None, chroot=None,
       sysroot=None, name='upload artifacts', test_data=None,
       private_bundle_func=None, report_to_spike=False,
-      attestation_eligible=False, upload_coverage=True,
+      attestation_eligible=False, artifact_sbom=None, upload_coverage=True,
       previously_uploaded_artifacts=None,
       ignore_breakpad_symbol_generation_errors=False, use_file_paths=False,
       build_targets=None
@@ -863,6 +863,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           [artifact-name].attestation if attestation_eligible is true.
       attestation_eligible(bool): Will call bcid_reporter to report artifact information if
           report_to_spike is also true. This is set in BuilderConfig.Artifacts.AttestationEligible.
+      artifact_sbom (dict[str, UploadedSBOM]): If set, a mapping of artifact
+          basename to its `UploadedSBOM`.
       upload_coverage(bool): If True, we will run the upload coverage step and
            store coverage information. This should be set of False when we dont
            run unit tests and hence have no coverage information to store.
@@ -965,6 +967,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
 
             try:
+              if basepath in (artifact_sbom or {}):
+                uploaded_sbom = artifact_sbom[basepath]
+                self.m.bcid_reporter.report_sbom(uploaded_sbom.digest,
+                                                 uploaded_sbom.gs_url,
+                                                 sbom_subjects=[file_hash])
+
               self.m.bcid_reporter.report_gcs(
                   file_hash, '{uri}/{item}'.format(uri=upload_uri,
                                                    item=basepath))

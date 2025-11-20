@@ -25,6 +25,7 @@ from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
 from RECIPE_MODULES.chromeos.checkpoint.api import STATUS_FAILED
 from RECIPE_MODULES.chromeos.checkpoint.api import STATUS_SUCCESS
+from RECIPE_MODULES.chromeos.cros_artifacts.api import ARTIFACTS_BY_IMAGE_TYPE
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -153,6 +154,7 @@ def DoRunSteps(api, config, properties):
 
   with api.checkpoint.retry(RetryStep.STAGE_ARTIFACTS) as run_step:
     if run_step:
+      artifact_sbom = {}
       try:
         if api.build_menu.install_packages(config, env_info.packages):
           # TODO(b/231739303): Make this step critical once cloud container build stablizes.
@@ -179,7 +181,13 @@ def DoRunSteps(api, config, properties):
           api.build_menu.build_images(config, include_version=True)
 
           with api.failures.ignore_exceptions():
-            api.cros_ssci.generate_and_upload_sbom()
+            baseline_sbom = api.cros_ssci.generate_and_upload_sbom()
+            artifact_sbom.update({
+                ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_BASE]:
+                    baseline_sbom,
+                ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_RECOVERY]:
+                    baseline_sbom,
+            })
 
           # Now that the image is built, we should have all metadata available.
           with api.step.nest('determine build and model metadata'):
@@ -210,7 +218,7 @@ def DoRunSteps(api, config, properties):
       try:
         uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
             config, report_to_spike=api.cros_infra_config.config.artifacts
-            .attestation_eligible,
+            .attestation_eligible, artifact_sbom=artifact_sbom,
             ignore_breakpad_symbol_generation_errors=failing_build_exception
             is not None)
         if uploaded_artifacts:

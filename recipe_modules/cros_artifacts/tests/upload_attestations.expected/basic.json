@@ -1,5 +1,9 @@
 [
   {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -983,6 +987,22 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "decacafe",
+      "-gcs-uri",
+      "gs://bucket/spdx.json",
+      "-sbom-subject",
+      "deadbeef"
+    ],
+    "name": "upload artifacts.generate provenance.snoop: report_sbom",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

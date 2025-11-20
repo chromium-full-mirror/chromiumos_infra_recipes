@@ -1,5 +1,9 @@
 [
   {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",

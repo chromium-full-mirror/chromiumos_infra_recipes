@@ -16,6 +16,7 @@ from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifac
 from PB.recipe_modules.chromeos.cros_artifacts.tests.upload_attestations import \
     UploadAttestationsProperties
 from recipe_engine import post_process
+from RECIPE_MODULES.chromeos.cros_ssci.api import UploadedSBOM
 
 PROPERTIES = UploadAttestationsProperties
 
@@ -25,6 +26,7 @@ DEPS = [
     'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
+    'cros_ssci',
 ]
 
 
@@ -75,8 +77,10 @@ def RunSteps(api, properties):
       artifacts_info=artifacts_info,
       sysroot=Sysroot(path='/build/target',
                       build_target=BuildTarget(name='target')),
-      report_to_spike=True, attestation_eligible=True,
-      ignore_breakpad_symbol_generation_errors=properties
+      report_to_spike=True, attestation_eligible=True, artifact_sbom={
+          'chromiumos_base_image.tar.xz':
+              UploadedSBOM(digest="decacafe", gs_url="gs://bucket/spdx.json"),
+      }, ignore_breakpad_symbol_generation_errors=properties
       .ignore_breakpad_symbol_generation_errors)
 
 
@@ -92,6 +96,9 @@ def GenTests(api):
                   'path': 'chromiumos_base_image.tar.xz',
               }],
           }, sort_keys=True)),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_sbom'),
       api.post_process(
           post_process.MustRun,
           'upload artifacts.generate provenance.snoop: report_gcs'),

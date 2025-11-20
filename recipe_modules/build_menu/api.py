@@ -978,6 +978,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       private_bundle_func=None,
       sysroot=None,
       report_to_spike=False,
+      artifact_sbom=None,
       name='upload artifacts',
       previously_uploaded_artifacts=None,
       ignore_breakpad_symbol_generation_errors=False,
@@ -996,6 +997,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
         the build.
       report_to_spike (bool): If True, will call bcid_reporter to report artifact
         information and trigger Spike to upload the provenance.
+      artifact_sbom (dict[str, UploadedSBOM]): If set, a mapping of artifact
+          basename to its `UploadedSBOM`.
       name (str): The step name. Defaults to 'upload artifacts'.
       previously_uploaded_artifacts(UploadedArtifacts): The UploadedArtifacts
         from a previous call to upload_artifacts; if set, these artifact
@@ -1031,6 +1034,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           artifacts_info=artifacts_info,
           chroot=self.chroot,
           sysroot=sysroot,
+          artifact_sbom=artifact_sbom,
           private_bundle_func=private_bundle_func,
           report_to_spike=report_to_spike,
           attestation_eligible=config.artifacts.attestation_eligible,
