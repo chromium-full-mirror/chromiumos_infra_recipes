@@ -71,7 +71,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
   @contextlib.contextmanager
   def sync_to_commit(self, commit: Optional[GitilesCommit] = None,
                      staging: bool = False,
-                     projects: Optional[List[str]] = None) -> Generator:
+                     projects: Optional[List[str]] = None,
+                     groups: Optional[List[str]] = None) -> Generator:
     """Sync the source tree.
 
     Args:
@@ -80,6 +81,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       staging: Whether this is a staging build.
       projects: Project names or paths to return info for. Defaults to all
         projects.
+      groups: The groups to sync. See repo init --help for more info.
 
     Yields:
       A context manager which syncs the workspace path.
@@ -88,6 +90,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     commit = commit or self.m.src_state.gitiles_commit
     manifest_url = self.m.src_state.build_manifest.url
     init_opts = {}
+    if groups:
+      init_opts['groups'] = groups
 
     branch = commit.ref.split('/', 2)[-1]
     on_branch = branch not in ('', 'main', 'snapshot', 'staging-snapshot')

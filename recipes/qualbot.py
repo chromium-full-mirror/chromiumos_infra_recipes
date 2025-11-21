@@ -36,7 +36,7 @@ def RunSteps(api: RecipeApi, properties: QualbotProperties):
                            "version:3@32.1", executable_path="bin/protoc"))
   with api.context(env_prefixes={'PATH': [protoc_path]}):
     with api.build_menu.configure_builder(missing_ok=True), \
-        api.build_menu.setup_workspace():
+        api.build_menu.setup_workspace(groups=['default']):
       run_qualbot(api, properties)
 
 
@@ -66,6 +66,7 @@ def GenTests(api: RecipeTestApi):
           post_process.StepSuccess,
           'Run Qualbot.call chromite.api.QualbotService/RunQualbot',
       ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.build_menu.test(
@@ -80,6 +81,7 @@ def GenTests(api: RecipeTestApi):
           post_process.StepFailure,
           'Run Qualbot.call chromite.api.QualbotService/RunQualbot',
       ),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -94,5 +96,6 @@ def GenTests(api: RecipeTestApi):
           post_process.StepFailure,
           'Run Qualbot.call chromite.api.QualbotService/RunQualbot',
       ),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

@@ -362,21 +362,25 @@ class BuildMenuApi(recipe_api.RecipeApi):
                               force_no_chroot_upgrade=force_no_chroot_upgrade)
 
   @contextlib.contextmanager
-  def setup_workspace(self, cherry_pick_changes=True, ignore_changes=False):
+  def setup_workspace(self, cherry_pick_changes: bool = True,
+                      ignore_changes: bool = False,
+                      groups: Optional[List[str]] = None):
     """Setup the workspace for the builder.
 
     Args:
-      cherry_pick_changes (bool): Whether to apply gerrit changes on top of the
+      cherry_pick_changes: Whether to apply gerrit changes on top of the
         checkout using cherry-pick. If set to False, will directly checkout
         the changes using the gerrit fetch refs.
-      ignore_changes (bool): Whether to apply gerrit changes. Set to True to
+      ignore_changes: Whether to apply gerrit changes. Set to True to
         completely skip application of gerrit changes.
+      groups: The groups to sync. See repo init --help for more info.
     """
     # If we do not have a config, use an empty one.
     config = self.config_or_default
 
     # Set up source checkouts.
-    with self.m.workspace_util.sync_to_commit(staging=self.is_staging):
+    with self.m.workspace_util.sync_to_commit(staging=self.is_staging,
+                                              groups=groups):
 
       # Apply any appropriate gerrit changes.
       ignore_missing_projects = (
