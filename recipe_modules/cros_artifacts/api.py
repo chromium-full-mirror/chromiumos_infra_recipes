@@ -936,6 +936,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         if image_archives:
           artifact_basenames.extend(
               [self.m.path.basename(i) for i in image_archives])
+          if self._test_data.enabled:
+            artifact_basenames.append('chromiumos_base_image.tar.xz')
         else:
           presentation.logs[
               'report_to_spike'] = 'IMAGE_ARCHIVES not in files_by_artifact'

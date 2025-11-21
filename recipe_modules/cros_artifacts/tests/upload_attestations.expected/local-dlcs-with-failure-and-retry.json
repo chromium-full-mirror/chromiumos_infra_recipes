@@ -936,7 +936,6 @@
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/artifacts_tmp_1/dlc/fake/dlc.img@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/artifacts_tmp_1/dlc/fake2/dlc.img@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/artifacts_tmp_1/dlc/fake3/dlc.img@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/artifacts_tmp_1/dlc/fake4/dlc.img@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -957,7 +956,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/dlc/fake/dlc.img"
+      "[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz"
     ],
     "infra_step": true,
     "name": "upload artifacts.generate provenance.Compute file hash",
@@ -1001,9 +1000,25 @@
       "[START_DIR]/reporter/snoopy_broker",
       "-report-gcs",
       "-digest",
+      "decacafe",
+      "-gcs-uri",
+      "gs://bucket/spdx.json",
+      "-sbom-subject",
+      "deadbeef"
+    ],
+    "name": "upload artifacts.generate provenance.snoop: report_sbom",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs",
     "~followup_annotations": [
@@ -1018,7 +1033,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/dlc/fake2/dlc.img"
+      "[CLEANUP]/artifacts_tmp_1/dlc/fake/dlc.img"
     ],
     "infra_step": true,
     "name": "upload artifacts.generate provenance.Compute file hash (2)",
@@ -1034,7 +1049,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (2)",
     "~followup_annotations": [
@@ -1049,7 +1064,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (3)",
     "~followup_annotations": [
@@ -1064,7 +1079,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (4)",
     "~followup_annotations": [
@@ -1079,7 +1094,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (5)",
     "~followup_annotations": [
@@ -1095,7 +1110,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/dlc/fake3/dlc.img"
+      "[CLEANUP]/artifacts_tmp_1/dlc/fake2/dlc.img"
     ],
     "infra_step": true,
     "name": "upload artifacts.generate provenance.Compute file hash (3)",
@@ -1111,7 +1126,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (6)",
     "~followup_annotations": [
@@ -1126,7 +1141,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/dlc/fake4/dlc.img"
+      "[CLEANUP]/artifacts_tmp_1/dlc/fake3/dlc.img"
     ],
     "infra_step": true,
     "name": "upload artifacts.generate provenance.Compute file hash (4)",
@@ -1142,7 +1157,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake4/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (7)",
     "~followup_annotations": [

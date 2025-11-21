@@ -135,21 +135,20 @@ def GenTests(api):
       'local-dlcs-with-failure-and-retry',
       api.step_data(
           'upload artifacts.Find DLCs.list local DLCs',
-          api.file.listdir([
-              'fake/dlc.img', 'fake2/dlc.img', 'fake3/dlc.img', 'fake4/dlc.img'
-          ]),
+          api.file.listdir(['fake/dlc.img', 'fake2/dlc.img', 'fake3/dlc.img']),
       ),
       api.post_check(post_process.MustRun,
                      'upload artifacts.Find DLCs.list local DLCs'),
-      # First DLC which succeeds on report
+      # First artifact which succeeds on report
       api.post_process(
           post_process.MustRun,
           'upload artifacts.generate provenance.snoop: report_gcs'),
       api.post_process(
           post_process.StepCommandContains,
-          'upload artifacts.generate provenance.snoop: report_gcs',
-          ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"]),
-      # Second DLC fails
+          'upload artifacts.generate provenance.snoop: report_gcs', [
+              "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
+          ]),
+      # First DLC fails
       api.override_step_data(
           'upload artifacts.generate provenance.snoop: report_gcs (2)',
           retcode=1),
@@ -165,16 +164,16 @@ def GenTests(api):
       api.post_process(
           post_process.StepCommandContains,
           'upload artifacts.generate provenance.snoop: report_gcs (5)',
-          ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"]),
-      # Give up on DLC2 and move onto DLC 3 & 4.
+          ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"]),
+      # Give up on DLC 1 and move onto DLC 2 & 3.
       api.post_process(
           post_process.StepCommandContains,
           'upload artifacts.generate provenance.snoop: report_gcs (6)',
-          ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"]),
+          ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"]),
       api.post_process(
           post_process.StepCommandContains,
           'upload artifacts.generate provenance.snoop: report_gcs (7)',
-          ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake4/dlc.img"]),
+          ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"]),
       status='SUCCESS')
 
   yield api.test(
