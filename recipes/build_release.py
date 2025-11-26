@@ -187,6 +187,8 @@ def DoRunSteps(api, config, properties):
                     baseline_sbom,
                 ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_RECOVERY]:
                     baseline_sbom,
+                ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_TEST]:
+                    baseline_sbom,
             })
 
           # Now that the image is built, we should have all metadata available.
