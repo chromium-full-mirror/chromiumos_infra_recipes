@@ -6633,7 +6633,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_6",
-      "gs://chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip"
+      "gs://cros-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6651,8 +6651,8 @@
     },
     "name": "gsutil upload kythe index pack",
     "~followup_annotations": [
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"gsutil upload kythe index pack\": \"gs://chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip\"}@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/cros-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"gsutil upload kythe index pack\": \"gs://cros-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip\"}@@@"
     ]
   },
   {
@@ -6665,7 +6665,7 @@
       "----",
       "cp",
       "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/compile_commands.json",
-      "gs://chrome-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json"
+      "gs://cros-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6683,8 +6683,8 @@
     },
     "name": "gsutil upload compile_commands.json",
     "~followup_annotations": [
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"gsutil upload compile_commands.json\": \"gs://chrome-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json\", \"gsutil upload kythe index pack\": \"gs://chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip\"}@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/cros-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"gsutil upload compile_commands.json\": \"gs://cros-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json\", \"gsutil upload kythe index pack\": \"gs://cros-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip\"}@@@"
     ]
   },
   {
