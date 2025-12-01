@@ -529,6 +529,8 @@ class SigningApi(recipe_api.RecipeApi):
 
       return relevant_signing_configs, local_dir
 
+  @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
+                     delay=datetime.timedelta(seconds=5))
   def stage_paygen_artifacts(self,
                              channels: List['common_pb2.Channel']) -> List[str]:
     """Copy the artifacts needed for paygen into the appropriate GS locations.
