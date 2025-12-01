@@ -230,6 +230,14 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                        datetime.timedelta(days=14)).strftime('%Y-%m-%d'))
         elif is_firmware_branch:
           expiration_date = None
+        elif branch.startswith('stabilize-starline-'):
+          # Default expiration date for starline branches is 1 year.
+          date = datetime.datetime.today() + datetime.timedelta(days=366)
+          expiration_date = ReleaseBuilder.Date(value=date.strftime('%Y-%m-%d'))
+          extra_text = (
+              '\nThis CL defines release builders for this stabilize branch for'
+              ' use with `cros try`. If you do not need `cros try` support,'
+              ' consider abandoning this CL.\n')
         else:
           # Default expiration date for stabilize branches is 6 months.
           date = datetime.datetime.today() + datetime.timedelta(days=30 * 6)

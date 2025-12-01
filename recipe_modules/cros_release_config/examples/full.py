@@ -200,6 +200,9 @@ def GenTests(api):
   six_months_out = (datetime.datetime.today() +
                     datetime.timedelta(days=30 * 6)).strftime('%Y-%m-%d')
 
+  one_year_out = (datetime.datetime.today() +
+                  datetime.timedelta(days=366)).strftime('%Y-%m-%d')
+
   yield api.test(
       'stabilize-branch',
       api.properties(
@@ -406,3 +409,24 @@ def GenTests(api):
                   CrosReleaseConfigProperties(
                       reviewers=[Email(email='jackneus@google.com')])
           }))
+
+  yield api.test(
+      'starline-branch',
+      api.properties(
+          **{
+              'branch':
+                  'stabilize-starline-54321.B',
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email='hardtmad@google.com')],
+                      ccs=[Email(
+                          email='bshai@google.com')], keep_n_milestones=4)
+          }),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update config.write release/stabilize_builders.textpb', [
+              expected_config(
+                  MAIN_BLOCK, BLOCK_EXPIRATION,
+                  new_stabilize_block('stabilize-starline-54321.B',
+                                      one_year_out), BLOCK_3, BLOCK_2, BLOCK_1)
+          ]), api.post_process(post_process.DropExpectation))
