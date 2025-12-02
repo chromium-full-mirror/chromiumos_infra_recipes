@@ -96,6 +96,18 @@ def GenTests(api):
                   'path': 'chromiumos_base_image.tar.xz',
               }],
           }, sort_keys=True)),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          json.dumps(
+              {
+                  'artifacts': {
+                      'artifacts': [{
+                          'paths': [{
+                              'path': 'firmware_from_source.tar.bz2'
+                          }],
+                      }],
+                  },
+              }, sort_keys=True)),
       api.post_process(
           post_process.MustRun,
           'upload artifacts.generate provenance.snoop: report_sbom'),
@@ -121,18 +133,104 @@ def GenTests(api):
   )
 
   yield api.test(
+      'firmware-tarball-requires-provenance',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.bundle IMAGE_ARCHIVES for upload',
+          'ArtifactsService/BundleImageArchives',
+          json.dumps({
+              'artifacts': [{
+                  'path': 'chromiumos_base_image.tar.xz',
+              }],
+          }, sort_keys=True)),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          json.dumps(
+              {
+                  'artifacts': {
+                      'artifacts': [{
+                          'artifact_type': 'FIRMWARE_TARBALL',
+                          'paths': [{
+                              'path': 'firmware_from_source.tar.bz2'
+                          }],
+                      }],
+                  },
+              }, sort_keys=True)),
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  MessageToDict(
+                      CrosArtifactsProperties(bcid_enforcement={
+                          'upload_artifact_prov_generation_fatal': True,
+                      })),
+          }),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_gcs'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.snoop: report_gcs', [
+              "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
+          ]),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_gcs (2)'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.snoop: report_gcs (2)', [
+              "gs://test-bucket/builder/R99-1234.56.0-101-/firmware_from_source.tar.bz2"
+          ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'image-archives-does-not-exist',
       api.properties(exclude_image_archives=True),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          json.dumps(
+              {
+                  'artifacts': {
+                      'artifacts': [{
+                          'artifact_type': 'FIRMWARE_TARBALL',
+                          'paths': [{
+                              'path': 'firmware_from_source.tar.bz2'
+                          }],
+                      }],
+                  },
+              }, sort_keys=True)),
       api.post_process(
-          post_process.DoesNotRun,
-          'upload artifacts.generate provenance.snoop: report_gcs'),
-      api.post_process(post_process.LogEquals, 'upload artifacts',
-                       'report_to_spike',
-                       'IMAGE_ARCHIVES not in files_by_artifact'),
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.snoop: report_gcs', [
+              "gs://test-bucket/builder/R99-1234.56.0-101-/firmware_from_source.tar.bz2"
+          ]),
+      api.post_process(
+          post_process.LogContains, 'upload artifacts', 'report_to_spike',
+          ['type IMAGE_ARCHIVES did not have any matching files.']),
   )
 
   yield api.test(
       'local-dlcs-with-failure-and-retry',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.bundle IMAGE_ARCHIVES for upload',
+          'ArtifactsService/BundleImageArchives',
+          json.dumps({
+              'artifacts': [{
+                  'path': 'chromiumos_base_image.tar.xz',
+              }],
+          }, sort_keys=True)),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          json.dumps(
+              {
+                  'artifacts': {
+                      'artifacts': [{
+                          'artifact_type': 'FIRMWARE_TARBALL',
+                          'paths': [{
+                              'path': 'firmware_from_source.tar.bz2'
+                          }],
+                      }],
+                  },
+              }, sort_keys=True)),
       api.step_data(
           'upload artifacts.Find DLCs.list local DLCs',
           api.file.listdir(['fake/dlc.img', 'fake2/dlc.img', 'fake3/dlc.img']),
@@ -148,10 +246,12 @@ def GenTests(api):
           'upload artifacts.generate provenance.snoop: report_gcs', [
               "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
           ]),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.snoop: report_gcs (2)', [
+              "gs://test-bucket/builder/R99-1234.56.0-101-/firmware_from_source.tar.bz2"
+          ]),
       # First DLC fails
-      api.override_step_data(
-          'upload artifacts.generate provenance.snoop: report_gcs (2)',
-          retcode=1),
       api.override_step_data(
           'upload artifacts.generate provenance.snoop: report_gcs (3)',
           retcode=1),
@@ -161,18 +261,21 @@ def GenTests(api):
       api.override_step_data(
           'upload artifacts.generate provenance.snoop: report_gcs (5)',
           retcode=1),
+      api.override_step_data(
+          'upload artifacts.generate provenance.snoop: report_gcs (6)',
+          retcode=1),
       api.post_process(
           post_process.StepCommandContains,
-          'upload artifacts.generate provenance.snoop: report_gcs (5)',
+          'upload artifacts.generate provenance.snoop: report_gcs (6)',
           ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"]),
       # Give up on DLC 1 and move onto DLC 2 & 3.
       api.post_process(
           post_process.StepCommandContains,
-          'upload artifacts.generate provenance.snoop: report_gcs (6)',
+          'upload artifacts.generate provenance.snoop: report_gcs (7)',
           ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"]),
       api.post_process(
           post_process.StepCommandContains,
-          'upload artifacts.generate provenance.snoop: report_gcs (7)',
+          'upload artifacts.generate provenance.snoop: report_gcs (8)',
           ["gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"]),
       status='SUCCESS')
 

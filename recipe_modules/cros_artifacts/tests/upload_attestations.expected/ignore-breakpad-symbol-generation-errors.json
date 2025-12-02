@@ -36,6 +36,10 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@report_to_spike@The following artifact types require provenance: IMAGE_ARCHIVES,FIRMWARE_TARBALL@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- chromiumos_base_image.tar.xz@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- from_source.tar.bz2@@@",
+      "@@@STEP_LOG_END@report_to_spike@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test-bucket/builder/R99-1234.56.0-101-@@@",
       "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-@@@"
     ]
@@ -1016,6 +1020,37 @@
       "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/from_source.tar.bz2"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.generate provenance.Compute file hash (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/from_source.tar.bz2"
+    ],
+    "name": "upload artifacts.generate provenance.snoop: report_gcs (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -36,6 +36,10 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@report_to_spike@The following artifact types require provenance: IMAGE_ARCHIVES,FIRMWARE_TARBALL@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- chromiumos_base_image.tar.xz@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- firmware_from_source.tar.bz2@@@",
+      "@@@STEP_LOG_END@report_to_spike@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test-bucket/builder/R99-1234.56.0-101-@@@",
       "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-@@@",
       "@@@STEP_FAILURE@@@"
@@ -149,31 +153,9 @@
       "@@@STEP_LOG_LINE@response@    \"artifacts\": [@@@",
       "@@@STEP_LOG_LINE@response@      {@@@",
       "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TARBALL\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/from_source.tar.bz2\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      },@@@",
-      "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TARBALL_INFO\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/fw_metadata.json\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      },@@@",
-      "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TOKEN_DATABASE\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/tokens.bin\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
@@ -334,7 +316,7 @@
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"artifacts\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"path\": \"[CLEANUP]/artifacts_tmp_1/artifact.tar.gz\"@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"chromiumos_base_image.tar.xz\"@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
       "@@@STEP_LOG_LINE@response@  ]@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
@@ -442,7 +424,7 @@
       "@@@STEP_LOG_LINE@published event@  \"bundleResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"artifacts\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/artifacts_tmp_1/artifact.tar.gz\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"chromiumos_base_image.tar.xz\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
@@ -456,7 +438,7 @@
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjItCisKKVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEvYXJ0aWZhY3QudGFyLmd62gJ+dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1BR0VfQVJDSElWRVMgZm9yIHVwbG9hZHxjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1bmRsZUltYWdlQXJjaGl2ZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjIgCh4KHGNocm9taXVtb3NfYmFzZV9pbWFnZS50YXIueHraAn51cGxvYWQgYXJ0aWZhY3RzfGJ1bmRsZSBJTUFHRV9BUkNISVZFUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VBcmNoaXZlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -602,7 +584,7 @@
     },
     "infra_step": true,
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjItCisKKVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEvYXJ0aWZhY3QudGFyLmd62gJ+dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1BR0VfQVJDSElWRVMgZm9yIHVwbG9hZHxjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1bmRsZUltYWdlQXJjaGl2ZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjIgCh4KHGNocm9taXVtb3NfYmFzZV9pbWFnZS50YXIueHraAn51cGxvYWQgYXJ0aWZhY3RzfGJ1bmRsZSBJTUFHRV9BUkNISVZFUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VBcmNoaXZlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1033,7 +1015,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/dlc/fake/dlc.img"
+      "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2"
     ],
     "infra_step": true,
     "name": "upload artifacts.generate provenance.Compute file hash (2)",
@@ -1049,12 +1031,28 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/firmware_from_source.tar.bz2"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (2)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/dlc/fake/dlc.img"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.generate provenance.Compute file hash (3)",
+    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
     ]
   },
   {
@@ -1104,6 +1102,21 @@
   },
   {
     "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
+    ],
+    "name": "upload artifacts.generate provenance.snoop: report_gcs (6)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -1111,37 +1124,6 @@
       "/path/to/tmp/json",
       "file_hash",
       "[CLEANUP]/artifacts_tmp_1/dlc/fake2/dlc.img"
-    ],
-    "infra_step": true,
-    "name": "upload artifacts.generate provenance.Compute file hash (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-gcs",
-      "-digest",
-      "deadbeef",
-      "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
-    ],
-    "name": "upload artifacts.generate provenance.snoop: report_gcs (6)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/dlc/fake3/dlc.img"
     ],
     "infra_step": true,
     "name": "upload artifacts.generate provenance.Compute file hash (4)",
@@ -1157,9 +1139,40 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (7)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/dlc/fake3/dlc.img"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.generate provenance.Compute file hash (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"
+    ],
+    "name": "upload artifacts.generate provenance.snoop: report_gcs (8)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1192,7 +1205,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"IMAGE_ARCHIVES\": [\"artifact.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../firmware_from_source.tar.bz2\"], \"IMAGE_ARCHIVES\": [\"../../chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
     ]
   },
   {

@@ -36,7 +36,9 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@report_to_spike@IMAGE_ARCHIVES not in files_by_artifact@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@The following artifact types require provenance: IMAGE_ARCHIVES,FIRMWARE_TARBALL@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- firmware_from_source.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- type IMAGE_ARCHIVES did not have any matching files.@@@",
       "@@@STEP_LOG_END@report_to_spike@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test-bucket/builder/R99-1234.56.0-101-@@@",
       "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-@@@"
@@ -150,31 +152,9 @@
       "@@@STEP_LOG_LINE@response@    \"artifacts\": [@@@",
       "@@@STEP_LOG_LINE@response@      {@@@",
       "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TARBALL\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/from_source.tar.bz2\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      },@@@",
-      "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TARBALL_INFO\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/fw_metadata.json\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      },@@@",
-      "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TOKEN_DATABASE\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/tokens.bin\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
@@ -627,6 +607,67 @@
   },
   {
     "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.generate provenance.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/reporter",
+      "-ensure-file",
+      "infra/tools/security/provenance_broker/${platform} git_revision:9022d7a188fb08ac5fce88b3bcaff5c9b1dbeee2",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.generate provenance.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-git_revision:902\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/security/provenance_broker/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/firmware_from_source.tar.bz2"
+    ],
+    "name": "upload artifacts.generate provenance.snoop: report_gcs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "python3",
       "-u",
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
@@ -653,7 +694,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../firmware_from_source.tar.bz2\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
     ]
   },
   {

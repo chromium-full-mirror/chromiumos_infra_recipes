@@ -65,6 +65,13 @@ _LEGACY_ENDPOINTS_BY_ARTIFACT = {
 # by input properties. The current default is to bundle artifacts one at a time.
 _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS = 1
 
+# The Artifact Types that will have provenance generated for them.
+_DEFAULT_ARTIFACT_TYPES_REQUIRING_PROVENANCE = [
+    BuilderConfig.Artifacts.ArtifactTypes.Name(
+        BuilderConfig.Artifacts.IMAGE_ARCHIVES),
+    BuilderConfig.Artifacts.ArtifactTypes.Name(
+        BuilderConfig.Artifacts.FIRMWARE_TARBALL),
+]
 
 class UploadedArtifacts(
     collections.namedtuple('UploadedArtifacts',
@@ -126,6 +133,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     self._timestamp_micros = int(time.time() * 1000)
     self._upload_artifact_prov_generation_fatal = (
         props.bcid_enforcement.upload_artifact_prov_generation_fatal or False)
+    self.artifact_types_requiring_prov_generation = _DEFAULT_ARTIFACT_TYPES_REQUIRING_PROVENANCE
 
   @property
   def timestamp_micros(self):
@@ -930,31 +938,28 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                       artifact_link=upload_uri)
 
       if report_to_spike and attestation_eligible:
-        image_archives = files_by_artifact.get('IMAGE_ARCHIVES', [])
-
         artifact_basenames = []
-        if image_archives:
-          artifact_basenames.extend(
-              [self.m.path.basename(i) for i in image_archives])
-          if self._test_data.enabled:
-            artifact_basenames.append('chromiumos_base_image.tar.xz')
-        else:
-          presentation.logs[
-              'report_to_spike'] = 'IMAGE_ARCHIVES not in files_by_artifact'
+        types_fulfilled = set()
+        for artifact_type in self.artifact_types_requiring_prov_generation:
+          files = files_by_artifact.get(artifact_type, [])
+          if files:
+            artifact_basenames.extend([self.m.path.basename(i) for i in files])
+            types_fulfilled.add(artifact_type)
 
-        # The artifact to generate provenance for.
-        # This list will be expanded as more artifacts are enrolled in
-        # provenance generation.
-        artifacts_to_report = [
-            ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_BASE],
-            ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_RECOVERY],
-            ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_TEST],
-        ]
+        presentation.logs['report_to_spike'] = (
+            'The following artifact types require provenance: ' +
+            ','.join(self.artifact_types_requiring_prov_generation) + '\n')
+
+        for basename in artifact_basenames:
+          presentation.logs['report_to_spike'] += f'- {basename}\n'
+
+        for artifact_type in self.artifact_types_requiring_prov_generation:
+          if artifact_type not in types_fulfilled:
+            presentation.logs[
+                'report_to_spike'] += f'- type {artifact_type} did not have any matching files.\n'
 
         paths_to_hash = {
-            self.m.path.join(outpath, i): i
-            for i in artifact_basenames
-            if i in artifacts_to_report
+            self.m.path.join(outpath, i): i for i in artifact_basenames
         }
 
         # Also generate provenance for all DLCs placed locally by BAPI.
@@ -969,6 +974,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
 
             try:
+              # Ensure that IMAGE_TYPE_BASE can always have an SBOM created if
+              # provided in tests. 'artifact.tar.gz' is the default value for
+              # IMAGE_TYPE_BASE returned by cros_build_api while in tests.
+              if self._test_data.enabled and artifact_sbom:
+                base_image_artifact = self.artifacts_by_image_type.get(
+                    common_pb2.IMAGE_TYPE_BASE)
+                if base_image_artifact in artifact_sbom:
+                  artifact_sbom['artifact.tar.gz'] = artifact_sbom[
+                      base_image_artifact]
               if basepath in (artifact_sbom or {}):
                 uploaded_sbom = artifact_sbom[basepath]
                 self.m.bcid_reporter.report_sbom(uploaded_sbom.digest,

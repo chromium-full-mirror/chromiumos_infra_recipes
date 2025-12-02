@@ -10335,6 +10335,10 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@report_to_spike@The following artifact types require provenance: IMAGE_ARCHIVES,FIRMWARE_TARBALL@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- artifact.tar.gz@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- type FIRMWARE_TARBALL did not have any matching files.@@@",
+      "@@@STEP_LOG_END@report_to_spike@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184@@@",
       "@@@STEP_LINK@gs publish dir: AUTOTEST_FILES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: DEBUG_SYMBOLS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-release/R99-1234.56.0-101@@@",
@@ -12912,7 +12916,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz"
+      "[CLEANUP]/artifacts_tmp_1/artifact.tar.gz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -12976,7 +12980,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/chromiumos_base_image.tar.xz"
+      "gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/artifact.tar.gz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
