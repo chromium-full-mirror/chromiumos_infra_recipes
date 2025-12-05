@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.paygen_orchestration.tests;
+package recipe_modules.chromeos.paygen_orchestration.tests.tests;
 
 import "recipes/chromeos/paygen.proto";
 

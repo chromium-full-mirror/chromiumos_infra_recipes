@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.util.tests;
+package recipe_modules.chromeos.util.tests.tests;
 
 message ProtoPathToRecipesPathProperties {
   // The path to use in the input proto path.

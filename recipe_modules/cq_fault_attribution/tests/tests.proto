@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cq_fault_attribution.tests;
+package recipe_modules.chromeos.cq_fault_attribution.tests.tests;
 
 message DisabledFaultAttributionProperties {
   reserved 2;
