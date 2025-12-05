@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_test_proctor.tests;
+package recipe_modules.chromeos.cros_test_proctor.tests.schedule_tests;
 
 message ScheduleTestsProperties {
   repeated string passed_tests = 1;

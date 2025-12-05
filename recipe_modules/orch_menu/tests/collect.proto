@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.orch_menu.tests;
+package recipe_modules.chromeos.orch_menu.tests.collect;
 
 import "chromiumos/builder_config.proto";
 import "chromiumos/common.proto";

@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.orch_menu.examples;
+package recipe_modules.chromeos.orch_menu.examples.aggregate_metadata;
 
 message AggregateProperties {
   repeated int64 skip_builds = 1;       // Builds to skip gathering metadata

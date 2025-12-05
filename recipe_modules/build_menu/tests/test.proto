@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.build_menu.tests;
+package recipe_modules.chromeos.build_menu.tests.test;
 
 import "go.chromium.org/luci/resultdb/proto/v1/invocation.proto";
 

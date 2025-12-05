@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.looks_for_green.tests;
+package recipe_modules.chromeos.looks_for_green.tests.test;
 
 message CalcApproxSnapAgeHoursProperties {
   int32 expected_approx_snap_age_hours = 1;

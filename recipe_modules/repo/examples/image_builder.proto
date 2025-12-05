@@ -4,15 +4,15 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.repo.examples;
+package recipe_modules.chromeos.repo.examples.image_builder;
 import "recipe_modules/chromeos/repo/examples/common.proto";
 
 message ImageBuilderProperties {
   // The args for repo init.
-  InitOpts init_opts = 1;
+  common.InitOpts init_opts = 1;
 
   // The args for repo sync.
-  SyncOpts sync_opts = 2;
+  common.SyncOpts sync_opts = 2;
 
   // The data to use as the final manifest data, if any.
   string manifest_data = 3;

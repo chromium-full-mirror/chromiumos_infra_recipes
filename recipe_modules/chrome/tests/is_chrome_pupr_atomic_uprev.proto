@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.chrome.tests;
+package recipe_modules.chromeos.chrome.tests.is_chrome_pupr_atomic_uprev;
 
 message IsChromePuprAtomicUprevProperties {
   // Expected return value from is_chrome_pupr_atomic_uprev().

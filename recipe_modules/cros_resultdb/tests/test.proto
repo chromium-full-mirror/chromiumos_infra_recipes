@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_resultdb.tests;
+package recipe_modules.chromeos.cros_resultdb.tests.test;
 
 import "test_platform/request.proto";
 

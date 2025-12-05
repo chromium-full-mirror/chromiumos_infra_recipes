@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.lfg_util.examples;
+package recipe_modules.chromeos.lfg_util.examples.test;
 
 message CQDependsIncludedProperties {
   repeated int32 expected_result = 1;

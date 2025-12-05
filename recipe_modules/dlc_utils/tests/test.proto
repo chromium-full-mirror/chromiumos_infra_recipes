@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.dlc_utils.tests;
+package recipe_modules.chromeos.dlc_utils.tests.test;
 
 message DlcUtilsTestProperties {
 

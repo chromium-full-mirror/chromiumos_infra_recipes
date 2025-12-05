@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.recipe_analyze.tests;
+package recipe_modules.chromeos.recipe_analyze.tests.is_recipe_affected;
 
 message IsRecipeAffectedProperties {
   // The `affected_files` input to enter into is_recipe_affected().

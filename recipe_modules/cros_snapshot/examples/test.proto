@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_snapshot.examples;
+package recipe_modules.chromeos.cros_snapshot.examples.test;
 
 message TestInputProperties {
   // Expected snapshot identifier

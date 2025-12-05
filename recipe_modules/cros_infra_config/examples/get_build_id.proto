@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_infra_config.examples;
+package recipe_modules.chromeos.cros_infra_config.examples.get_build_id;
 
 message GetBuildIdProperties {
   // Expected build id.

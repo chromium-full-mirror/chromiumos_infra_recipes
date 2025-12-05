@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.gobin.examples;
+package recipe_modules.chromeos.gobin.examples.get_latest_pin_value;
 
 message GetLatestPinValueProperties {
   // Expected pin value.

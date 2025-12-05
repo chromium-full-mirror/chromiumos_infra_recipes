@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_debug.tests;
+package recipe_modules.chromeos.cros_debug.tests.pause_and_wait_for_signal;
 
 message PauseAndWaitForSignalProperties {
   bool exists = 1;

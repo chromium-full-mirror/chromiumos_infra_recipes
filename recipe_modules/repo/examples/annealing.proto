@@ -4,15 +4,15 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.repo.examples;
+package recipe_modules.chromeos.repo.examples.annealing;
 import "recipe_modules/chromeos/repo/examples/common.proto";
 
 message AnnealingProperties {
   // The args for repo init.
-  InitOpts init_opts = 1;
+  common.InitOpts init_opts = 1;
 
   // The args for repo sync.
-  SyncOpts sync_opts = 2;
+  common.SyncOpts sync_opts = 2;
 
   // The manifest_ref.  This is required for annealing tests, and
   // empty for builder tests.
@@ -28,7 +28,7 @@ message AnnealingProperties {
   string from_manifest_data = 6;
 
   // The expected manifest diffs, if any.
-  repeated ManifestDiff expected_manifest_diffs = 7;
+  repeated common.ManifestDiff expected_manifest_diffs = 7;
 
   // projects (List[str]): Projects of concern or None if all projects are of
   // concern. Used to limit work where possible such as only clearing git

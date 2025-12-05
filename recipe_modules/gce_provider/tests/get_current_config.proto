@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.gce_provider.tests;
+package recipe_modules.chromeos.gce_provider.tests.get_current_config;
 
 message GetCurrentConfigProperties {
   // The prefix to search for.

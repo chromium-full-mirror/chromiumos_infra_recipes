@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.snapshot_orch_menu.tests;
+package recipe_modules.chromeos.snapshot_orch_menu.tests.should_generate_lkgm_cl;
 
 message ShouldGenerateLkgmClProperties {
   bool expected_result = 1;

@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.metadata_json.examples;
+package recipe_modules.chromeos.metadata_json.examples.test;
 
 import "go.chromium.org/luci/resultdb/proto/v1/invocation.proto";
 

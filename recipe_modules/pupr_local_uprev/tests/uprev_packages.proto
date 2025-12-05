@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.pupr_local_uprev.tests;
+package recipe_modules.chromeos.pupr_local_uprev.tests.uprev_packages;
 
 message UprevPackagesProperties {
   string additional_commit_message = 1;

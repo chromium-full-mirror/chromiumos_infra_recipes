@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_source.tests;
+package recipe_modules.chromeos.cros_source.tests.mismatch_args;
 
 message MismatchArgsProperties {
   // The manifest URL to pass

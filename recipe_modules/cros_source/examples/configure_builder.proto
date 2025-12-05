@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_source.examples;
+package recipe_modules.chromeos.cros_source.examples.configure_builder;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 

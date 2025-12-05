@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_artifacts.tests;
+package recipe_modules.chromeos.cros_artifacts.tests.artifacts_gs_path;
 
 import "chromiumos/builder_config.proto";
 

@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.gerrit.examples;
+package recipe_modules.chromeos.gerrit.examples.get_change_mergeable;
 
 message GetChangeMergeableProperties {
   // Whether the change is mergeable.

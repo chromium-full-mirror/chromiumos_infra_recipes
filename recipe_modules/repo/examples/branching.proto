@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.repo.examples;
+package recipe_modules.chromeos.repo.examples.branching;
 import "recipe_modules/chromeos/repo/examples/common.proto";
 
 message BranchProjects {
@@ -28,7 +28,7 @@ message BranchingProperties {
   string manifest_data = 2;
 
   // Args for sync.
-  SyncOpts sync_opts = 3;
+  common.SyncOpts sync_opts = 3;
 
   // Args for start.
   BranchProjects start_args = 4;

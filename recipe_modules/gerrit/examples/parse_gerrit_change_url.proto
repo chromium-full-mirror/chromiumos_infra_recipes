@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.gerrit.examples;
+package recipe_modules.chromeos.gerrit.examples.parse_gerrit_change_url;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 

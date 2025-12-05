@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_infra_config.tests;
+package recipe_modules.chromeos.cros_infra_config.tests.test;
 
 message TestInputProperties {
   // How many gerrit_changes are expected in the cooked config?

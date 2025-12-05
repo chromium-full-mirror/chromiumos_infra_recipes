@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.git_cl.examples;
+package recipe_modules.chromeos.git_cl.examples.upload;
 
 message UploadProperties {
   // Expected command output

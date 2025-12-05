@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_source.examples;
+package recipe_modules.chromeos.cros_source.examples.full;
 
 message FullProperties {
   string expected_snapshot_cas_digest = 1;

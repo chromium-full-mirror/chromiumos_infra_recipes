@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_build_api.examples;
+package recipe_modules.chromeos.cros_build_api.examples.set_api_return;
 
 message SetReturnProperties {
   // Expect an assertion.

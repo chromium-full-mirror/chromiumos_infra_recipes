@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_artifacts.tests;
+package recipe_modules.chromeos.cros_artifacts.tests.upload_attestations;
 
 message UploadAttestationsProperties {
   // Whether to define the artifact_info with no IMAGE_ARCHIVES type.

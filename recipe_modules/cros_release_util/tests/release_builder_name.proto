@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_release_util.tests;
+package recipe_modules.chromeos.cros_release_util.tests.release_builder_name;
 
 message ReleaseBuilderNameProperties {
   // Name of the build target.

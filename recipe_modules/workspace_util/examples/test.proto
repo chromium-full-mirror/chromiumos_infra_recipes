@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.workspace_util.examples;
+package recipe_modules.chromeos.workspace_util.examples.test;
 
 import "chromiumos/common.proto";
 

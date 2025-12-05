@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_source.examples;
+package recipe_modules.chromeos.cros_source.examples.sync_cache;
 
 message SyncCacheProperties {
   // The manifest URL to pass

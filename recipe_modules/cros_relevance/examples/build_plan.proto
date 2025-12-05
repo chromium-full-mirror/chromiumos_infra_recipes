@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_relevance.examples;
+package recipe_modules.chromeos.cros_relevance.examples.build_plan;
 
 import "chromiumos/builder_config.proto";
 

@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_prebuilts.examples;
+package recipe_modules.chromeos.cros_prebuilts.examples.full;
 
 import "chromiumos/common.proto";
 import "chromite/api/sysroot.proto";

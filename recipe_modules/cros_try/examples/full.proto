@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_try.examples;
+package recipe_modules.chromeos.cros_try.examples.full;
 
 message TestProperties {
   // Expected tryjb invoker.

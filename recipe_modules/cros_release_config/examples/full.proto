@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_release_config.examples;
+package recipe_modules.chromeos.cros_release_config.examples.full;
 
 message TestProperties {
   // Branch name to use.

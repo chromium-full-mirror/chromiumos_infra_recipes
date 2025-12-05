@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.bot_scaling.examples;
+package recipe_modules.chromeos.bot_scaling.examples.drop_cpus;
 
 // See drop_cpu_cores function definition for documentation.
 message BotDropProperties {

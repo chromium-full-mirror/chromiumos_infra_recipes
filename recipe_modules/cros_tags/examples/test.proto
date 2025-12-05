@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_tags.examples;
+package recipe_modules.chromeos.cros_tags.examples.test;
 
 message TestInputProperties {
   // What cq_equivialent_cl_group should this be in.

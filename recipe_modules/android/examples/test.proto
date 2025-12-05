@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.android.examples;
+package recipe_modules.chromeos.android.examples.test;
 
 message TestProperties {
   // Whether the patchsets cause an uprev.
