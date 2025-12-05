@@ -3243,7 +3243,8 @@
     },
     "name": "upreving pin for branch main.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

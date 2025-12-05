@@ -1376,7 +1376,8 @@
     },
     "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

@@ -2998,7 +2998,8 @@
     },
     "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -3866,7 +3867,8 @@
     },
     "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

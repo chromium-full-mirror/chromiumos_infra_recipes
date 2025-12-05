@@ -512,7 +512,8 @@
     },
     "name": "create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

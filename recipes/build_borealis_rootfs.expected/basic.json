@@ -2364,7 +2364,8 @@
     },
     "name": "update VERSION-PIN.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

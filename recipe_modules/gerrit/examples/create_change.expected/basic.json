@@ -85,7 +85,8 @@
     },
     "name": "create gerrit change for project.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -193,7 +194,8 @@
     },
     "name": "create gerrit change for bar.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -341,7 +343,8 @@
     },
     "name": "create gerrit change for baz.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

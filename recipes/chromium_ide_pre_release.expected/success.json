@@ -2349,7 +2349,8 @@
     },
     "name": "create gerrit change for chromiumos/infra/ide.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

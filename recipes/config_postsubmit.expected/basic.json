@@ -2288,7 +2288,8 @@
     },
     "name": "Do replicate_public_config and create CL.create CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/project_public.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -3281,7 +3282,8 @@
     },
     "name": "Do update_android_config and create CL.create CL.create gerrit change for device/google/desktop/example_program.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

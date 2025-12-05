@@ -2728,7 +2728,8 @@
     },
     "name": "commit changes.chromeos/infra/config.committing to chromeos/infra/config.create gerrit change for chromeos/infra/config.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -3190,7 +3191,8 @@
     },
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.create gerrit change for chromeos/config-internal.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

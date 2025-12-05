@@ -1454,7 +1454,8 @@
     },
     "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -2160,7 +2161,8 @@
     },
     "name": "create buildspec.commit buildspec as snapshot.commit to staging-buildspec-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -2915,7 +2917,8 @@
     },
     "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -3621,7 +3624,8 @@
     },
     "name": "create buildspec (2).commit buildspec as snapshot.commit to staging-buildspec-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -4569,7 +4573,8 @@
     },
     "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -5275,7 +5280,8 @@
     },
     "name": "create buildspec (3).commit buildspec as snapshot.commit to staging-buildspec-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -6096,7 +6102,8 @@
     },
     "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -6802,7 +6809,8 @@
     },
     "name": "create buildspec (4).commit buildspec as snapshot.commit to staging-buildspec-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

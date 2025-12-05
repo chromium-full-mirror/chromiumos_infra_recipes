@@ -2489,7 +2489,8 @@
     },
     "name": "upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

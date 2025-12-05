@@ -2468,7 +2468,8 @@
     },
     "name": "Uprev Suite.upload cl to gerrit.create gerrit change for chromiumos/config.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

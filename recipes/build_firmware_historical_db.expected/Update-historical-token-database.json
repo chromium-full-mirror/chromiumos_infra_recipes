@@ -4922,7 +4922,8 @@
     },
     "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

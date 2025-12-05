@@ -3932,7 +3932,8 @@
     },
     "name": "generate project change lists.working on project c.create gerrit change for [CLEANUP]/chromiumos_workspace/src/c.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -4281,7 +4282,8 @@
     },
     "name": "generate project change lists.working on project d.create gerrit change for [CLEANUP]/chromiumos_workspace/src/d.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

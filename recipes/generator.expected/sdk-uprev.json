@@ -2542,7 +2542,8 @@
     },
     "name": "generate CLs.create gerrit change for src/third_paty/chromiumos-overlay.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -2657,7 +2658,8 @@
     },
     "name": "generate CLs.create gerrit change for src/overlays.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

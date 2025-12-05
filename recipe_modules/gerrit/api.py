@@ -693,7 +693,8 @@ class GerritApi(RecipeApi):
 
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
                              hashtags=hashtags, send_mail=True,
-                             target_branch=ref, use_local_diff=use_local_diff)
+                             target_branch=ref, use_local_diff=use_local_diff,
+                             add_output_log=True)
         issue = None
         if ref:
           # Try to find the issue number for the appropriate branch, which

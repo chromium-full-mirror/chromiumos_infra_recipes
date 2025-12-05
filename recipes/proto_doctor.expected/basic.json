@@ -1512,7 +1512,8 @@
     },
     "name": "process branch main.compile chromite protos.create gerrit change for [CLEANUP]/chromiumos_workspace/chromite.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -2726,7 +2727,8 @@
     },
     "name": "process branch release-R100-14526.B.compile chromite protos.create gerrit change for [CLEANUP]/chromiumos_workspace/chromite.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
