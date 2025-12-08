@@ -30,6 +30,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/archive',
+    'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/cv',
@@ -213,7 +214,9 @@ def get_keyset_is_mp(response: SignImageResponse) -> bool:
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
   with api.mutable_output.wrap():
     with api.cros_source.checkout_overlays_context():
+      api.bcid_reporter.report_stage('start')
       api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
+      api.bcid_reporter.report_stage('fetch')
       api.cros_source.ensure_synced_cache()
       fw_config_path = api.src_state.workspace_path / 'firmware-config'
       with api.step.nest('clone firmware-config'):
@@ -284,6 +287,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
           latest_filename='LATEST-SHELLBALL')
       api.signing_utils.custom_artifact_version = new_shellball_version
 
+      api.bcid_reporter.report_stage('upload')
+
       # Sign shellball.
       if api._test_data.enabled:  # pylint: disable=protected-access
         api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
@@ -304,13 +309,16 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
           new_shellball_version, latest_filename='LATEST-SHELLBALL')
 
       # Open a cl with the new firmware prebuilts.
-      return upload_firmware_prebuilts(api, output_artifact_shellball,
-                                       shellball_path, output_artifact_eccm_zip,
-                                       api.build_menu.build_target.name,
-                                       new_shellball_version,
-                                       get_keyset_is_mp(signed_image_response),
-                                       fw_config_path,
-                                       abandon=api.cros_infra_config.is_staging)
+      res = upload_firmware_prebuilts(api, output_artifact_shellball,
+                                      shellball_path, output_artifact_eccm_zip,
+                                      api.build_menu.build_target.name,
+                                      new_shellball_version,
+                                      get_keyset_is_mp(signed_image_response),
+                                      fw_config_path,
+                                      abandon=api.cros_infra_config.is_staging)
+
+      api.bcid_reporter.report_stage('upload-complete')
+      return res
 
 
 # Sample SignImageResponse for testing.
@@ -388,6 +396,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'create symlink (2)'),
       api.post_check(post_process.MustRun, 'git commit'),
       api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
+      api.post_check(post_process.MustRun, 'snoop: report_stage'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='firmware-packager-android-kukui-main',
