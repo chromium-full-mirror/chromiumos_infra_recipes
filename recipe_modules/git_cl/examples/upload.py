@@ -31,7 +31,8 @@ def RunSteps(api: RecipeApi, properties: UploadProperties) -> None:
                              send_mail=True, target_branch='HEAD', dry_run=True,
                              use_local_diff=properties.use_local_diff,
                              title=properties.title,
-                             description=properties.description)
+                             description=properties.description,
+                             upload_options=properties.upload_options)
   api.assertions.assertEqual(output, properties.expected_output)
 
 
@@ -58,5 +59,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.git_cl.output('git_cl upload', 'success'),
       api.post_check(post_process.StepCommandContains, 'git_cl upload',
                      ['--title', 'the second patchset']),
+      api.post_process(post_process.DropExpectation),
+  )
+  yield api.test(
+      'upload-options',
+      api.properties(
+          UploadProperties(use_local_diff=True, expected_output=b'success',
+                           upload_options=['banned-words~skip'])),
+      api.git_cl.output('git_cl upload', 'success'),
+      api.post_check(post_process.StepCommandContains, 'git_cl upload',
+                     ['-o', 'banned-words~skip']),
       api.post_process(post_process.DropExpectation),
   )

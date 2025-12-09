@@ -46,7 +46,8 @@ class GitClApi(recipe_api.RecipeApi):
              hashtags: Optional[List[str]] = None, send_mail: bool = False,
              target_branch: Optional[str] = None, dry_run: bool = False,
              use_local_diff: bool = False, title: Optional[str] = None,
-             description: Optional[str] = None, **kwargs) -> str:
+             description: Optional[str] = None,
+             upload_options: Optional[List[str]] = None, **kwargs) -> str:
     """Run `git cl upload`.
 
     --force and --bypass-hooks are always set to remove the need to enter
@@ -66,11 +67,17 @@ class GitClApi(recipe_api.RecipeApi):
         instead of diff taken against tip-of-branch.
       title: Title for patchset. (-m)
       description: commit description for patchset. + for from log.
+      upload_options: additional options passed with -o.
 
     Returns:
       The command output.
     """
     args = ['--bypass-hooks', '--force']
+
+    if upload_options is not None:
+      for option in upload_options:
+        args.append('-o')
+        args.append(option)
 
     if topic is not None:
       args.append('--topic')

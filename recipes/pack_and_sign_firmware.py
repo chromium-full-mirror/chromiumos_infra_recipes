@@ -184,12 +184,13 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
     commit_msg, ccs = craft_commit_message(api, version, bbid, target,
                                            fw_config_path)
     api.git.commit(commit_msg)
+    # TODO: b/466455984 - Remove skip when no longer needed.
     change = api.gerrit.create_change(
         f'/device/google/desktop/{target}-prebuilts/',
         ref=api.git.get_branch_ref('main'), project_path=checkout,
         reviewers=CL_REVIEWERS if not api.cros_infra_config.is_staging else [],
         ccs=ccs if not api.cros_infra_config.is_staging else [],
-        non_repo_checkout=True)
+        non_repo_checkout=True, upload_options=['banned-words~skip'])
     if abandon:
       api.gerrit.abandon_change(change)
     return result_pb2.RawResult(

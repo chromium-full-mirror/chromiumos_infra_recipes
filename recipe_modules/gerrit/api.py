@@ -631,7 +631,8 @@ class GerritApi(RecipeApi):
                     topic: Optional[str] = None, ref: Optional[str] = None,
                     hashtags: Optional[List[str]] = None,
                     project_path: Path = None, use_local_diff: bool = False,
-                    non_repo_checkout: bool = False) -> GerritChange:
+                    non_repo_checkout: bool = False,
+                    upload_options: Optional[List[str]] = None) -> GerritChange:
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
@@ -652,6 +653,7 @@ class GerritApi(RecipeApi):
       non_repo_checkout: If true, means that the checkout described by
         `project_path` is not within a repo checkout (and thus the method
         will skip `repo` calls used to gather optional information).
+      upload_options: Additional options for git cl upload.
 
     Returns:
       The newly created change.
@@ -694,7 +696,7 @@ class GerritApi(RecipeApi):
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
                              hashtags=hashtags, send_mail=True,
                              target_branch=ref, use_local_diff=use_local_diff,
-                             add_output_log=True)
+                             upload_options=upload_options, add_output_log=True)
         issue = None
         if ref:
           # Try to find the issue number for the appropriate branch, which

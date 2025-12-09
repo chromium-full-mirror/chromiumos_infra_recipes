@@ -15,4 +15,6 @@ message UploadProperties {
   string title = 3;
   // Commit description for the patchset.
   string description = 4;
+  // Upload options for git cl upload.
+  repeated string upload_options = 5;
 }
