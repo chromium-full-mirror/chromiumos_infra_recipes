@@ -949,6 +949,24 @@
   },
   {
     "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket/spdx.json",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz.spdx.json"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.generate provenance.gsutil copy SBOM to match artifact name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "cipd",
       "ensure",
       "-root",
@@ -984,7 +1002,7 @@
       "-digest",
       "decacafe",
       "-gcs-uri",
-      "gs://bucket/spdx.json",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz.spdx.json",
       "-sbom-subject",
       "deadbeef"
     ],

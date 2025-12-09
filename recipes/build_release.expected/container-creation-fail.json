@@ -13129,12 +13129,46 @@
   },
   {
     "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/baseline-sbom.spdx.json",
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/artifact.tar.gz.spdx.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.gsutil copy SBOM to match artifact name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-gcs",
       "-digest",
       "{\"SPDXID\": \"Test-Document\"}",
       "-gcs-uri",
-      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/baseline-sbom.spdx.json",
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/artifact.tar.gz.spdx.json",
       "-sbom-subject",
       "deadbeef"
     ],

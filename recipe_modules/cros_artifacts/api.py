@@ -983,15 +983,30 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                 if base_image_artifact in artifact_sbom:
                   artifact_sbom['artifact.tar.gz'] = artifact_sbom[
                       base_image_artifact]
+
+              artifact_gs_url = '{uri}/{item}'.format(uri=upload_uri,
+                                                      item=basepath)
               if basepath in (artifact_sbom or {}):
                 uploaded_sbom = artifact_sbom[basepath]
+                artifact_sbom_gs_url = f'{artifact_gs_url}.spdx.json'
+                # BCID verifier writes an attestation envelope matching the
+                # SBOM gs:// URL for each report_sbom invocation.
+                #
+                # Calling report_sbom multiple times with the same SBOM URL
+                # causes the BCID verifier to overwrite the previous envelope.
+                #
+                # For security reasons, we don't allow overwriting in the
+                # artifact bucket, so we copy the "original" SBOM to achieve a
+                # 1:1:1 relationship of artifact:sbom_url:envelope.
+                self.m.gsutil(
+                    ['cp', uploaded_sbom.gs_url, artifact_sbom_gs_url],
+                    name="copy SBOM to match artifact name",
+                )
                 self.m.bcid_reporter.report_sbom(uploaded_sbom.digest,
-                                                 uploaded_sbom.gs_url,
+                                                 artifact_sbom_gs_url,
                                                  sbom_subjects=[file_hash])
 
-              self.m.bcid_reporter.report_gcs(
-                  file_hash, '{uri}/{item}'.format(uri=upload_uri,
-                                                   item=basepath))
+              self.m.bcid_reporter.report_gcs(file_hash, artifact_gs_url)
             except recipe_api.StepFailure as exp:
               prov_gen.status = self.m.step.FAILURE
               prov_gen.step_summary_text = 'Unable to generate all BCID provenance'
