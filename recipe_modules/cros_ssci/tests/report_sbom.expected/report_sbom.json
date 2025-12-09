@@ -435,7 +435,7 @@
     "name": "generate and report SBOM.Compute file hash",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Hash calculated: {\"SPDXID\": \"Test-Document\"}@@@"
+      "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
     ]
   },
   {

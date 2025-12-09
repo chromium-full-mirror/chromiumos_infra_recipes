@@ -15,6 +15,8 @@ from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
+from RECIPE_MODULES.chromeos.cros_ssci.api import UploadedSBOM
+from RECIPE_MODULES.chromeos.cros_artifacts.api import ARTIFACTS_BY_IMAGE_TYPE
 
 DEPS = [
     'recipe_engine/assertions',
@@ -22,8 +24,10 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'build_menu',
+    'cros_artifacts',
     'cros_build_api',
     'cros_infra_config',
+    'cros_ssci',
     'mutable_output',
     'signing',
 ]
@@ -42,25 +46,30 @@ def RunSteps(api: RecipeApi):
     # Call signing.
     api.signing.sign_artifacts(
         sign_types=sign_types, channels=channels,
-        attestation_eligible=api.properties['attestation_eligible'])
+        attestation_eligible=api.properties['attestation_eligible'],
+        artifact_sbom={
+            ARTIFACTS_BY_IMAGE_TYPE[IMAGE_TYPE_RECOVERY]:
+                UploadedSBOM(digest="decacafe",
+                             gs_url="gs://sbom-bucket/sbom.json"),
+        })
 
 
 def GenTests(api: RecipeTestApi):
   sample_response = SignImageResponse(
-      output_archive_dir='/archive_dir/',
-      signed_artifacts=signing_pb2.BuildTargetSignedArtifacts(
-          archive_artifacts=[
-              signing_pb2.ArchiveArtifacts(
-                  build_target='kukui',
-                  channel=CHANNEL_CANARY,
-                  signed_artifacts=[
-                      signing_pb2.SignedArtifact(
-                          signed_artifact_name='chromeos-firmwareupdate',
-                      ),
-                  ],
-                  signing_status=PASSED,
-              ),
-          ]))
+      output_archive_dir='/archive_dir/', signed_artifacts=signing_pb2
+      .BuildTargetSignedArtifacts(archive_artifacts=[
+          signing_pb2.ArchiveArtifacts(
+              build_target='kukui',
+              channel=CHANNEL_CANARY,
+              input_archive_name=ARTIFACTS_BY_IMAGE_TYPE[IMAGE_TYPE_RECOVERY],
+              signed_artifacts=[
+                  signing_pb2.SignedArtifact(
+                      signed_artifact_name='chromeos-firmwareupdate',
+                  ),
+              ],
+              signing_status=PASSED,
+          ),
+      ]))
 
   yield api.build_menu.test(
       'no-bcid-steps', api.properties(attestation_eligible=False),
@@ -112,6 +121,8 @@ def GenTests(api: RecipeTestApi):
       api.cros_build_api.set_api_return('sign artifacts.call BAPI',
                                         'ImageService/SignImage',
                                         MessageToJson(sample_response)),
+      api.post_check(post_process.MustRun,
+                     'sign artifacts.match signed artifacts to SBOM'),
       api.post_check(
           post_process.MustRun,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY'
@@ -135,6 +146,14 @@ def GenTests(api: RecipeTestApi):
               "-attestation-path",
               "[CLEANUP]/signing-dir_tmp_1/recovery_image.tar.xz.intoto.jsonl",
               "verification-mode", "VERIFY_FOR_ENFORCEMENT"
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.snoop: report_sbom',
+          [
+              '-report-gcs', '-digest', 'decacafe', '-gcs-uri',
+              'gs://chromeos-releases/canary-channel/kukui/1234.56.0/chromeos-firmwareupdate.spdx.json',
+              '-sbom-subject', 'deadbeef'
           ]),
       api.post_check(
           post_process.StepCommandContains,

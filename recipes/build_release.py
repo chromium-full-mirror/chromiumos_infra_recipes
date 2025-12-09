@@ -187,6 +187,8 @@ def DoRunSteps(api, config, properties):
                     baseline_sbom,
                 ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_RECOVERY]:
                     baseline_sbom,
+                ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_FACTORY]:
+                    baseline_sbom,
                 ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_TEST]:
                     baseline_sbom,
             })
@@ -293,7 +295,7 @@ def DoRunSteps(api, config, properties):
     signed_image_response = api.signing.sign_artifacts(
         sign_types=release_sign_types, channels=channels,
         attestation_eligible=api.cros_infra_config.config.artifacts
-        .attestation_eligible)
+        .attestation_eligible, artifact_sbom=artifact_sbom)
     if signed_image_response:
       signed_build_list = api.signing_utils.signing_response_to_metadata(
           signed_image_response)

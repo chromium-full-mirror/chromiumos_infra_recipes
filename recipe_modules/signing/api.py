@@ -30,6 +30,7 @@ from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import StepFailure
 
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
+from RECIPE_MODULES.chromeos.cros_ssci.api import UploadedSBOM
 
 BuildConfig = BuildReport.BuildConfig
 
@@ -653,6 +654,7 @@ class SigningApi(recipe_api.RecipeApi):
       local_artifact_dir: Optional[Path] = None,
       upload_unsigned: Optional[bool] = True,
       attestation_eligible: bool = False,
+      artifact_sbom: dict[str, UploadedSBOM] = None,
   ) -> SignImageResponse:
     """Implementation for local signing flow.
 
@@ -712,7 +714,8 @@ class SigningApi(recipe_api.RecipeApi):
 
       return self.signing_operation(config, archive_dir, local_artifact_dir,
                                     attestation_eligible,
-                                    failed_unsigned_verifications)
+                                    failed_unsigned_verifications,
+                                    artifact_sbom)
 
 
   @contextlib.contextmanager
@@ -755,11 +758,16 @@ class SigningApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def signing_operation(
-      self, config: BuildTargetSigningConfigs, archive_dir: Path = None,
+      self,
+      config: BuildTargetSigningConfigs,
+      archive_dir: Path = None,
       local_artifact_dir: Optional[Path] = None,
       attestation_eligible: bool = False,
-      failed_unsigned_verifications: Optional[set] = None) -> SignImageResponse:
+      failed_unsigned_verifications: Optional[set] = None,
+      artifact_sbom: dict[str, UploadedSBOM] = None,
+  ) -> SignImageResponse:
     """Do an explicit signing operation on a provided signing config."""
+    artifact_sbom = artifact_sbom or {}
     with self.docker_setup():
       if not archive_dir:
         archive_dir = self.m.path.mkdtemp('signing-dir')
@@ -793,8 +801,21 @@ class SigningApi(recipe_api.RecipeApi):
             if archive.signing_status != PASSED:
               presentation.status = self.m.step.FAILURE
 
+      # Match signed image to its SBOM based on input_archive_name.
+      release_sbom = {}
+      if attestation_eligible:
+        with self.m.step.nest('match signed artifacts to SBOM') as presentation:
+          for release_artifact in response.signed_artifacts.archive_artifacts:
+            input_artifact_name = release_artifact.input_archive_name
+            if sbom := artifact_sbom.get(input_artifact_name, None):
+              for signed in release_artifact.signed_artifacts:
+                release_sbom.update({signed.signed_artifact_name: sbom})
+          presentation.step_summary_text = '\n'.join(
+              f"- {artifact_name}: {sbom.gs_url} ({sbom.digest})"
+              for artifact_name, sbom in release_sbom.items())
+
       self.upload_signed_artifacts(response, attestation_eligible,
-                                   failed_unsigned_verifications)
+                                   failed_unsigned_verifications, release_sbom)
 
     return response
 
@@ -981,7 +1002,8 @@ class SigningApi(recipe_api.RecipeApi):
 
   def upload_signed_artifacts(
       self, response: SignImageResponse, attestation_eligible: bool,
-      failed_unsigned_artifact_verification: Optional[set] = None) -> None:
+      failed_unsigned_artifact_verification: Optional[set] = None,
+      release_sbom: dict[str, UploadedSBOM] = None) -> None:
     """Uploads all files in output_dir to GS using gsutil cp."""
     if not failed_unsigned_artifact_verification:
       failed_unsigned_artifact_verification = set()
@@ -1054,6 +1076,14 @@ class SigningApi(recipe_api.RecipeApi):
                 try:
                   artifact_hash = self.m.file.file_hash(local_artifact_path,
                                                         test_data='deadbeef')
+                  if sbom := (release_sbom or {}).get(artifact, None):
+                    # Copy SBOM to match artifact name.
+                    artifact_sbom_url = f"{gs_artifact_path}.spdx.json"
+                    self.m.gsutil(["cp", sbom.gs_url, artifact_sbom_url],
+                                  name="copy SBOM to match artifact name")
+                    self.m.bcid_reporter.report_sbom(
+                        sbom.digest, artifact_sbom_url,
+                        sbom_subjects=[artifact_hash])
                   self.m.bcid_reporter.report_gcs(artifact_hash,
                                                   gs_artifact_path)
                 except StepFailure as step_failure:

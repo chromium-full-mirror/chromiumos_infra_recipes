@@ -142,8 +142,7 @@ class CrosSsciApi(RecipeApi):
 
     Returns `UploadedSBOM`, which can be passed to a later report_sbom() call.
     """
-    digest = self.m.file.file_hash(local_path,
-                                   test_data='{"SPDXID": "Test-Document"}')
+    digest = self.m.file.file_hash(local_path, test_data='feedf00d')
 
     config = self.m.build_menu.config_or_default
     gs_bucket = config.artifacts.artifacts_gs_bucket

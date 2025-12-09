@@ -10383,7 +10383,7 @@
     "name": "generate and report SBOM.Compute file hash",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Hash calculated: {\"SPDXID\": \"Test-Document\"}@@@"
+      "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
     ]
   },
   {
@@ -14033,7 +14033,7 @@
       "[START_DIR]/reporter/snoopy_broker",
       "-report-gcs",
       "-digest",
-      "{\"SPDXID\": \"Test-Document\"}",
+      "feedf00d",
       "-gcs-uri",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/artifact.tar.gz.spdx.json",
       "-sbom-subject",

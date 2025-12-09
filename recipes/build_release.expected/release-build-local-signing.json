@@ -10371,7 +10371,7 @@
     "name": "generate and report SBOM.Compute file hash",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Hash calculated: {\"SPDXID\": \"Test-Document\"}@@@"
+      "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
     ]
   },
   {
@@ -14015,7 +14015,7 @@
       "[START_DIR]/reporter/snoopy_broker",
       "-report-gcs",
       "-digest",
-      "{\"SPDXID\": \"Test-Document\"}",
+      "feedf00d",
       "-gcs-uri",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/artifact.tar.gz.spdx.json",
       "-sbom-subject",
@@ -17242,6 +17242,14 @@
   },
   {
     "cmd": [],
+    "name": "sign artifacts.match signed artifacts to SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@- chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys: gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/baseline-sbom.spdx.json (feedf00d)@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -17293,6 +17301,72 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/baseline-sbom.spdx.json",
+      "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys.spdx.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.gsutil copy SBOM to match artifact name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "feedf00d",
+      "-gcs-uri",
+      "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys.spdx.json",
+      "-sbom-subject",
+      "deadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.snoop: report_sbom",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
