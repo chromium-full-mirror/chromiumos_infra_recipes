@@ -15,6 +15,8 @@ from PB.chromiumos import signing as signing_pb2
 from PB.chromite.api.image import SignImageResponse
 from PB.chromite.api.recovery import CreateRecoveryKernelRequest
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.recipes.chromeos.build_and_sign_recovery import BuildAndSignRecoveryProperties
+from PB.recipes.chromeos.build_and_sign_recovery import PublishStrategy
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 
@@ -47,6 +49,8 @@ DEPS = [
     'src_state',
 ]
 
+PROPERTIES = BuildAndSignRecoveryProperties
+
 TEST_SIGNING_CONFIG = '''build_target_signing_configs {
       build_target: "kukui"
       keyset: "kukui-premp"
@@ -56,6 +60,9 @@ TEST_SIGNING_CONFIG = '''build_target_signing_configs {
     }'''
 
 CL_REVIEWERS = ['kimjae@google.com', 'konrada@google.com', 'rrangel@google.com']
+
+AG_HOST = 'googleplex-android'
+DESKTOP_HOST = 'arsp'
 
 
 def create_or_update_symlink(api: RecipeApi, directory: Path, file: str,
@@ -69,12 +76,15 @@ def create_or_update_symlink(api: RecipeApi, directory: Path, file: str,
 def upload_recovery_prebuilts(api: RecipeTestApi, unsigned_recovery_path: Path,
                               signed_recovery_path: Path, target: str,
                               keyset_is_mp: bool, version: str,
-                              abandon: bool = True) -> result_pb2.RawResult:
-  """Uploads the recovery kernel prebuilts to the android repo."""
+                              abandon: bool = True, host: str = AG_HOST) -> str:
+  """Uploads the recovery kernel prebuilts to the android repo.
+
+  Returns:
+    The message to include in the summary markdown of the build."""
   checkout = api.path.mkdtemp()
   with api.context(cwd=checkout):
     api.git.clone(
-        f'https://googleplex-android.googlesource.com/device/google/desktop/{target}-prebuilts',
+        f'https://{host}.googlesource.com/device/google/desktop/{target}-prebuilts',
         depth=1)
 
     # Copy the prebuild into the kernel prebuild repo.
@@ -99,16 +109,11 @@ def upload_recovery_prebuilts(api: RecipeTestApi, unsigned_recovery_path: Path,
     # Check to make sure there was actually a change.
     diff_lines = api.git.get_working_dir_diff_files()
     if not diff_lines:
-      return result_pb2.RawResult(
-          summary_markdown='No recovery kernel images changed.',
-          status=bb_common_pb2.SUCCESS,
-      )
+      return 'No recovery kernel images changed.'
     # Skip upload in CQ.
     if api.cv.active:
       api.step.empty('Skipping CL upload in CQ')
-      return result_pb2.RawResult(
-          status=bb_common_pb2.SUCCESS,
-      )
+      return ''
     # Create a cl updating the file.
     api.git.add_all()
     bbid = api.buildbucket.build_url()
@@ -127,10 +132,7 @@ def upload_recovery_prebuilts(api: RecipeTestApi, unsigned_recovery_path: Path,
         non_repo_checkout=True)
     if abandon:
       api.gerrit.abandon_change(change)
-    return result_pb2.RawResult(
-        summary_markdown=f'Updated recovery kernel prebuilts for {target}',
-        status=bb_common_pb2.SUCCESS,
-    )
+    return 'Updated recovery kernel prebuilts for {target}'
 
 
 def get_recovery_path(api: RecipeApi, response: SignImageResponse) -> Path:
@@ -146,7 +148,7 @@ def get_keyset_is_mp(response: SignImageResponse) -> bool:
   return only_artifact.keyset_is_mp
 
 
-def RunSteps(api: RecipeApi):
+def RunSteps(api: RecipeApi, properties: BuildAndSignRecoveryProperties):
   with api.mutable_output.wrap():
     with api.cros_source.checkout_overlays_context():
       config = api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
@@ -201,11 +203,29 @@ def RunSteps(api: RecipeApi):
             new_recovery_version, latest_filename='LATEST-RECOVERYKERNEL')
 
         # Open a cl with the new recovery kernel prebuilts.
-        return upload_recovery_prebuilts(
-            api, recovery_local_path, signed_recovery_path,
-            api.build_menu.build_target.name,
-            get_keyset_is_mp(signed_image_response), new_recovery_version,
-            abandon=api.cros_infra_config.is_staging)
+        if properties.publish_strategy in (PublishStrategy.UNSPECIFIED,
+                                           PublishStrategy.AG_ONLY,
+                                           PublishStrategy.AG_AND_DESKTOP):
+          ag_msg = upload_recovery_prebuilts(
+              api, recovery_local_path, signed_recovery_path,
+              api.build_menu.build_target.name,
+              get_keyset_is_mp(signed_image_response), new_recovery_version,
+              abandon=api.cros_infra_config.is_staging, host=AG_HOST)
+        else:
+          ag_msg = 'Not published to AG host'
+        if properties.publish_strategy in (PublishStrategy.DESKTOP_ONLY,
+                                           PublishStrategy.AG_AND_DESKTOP):
+          desktop_msg = upload_recovery_prebuilts(
+              api, recovery_local_path, signed_recovery_path,
+              api.build_menu.build_target.name,
+              get_keyset_is_mp(signed_image_response), new_recovery_version,
+              abandon=api.cros_infra_config.is_staging, host=DESKTOP_HOST)
+        else:
+          desktop_msg = 'Not published to desktop host'
+        return result_pb2.RawResult(
+            summary_markdown=f'AG: {ag_msg}\nDesktop:{desktop_msg}',
+            status=bb_common_pb2.SUCCESS,
+        )
 
 
 # Sample SignImageResponse for testing.
@@ -233,7 +253,7 @@ def sample_response(
 
 def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
-      'success',
+      'success-unspecified-host',
       api.properties(
           **{
               '$chromeos/cros_release': {
@@ -248,7 +268,162 @@ def GenTests(api: RecipeTestApi):
           'sign recovery kernel image.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response())),
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          'https://googleplex-android.googlesource.com/device/google/desktop/kukui-prebuilts'
+          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
+      ]),
+      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
+      api.step_data(
+          'get latest prebuilt version for kukui.gsutil reading LATEST-RECOVERYKERNEL version',
+          stdout=api.raw_io.output('1.0')),
+      api.post_check(post_process.MustRun,
+                     'copy prebuild recovery image into temp dir'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign recovery kernel image.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
+          [re.compile('.*"imageType": 21.*')]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign recovery kernel image.sign artifacts.upload signed artifacts to '
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.'
+          'gsutil cp', [
+              'gs://signed-firmware/kukui/2.0/',
+          ]),
+      api.post_check(post_process.MustRun, 'write latest file for version 2.0'),
+      api.post_check(post_process.MustRun,
+                     'gsutil upload LATEST-RECOVERYKERNEL'),
+      api.post_check(
+          post_process.StepCommandContains, 'write commit message',
+          [re.compile(r'recovery-kernel: Update prebuilts to version 2\.0.*')]),
+      api.post_check(post_process.MustRun, 'git commit'),
+      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='recovery-android-kukui-main',
+  )
+
+  yield api.build_menu.test(
+      'success-ag-only',
+      api.properties(
+          **{
+              'publish_strategy':
+                  PublishStrategy.AG_ONLY,
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware'))
+          }),
+      api.cros_build_api.set_api_return(
+          'sign recovery kernel image.sign artifacts.call BAPI',
+          'ImageService/SignImage', MessageToJson(sample_response())),
+      api.post_process(post_process.StepCommandContains, 'git clone', [
+          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
+      ]),
+      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
+      api.step_data(
+          'get latest prebuilt version for kukui.gsutil reading LATEST-RECOVERYKERNEL version',
+          stdout=api.raw_io.output('1.0')),
+      api.post_check(post_process.MustRun,
+                     'copy prebuild recovery image into temp dir'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign recovery kernel image.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
+          [re.compile('.*"imageType": 21.*')]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign recovery kernel image.sign artifacts.upload signed artifacts to '
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.'
+          'gsutil cp', [
+              'gs://signed-firmware/kukui/2.0/',
+          ]),
+      api.post_check(post_process.MustRun, 'write latest file for version 2.0'),
+      api.post_check(post_process.MustRun,
+                     'gsutil upload LATEST-RECOVERYKERNEL'),
+      api.post_check(
+          post_process.StepCommandContains, 'write commit message',
+          [re.compile(r'recovery-kernel: Update prebuilts to version 2\.0.*')]),
+      api.post_check(post_process.MustRun, 'git commit'),
+      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
+      api.post_check(post_process.DoesNotRun, 'git commit (2)'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='recovery-android-kukui-main',
+  )
+
+  yield api.build_menu.test(
+      'success-desktop-only',
+      api.properties(
+          **{
+              'publish_strategy':
+                  PublishStrategy.DESKTOP_ONLY,
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware'))
+          }),
+      api.cros_build_api.set_api_return(
+          'sign recovery kernel image.sign artifacts.call BAPI',
+          'ImageService/SignImage', MessageToJson(sample_response())),
+      api.post_process(post_process.StepCommandContains, 'git clone', [
+          f'https://{DESKTOP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
+      ]),
+      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
+      api.step_data(
+          'get latest prebuilt version for kukui.gsutil reading LATEST-RECOVERYKERNEL version',
+          stdout=api.raw_io.output('1.0')),
+      api.post_check(post_process.MustRun,
+                     'copy prebuild recovery image into temp dir'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign recovery kernel image.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
+          [re.compile('.*"imageType": 21.*')]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign recovery kernel image.sign artifacts.upload signed artifacts to '
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.'
+          'gsutil cp', [
+              'gs://signed-firmware/kukui/2.0/',
+          ]),
+      api.post_check(post_process.MustRun, 'write latest file for version 2.0'),
+      api.post_check(post_process.MustRun,
+                     'gsutil upload LATEST-RECOVERYKERNEL'),
+      api.post_check(
+          post_process.StepCommandContains, 'write commit message',
+          [re.compile(r'recovery-kernel: Update prebuilts to version 2\.0.*')]),
+      api.post_check(post_process.MustRun, 'git commit'),
+      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
+      api.post_check(post_process.DoesNotRun, 'git commit (2)'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='recovery-android-kukui-main',
+  )
+
+  yield api.build_menu.test(
+      'success-ag-and-desktop',
+      api.properties(
+          **{
+              'publish_strategy':
+                  PublishStrategy.AG_AND_DESKTOP,
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware'))
+          }),
+      api.cros_build_api.set_api_return(
+          'sign recovery kernel image.sign artifacts.call BAPI',
+          'ImageService/SignImage', MessageToJson(sample_response())),
+      api.post_process(post_process.StepCommandContains, 'git clone', [
+          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
+      ]),
+      api.post_process(post_process.StepCommandContains, 'git clone (2)', [
+          f'https://{DESKTOP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
       ]),
       api.step_data(
           'get latest prebuilt version for kukui.gsutil reading LATEST-RECOVERYKERNEL version',
@@ -274,6 +449,8 @@ def GenTests(api: RecipeTestApi):
           [re.compile(r'recovery-kernel: Update prebuilts to version 2\.0.*')]),
       api.post_check(post_process.MustRun, 'git commit'),
       api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
+      api.post_check(post_process.MustRun, 'git commit (2)'),
+      api.post_check(post_process.DoesNotRun, 'abandon CL 2'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='recovery-android-kukui-main',
@@ -397,8 +574,10 @@ def GenTests(api: RecipeTestApi):
           'gsutil cp', [
               'gs://signed-firmware/kukui/4.0/',
           ]),
-      api.post_check(post_process.SummaryMarkdown,
-                     'No recovery kernel images changed.'),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          'AG: No recovery kernel images changed.\nDesktop:Not published to desktop host'
+      ),
       api.post_check(post_process.DoesNotRun, 'git commit'),
       api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
       api.post_process(post_process.DropExpectation),
