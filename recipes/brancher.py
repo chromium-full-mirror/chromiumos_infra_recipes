@@ -106,10 +106,6 @@ def _should_update_release_config(properties: BrancherProperties) -> bool:
   if (properties.branch_info.type == Branch.STABILIZE and
       not is_108_or_greater(properties.source_version)):
     return False
-  # Custom branch types are weird and might break things.
-  # Don't assume they should go into the scheduler.
-  if properties.branch_info.type == Branch.CUSTOM:
-    return False
   return True
 
 
@@ -192,7 +188,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               branch_util_push=True,
               autosubmit_config=True,
           )),
-      api.post_check(post_process.DoesNotRun, "update config"),
+      api.post_check(post_process.MustRun, "update config"),
       api.post_process(post_process.DropExpectation),
   )
 
