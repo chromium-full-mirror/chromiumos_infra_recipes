@@ -5223,6 +5223,7 @@
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/brya/ec.RO.elf@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/brya/ec.RW.elf@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/brya/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/brya/foobar@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/poppy/firmware/image.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware/component_manifest.json@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware/ec.RO.elf@@@",

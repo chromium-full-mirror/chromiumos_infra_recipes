@@ -4373,6 +4373,7 @@
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/brya/ec.RO.elf@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/brya/ec.RW.elf@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/brya/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/brya/foobar@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/build/poppy/firmware/image.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/build/reef/firmware/component_manifest.json@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/build/reef/firmware/ec.RO.elf@@@",

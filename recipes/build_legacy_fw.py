@@ -440,6 +440,7 @@ class FirmwareBuilder():
               'brya/ec.bin',
               'brya/ec.RO.elf',
               'brya/ec.RW.elf',
+              'brya/foobar',
               'rex/ec.bin',
               'rex/zephyr.ro.elf',
               'rex/zephyr.rw.elf',
@@ -490,7 +491,7 @@ class FirmwareBuilder():
           # If there are elf files present, create an EC_elf archive also.
           elf_files = []
           for maybe_elf_file in files_list:
-            if file.parent == maybe_elf_file.parent and maybe_elf_file.suffix == ".elf":
+            if file.parent == maybe_elf_file.parent and maybe_elf_file.suffixes and maybe_elf_file.suffix == ".elf":
               elf_files.append(maybe_elf_file.name)
           if elf_files:
             tarball_full_path = out_path / f'{board_name}.EC_elf.{build_version}.tar.bz2'
