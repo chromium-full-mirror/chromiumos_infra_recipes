@@ -13,6 +13,7 @@ from google.protobuf.json_format import MessageToJson
 from PB.chromiumos import build_report as build_report_pb2
 from PB.chromiumos import common as common_pb2
 from PB.chromiumos import signing as signing_pb2
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromite.api.image import SignImageResponse
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
@@ -302,7 +303,9 @@ def RunSteps(api: RecipeApi,
         signed_image_response = api.signing.sign_artifacts(
             sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
             channels=[common_pb2.CHANNEL_AGNOSTIC], include_paygen=False,
-            local_artifact_dir=output_artifact_dir, upload_unsigned=False)
+            local_artifact_dir=output_artifact_dir, upload_unsigned=False,
+            attestation_eligible=api.cros_infra_config.config.artifacts
+            .attestation_eligible)
         if not signed_image_response:
           raise StepFailure('Empty signing config for build target')
         shellball_path = get_shellball_path(api, signed_image_response)
@@ -376,6 +379,13 @@ def GenTests(api: RecipeTestApi):
           triggers_pb2.Trigger(id='123', noop=triggers_pb2.NoopTrigger(
               data='foo')),
       ]),
+      api.cros_infra_config.use_custom_builder_config(
+          BuilderConfig(
+              artifacts=BuilderConfig.Artifacts(
+                  attestation_eligible=True,
+              )),
+          step_name='configure builder.cros_infra_config',
+      ),
       api.properties(
           **{
               '$chromeos/cros_release': {
@@ -630,6 +640,14 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'git commit (2)'),
       api.post_check(post_process.DoesNotRun, 'abandon CL 1 (2)'),
       api.post_check(post_process.MustRun, 'snoop: report_stage'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign firmware shellball.sign artifacts.upload signed artifacts to signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.generate signed provenance.snoop: report_gcs',
+          [
+              '[START_DIR]/reporter/snoopy_broker', '-report-gcs', '-digest',
+              'deadbeef', '-gcs-uri',
+              'gs://signed-firmware/kukui/4.0/signed_firmware.bin'
+          ]),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='firmware-packager-android-kukui-main',
