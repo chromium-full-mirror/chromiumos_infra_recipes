@@ -283,6 +283,7 @@ def _update_android_config(api, properties, _project_infos, dry_run):
 
         project_to_hal_xml_path = {}
         project_to_feature_xml_output_dir = {}
+        project_to_feature_from_hal_xml_output_dir = {}
         project_to_media_profiles_output_dir = {}
         project_to_component_xml_output_dir = {}
         for jsonproto_path in jsonproto_files:
@@ -331,6 +332,22 @@ def _update_android_config(api, properties, _project_infos, dry_run):
             )
             project_to_feature_xml_output_dir[project_name] = (
                 feature_xml_output_dir)
+
+            feature_from_hal_xml_output_dir = api.path.mkdtemp(
+                "output_feature_from_hal_xml")
+            api.step(
+                f"Run generate-feature-xml from HAL for {project_name}",
+                [
+                    cros_to_android_script,
+                    "generate-feature-xml",
+                    "--from-hal-config",
+                    "-o",
+                    feature_from_hal_xml_output_dir,
+                    jsonproto_path,
+                ],
+            )
+            project_to_feature_from_hal_xml_output_dir[project_name] = (
+                feature_from_hal_xml_output_dir)
 
             media_profiles_output_dir = api.path.mkdtemp("output_feature_xml")
             dtd_schema = cros_to_android_script.parent / "media_profiles.dtd"
@@ -400,6 +417,13 @@ Flag: EXEMPT desktop only
                     f"copy feature XMLs for {project_name}",
                     project_to_feature_xml_output_dir[project_name],
                     project_path / 'configs/features', allow_override=True)
+
+              if project_name in project_to_feature_from_hal_xml_output_dir:
+                api.file.copytree(
+                    f"copy feature from HAL XMLs for {project_name}",
+                    project_to_feature_from_hal_xml_output_dir[project_name],
+                    project_path / 'configs/features_from_hal',
+                    allow_override=True)
 
               if project_name in project_to_media_profiles_output_dir:
                 api.file.copytree(
@@ -482,6 +506,14 @@ Flag: EXEMPT desktop only
                                 feature_xml_output_dir,
                                 program_path / 'configs/features' / project,
                                 allow_override=True)
+
+            for project, feature_from_hal_xml_output_dir in project_to_feature_from_hal_xml_output_dir.items(
+            ):
+              api.file.copytree(
+                  f"copy feature from HAL XMLs for {project}",
+                  feature_from_hal_xml_output_dir,
+                  program_path / 'configs/features_from_hal' / project,
+                  allow_override=True)
 
             for project, media_profiles_output_dir in project_to_media_profiles_output_dir.items(
             ):
@@ -788,6 +820,27 @@ def GenTests(api):
                   'project/galaxy/milkyway/public_sw_build_config',
               '[CLEANUP]/chromiumos_workspace/src/' \
                 'project_public/galaxy/milkyway/sw_build_config',
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Do update_android_config and create CL' \
+              '.Process builder example-snapshot' \
+              '.Process example_project from config.jsonproto' \
+              '.Run generate-feature-xml from HAL for example_project',
+          [
+              'generate-feature-xml',
+              '--from-hal-config',
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Do update_android_config and create CL' \
+              '.Process builder example-snapshot' \
+              '.copy feature from HAL XMLs for example_project',
+          [
+              '[CLEANUP]/android_workspace/device/google/desktop/example/'
+              'configs/features_from_hal/example_project',
           ],
       ),
       api.post_check(post_process.DoesNotRunRE, r'.*\.abandon CL.*'),
