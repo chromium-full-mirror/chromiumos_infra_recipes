@@ -300,12 +300,13 @@ def RunSteps(api: RecipeApi,
             'signing_config', TEST_SIGNING_CONFIG)
       api.cros_release.validate_sign_types()
       with api.step.nest('sign firmware shellball') as pres:
+        infra_config = api.cros_infra_config.config
         signed_image_response = api.signing.sign_artifacts(
             sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
             channels=[common_pb2.CHANNEL_AGNOSTIC], include_paygen=False,
             local_artifact_dir=output_artifact_dir, upload_unsigned=False,
-            attestation_eligible=api.cros_infra_config.config.artifacts
-            .attestation_eligible)
+            attestation_eligible=infra_config.artifacts.attestation_eligible
+            if infra_config and infra_config.HasField('artifacts') else False)
         if not signed_image_response:
           raise StepFailure('Empty signing config for build target')
         shellball_path = get_shellball_path(api, signed_image_response)
