@@ -38,7 +38,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@report_to_spike@The following artifact types require provenance: IMAGE_ARCHIVES,FIRMWARE_TARBALL@@@",
       "@@@STEP_LOG_LINE@report_to_spike@- chromiumos_base_image.tar.xz@@@",
-      "@@@STEP_LOG_LINE@report_to_spike@- from_source.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- target/firmware_from_source.tar.bz2@@@",
       "@@@STEP_LOG_END@report_to_spike@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test-bucket/builder/R99-1234.56.0-101-@@@",
       "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-@@@"
@@ -152,31 +152,9 @@
       "@@@STEP_LOG_LINE@response@    \"artifacts\": [@@@",
       "@@@STEP_LOG_LINE@response@      {@@@",
       "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TARBALL\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/from_source.tar.bz2\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      },@@@",
-      "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TARBALL_INFO\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/fw_metadata.json\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      },@@@",
-      "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TOKEN_DATABASE\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/tokens.bin\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
@@ -770,8 +748,7 @@
       "@@@STEP_LOG_LINE@request@          ],@@@",
       "@@@STEP_LOG_LINE@request@          \"aclName\": \"public-read\"@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      ],@@@",
-      "@@@STEP_LOG_LINE@request@      \"ignoreBreakpadSymbolGenerationErrors\": true@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"firmware\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
@@ -845,7 +822,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"sysroot\": {\n    \"path\": \"/build/target\",\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }\n  },\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            10\n          ]\n        }\n      ]\n    },\n    \"toolchain\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            15\n          ],\n          \"gsLocations\": [\n            \"publish_gs_location\",\n            \"pub2/{gs_path}\"\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"sysroot\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            32,\n            35\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ],\n      \"ignoreBreakpadSymbolGenerationErrors\": true\n    },\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30,\n            31,\n            33,\n            44\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"infra\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            36\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"sysroot\": {\n    \"path\": \"/build/target\",\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }\n  },\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            10\n          ]\n        }\n      ]\n    },\n    \"toolchain\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            15\n          ],\n          \"gsLocations\": [\n            \"publish_gs_location\",\n            \"pub2/{gs_path}\"\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"sysroot\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            32,\n            35\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30,\n            31,\n            33,\n            44\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"infra\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            36\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
@@ -1050,7 +1027,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/from_source.tar.bz2"
+      "[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2"
     ],
     "infra_step": true,
     "name": "upload artifacts.generate provenance.Compute file hash (2)",
@@ -1066,7 +1043,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/from_source.tar.bz2"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/target/firmware_from_source.tar.bz2"
     ],
     "name": "upload artifacts.generate provenance.snoop: report_gcs (2)",
     "~followup_annotations": [
@@ -1101,7 +1078,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"IMAGE_ARCHIVES\": [\"chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"IMAGE_ARCHIVES\": [\"chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
     ]
   },
   {

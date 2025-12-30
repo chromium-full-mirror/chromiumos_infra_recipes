@@ -91,11 +91,13 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'upload artifacts.bundle IMAGE_ARCHIVES for upload',
           'ArtifactsService/BundleImageArchives',
-          json.dumps({
-              'artifacts': [{
-                  'path': 'chromiumos_base_image.tar.xz',
-              }],
-          }, sort_keys=True)),
+          json.dumps(
+              {
+                  'artifacts': [{
+                      'path':
+                          '[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz',
+                  }],
+              }, sort_keys=True)),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           json.dumps(
@@ -103,7 +105,8 @@ def GenTests(api):
                   'artifacts': {
                       'artifacts': [{
                           'paths': [{
-                              'path': 'firmware_from_source.tar.bz2'
+                              'path':
+                                  '[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2'
                           }],
                       }],
                   },
@@ -122,11 +125,13 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'upload artifacts.bundle IMAGE_ARCHIVES for upload',
           'ArtifactsService/BundleImageArchives',
-          json.dumps({
-              'artifacts': [{
-                  'path': 'chromiumos_base_image.tar.xz',
-              }],
-          }, sort_keys=True)),
+          json.dumps(
+              {
+                  'artifacts': [{
+                      'path':
+                          '[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz',
+                  }],
+              }, sort_keys=True)),
       api.post_process(
           post_process.MustRun,
           'upload artifacts.generate provenance.snoop: report_gcs'),
@@ -137,20 +142,24 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'upload artifacts.bundle IMAGE_ARCHIVES for upload',
           'ArtifactsService/BundleImageArchives',
-          json.dumps({
-              'artifacts': [{
-                  'path': 'chromiumos_base_image.tar.xz',
-              }],
-          }, sort_keys=True)),
+          json.dumps(
+              {
+                  'artifacts': [{
+                      'path':
+                          '[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz',
+                  }],
+              }, sort_keys=True)),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           json.dumps(
               {
                   'artifacts': {
                       'artifacts': [{
-                          'artifact_type': 'FIRMWARE_TARBALL',
+                          'artifact_type':
+                              'FIRMWARE_TARBALL',
                           'paths': [{
-                              'path': 'firmware_from_source.tar.bz2'
+                              'path':
+                                  '[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2'
                           }],
                       }],
                   },
@@ -183,6 +192,67 @@ def GenTests(api):
   )
 
   yield api.test(
+      'firmware-tarball-requires-provenance-target-in-outpath',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.bundle IMAGE_ARCHIVES for upload',
+          'ArtifactsService/BundleImageArchives',
+          json.dumps(
+              {
+                  'artifacts': [{
+                      'path':
+                          '[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz',
+                  }],
+              }, sort_keys=True)),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          json.dumps(
+              {
+                  'artifacts': {
+                      'artifacts': [{
+                          'artifact_type':
+                              'FIRMWARE_TARBALL',
+                          'paths': [{
+                              'path':
+                                  '[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2'
+                          }],
+                      }],
+                  },
+              }, sort_keys=True)),
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  MessageToDict(
+                      CrosArtifactsProperties(bcid_enforcement={
+                          'upload_artifact_prov_generation_fatal': True,
+                      })),
+          }),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_gcs'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.snoop: report_gcs', [
+              "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
+          ]),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_gcs (2)'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.Compute file hash (2)', [
+              "vpython3", "-u",
+              "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+              "--json-output", "/path/to/tmp/json", "file_hash",
+              "[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2"
+          ]),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.snoop: report_gcs (2)', [
+              "gs://test-bucket/builder/R99-1234.56.0-101-/target/firmware_from_source.tar.bz2"
+          ]),
+  )
+
+  yield api.test(
       'image-archives-does-not-exist',
       api.properties(exclude_image_archives=True),
       api.cros_build_api.set_api_return(
@@ -191,9 +261,11 @@ def GenTests(api):
               {
                   'artifacts': {
                       'artifacts': [{
-                          'artifact_type': 'FIRMWARE_TARBALL',
+                          'artifact_type':
+                              'FIRMWARE_TARBALL',
                           'paths': [{
-                              'path': 'firmware_from_source.tar.bz2'
+                              'path':
+                                  '[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2'
                           }],
                       }],
                   },
@@ -213,20 +285,24 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'upload artifacts.bundle IMAGE_ARCHIVES for upload',
           'ArtifactsService/BundleImageArchives',
-          json.dumps({
-              'artifacts': [{
-                  'path': 'chromiumos_base_image.tar.xz',
-              }],
-          }, sort_keys=True)),
+          json.dumps(
+              {
+                  'artifacts': [{
+                      'path':
+                          '[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz',
+                  }],
+              }, sort_keys=True)),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           json.dumps(
               {
                   'artifacts': {
                       'artifacts': [{
-                          'artifact_type': 'FIRMWARE_TARBALL',
+                          'artifact_type':
+                              'FIRMWARE_TARBALL',
                           'paths': [{
-                              'path': 'firmware_from_source.tar.bz2'
+                              'path':
+                                  '[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2'
                           }],
                       }],
                   },

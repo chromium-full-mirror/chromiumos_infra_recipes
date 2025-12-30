@@ -938,39 +938,38 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                       artifact_link=upload_uri)
 
       if report_to_spike and attestation_eligible:
-        artifact_basenames = []
+        # paths_to_hash is always relative paths.
+        paths_to_hash = []
         types_fulfilled = set()
         for artifact_type in self.artifact_types_requiring_prov_generation:
           files = files_by_artifact.get(artifact_type, [])
           if files:
-            artifact_basenames.extend([self.m.path.basename(i) for i in files])
+            paths_to_hash.extend(files)
             types_fulfilled.add(artifact_type)
 
         presentation.logs['report_to_spike'] = (
             'The following artifact types require provenance: ' +
             ','.join(self.artifact_types_requiring_prov_generation) + '\n')
 
-        for basename in artifact_basenames:
-          presentation.logs['report_to_spike'] += f'- {basename}\n'
+        for path in paths_to_hash:
+          presentation.logs['report_to_spike'] += f'- {path}\n'
 
         for artifact_type in self.artifact_types_requiring_prov_generation:
           if artifact_type not in types_fulfilled:
             presentation.logs[
                 'report_to_spike'] += f'- type {artifact_type} did not have any matching files.\n'
 
-        paths_to_hash = {
-            self.m.path.join(outpath, i): i for i in artifact_basenames
-        }
-
         # Also generate provenance for all DLCs placed locally by BAPI.
         self.m.dlc_utils.artifacts_local_path = str(outpath)
         dlc_local_paths = self.m.dlc_utils.get_dlcs_in_path(
             outpath, use_local_path=True)
+
         for dlc in dlc_local_paths:
-          paths_to_hash[dlc] = self.m.path.relpath(dlc, outpath)
+          paths_to_hash.append(self.m.path.relpath(dlc, outpath))
 
         with self.m.step.nest('generate provenance') as prov_gen:
-          for abspath, basepath in paths_to_hash.items():
+          for relpath in paths_to_hash:
+            abspath = self.m.path.join(outpath, relpath)
             file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
 
             try:
@@ -985,9 +984,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                       base_image_artifact]
 
               artifact_gs_url = '{uri}/{item}'.format(uri=upload_uri,
-                                                      item=basepath)
-              if basepath in (artifact_sbom or {}):
-                uploaded_sbom = artifact_sbom[basepath]
+                                                      item=relpath)
+              basename = self.m.path.basename(abspath)
+              if basename in (artifact_sbom or {}):
+                uploaded_sbom = artifact_sbom[basename]
                 artifact_sbom_gs_url = f'{artifact_gs_url}.spdx.json'
                 # BCID verifier writes an attestation envelope matching the
                 # SBOM gs:// URL for each report_sbom invocation.

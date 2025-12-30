@@ -5316,7 +5316,7 @@
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@report_to_spike@The following artifact types require provenance: IMAGE_ARCHIVES,FIRMWARE_TARBALL@@@",
-      "@@@STEP_LOG_LINE@report_to_spike@- firmware_from_source.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- target/firmware_from_source.tar.bz2@@@",
       "@@@STEP_LOG_LINE@report_to_spike@- type IMAGE_ARCHIVES did not have any matching files.@@@",
       "@@@STEP_LOG_END@report_to_spike@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-@@@",
@@ -5692,7 +5692,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2"
+      "[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5728,7 +5728,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/firmware_from_source.tar.bz2"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/target/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

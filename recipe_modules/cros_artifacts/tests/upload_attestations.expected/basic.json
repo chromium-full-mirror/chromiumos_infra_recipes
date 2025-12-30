@@ -153,7 +153,7 @@
       "@@@STEP_LOG_LINE@response@      {@@@",
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
@@ -314,7 +314,7 @@
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"artifacts\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"path\": \"chromiumos_base_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz\"@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
       "@@@STEP_LOG_LINE@response@  ]@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
@@ -422,7 +422,7 @@
       "@@@STEP_LOG_LINE@published event@  \"bundleResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"artifacts\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"chromiumos_base_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
@@ -436,7 +436,7 @@
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjIgCh4KHGNocm9taXVtb3NfYmFzZV9pbWFnZS50YXIueHraAn51cGxvYWQgYXJ0aWZhY3RzfGJ1bmRsZSBJTUFHRV9BUkNISVZFUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VBcmNoaXZlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjI6CjgKNltDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEvY2hyb21pdW1vc19iYXNlX2ltYWdlLnRhci54etoCfnVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX0FSQ0hJVkVTIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5kbGVJbWFnZUFyY2hpdmVzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -582,7 +582,7 @@
     },
     "infra_step": true,
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjIgCh4KHGNocm9taXVtb3NfYmFzZV9pbWFnZS50YXIueHraAn51cGxvYWQgYXJ0aWZhY3RzfGJ1bmRsZSBJTUFHRV9BUkNISVZFUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VBcmNoaXZlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjI6CjgKNltDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEvY2hyb21pdW1vc19iYXNlX2ltYWdlLnRhci54etoCfnVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX0FSQ0hJVkVTIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5kbGVJbWFnZUFyY2hpdmVzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1046,7 +1046,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"../../firmware_from_source.tar.bz2\"], \"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"IMAGE_ARCHIVES\": [\"../../chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"firmware_from_source.tar.bz2\"], \"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"IMAGE_ARCHIVES\": [\"chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
     ]
   },
   {

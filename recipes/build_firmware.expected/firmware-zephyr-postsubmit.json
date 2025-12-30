@@ -4284,8 +4284,8 @@
       "@@@STEP_LOG_LINE@report_to_spike@- karis.EC_elf.tar.bz2@@@",
       "@@@STEP_LOG_LINE@report_to_spike@- screebo.EC.tar.bz2@@@",
       "@@@STEP_LOG_LINE@report_to_spike@- screebo.EC_elf.tar.bz2@@@",
-      "@@@STEP_LOG_LINE@report_to_spike@- firmware_from_source.tar.bz2@@@",
-      "@@@STEP_LOG_LINE@report_to_spike@- firmware_from_source.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- brox/firmware_from_source.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@report_to_spike@- rex/firmware_from_source.tar.bz2@@@",
       "@@@STEP_LOG_LINE@report_to_spike@- type IMAGE_ARCHIVES did not have any matching files.@@@",
       "@@@STEP_LOG_END@report_to_spike@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-zephyr-postsubmit/R99-1234.56.0-101-8945511751514863184@@@",
@@ -5065,7 +5065,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2"
+      "[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -5094,7 +5094,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://chromeos-image-archive/firmware-zephyr-postsubmit/R99-1234.56.0-101-8945511751514863184/firmware_from_source.tar.bz2"
+      "gs://chromeos-image-archive/firmware-zephyr-postsubmit/R99-1234.56.0-101-8945511751514863184/brox/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -5110,6 +5110,63 @@
       }
     },
     "name": "upload artifacts.generate provenance.snoop: report_gcs (7)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.Compute file hash (8)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      "gs://chromeos-image-archive/firmware-zephyr-postsubmit/R99-1234.56.0-101-8945511751514863184/rex/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.snoop: report_gcs (8)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
