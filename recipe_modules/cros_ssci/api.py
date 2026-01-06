@@ -124,7 +124,7 @@ def _build_spdx_dict(name: str, unique_id: str, creation_time: datetime,
           ]
       },
       "dataLicense": "CC0-1.0",
-      "name": f"ChromeOS SBOM: {name}",
+      "name": name,
       "spdxVersion": "SPDX-2.3",
       "documentNamespace": f"https://spdx.google/{url_quote(unique_id)}",
       "packages": spdx_packages,
@@ -136,19 +136,22 @@ def _build_spdx_dict(name: str, unique_id: str, creation_time: datetime,
 class CrosSsciApi(RecipeApi):
   """API for working with SSCI."""
 
-  def generate_and_upload_sbom(self) -> UploadedSBOM:
+  def generate_and_upload_sbom(self, sysroot: Sysroot, chroot: Chroot,
+                               sbom_gs_bucket: str,
+                               sbom_gs_path: str) -> UploadedSBOM:
     """Generate and upload SBOM to GCS."""
-    with self.m.step.nest('generate and report SBOM'):
+    with self.m.step.nest('generate system image SBOM'):
       name = 'baseline-sbom.spdx.json'
       local_path = self.m.path.mkdtemp('cros_ssci') / name
 
-      self.generate_sbom(local_path)
-      return self.upload_sbom(local_path, name)
+      self.generate_sbom(sysroot=sysroot, chroot=chroot, out_path=local_path)
+      return self.upload_sbom(local_path, gs_bucket=sbom_gs_bucket,
+                              gs_path=sbom_gs_path)
 
-  def generate_sbom(self, out_path: Path) -> step_data.StepData:
+  def generate_sbom(self, sysroot: Sysroot, chroot: Chroot,
+                    out_path: Path) -> step_data.StepData:
     """Generate SBOM and write SPDX JSON to out_path."""
-    packages = self.collect_package_metadata(sysroot=self.m.build_menu.sysroot,
-                                             chroot=self.m.build_menu.chroot)
+    packages = self.collect_package_metadata(sysroot=sysroot, chroot=chroot)
 
     with self.m.step.nest('generate a baseline SBOM'):
       builder_full_name = self.m.buildbucket.builder_full_name
@@ -157,7 +160,7 @@ class CrosSsciApi(RecipeApi):
 
       # Main package describes the system image.
       main_package = {
-          "name": f"ChromeOS_Image_{builder_full_name}_{version}",
+          "name": "ChromeOS System Image",
           "SPDXID": _SPDX_PACKAGE_MAIN_ID,
           "versionInfo": f"{version}",
           "supplier": "Organization: Google LLC",
@@ -168,26 +171,66 @@ class CrosSsciApi(RecipeApi):
       }
 
       spdx_dict = _build_spdx_dict(
-          name=f"{builder_full_name} {version}",
+          name=f"ChromeOS System Image SBOM: {version}",
           unique_id=f'{builder_full_name}/{build_id}',
           creation_time=self.m.time.utcnow(),
           packages=packages,
           main_package=main_package,
       )
 
-    return self.m.file.write_json("write SPDX SBOM", out_path, data=spdx_dict,
-                                  indent=2)
+      return self.m.file.write_json("write SPDX SBOM", out_path, data=spdx_dict,
+                                    indent=2)
 
-  def upload_sbom(self, local_path: Path, gs_file_name: str) -> UploadedSBOM:
+  def generate_dlc_sbom(self, dlc_name: str,
+                        out_path: Path) -> step_data.StepData:
+    """Generate DLC SBOM and write SPDX JSON to out_path.
+
+    Args:
+      dlc_name: Name of the DLC (this will be the SPDX package name)
+      out_path: Path to write the SPDX JSON to.
+
+    The generated DLC SBOM is a stub:
+      - The result SPDX contains exactly one main package
+      - The main package is derived from `dlc_name`
+      - Versioning info are derived from buildbucket
+
+    Each OS image always maps to one set of DLCs. The DLC's binary content might
+    be the same for multiple OS versions / boards.
+    """
+    with self.m.step.nest('generate DLC SBOM'):
+      builder_full_name = self.m.buildbucket.builder_full_name
+      build_id = self.m.buildbucket.build.id
+      version = self.m.cros_version.version
+
+      main_package = {
+          "name": f"ChromeOS_DLC_{dlc_name}",
+          "SPDXID": _SPDX_PACKAGE_MAIN_ID,
+          "versionInfo": f"{version}",
+          "supplier": "Organization: Google LLC",
+          "downloadLocation": "https://www.google.com/",
+          "filesAnalyzed": False,
+          "licenseConcluded": "NOASSERTION",
+          "licenseDeclared": "NOASSERTION"
+      }
+
+      spdx_dict = _build_spdx_dict(
+          name=f"ChromeOS DLC SBOM: {dlc_name}",
+          unique_id=f'{builder_full_name}/{build_id}/dlc/{dlc_name}',
+          creation_time=self.m.time.utcnow(),
+          packages=[],
+          main_package=main_package,
+      )
+
+      return self.m.file.write_json("write DLC SPDX SBOM", out_path,
+                                    data=spdx_dict, indent=2)
+
+  def upload_sbom(self, local_path: Path, gs_bucket: str,
+                  gs_path: str) -> UploadedSBOM:
     """Upload SBOM at `local_path` to GCS under this build's artifact path using `gs_file_name`.
 
     Returns `UploadedSBOM`, which can be passed to a later report_sbom() call.
     """
     digest = self.m.file.file_hash(local_path, test_data='feedf00d')
-
-    config = self.m.build_menu.config_or_default
-    gs_bucket = config.artifacts.artifacts_gs_bucket
-    gs_path = f'{self.m.build_menu.artifacts_build_path()}/{gs_file_name}'
     self.m.gsutil.upload(source=local_path, bucket=gs_bucket, dest=gs_path)
 
     gs_url = f'gs://{gs_bucket}/{gs_path}'

@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/step',
     'code_coverage',
     'cros_build_api',
+    'cros_ssci',
     'cros_infra_config',
     'cros_snapshot',
     'cros_source',

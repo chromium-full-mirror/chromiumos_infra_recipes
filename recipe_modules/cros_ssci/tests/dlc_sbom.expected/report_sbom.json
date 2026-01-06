@@ -1,0 +1,193 @@
+[
+  {
+    "cmd": [],
+    "name": "generate DLC SBOM"
+  },
+  {
+    "cmd": [],
+    "name": "generate DLC SBOM.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate DLC SBOM.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate DLC SBOM.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate DLC SBOM.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate DLC SBOM.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate DLC SBOM.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:53:23Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/postsubmit/kukui-release-main/8945511751514863184/dlc/test-dlc\",\n  \"name\": \"ChromeOS DLC SBOM: test-dlc\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS_DLC_test-dlc\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
+      "[CLEANUP]/cros_ssci_test_tmp_1/test-dlc-spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate DLC SBOM.write DLC SPDX SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@{@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  \"SPDXID\": \"SPDXRef-DOCUMENT\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  \"creationInfo\": {@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@    \"created\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@    \"creators\": [@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"Tool: ChromeOsReleaseRecipe-1\"@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@    ]@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  },@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  \"dataLicense\": \"CC0-1.0\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  \"documentNamespace\": \"https://spdx.google/chromeos/postsubmit/kukui-release-main/8945511751514863184/dlc/test-dlc\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  \"name\": \"ChromeOS DLC SBOM: test-dlc\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  \"packages\": [@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"SPDXID\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"downloadLocation\": \"https://www.google.com/\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"filesAnalyzed\": false,@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"name\": \"ChromeOS_DLC_test-dlc\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"versionInfo\": \"R99-1234.56.0-101\"@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  \"relationships\": [@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"relationshipType\": \"DESCRIBES\",@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@      \"spdxElementId\": \"SPDXRef-DOCUMENT\"@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@  \"spdxVersion\": \"SPDX-2.3\"@@@",
+      "@@@STEP_LOG_LINE@test-dlc-spdx.json@}@@@",
+      "@@@STEP_LOG_END@test-dlc-spdx.json@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

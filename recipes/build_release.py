@@ -181,7 +181,11 @@ def DoRunSteps(api, config, properties):
           api.build_menu.build_images(config, include_version=True)
 
           with api.failures.ignore_exceptions():
-            baseline_sbom = api.cros_ssci.generate_and_upload_sbom()
+            sbom_gs_bucket = config.artifacts.artifacts_gs_bucket
+            sbom_gs_path = f'{api.build_menu.artifacts_build_path()}/baseline-sbom.spdx.json'
+            baseline_sbom = api.cros_ssci.generate_and_upload_sbom(
+                sysroot=api.build_menu.sysroot, chroot=api.build_menu.chroot,
+                sbom_gs_bucket=sbom_gs_bucket, sbom_gs_path=sbom_gs_path)
             artifact_sbom.update({
                 ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_BASE]:
                     baseline_sbom,

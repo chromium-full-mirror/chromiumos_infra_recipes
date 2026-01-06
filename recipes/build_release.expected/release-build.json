@@ -10031,11 +10031,11 @@
   },
   {
     "cmd": [],
-    "name": "generate and report SBOM"
+    "name": "generate system image SBOM"
   },
   {
     "cmd": [],
-    "name": "generate and report SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata",
+    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -10099,7 +10099,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate and report SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.write input file",
+    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -10132,7 +10132,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate and report SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.read chromite version",
+    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.read chromite version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
@@ -10160,7 +10160,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate and report SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.git checkout",
+    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -10198,7 +10198,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate and report SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.call build API script",
+    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -10236,14 +10236,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate and report SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.read output file",
+    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate and report SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.call response",
+    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -10252,7 +10252,7 @@
   },
   {
     "cmd": [],
-    "name": "generate and report SBOM.generate a baseline SBOM",
+    "name": "generate system image SBOM.generate a baseline SBOM",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -10265,7 +10265,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:54:20Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/release/kukui-release-main/8945511751514863184\",\n  \"name\": \"ChromeOS SBOM: chromeos/release/kukui-release-main R99-1234.56.0-101\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS_Image_chromeos/release/kukui-release-main_R99-1234.56.0-101\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-dev-libs-test-library-1.0.0_p1-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"dev-libs-test-library\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"1.0.0_p1\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-app-shells-bash-2.0.0_p2-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"app-shells-bash\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"2.0.0_p2\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-dev-libs-test-library-1.0.0_p1-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-app-shells-bash-2.0.0_p2-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
+      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:54:20Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/release/kukui-release-main/8945511751514863184\",\n  \"name\": \"ChromeOS System Image SBOM: R99-1234.56.0-101\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS System Image\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-dev-libs-test-library-1.0.0_p1-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"dev-libs-test-library\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"1.0.0_p1\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-app-shells-bash-2.0.0_p2-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"app-shells-bash\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"2.0.0_p2\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-dev-libs-test-library-1.0.0_p1-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-app-shells-bash-2.0.0_p2-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
       "[CLEANUP]/cros_ssci_tmp_1/baseline-sbom.spdx.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10285,9 +10285,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate and report SBOM.write SPDX SBOM",
+    "name": "generate system image SBOM.generate a baseline SBOM.write SPDX SBOM",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@{@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"SPDXID\": \"SPDXRef-DOCUMENT\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"creationInfo\": {@@@",
@@ -10299,7 +10299,7 @@
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  },@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"dataLicense\": \"CC0-1.0\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"documentNamespace\": \"https://spdx.google/chromeos/release/kukui-release-main/8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"name\": \"ChromeOS SBOM: chromeos/release/kukui-release-main R99-1234.56.0-101\",@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"name\": \"ChromeOS System Image SBOM: R99-1234.56.0-101\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"packages\": [@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    {@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"SPDXID\": \"SPDXRef-Package-main\",@@@",
@@ -10307,7 +10307,7 @@
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"filesAnalyzed\": false,@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"name\": \"ChromeOS_Image_chromeos/release/kukui-release-main_R99-1234.56.0-101\",@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"name\": \"ChromeOS System Image\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"versionInfo\": \"R99-1234.56.0-101\"@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    },@@@",
@@ -10399,7 +10399,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate and report SBOM.Compute file hash",
+    "name": "generate system image SBOM.Compute file hash",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
@@ -10434,11 +10434,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate and report SBOM.gsutil upload",
+    "name": "generate system image SBOM.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/baseline-sbom.spdx.json@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"generate and report SBOM|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/baseline-sbom.spdx.json\", \"try creating test service containers|create test service containers|upload container metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/containers.jsonpb\", \"try creating test service containers|create test service containers|upload test_harness_metadata metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_harness_metadata.jsonpb\", \"try creating test service containers|create test service containers|upload test_metadata metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_metadata.jsonpb\", \"upload sources metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/sources.jsonpb\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"generate system image SBOM|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/baseline-sbom.spdx.json\", \"try creating test service containers|create test service containers|upload container metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/containers.jsonpb\", \"try creating test service containers|create test service containers|upload test_harness_metadata metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_harness_metadata.jsonpb\", \"try creating test service containers|create test service containers|upload test_metadata metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/test_metadata.jsonpb\", \"upload sources metadata|gsutil upload\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {
@@ -14014,6 +14014,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance.report sbom for artifact.tar.gz",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",
@@ -14042,9 +14049,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.generate provenance.gsutil copy SBOM to match artifact name",
+    "name": "upload artifacts.generate provenance.report sbom for artifact.tar.gz.gsutil copy SBOM to match artifact name",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -14074,9 +14081,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.generate provenance.snoop: report_sbom",
+    "name": "upload artifacts.generate provenance.report sbom for artifact.tar.gz.snoop: report_sbom",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

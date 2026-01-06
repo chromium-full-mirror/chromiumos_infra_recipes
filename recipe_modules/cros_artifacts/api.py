@@ -985,26 +985,47 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
               artifact_gs_url = '{uri}/{item}'.format(uri=upload_uri,
                                                       item=relpath)
+              # Match and report OS image SBOM.
               basename = self.m.path.basename(abspath)
               if basename in (artifact_sbom or {}):
-                uploaded_sbom = artifact_sbom[basename]
-                artifact_sbom_gs_url = f'{artifact_gs_url}.spdx.json'
-                # BCID verifier writes an attestation envelope matching the
-                # SBOM gs:// URL for each report_sbom invocation.
-                #
-                # Calling report_sbom multiple times with the same SBOM URL
-                # causes the BCID verifier to overwrite the previous envelope.
-                #
-                # For security reasons, we don't allow overwriting in the
-                # artifact bucket, so we copy the "original" SBOM to achieve a
-                # 1:1:1 relationship of artifact:sbom_url:envelope.
-                self.m.gsutil(
-                    ['cp', uploaded_sbom.gs_url, artifact_sbom_gs_url],
-                    name="copy SBOM to match artifact name",
-                )
-                self.m.bcid_reporter.report_sbom(uploaded_sbom.digest,
-                                                 artifact_sbom_gs_url,
-                                                 sbom_subjects=[file_hash])
+                with self.m.step.nest(f'report sbom for {basename}'):
+                  uploaded_sbom = artifact_sbom[basename]
+                  artifact_sbom_gs_url = f'{artifact_gs_url}.spdx.json'
+                  # BCID verifier writes an attestation envelope matching the
+                  # SBOM gs:// URL for each report_sbom invocation.
+                  #
+                  # Calling report_sbom multiple times with the same SBOM URL
+                  # causes the BCID verifier to overwrite the previous envelope.
+                  #
+                  # For security reasons, we don't allow overwriting in the
+                  # artifact bucket, so we copy the "original" SBOM to achieve a
+                  # 1:1:1 relationship of artifact:sbom_url:envelope.
+                  self.m.gsutil(
+                      ['cp', uploaded_sbom.gs_url, artifact_sbom_gs_url],
+                      name="copy SBOM to match artifact name",
+                  )
+                  self.m.bcid_reporter.report_sbom(uploaded_sbom.digest,
+                                                   artifact_sbom_gs_url,
+                                                   sbom_subjects=[file_hash])
+
+              # Generate and report DLC SBOMs.
+              if abspath in dlc_local_paths:
+                dlc_name = self.m.dlc_utils.infer_dlc_name(abspath)
+                with self.m.step.nest(
+                    f'generate and report sbom for dlc: {dlc_name}'):
+                  local_dlc_spdx_path = self.m.path.mkdtemp(
+                      'cros_ssci_') / f'dlc_{dlc_name}.spdx.json'
+                  self.m.cros_ssci.generate_dlc_sbom(dlc_name,
+                                                     local_dlc_spdx_path)
+
+                  # Put DLC SPDX alongside DLC file.
+                  uploaded_dlc_sbom = self.m.cros_ssci.upload_sbom(
+                      local_dlc_spdx_path, gs_bucket=gs_bucket,
+                      gs_path=f'{gs_path}/{relpath}.spdx.json')
+
+                  self.m.bcid_reporter.report_sbom(uploaded_dlc_sbom.digest,
+                                                   uploaded_dlc_sbom.gs_url,
+                                                   sbom_subjects=[file_hash])
 
               self.m.bcid_reporter.report_gcs(file_hash, artifact_gs_url)
             except recipe_api.StepFailure as exp:

@@ -190,3 +190,14 @@ class DlcUtilsApi(recipe_api.RecipeApi):
       runner.wait_for_and_throw()
 
       return ret
+
+  def infer_dlc_name(self, path: str) -> str:
+    """Infers the DLC name from a path by looking for the first path component after `self._dlc_directories`."""
+    parts = path.split(self.m.path.sep)
+
+    for i, part in enumerate(parts):
+      if part in self._dlc_directories:
+        if i + 1 < len(parts):
+          return parts[i + 1]
+
+    return path.lstrip('/').replace('/', '-')

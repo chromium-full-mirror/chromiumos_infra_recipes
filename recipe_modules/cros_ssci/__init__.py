@@ -13,7 +13,6 @@ DEPS = [
     'recipe_engine/time',
     'recipe_engine/step',
     'depot_tools/gsutil',
-    'build_menu',
     'cros_build_api',
     'cros_version',
 ]

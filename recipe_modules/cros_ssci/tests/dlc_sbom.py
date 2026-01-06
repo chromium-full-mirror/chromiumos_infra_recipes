@@ -1,4 +1,4 @@
-# Copyright 2025 The ChromiumOS Authors
+# Copyright 2026 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -7,11 +7,10 @@
 from recipe_engine import post_process
 
 DEPS = [
-    'build_menu',
     'cros_ssci',
     'test_util',
-    'recipe_engine/buildbucket',
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/path',
     'recipe_engine/step',
@@ -19,15 +18,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  result = api.cros_ssci.generate_and_upload_sbom(
-      sysroot=api.build_menu.sysroot, chroot=api.build_menu.chroot,
-      sbom_gs_bucket='chromeos-releases-test',
-      sbom_gs_path=f'{api.build_menu.artifacts_build_path()}/baseline-sbom.spdx.json'
-  )
-  api.assertions.assertRegexpMatches(
-      result.gs_url,
-      'gs://chromeos-releases-test/kukui-release-main/R[^/]+/baseline-sbom.spdx.json',
-  )
+  dlc_spdx = api.path.mkdtemp('cros_ssci_test') / 'test-dlc-spdx.json'
+  api.cros_ssci.generate_dlc_sbom("test-dlc", dlc_spdx)
 
 
 def GenTests(api):

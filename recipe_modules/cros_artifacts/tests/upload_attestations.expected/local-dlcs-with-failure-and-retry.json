@@ -1,9 +1,5 @@
 [
   {
-    "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
     "cmd": [
       "vpython3",
       "-u",
@@ -15,6 +11,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "read chromite version",
     "~followup_annotations": [
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
@@ -27,6 +35,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "git checkout",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -40,8 +60,8 @@
       "@@@STEP_LOG_LINE@report_to_spike@- chromiumos_base_image.tar.xz@@@",
       "@@@STEP_LOG_LINE@report_to_spike@- firmware_from_source.tar.bz2@@@",
       "@@@STEP_LOG_END@report_to_spike@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test-bucket/builder/R99-1234.56.0-101-@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test-bucket/builder/R99-1234.56.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-8945511751514863184@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -65,6 +85,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -82,10 +114,22 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      ":"
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -99,6 +143,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -108,11 +164,23 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -177,6 +245,18 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -199,6 +279,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -221,6 +313,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -258,6 +362,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.create manifest.xml artifact.repo manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -277,6 +393,18 @@
       "[CLEANUP]/artifacts_tmp_1/manifest.xml"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.create manifest.xml artifact.write manifest.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -335,6 +463,18 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -357,6 +497,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -379,6 +531,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -428,6 +592,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload artifacts|bundle IMAGE_ARCHIVES for upload|call chromite.api.ArtifactsService/BundleImageArchives|call build API script\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
@@ -438,7 +603,7 @@
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjI6CjgKNltDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEvY2hyb21pdW1vc19iYXNlX2ltYWdlLnRhci54etoCfnVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX0FSQ0hJVkVTIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5kbGVJbWFnZUFyY2hpdmVzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjI6CjgKNltDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEvY2hyb21pdW1vc19iYXNlX2ltYWdlLnRhci54etAC0OyA2a7xtZJ82gJ+dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1BR0VfQVJDSElWRVMgZm9yIHVwbG9hZHxjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1bmRsZUltYWdlQXJjaGl2ZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -470,6 +635,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message.ensure support.read infrainfra golang version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@6@@@",
@@ -502,6 +679,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@7@@@"
@@ -524,6 +713,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@7@@@",
@@ -557,6 +758,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message.ensure support.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@6@@@",
@@ -583,8 +796,20 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.bundle IMAGE_ARCHIVES for upload.call chromite.api.ArtifactsService/BundleImageArchives.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjI6CjgKNltDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEvY2hyb21pdW1vc19iYXNlX2ltYWdlLnRhci54etoCfnVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX0FSQ0hJVkVTIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5kbGVJbWFnZUFyY2hpdmVzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuASphCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMSIZCg0vYnVpbGQvdGFyZ2V0EggKBnRhcmdldCofCh0KGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEQAjI6CjgKNltDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEvY2hyb21pdW1vc19iYXNlX2ltYWdlLnRhci54etAC0OyA2a7xtZJ82gJ+dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1BR0VfQVJDSElWRVMgZm9yIHVwbG9hZHxjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1bmRsZUltYWdlQXJjaGl2ZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -639,6 +864,18 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call chromite.api.ToolchainService/BundleArtifacts.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -661,6 +898,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call chromite.api.ToolchainService/BundleArtifacts.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -683,6 +932,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call chromite.api.ToolchainService/BundleArtifacts.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -827,6 +1088,18 @@
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -849,6 +1122,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -871,6 +1156,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -890,7 +1187,7 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://test-bucket/builder/R99-1234.56.0-101-\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184\"@@@"
     ]
   },
   {
@@ -912,6 +1209,18 @@
       "--recursive"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.Find DLCs.list local DLCs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -941,10 +1250,29 @@
       "[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.Compute file hash",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance.report sbom for chromiumos_base_image.tar.xz",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -957,12 +1285,24 @@
       "----",
       "cp",
       "gs://bucket/spdx.json",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz.spdx.json"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/chromiumos_base_image.tar.xz.spdx.json"
     ],
     "infra_step": true,
-    "name": "upload artifacts.generate provenance.gsutil copy SBOM to match artifact name",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.report sbom for chromiumos_base_image.tar.xz.gsutil copy SBOM to match artifact name",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -979,9 +1319,21 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "upload artifacts.generate provenance.ensure_installed",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.report sbom for chromiumos_base_image.tar.xz.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -1002,13 +1354,25 @@
       "-digest",
       "decacafe",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz.spdx.json",
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/chromiumos_base_image.tar.xz.spdx.json",
       "-sbom-subject",
       "deadbeef"
     ],
-    "name": "upload artifacts.generate provenance.snoop: report_sbom",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.report sbom for chromiumos_base_image.tar.xz.snoop: report_sbom",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1018,8 +1382,20 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/chromiumos_base_image.tar.xz"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.snoop: report_gcs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1036,6 +1412,18 @@
       "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.Compute file hash (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1049,8 +1437,20 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/firmware_from_source.tar.bz2"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/firmware_from_source.tar.bz2"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.snoop: report_gcs (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1067,10 +1467,188 @@
       "[CLEANUP]/artifacts_tmp_1/dlc/fake/dlc.img"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.Compute file hash (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake.generate DLC SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:53:35Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/ci/amd64/8945511751514863184/dlc/fake\",\n  \"name\": \"ChromeOS DLC SBOM: fake\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS_DLC_fake\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
+      "[CLEANUP]/cros_ssci__tmp_1/dlc_fake.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake.generate DLC SBOM.write DLC SPDX SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@{@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  \"SPDXID\": \"SPDXRef-DOCUMENT\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  \"creationInfo\": {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@    \"created\": \"2012-05-14T12:53:35Z\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@    \"creators\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"Tool: ChromeOsReleaseRecipe-1\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@    ]@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  },@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  \"dataLicense\": \"CC0-1.0\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  \"documentNamespace\": \"https://spdx.google/chromeos/ci/amd64/8945511751514863184/dlc/fake\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  \"name\": \"ChromeOS DLC SBOM: fake\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  \"packages\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"SPDXID\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"downloadLocation\": \"https://www.google.com/\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"filesAnalyzed\": false,@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"name\": \"ChromeOS_DLC_fake\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"versionInfo\": \"R99-1234.56.0-101\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  \"relationships\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"relationshipType\": \"DESCRIBES\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@      \"spdxElementId\": \"SPDXRef-DOCUMENT\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@  \"spdxVersion\": \"SPDX-2.3\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake.spdx.json@}@@@",
+      "@@@STEP_LOG_END@dlc_fake.spdx.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/cros_ssci__tmp_1/dlc_fake.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/cros_ssci__tmp_1/dlc_fake.spdx.json",
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img.spdx.json@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload artifacts|generate provenance|generate and report sbom for dlc: fake|gsutil upload\": \"gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img.spdx.json\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "feedf00d",
+      "-gcs-uri",
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img.spdx.json",
+      "-sbom-subject",
+      "deadbeef"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake.snoop: report_sbom",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1080,8 +1658,20 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.snoop: report_gcs (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1095,8 +1685,20 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.snoop: report_gcs (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1110,8 +1712,20 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.snoop: report_gcs (5)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1125,8 +1739,20 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.snoop: report_gcs (6)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1144,10 +1770,188 @@
       "[CLEANUP]/artifacts_tmp_1/dlc/fake2/dlc.img"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.Compute file hash (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake2.generate DLC SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:53:36.500000Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/ci/amd64/8945511751514863184/dlc/fake2\",\n  \"name\": \"ChromeOS DLC SBOM: fake2\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS_DLC_fake2\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
+      "[CLEANUP]/cros_ssci__tmp_2/dlc_fake2.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake2.generate DLC SBOM.write DLC SPDX SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@{@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  \"SPDXID\": \"SPDXRef-DOCUMENT\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  \"creationInfo\": {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@    \"created\": \"2012-05-14T12:53:36.500000Z\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@    \"creators\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"Tool: ChromeOsReleaseRecipe-1\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@    ]@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  },@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  \"dataLicense\": \"CC0-1.0\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  \"documentNamespace\": \"https://spdx.google/chromeos/ci/amd64/8945511751514863184/dlc/fake2\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  \"name\": \"ChromeOS DLC SBOM: fake2\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  \"packages\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"SPDXID\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"downloadLocation\": \"https://www.google.com/\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"filesAnalyzed\": false,@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"name\": \"ChromeOS_DLC_fake2\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"versionInfo\": \"R99-1234.56.0-101\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  \"relationships\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"relationshipType\": \"DESCRIBES\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@      \"spdxElementId\": \"SPDXRef-DOCUMENT\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@  \"spdxVersion\": \"SPDX-2.3\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake2.spdx.json@}@@@",
+      "@@@STEP_LOG_END@dlc_fake2.spdx.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/cros_ssci__tmp_2/dlc_fake2.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake2.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/cros_ssci__tmp_2/dlc_fake2.spdx.json",
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake2/dlc.img.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake2.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake2/dlc.img.spdx.json@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload artifacts|generate provenance|generate and report sbom for dlc: fake2|gsutil upload\": \"gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake2/dlc.img.spdx.json\", \"upload artifacts|generate provenance|generate and report sbom for dlc: fake|gsutil upload\": \"gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img.spdx.json\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "feedf00d",
+      "-gcs-uri",
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake2/dlc.img.spdx.json",
+      "-sbom-subject",
+      "deadbeef"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake2.snoop: report_sbom",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1157,8 +1961,20 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake2/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake2/dlc.img"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.snoop: report_gcs (7)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1175,10 +1991,188 @@
       "[CLEANUP]/artifacts_tmp_1/dlc/fake3/dlc.img"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.Compute file hash (5)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake3",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake3.generate DLC SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:53:38Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/ci/amd64/8945511751514863184/dlc/fake3\",\n  \"name\": \"ChromeOS DLC SBOM: fake3\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS_DLC_fake3\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
+      "[CLEANUP]/cros_ssci__tmp_3/dlc_fake3.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake3.generate DLC SBOM.write DLC SPDX SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@{@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  \"SPDXID\": \"SPDXRef-DOCUMENT\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  \"creationInfo\": {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@    \"created\": \"2012-05-14T12:53:38Z\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@    \"creators\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"Tool: ChromeOsReleaseRecipe-1\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@    ]@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  },@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  \"dataLicense\": \"CC0-1.0\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  \"documentNamespace\": \"https://spdx.google/chromeos/ci/amd64/8945511751514863184/dlc/fake3\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  \"name\": \"ChromeOS DLC SBOM: fake3\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  \"packages\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"SPDXID\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"downloadLocation\": \"https://www.google.com/\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"filesAnalyzed\": false,@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"name\": \"ChromeOS_DLC_fake3\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"versionInfo\": \"R99-1234.56.0-101\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  \"relationships\": [@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"relationshipType\": \"DESCRIBES\",@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@      \"spdxElementId\": \"SPDXRef-DOCUMENT\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@  \"spdxVersion\": \"SPDX-2.3\"@@@",
+      "@@@STEP_LOG_LINE@dlc_fake3.spdx.json@}@@@",
+      "@@@STEP_LOG_END@dlc_fake3.spdx.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/cros_ssci__tmp_3/dlc_fake3.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake3.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/cros_ssci__tmp_3/dlc_fake3.spdx.json",
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake3/dlc.img.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake3.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake3/dlc.img.spdx.json@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload artifacts|generate provenance|generate and report sbom for dlc: fake2|gsutil upload\": \"gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake2/dlc.img.spdx.json\", \"upload artifacts|generate provenance|generate and report sbom for dlc: fake3|gsutil upload\": \"gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake3/dlc.img.spdx.json\", \"upload artifacts|generate provenance|generate and report sbom for dlc: fake|gsutil upload\": \"gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake/dlc.img.spdx.json\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "feedf00d",
+      "-gcs-uri",
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake3/dlc.img.spdx.json",
+      "-sbom-subject",
+      "deadbeef"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.generate provenance.generate and report sbom for dlc: fake3.snoop: report_sbom",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1188,8 +2182,20 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/dlc/fake3/dlc.img"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/dlc/fake3/dlc.img"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.generate provenance.snoop: report_gcs (8)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1209,9 +2215,21 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://test-bucket/builder/R99-1234.56.0-101-"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.gsutil rsync",
     "timeout": 900,
     "~followup_annotations": [
@@ -1223,7 +2241,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"firmware_from_source.tar.bz2\"], \"IMAGE_ARCHIVES\": [\"chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"firmware_from_source.tar.bz2\"], \"IMAGE_ARCHIVES\": [\"chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
     ]
   },
   {
@@ -1231,7 +2249,7 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -1247,10 +2265,22 @@
       "-r",
       "-a",
       "public-read",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/afdo",
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/afdo",
       "gs://publish_gs_location/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.publish artifacts.gsutil cp",
     "timeout": 900,
     "~followup_annotations": [
@@ -1270,10 +2300,22 @@
       "-r",
       "-a",
       "public-read",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/afdo",
-      "gs://pub2/builder/R99-1234.56.0-101-/"
+      "gs://test-bucket/builder/R99-1234.56.0-101-8945511751514863184/afdo",
+      "gs://pub2/builder/R99-1234.56.0-101-8945511751514863184/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload artifacts.publish artifacts.gsutil cp (2)",
     "timeout": 900,
     "~followup_annotations": [
@@ -1285,7 +2327,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/builder/R99-1234.56.0-101-\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/builder/R99-1234.56.0-101-8945511751514863184\"}]}@@@"
     ]
   },
   {
