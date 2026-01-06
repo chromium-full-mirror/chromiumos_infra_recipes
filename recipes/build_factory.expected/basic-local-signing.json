@@ -10077,13 +10077,6 @@
   },
   {
     "cmd": [],
-    "name": "sign artifacts.stage paygen artifacts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "sign artifacts.upload unsigned artifacts to chromeos-throw-away-bucket bucket",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

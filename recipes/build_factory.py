@@ -54,7 +54,7 @@ def sign_locally(api) -> None:
   release_sign_types = api.cros_release.sign_types
   channels = api.cros_release.channels
   signed_image_response = api.signing.sign_artifacts(
-      sign_types=release_sign_types, channels=channels)
+      sign_types=release_sign_types, channels=channels, include_paygen=False)
   if signed_image_response:
     signed_build_list = api.signing_utils.signing_response_to_metadata(
         signed_image_response)
