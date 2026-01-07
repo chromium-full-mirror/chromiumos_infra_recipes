@@ -5,7 +5,6 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
-from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.steps.execution import ExecuteResponse
@@ -13,7 +12,6 @@ from PB.test_platform.taskstate import TaskState
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'exonerate',
     'skylab_results',
@@ -102,15 +100,3 @@ def GenTests(api):
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True, dry_run=True)
           }))
-
-  yield api.test(
-      # v2-enabled just cover the exception scenario: v2 has its own test cases
-      'v2-enabled',
-      api.buildbucket.try_build(
-          experiments=['chromeos.cq.auto.exoneration.v2.enabled']),
-      api.properties(
-          **{
-              '$chromeos/exonerate':
-                  ExonerateProperties(enable_exoneration=True, dry_run=True)
-          }),
-      api.post_process(post_process.DropExpectation))

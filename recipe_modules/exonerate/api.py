@@ -3,15 +3,11 @@
 # found in the LICENSE file.
 
 """Functions for exonerating test failures."""
-import traceback
 from collections import defaultdict
 from collections import namedtuple
 from typing import Dict, List, Optional, Tuple
-from typing import Set
 
 from recipe_engine import recipe_api
-from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
-  TestVariantStabilityAnalysis
 from PB.go.chromium.org.luci.buildbucket.proto import \
   common as common_pb2
 from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
@@ -85,10 +81,6 @@ class ExonerateApi(recipe_api.RecipeApi):
     if not self._configs_loaded:
       self.load_configs()
     return self._manual_exoneration_configs
-
-  @property
-  def auto_exoneration_v2_enabled(self) -> bool:
-    return 'chromeos.cq.auto.exoneration.v2.enabled' in self.m.buildbucket.build.input.experiments
 
   def enable_excludes(self):
     """enable excludes config's use."""
@@ -528,8 +520,6 @@ class ExonerateApi(recipe_api.RecipeApi):
       if not self._failed_tests:
         pres.step_text = 'no failed tests'
         return False
-      # Dry run v2: source-position-based analysis
-      self.auto_exoneration_analysis_v2()
       try:
         # Convert failed tests into the format LUCI Analysis wants.
         test_variant_list = []
@@ -701,94 +691,3 @@ class ExonerateApi(recipe_api.RecipeApi):
       presentation.step_text = _get_step_text(exonerated_hw_suites)
       _log_results(exonerated_hw_suites)
       return exonerated_hw_test_results
-
-  def auto_exoneration_analysis_v2(self, failed_tests: Set[FailedTest] = None,
-                                   fake_data=None) -> None:
-    """Analyze failed tests to see if they can be exonerated.
-
-    Args:
-      failed_tests: Optional override of tests to be analyzed.
-        Default use self._failed_tests.
-      fake_data: Mocked LUCI Analysis response data to be used for tests.
-        Tuple of (List[TestVariantStabilityAnalysis], TestStabilityCriteria).
-    """
-
-    def transform_stats(
-        stability: List[TestVariantStabilityAnalysis]) -> List[FailedTestStats]:
-      """Convert LUCI Analaysis model to FailedTestStats."""
-      if not self._configs_loaded:
-        self.load_configs()
-      all_stats = []
-      for item in stability:
-        stat = FailedTestStats()
-        stat.test_id = item.test_id
-        stat.build_target = self.m.rdb_util.get_build_target_from_variant(
-            item.variant)
-        stat.board = self.m.rdb_util.get_board_from_variant(item.variant)
-        stat.model = self.m.rdb_util.get_model_from_variant(item.variant)
-        stat.consistent_failure_count = item.failure_rate.unexpected_test_runs
-        stat.query_position_consecutive_failure_count = item.failure_rate.consecutive_unexpected_test_runs
-        stat.flaky_verdict_percent = 0 if item.flake_rate.total_verdicts == 0 else round(
-            100 * item.flake_rate.run_flaky_verdicts /
-            item.flake_rate.total_verdicts)
-        consistently_failing = item.failure_rate.is_met
-        was_flaky = item.flake_rate.is_met
-        stat.automatically_exonerated = consistently_failing or was_flaky
-        # Manual exoneration's configs remove the tast prefix from test names.
-        tastless_name = self.m.exoneration_util.get_tastless_name(stat.test_id)
-        stat.manually_exonerated = self._is_test_name_exonerable(
-            tastless_name, stat.build_target)
-        all_stats.append(stat)
-      return all_stats
-
-    if self.auto_exoneration_v2_enabled:
-      with self.m.step.nest('Auto exoneration v2 dry run') as pres:
-        try:
-          if not failed_tests:
-            failed_tests = self._failed_tests
-          # Convert request
-          test_variant_list = []
-          for test in failed_tests:
-            test_variant = self.get_test_variant_dict(
-                test_id=test.name, board=test.board,
-                build_target=test.build_target, model=test.model)
-            test_variant_list.append(test_variant)
-          test_variant_list.sort(key=lambda x: x['testId'])
-          test_variant_position_list = self.m.exoneration_util.match_test_variants_sources(
-              test_variant_list)
-          all_count = len(test_variant_list)
-          matched_count = len(test_variant_position_list)
-          # Temporary output properties for v2 dry run debug only
-          debug_dict = {
-              'all_test_variants_count': all_count,
-              'source_matched_count': matched_count,
-              'all_matched': all_count == matched_count,
-          }
-          self.m.easy.set_properties_step(failed_test_stats_v2_debug=debug_dict)
-          pres.logs['source matched test_variant_list'] = str(test_variant_list)
-          if all_count != matched_count:
-            pres.step_text = f'Only {matched_count}/{all_count} variants source matched'
-
-          # Make call to LUCI Analysis
-          stability, criteria = self.m.exoneration_util.query_stability(
-              test_variant_position_list, fake_data=fake_data)
-          pres.logs['stability'] = str(
-              sorted(stability, key=lambda x: x.test_id))
-          pres.logs['criteria'] = str(criteria)
-
-          # Transform response to consumable stats
-          all_stats = transform_stats(stability)
-
-          # Apply override (guardrail)
-          override_info = self.m.exoneration_util.override_calculation(
-              all_stats, self.overall_autoex_limit,
-              self.per_target_autoex_limit)
-          overall_stats = OverallTestStats(
-              failed_tests=sorted(all_stats, key=lambda x: x.test_id),
-              override_info=override_info)
-          pres.logs['all_stats'] = str(overall_stats)
-          self.m.easy.set_properties_step(failed_test_stats_v2=overall_stats)
-        except Exception as e:  # pylint: disable=broad-except
-          pres.step_text = f'Error occurred when running auto exoneration v2: {str(e)}'
-          pres.logs['exception'] = traceback.format_exc()
-          pres.status = self.m.step.WARNING

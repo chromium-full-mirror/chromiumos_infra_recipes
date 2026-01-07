@@ -5,19 +5,13 @@
 """A module for util functions associated with cq test exoneration."""
 
 from collections import defaultdict
-from typing import Callable
 from typing import List, Tuple
-from typing import Optional
 
 from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
-  TestVariantFailureRateAnalysis, TestStabilityCriteria, \
-  TestVariantStabilityAnalysis
-from PB.go.chromium.org.luci.resultdb.proto.v1.resultdb import \
-  QueryTestVariantsResponse
+  TestVariantFailureRateAnalysis
 from PB.recipe_modules.chromeos.exonerate.exonerate import \
   FailedTestStats, OverallTestStats
 from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.exoneration_util.matcher import TestVariantMatcher
 
 RPC_BATCH_SIZE = 100
 
@@ -54,68 +48,6 @@ class ExonerationUtilApi(recipe_api.RecipeApi):
               test_variant_list[i:i + RPC_BATCH_SIZE], project='chromeos'))
 
     return failure_rates
-
-  def _resultdb_query_test_variants(self, page_token: Optional[str] = None):
-    """Wrapper function to resultdb.query_test_variants API with only page_token
-    exposed."""
-    return self.m.resultdb.query_test_variants(
-        [self.m.resultdb.current_invocation],
-        test_variant_status='UNEXPECTED_MASK',  # all non-EXPECTED status
-        field_mask_paths=['test_id', 'variant', 'status', 'sources_id'],
-        page_size=10000,
-        page_token=page_token,
-    )
-
-  def match_test_variants_sources(
-      self, test_variant_list: List[dict],
-      fake_query_func: Callable[[Optional[str]],
-                                QueryTestVariantsResponse] = None
-  ) -> List[dict]:
-    """Query resultdb test variants API and populate sources to the given
-    test variants (dict). The return data is readily to be consumed by the
-    query_stability method.
-
-    Args:
-      test_variants: list of test variant dicts to be matched.
-      fake_query_func: a fake query function to be used for unit testing.
-
-    Returns:
-      a new list of test variant dicts that have sources populated. The list can
-      be compared to the original to identify any missed matches.
-    """
-    query_func = self._resultdb_query_test_variants
-    if fake_query_func:
-      query_func = fake_query_func
-    matcher = TestVariantMatcher(query_func)
-
-    return matcher.match_sources(test_variant_list)
-
-  def query_stability(
-      self, test_variant_position_list: List[dict], fake_data=None
-  ) -> (List[TestVariantStabilityAnalysis], TestStabilityCriteria):
-    """Query stability from luci_analysis. Batched client.
-
-    Args:
-      test_variant_position_list list(TestVariantPosition): List of dicts
-        containing testId, variant and source position
-      fake_data: Fake data to be returned for unit testing.
-
-    Returns:
-      List of TestVariantStabilityAnalysis.
-      TestStabilityCriteria configured in Luci analysis.
-    """
-    if fake_data:
-      return fake_data
-    stability = []
-    criteria = None
-    # Break up the input into chunks of RPC_BATCH_SIZE and query LUCI analysis.
-    for i in range(0, len(test_variant_position_list), RPC_BATCH_SIZE):
-      batch, criteria = self.m.luci_analysis.query_stability(
-          test_variant_position_list[i:i + RPC_BATCH_SIZE], project='chromeos')
-      stability.extend(batch)
-
-    return stability, criteria
-
 
   def override_calculation(
       self, test_stats: List[FailedTestStats], overall_limit: int,
