@@ -20,4 +20,8 @@ message RepoProperties {
   // Repo branch/revision for the repo source itself.  Defaults to the stable
   // branch (specified by repo itself).
   string default_repo_rev = 5;
+
+  // How many commits to fetch from the manifest repository.  Defaults to all
+  // (which is the same as 0).  Usually only useful to specify 1 here.
+  uint32 default_manifest_depth = 6;
 }

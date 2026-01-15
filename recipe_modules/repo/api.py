@@ -60,6 +60,7 @@ class RepoApi(recipe_api.RecipeApi):
     self._disable_source_cache_health = properties.disable_source_cache_health
     self._disable_repo_verify = properties.disable_repo_verify
     self._default_repo_url = properties.default_repo_url
+    self._default_manifest_depth = properties.default_manifest_depth
     self._repo_roots_with_updated_binary: Set[Path] = set()
     self._repo_url = None
     self._repo_rev = properties.default_repo_rev
@@ -225,6 +226,8 @@ class RepoApi(recipe_api.RecipeApi):
     self._repo_rev = repo_branch or self._repo_rev
     if not self._repo_rev and not self.m.cros_infra_config.is_staging:
       self._repo_rev = 'stable'
+    if manifest_depth is None:
+      manifest_depth = self._default_manifest_depth
 
     if self._repo_url:
       cmd.append(f'--repo-url={self._repo_url}')
