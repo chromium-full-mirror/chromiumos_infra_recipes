@@ -62,7 +62,7 @@ class RepoApi(recipe_api.RecipeApi):
     self._default_repo_url = properties.default_repo_url
     self._repo_roots_with_updated_binary: Set[Path] = set()
     self._repo_url = None
-    self._repo_rev = None
+    self._repo_rev = properties.default_repo_rev
 
     # Running stats variables for repo.
     # A list of dicts, key parameters from a repo sync operation log.

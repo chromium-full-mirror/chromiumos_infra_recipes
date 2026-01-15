@@ -16,4 +16,8 @@ message RepoProperties {
   // Repo url to use when not provided by the caller.  Defaults to the URL
   // internal to the repo launcher being used.
   string default_repo_url = 4;
+
+  // Repo branch/revision for the repo source itself.  Defaults to the stable
+  // branch (specified by repo itself).
+  string default_repo_rev = 5;
 }
