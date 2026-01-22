@@ -56,7 +56,13 @@ PRECONDITION_FAILURE = 412
 PACKAGE_NAME = "chromeos-ec-token"
 HISTORICAL_DB = f"{PACKAGE_NAME}-historical.bin"
 VERSIONED_DB = f"{PACKAGE_NAME}-%s.bin"
-DISTFILES = "gs://chromeos-localmirror/distfiles"
+
+# TODO(b/475834744, b/475835783): chromeos-localmirror bucket is being deprecated.
+# Remove once all tools have been updated to use firmware-image-archive
+CHROMEOS_LOCALMIRROR = "gs://chromeos-localmirror"
+FIRMWARE_IMAGE_ARCHIVE = "gs://firmware-image-archive"
+
+DISTFILES = "distfiles"
 TOKEN_BUCKET = f"{DISTFILES}/cros_ec/tokens"
 TOKEN_VERSION_BUCKET = f"{TOKEN_BUCKET}/version"
 PACKAGE_PATH = (
@@ -95,7 +101,10 @@ def RunSteps(api, properties):
         .attestation_eligible,
     )
 
-    UpdateHistoricalTokenDatabase(api, location, uploaded_artifacts)
+    UpdateHistoricalTokenDatabase(api, location, uploaded_artifacts,
+                                  CHROMEOS_LOCALMIRROR)
+    UpdateHistoricalTokenDatabase(api, location, uploaded_artifacts,
+                                  FIRMWARE_IMAGE_ARCHIVE)
 
 
 def _GetStatInfo(api: RecipeApi, gsFile: str, field: str):
@@ -154,7 +163,7 @@ def UpdateVersionPin(api: RecipeApi, version: str):
               api.gerrit.parse_gerrit_change_url(change))
 
 
-def CopyVersionedDatabase(api: RecipeApi, source: str):
+def CopyVersionedDatabase(api: RecipeApi, source: str, gs_bucket: str):
   with api.step.nest("Generate versioned database name"):
     file_hash = api.file.file_hash(source, test_data="deadbeef")
     version = api.time.utcnow().strftime("%Y.%m.%d.%H%M%S")
@@ -162,7 +171,8 @@ def CopyVersionedDatabase(api: RecipeApi, source: str):
     file_hash += "-staging" if api.build_menu.is_staging else ""
     version += "_alpha" if api.build_menu.is_staging else ""
 
-    gs_path_with_hash = f"{TOKEN_VERSION_BUCKET}/historical.{file_hash}.bin"
+    gs_path_with_hash = (
+        f"{gs_bucket}/{TOKEN_VERSION_BUCKET}/historical.{file_hash}.bin")
     retval = api.gcloud.storage_cp(
         source,
         gs_path_with_hash,
@@ -177,14 +187,14 @@ def CopyVersionedDatabase(api: RecipeApi, source: str):
     if retval == 0:
       api.gcloud.storage_cp(
           gs_path_with_hash,
-          f"{DISTFILES}/{HISTORICAL_DB}",
+          f"{gs_bucket}/{DISTFILES}/{HISTORICAL_DB}",
           flags=[
               "--predefined-acl=publicRead",
           ],
       )
       api.gcloud.storage_cp(
           gs_path_with_hash,
-          f"{DISTFILES}/{VERSIONED_DB % version}",
+          f"{gs_bucket}/{DISTFILES}/{VERSIONED_DB % version}",
           flags=[
               "--predefined-acl=publicRead",
           ],
@@ -196,6 +206,7 @@ def UpdateHistoricalTokenDatabase(
     api: RecipeApi,
     location: common_pb2.FwLocation,
     uploaded_artifacts: UploadedArtifacts,
+    gs_bucket: str,
 ):
   """Updates Historical Token Database in GCS.
 
@@ -206,6 +217,7 @@ def UpdateHistoricalTokenDatabase(
       api: RecipesAPI object for dependencies.
       location: The firmware location.
       uploaded_artifacts: Artifacts that were uploaded.
+      gs_bucket: GS bucket to upload token database.
     """
   if location == common_pb2.PLATFORM_ZEPHYR:
     cros_src_path = api.cros_source.workspace_path
@@ -236,10 +248,12 @@ def UpdateHistoricalTokenDatabase(
         retry_count = 0
         retval = PRECONDITION_FAILURE
         while retry_count < 3 and retval == PRECONDITION_FAILURE:
-          generation_id = _GetGenerationId(api,
-                                           f"{TOKEN_BUCKET}/{HISTORICAL_DB}")
-          api.gsutil.download_url(f"{TOKEN_BUCKET}/{HISTORICAL_DB}",
-                                  temp_historical_db)
+          generation_id = _GetGenerationId(
+              api, f"{gs_bucket}/{TOKEN_BUCKET}/{HISTORICAL_DB}")
+          api.gsutil.download_url(
+              f"{gs_bucket}/{TOKEN_BUCKET}/{HISTORICAL_DB}",
+              temp_historical_db,
+          )
 
           pw_cmd = [
               "vpython3",
@@ -267,7 +281,7 @@ def UpdateHistoricalTokenDatabase(
 
           retval = api.gcloud.storage_cp(
               temp_historical_db,
-              f"{TOKEN_BUCKET}/{HISTORICAL_DB}",
+              f"{gs_bucket}/{TOKEN_BUCKET}/{HISTORICAL_DB}",
               flags=[
                   f"--if-generation-match={generation_id}",
                   "--predefined-acl=publicRead",
@@ -279,9 +293,10 @@ def UpdateHistoricalTokenDatabase(
             api.time.sleep(1)
 
         if retval == PRECONDITION_FAILURE and retry_count == 3:
-          raise StepFailure(f"Failed to update {TOKEN_BUCKET}/{HISTORICAL_DB}")
+          raise StepFailure(
+              f"Failed to update {gs_bucket}/{TOKEN_BUCKET}/{HISTORICAL_DB}")
 
-        CopyVersionedDatabase(api, temp_historical_db)
+        CopyVersionedDatabase(api, temp_historical_db, gs_bucket)
 
 
 def GenTests(api):
@@ -393,6 +408,10 @@ def GenTests(api):
                     retcode=0),
       api.step_data(
           "Update Historical Token Database.gsutil stat",
+          stdout=api.raw_io.output_text(GSUTIL_STAT),
+      ),
+      api.step_data(
+          "Update Historical Token Database (2).gsutil stat",
           stdout=api.raw_io.output_text(GSUTIL_STAT),
       ),
       api.step_data(

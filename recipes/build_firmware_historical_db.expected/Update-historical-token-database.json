@@ -5062,6 +5062,831 @@
   },
   {
     "cmd": [],
+    "name": "Update Historical Token Database (2)"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CLEANUP]/tmp_tmp_3/token"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Create token download directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/fw-zephyr-informational/R99-1234.56.0-101-8945511751514863184/../artifactsd33fvz7t/tokens.bin",
+      "[CLEANUP]/tmp_tmp_3/token/../artifactsd33fvz7t/tokens.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).gsutil download",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "stat",
+      "gs://firmware-image-archive/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).gsutil stat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://firmware-image-archive/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
+      "[CLEANUP]/tmp_tmp_3/token/chromeos-ec-token-historical.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).gsutil download_url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/platform/ec/zephyr/pigweed-vpython3",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
+      "add",
+      "--database",
+      "[CLEANUP]/tmp_tmp_3/token/chromeos-ec-token-historical.bin",
+      "[CLEANUP]/tmp_tmp_3/token/../artifactsd33fvz7t/tokens.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Merge token database",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/platform/ec/zephyr/pigweed-vpython3",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
+      "report",
+      "[CLEANUP]/tmp_tmp_3/token/chromeos-ec-token-historical.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Token database report",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "--if-generation-match=1702318339485920",
+      "--predefined-acl=publicRead",
+      "[CLEANUP]/tmp_tmp_3/token/chromeos-ec-token-historical.bin",
+      "gs://firmware-image-archive/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).gcloud storage cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Update Historical Token Database (2).Generate versioned database name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/tmp_tmp_3/token/chromeos-ec-token-historical.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "--if-generation-match=0",
+      "--predefined-acl=publicRead",
+      "[CLEANUP]/tmp_tmp_3/token/chromeos-ec-token-historical.bin",
+      "gs://firmware-image-archive/distfiles/cros_ec/tokens/version/historical.deadbeef.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.gcloud storage cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "--predefined-acl=publicRead",
+      "gs://firmware-image-archive/distfiles/cros_ec/tokens/version/historical.deadbeef.bin",
+      "gs://firmware-image-archive/distfiles/chromeos-ec-token-historical.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.gcloud storage cp (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "--predefined-acl=publicRead",
+      "gs://firmware-image-archive/distfiles/cros_ec/tokens/version/historical.deadbeef.bin",
+      "gs://firmware-image-archive/distfiles/chromeos-ec-token-2012.05.14.125344.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.gcloud storage cp (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "2012.05.14.125344",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/VERSION-PIN"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.write version pin file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@2012.05.14.125344@@@",
+      "@@@STEP_LOG_END@VERSION-PIN@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "uprev-chromeos-ec-token-pin",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/VERSION-PIN"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "VERSION-PIN: updating version pin chromeos-ec-token to 2012.05.14.125344\n\nCL generated by job https://cr-buildbucket.appspot.com/build/8945511751514863184",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@VERSION-PIN: updating version pin chromeos-ec-token to 2012.05.14.125344@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@CL generated by job https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@7@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--topic",
+      "chromeos-ec-token",
+      "--send-mail"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.set labels on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.set labels on CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.set labels on CL 1.git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database (2).Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.set labels on CL 1.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {
@@ -5498,7 +6323,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0024@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0025@@@"
     ]
   },
   {
