@@ -974,14 +974,23 @@ class SigningApi(recipe_api.RecipeApi):
             elif suffix is not None:
               dst = f'{dst}.{suffix}'
             src_path = os.path.join(str(archive_dir), src)
-            if self.m.path.isfile(src_path) or self.m.path.isdir(src_path):
+            if self.m.path.isfile(src_path):
               uploaded.add(src)
               # -n so we don't clobber existing destination artifacts.
-              # -r for recursive.
               self.m.gsutil([
                   'cp',
                   '-n',
+                  src_path,
+                  os.path.join(gs_dir, dst),
+              ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
+            elif self.m.path.isdir(src_path):
+              uploaded.add(src)
+              # Use rsync for directories to avoid nesting.
+              # -n so we don't clobber existing destination artifacts.
+              self.m.gsutil([
+                  'rsync',
                   '-r',
+                  '-n',
                   src_path,
                   os.path.join(gs_dir, dst),
               ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
