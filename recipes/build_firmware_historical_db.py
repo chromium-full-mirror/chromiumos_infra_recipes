@@ -176,13 +176,15 @@ def CopyVersionedDatabase(api: RecipeApi, source: str, gs_bucket: str):
 
     gs_path_with_hash = (
         f"{gs_bucket}/{TOKEN_VERSION_BUCKET}/historical.{file_hash}.bin")
+
+    cp_flags = ["--if-generation-match=0"]
+    if not api.build_menu.is_staging:
+      cp_flags.append("--predefined-acl=publicRead")
+
     retval = api.gcloud.storage_cp(
         source,
         gs_path_with_hash,
-        flags=[
-            "--if-generation-match=0",
-            "--predefined-acl=publicRead",
-        ],
+        flags=cp_flags,
         ok_ret=(0, 1, PRECONDITION_FAILURE),
     ).retcode
 
@@ -193,14 +195,14 @@ def CopyVersionedDatabase(api: RecipeApi, source: str, gs_bucket: str):
           f"{gs_bucket}/{DISTFILES}/{HISTORICAL_DB}",
           flags=[
               "--predefined-acl=publicRead",
-          ],
+          ] if not api.build_menu.is_staging else None,
       )
       api.gcloud.storage_cp(
           gs_path_with_hash,
           f"{gs_bucket}/{DISTFILES}/{VERSIONED_DB % version}",
           flags=[
               "--predefined-acl=publicRead",
-          ],
+          ] if not api.build_menu.is_staging else None,
       )
       UpdateVersionPin(api, version)
 
@@ -281,14 +283,14 @@ def UpdateHistoricalTokenDatabase(
           ]
 
           api.step("Token database report", pw_report)
+          cp_flags = [f"--if-generation-match={generation_id}"]
+          if not api.build_menu.is_staging:
+            cp_flags.append("--predefined-acl=publicRead")
 
           retval = api.gcloud.storage_cp(
               temp_historical_db,
               f"{gs_bucket}/{TOKEN_BUCKET}/{HISTORICAL_DB}",
-              flags=[
-                  f"--if-generation-match={generation_id}",
-                  "--predefined-acl=publicRead",
-              ],
+              flags=cp_flags,
               ok_ret=(0, PRECONDITION_FAILURE),
           ).retcode
           retry_count += 1
