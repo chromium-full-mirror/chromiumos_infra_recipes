@@ -27,6 +27,7 @@ DEPS = [
     'recipe_engine/step',
     'build_menu',
     'git_footers',
+    'greenness',
     'orch_menu',
     'snapshot_orch_menu',
     'src_state',
@@ -56,6 +57,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
     raw_result = api.snapshot_orch_menu.create_recipe_result()
 
     summary_markdown = f'Version: {version_str}'
+    if api.greenness.greenness_markdown:
+      summary_markdown += f'\n\n{api.greenness.greenness_markdown}'
     if raw_result.summary_markdown:
       summary_markdown += '\n\n'
       summary_markdown += raw_result.summary_markdown

@@ -30,6 +30,11 @@ class GreennessApi(recipe_api.RecipeApi):
     self._llfg_exclude_variants = properties.llfg_exclude_variants
     self._builder_greenness_dict: OrderedDict[
         str, GreennessTuple] = collections.OrderedDict()
+    self._greenness_markdown = None
+
+  @property
+  def greenness_markdown(self) -> str:
+    return self._greenness_markdown
 
   @property
   def builder_greenness_dict(self) -> OrderedDict[str, GreennessTuple]:
@@ -190,6 +195,17 @@ class GreennessApi(recipe_api.RecipeApi):
 
       pres.logs['irrelevant builders'] = irrelevant_builders
 
+  def _set_greenness_markdown(self, aggregate_metric: int,
+                              aggregate_build_metric: int):
+    """Store string containing greenness info for summary.
+
+    Args:
+      aggregate_metric: The aggregate greenness score.
+      aggregate_build_metric: The aggregate build-only greenness score.
+    """
+    self._greenness_markdown = f'Overall Greenness Score: {aggregate_metric}, ' \
+        f'Build Only Greenness Score: {aggregate_build_metric}'
+
   def print_step(self) -> None:
     """Print comprehensive greenness info in a step."""
     with self.m.step.nest('print greenness') as pres:
@@ -237,13 +253,17 @@ class GreennessApi(recipe_api.RecipeApi):
           if green_tuple.score != -1:
             critical_scores.append(green_tuple.score)
 
+    agg_green = 0
+    agg_build_green = 0
     if critical_scores:
-      agg_greenness.aggregate_metric = int(
-          sum(critical_scores) / len(critical_scores))
+      agg_green = int(sum(critical_scores) / len(critical_scores))
+      agg_greenness.aggregate_metric = agg_green
     if critical_build_scores:
-      agg_greenness.aggregate_build_metric = int(
+      agg_build_green = int(
           sum(critical_build_scores) / len(critical_build_scores))
+      agg_greenness.aggregate_build_metric = agg_build_green
     self.m.easy.set_properties_step(greenness=agg_greenness)
+    self._set_greenness_markdown(agg_green, agg_build_green)
 
   def is_green_for_local(self, is_bazel: bool = False) -> bool:
     """Returns whether the current snapshot is green for local builds.
