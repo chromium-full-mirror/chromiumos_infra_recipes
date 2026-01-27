@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "set greenness",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"60\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"builder_name\", \"metric\": \"60\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"66\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"builder_name\", \"metric\": \"66\"}]}@@@"
     ]
   },
   {

@@ -141,21 +141,33 @@ class GreennessApi(recipe_api.RecipeApi):
       results: Results of the HW test runs.
     """
     hwtest_dict = {}
+    # There is one SkylabResult per builder/suite combo.
     for res in results:
       # Only count if test suite was critical.
       if res.task.test.common.critical.value:
         bt = str(res.task.unit.common.build_target.name)
         builder = str(res.task.unit.common.builder_name)
-        test_cases = [
-            r.state.verdict == TaskState.VERDICT_PASSED
-            for r in res.child_results
+        # Each child result represents one test_runner build which contains
+        # multiple test cases.
+        # Shards can be retried in which case they will be represented multiple
+        # times in child_results. Only take the best attempt per shard as to not
+        # double count or bring down the greenness metric when tests pass on
+        # retry.
+        shard_name_to_result_mapping = collections.defaultdict(list)
+        for shard in res.child_results:
+          shard_name_to_result_mapping[shard.name].append(shard)
+        test_shards = [
+            any(result.state.verdict == TaskState.VERDICT_PASSED
+                for result in results)
+            for results in shard_name_to_result_mapping.values()
         ]
-        prev_cases = hwtest_dict.get((builder, bt), [])
-        hwtest_dict[(builder, bt)] = prev_cases + test_cases
 
-    for (builder, bt), test_cases in hwtest_dict.items():
-      if test_cases:
-        score = int(sum(test_cases) * 100 / len(test_cases))
+        prev_shards = hwtest_dict.get((builder, bt), [])
+        hwtest_dict[(builder, bt)] = prev_shards + test_shards
+
+    for (builder, bt), test_shards in hwtest_dict.items():
+      if test_shards:
+        score = int(sum(test_shards) * 100 / len(test_shards))
         builder_score = self._get_build_score_for_tests(
             self._builder_greenness_dict, builder)
         self._builder_greenness_dict[builder] = GreennessTuple(
