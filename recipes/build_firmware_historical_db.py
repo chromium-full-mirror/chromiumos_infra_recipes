@@ -57,12 +57,7 @@ PACKAGE_NAME = "chromeos-ec-token"
 HISTORICAL_DB = f"{PACKAGE_NAME}-historical.bin"
 VERSIONED_DB = f"{PACKAGE_NAME}-%s.bin"
 
-# TODO(b/475834744, b/475835783): chromeos-localmirror bucket is being deprecated.
-# Remove once all tools have been updated to use firmware-image-archive
 CHROMEOS_LOCALMIRROR = "gs://chromeos-localmirror"
-FIRMWARE_IMAGE_ARCHIVE = "gs://firmware-image-archive"
-# For staging builder
-THROWAWAY_BUCKET = "gs://chromeos-throw-away-bucket"
 
 DISTFILES = "distfiles"
 TOKEN_BUCKET = f"{DISTFILES}/cros_ec/tokens"
@@ -105,9 +100,6 @@ def RunSteps(api, properties):
 
     UpdateHistoricalTokenDatabase(api, location, uploaded_artifacts,
                                   CHROMEOS_LOCALMIRROR)
-    UpdateHistoricalTokenDatabase(
-        api, location, uploaded_artifacts, THROWAWAY_BUCKET
-        if api.build_menu.is_staging else FIRMWARE_IMAGE_ARCHIVE)
 
 
 def _GetStatInfo(api: RecipeApi, gsFile: str, field: str):
@@ -413,10 +405,6 @@ def GenTests(api):
                     retcode=0),
       api.step_data(
           "Update Historical Token Database.gsutil stat",
-          stdout=api.raw_io.output_text(GSUTIL_STAT),
-      ),
-      api.step_data(
-          "Update Historical Token Database (2).gsutil stat",
           stdout=api.raw_io.output_text(GSUTIL_STAT),
       ),
       api.step_data(
