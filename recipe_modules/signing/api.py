@@ -986,11 +986,11 @@ class SigningApi(recipe_api.RecipeApi):
             elif self.m.path.isdir(src_path):
               uploaded.add(src)
               # Use rsync for directories to avoid nesting.
-              # -n so we don't clobber existing destination artifacts.
+              # -i so we don't clobber existing destination artifacts.
               self.m.gsutil([
                   'rsync',
                   '-r',
-                  '-n',
+                  '-i',
                   src_path,
                   os.path.join(gs_dir, dst),
               ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
