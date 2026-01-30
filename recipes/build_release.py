@@ -182,19 +182,15 @@ def DoRunSteps(api, config, properties):
 
           with api.failures.ignore_exceptions():
             sbom_gs_bucket = config.artifacts.artifacts_gs_bucket
-            sbom_gs_path = f'{api.build_menu.artifacts_build_path()}/baseline-sbom.spdx.json'
-            baseline_sbom = api.cros_ssci.generate_and_upload_sbom(
+            sbom_gs_path = api.build_menu.artifacts_build_path()
+            system_image_sboms = api.cros_ssci.generate_and_upload_sbom_for_system_images(
                 sysroot=api.build_menu.sysroot, chroot=api.build_menu.chroot,
                 sbom_gs_bucket=sbom_gs_bucket, sbom_gs_path=sbom_gs_path)
+
             artifact_sbom.update({
-                ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_BASE]:
-                    baseline_sbom,
-                ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_RECOVERY]:
-                    baseline_sbom,
-                ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_FACTORY]:
-                    baseline_sbom,
-                ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_TEST]:
-                    baseline_sbom,
+                ARTIFACTS_BY_IMAGE_TYPE[image_type]: sbom
+                for image_type, sbom in system_image_sboms.items()
+                if image_type in ARTIFACTS_BY_IMAGE_TYPE
             })
 
           # Now that the image is built, we should have all metadata available.

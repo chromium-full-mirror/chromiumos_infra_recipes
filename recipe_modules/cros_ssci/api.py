@@ -17,6 +17,7 @@ from google.protobuf import json_format
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.third_party_inventory import CollectPackageMetadataRequest
 from PB.chromiumos.common import Chroot
+from PB.chromiumos import common as common_pb2
 from PB.chromiumos.build.api.third_party_inventory import PackageMetadata
 
 
@@ -35,6 +36,9 @@ _SPDX_ORGANIZATION = "Google LLC"
 #  - Tool version is a monotonically increasing number
 _SPDX_TOOL_NAME = "ChromeOsReleaseRecipe"
 _SPDX_TOOL_VERSION = "1"
+
+_BASELINE_SPDX_FILENAME = 'baseline-sbom.spdx.json'
+_KERNEL_SPDX_FILENAME = 'kernel-sbom.spdx.json'
 
 
 def _parse_protojson(s: str, proto_class: type[Message]) -> Message:
@@ -79,9 +83,23 @@ def _to_spdx_package_relationship(p: PackageMetadata) -> dict:
   }
 
 
+def _build_main_package(name: str, version: str) -> dict:
+  """Construct a main package dict."""
+  return {
+      "name": name,
+      "SPDXID": _SPDX_PACKAGE_MAIN_ID,
+      "versionInfo": version,
+      "supplier": f"Organization: {_SPDX_ORGANIZATION}",
+      "downloadLocation": "https://www.google.com/",
+      "filesAnalyzed": False,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION"
+  }
+
+
 # For now, we hardcode SPDX fields to generate a minimal SBOM.
 #
-# In the future, this will becomes its own tooling and ingest PackageMetadata
+# In the future, this may become its own tooling and ingest PackageMetadata
 # protojson directly to produce a SPDX file (using SDPX tooling).
 def _build_spdx_dict(name: str, unique_id: str, creation_time: datetime,
                      packages: List[PackageMetadata],
@@ -136,50 +154,84 @@ def _build_spdx_dict(name: str, unique_id: str, creation_time: datetime,
 class CrosSsciApi(RecipeApi):
   """API for working with SSCI."""
 
-  def generate_and_upload_sbom(self, sysroot: Sysroot, chroot: Chroot,
-                               sbom_gs_bucket: str,
-                               sbom_gs_path: str) -> UploadedSBOM:
-    """Generate and upload SBOM to GCS."""
-    with self.m.step.nest('generate system image SBOM'):
-      name = 'baseline-sbom.spdx.json'
-      local_path = self.m.path.mkdtemp('cros_ssci') / name
+  def generate_and_upload_sbom_for_system_images(
+      self, sysroot: Sysroot, chroot: Chroot, sbom_gs_bucket: str,
+      sbom_gs_path: str) -> dict[common_pb2.ImageType, UploadedSBOM]:
+    """Generate and upload SBOM to GCS.
 
-      self.generate_sbom(sysroot=sysroot, chroot=chroot, out_path=local_path)
-      return self.upload_sbom(local_path, gs_bucket=sbom_gs_bucket,
-                              gs_path=sbom_gs_path)
+    This generates both baseline and kernel SBOMs from the same package metadata.
 
-  def generate_sbom(self, sysroot: Sysroot, chroot: Chroot,
-                    out_path: Path) -> step_data.StepData:
-    """Generate SBOM and write SPDX JSON to out_path."""
+    Args:
+      sysroot: Sysroot protobuf.
+      chroot: Chroot protobuf.
+      sbom_gs_bucket: GCS bucket to upload to.
+      sbom_gs_path: GCS path prefix to upload to.
+
+    Returns:
+      A dict mapping common_pb2.ImageType to UploadedSBOM.
+    """
     packages = self.collect_package_metadata(sysroot=sysroot, chroot=chroot)
 
-    with self.m.step.nest('generate a baseline SBOM'):
-      builder_full_name = self.m.buildbucket.builder_full_name
-      build_id = self.m.buildbucket.build.id
-      version = self.m.cros_version.version
+    builder_full_name = self.m.buildbucket.builder_full_name
+    build_id = self.m.buildbucket.build.id
+    version_str = str(self.m.cros_version.version)
 
-      # Main package describes the system image.
-      main_package = {
-          "name": "ChromeOS System Image",
-          "SPDXID": _SPDX_PACKAGE_MAIN_ID,
-          "versionInfo": f"{version}",
-          "supplier": "Organization: Google LLC",
-          "downloadLocation": "https://www.google.com/",
-          "filesAnalyzed": False,
-          "licenseConcluded": "NOASSERTION",
-          "licenseDeclared": "NOASSERTION"
-      }
+    tempdir = self.m.path.mkdtemp('cros_ssci')
+    result = {}
 
+    with self.m.step.nest('generate and upload baseline SBOM'):
       spdx_dict = _build_spdx_dict(
-          name=f"ChromeOS System Image SBOM: {version}",
+          name=f"ChromeOS System Image SBOM: {version_str}",
           unique_id=f'{builder_full_name}/{build_id}',
           creation_time=self.m.time.utcnow(),
           packages=packages,
-          main_package=main_package,
+          main_package=_build_main_package(
+              name="ChromeOS System Image",
+              version=version_str,
+          ),
       )
 
-      return self.m.file.write_json("write SPDX SBOM", out_path, data=spdx_dict,
-                                    indent=2)
+      local_path = tempdir / _BASELINE_SPDX_FILENAME
+      self.m.file.write_json("write SPDX SBOM", local_path, data=spdx_dict,
+                             indent=2)
+      uploaded_sbom = self.upload_sbom(
+          local_path, gs_bucket=sbom_gs_bucket,
+          gs_path=f'{sbom_gs_path}/{_BASELINE_SPDX_FILENAME}')
+
+      for image_type in [
+          common_pb2.IMAGE_TYPE_BASE, common_pb2.IMAGE_TYPE_RECOVERY,
+          common_pb2.IMAGE_TYPE_FACTORY, common_pb2.IMAGE_TYPE_TEST
+      ]:
+        result[image_type] = uploaded_sbom
+
+    with self.m.step.nest('generate and upload kernel SBOM'):
+      # A predicate that picks packages that forms the standalone kernel.
+      package_filter = lambda package: (
+          package.category == 'sys-kernel' and package.name.startswith(
+              "chromeos-kernel"))
+      kernel_packages = list(filter(package_filter, packages))
+
+      spdx_dict = _build_spdx_dict(
+          name=f"ChromeOS Kernel SBOM: {builder_full_name} {version_str}",
+          unique_id=f'{builder_full_name}/{build_id}',
+          creation_time=self.m.time.utcnow(),
+          packages=kernel_packages,
+          main_package=_build_main_package(
+              name=f"ChromeOS_Kernel_{builder_full_name}",
+              version=version_str,
+          ),
+      )
+
+      local_path = tempdir / _KERNEL_SPDX_FILENAME
+      self.m.file.write_json("write SPDX SBOM", local_path, data=spdx_dict,
+                             indent=2)
+      uploaded_sbom = self.upload_sbom(
+          local_path, gs_bucket=sbom_gs_bucket,
+          gs_path=f'{sbom_gs_path}/{_KERNEL_SPDX_FILENAME}')
+      result[common_pb2.IMAGE_TYPE_FLEXOR_KERNEL] = uploaded_sbom
+
+    return result
+
 
   def generate_dlc_sbom(self, dlc_name: str,
                         out_path: Path) -> step_data.StepData:
@@ -202,23 +254,15 @@ class CrosSsciApi(RecipeApi):
       build_id = self.m.buildbucket.build.id
       version = self.m.cros_version.version
 
-      main_package = {
-          "name": f"ChromeOS_DLC_{dlc_name}",
-          "SPDXID": _SPDX_PACKAGE_MAIN_ID,
-          "versionInfo": f"{version}",
-          "supplier": "Organization: Google LLC",
-          "downloadLocation": "https://www.google.com/",
-          "filesAnalyzed": False,
-          "licenseConcluded": "NOASSERTION",
-          "licenseDeclared": "NOASSERTION"
-      }
-
       spdx_dict = _build_spdx_dict(
           name=f"ChromeOS DLC SBOM: {dlc_name}",
           unique_id=f'{builder_full_name}/{build_id}/dlc/{dlc_name}',
           creation_time=self.m.time.utcnow(),
           packages=[],
-          main_package=main_package,
+          main_package=_build_main_package(
+              name=f"ChromeOS_DLC_{dlc_name}",
+              version=str(version),
+          ),
       )
 
       return self.m.file.write_json("write DLC SPDX SBOM", out_path,
@@ -235,7 +279,6 @@ class CrosSsciApi(RecipeApi):
 
     gs_url = f'gs://{gs_bucket}/{gs_path}'
     return UploadedSBOM(digest=digest, gs_url=gs_url)
-
 
   def collect_package_metadata(self, chroot: Chroot,
                                sysroot: Sysroot) -> List[PackageMetadata]:

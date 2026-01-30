@@ -160,13 +160,8 @@
   },
   {
     "cmd": [],
-    "name": "generate system image SBOM"
-  },
-  {
-    "cmd": [],
-    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata",
+    "name": "call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
@@ -175,11 +170,11 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"metadata_protojson\": [@@@",
-      "@@@STEP_LOG_LINE@response@    \"{\\\"category\\\": \\\"dev-libs\\\", \\\"name\\\": \\\"test-library\\\", \\\"version\\\": \\\"1.0.0_p1\\\"}\",@@@",
-      "@@@STEP_LOG_LINE@response@    \"{\\\"category\\\": \\\"app-shells\\\", \\\"name\\\": \\\"bash\\\", \\\"version\\\": \\\"2.0.0_p2\\\"}\"@@@",
-      "@@@STEP_LOG_LINE@response@  ],@@@",
-      "@@@STEP_LOG_LINE@response@  \"success\": true@@@",
+      "@@@STEP_LOG_LINE@response@  \"success\": true,@@@",
+      "@@@STEP_LOG_LINE@response@  \"metadataProtojson\": [@@@",
+      "@@@STEP_LOG_LINE@response@    \"{\\n  \\\"category\\\": \\\"sys-kernel\\\",\\n  \\\"name\\\": \\\"chromeos-kernel-6_6\\\",\\n  \\\"version\\\": \\\"6.6.99\\\"\\n}\",@@@",
+      "@@@STEP_LOG_LINE@response@    \"{\\n  \\\"category\\\": \\\"category\\\",\\n  \\\"name\\\": \\\"package\\\",\\n  \\\"version\\\": \\\"1.0\\\"\\n}\"@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -208,9 +203,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.write input file",
+    "name": "call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -237,9 +232,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.read chromite version",
+    "name": "call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.read chromite version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
     ]
   },
@@ -262,9 +257,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.git checkout",
+    "name": "call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -296,9 +291,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.call build API script",
+    "name": "call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -330,26 +325,23 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.read output file",
+    "name": "call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate system image SBOM.call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.call response",
+    "name": "call chromite.api.ThirdPartyInventoryService/CollectPackageMetadata.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate system image SBOM.generate a baseline SBOM",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "generate and upload baseline SBOM"
   },
   {
     "cmd": [
@@ -359,7 +351,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:53:26Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/postsubmit/kukui-release-main/8945511751514863184\",\n  \"name\": \"ChromeOS System Image SBOM: R99-1234.56.0-101\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS System Image\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-dev-libs-test-library-1.0.0_p1-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"dev-libs-test-library\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"1.0.0_p1\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-app-shells-bash-2.0.0_p2-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"app-shells-bash\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"2.0.0_p2\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-dev-libs-test-library-1.0.0_p1-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-app-shells-bash-2.0.0_p2-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
+      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:53:26Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/postsubmit/kukui-release-main/8945511751514863184\",\n  \"name\": \"ChromeOS System Image SBOM: R99-1234.56.0-101\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS System Image\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-sys-kernel-chromeos-kernel-6_6-6.6.99-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"sys-kernel-chromeos-kernel-6_6\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"6.6.99\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-category-package-1.0-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"category-package\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"1.0\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-sys-kernel-chromeos-kernel-6_6-6.6.99-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-category-package-1.0-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
       "[CLEANUP]/cros_ssci_tmp_1/baseline-sbom.spdx.json"
     ],
     "infra_step": true,
@@ -375,9 +367,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate system image SBOM.generate a baseline SBOM.write SPDX SBOM",
+    "name": "generate and upload baseline SBOM.write SPDX SBOM",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@{@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"SPDXID\": \"SPDXRef-DOCUMENT\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"creationInfo\": {@@@",
@@ -402,7 +394,7 @@
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"versionInfo\": \"R99-1234.56.0-101\"@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    },@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    {@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"SPDXID\": \"SPDXRef-Package-dev-libs-test-library-1.0.0_p1-0\",@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"SPDXID\": \"SPDXRef-Package-sys-kernel-chromeos-kernel-6_6-6.6.99-0\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"description\": \"\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"downloadLocation\": \"NONE\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"externalRefs\": [@@@",
@@ -415,13 +407,13 @@
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"filesAnalyzed\": false,@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"name\": \"dev-libs-test-library\",@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"name\": \"sys-kernel-chromeos-kernel-6_6\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"originator\": \"NOASSERTION\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"versionInfo\": \"1.0.0_p1\"@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"versionInfo\": \"6.6.99\"@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    },@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    {@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"SPDXID\": \"SPDXRef-Package-app-shells-bash-2.0.0_p2-0\",@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"SPDXID\": \"SPDXRef-Package-category-package-1.0-0\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"description\": \"\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"downloadLocation\": \"NONE\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"externalRefs\": [@@@",
@@ -434,10 +426,10 @@
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"filesAnalyzed\": false,@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"name\": \"app-shells-bash\",@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"name\": \"category-package\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"originator\": \"NOASSERTION\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"versionInfo\": \"2.0.0_p2\"@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"versionInfo\": \"1.0\"@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    }@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  ],@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@  \"relationships\": [@@@",
@@ -447,12 +439,12 @@
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"spdxElementId\": \"SPDXRef-DOCUMENT\"@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    },@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    {@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-dev-libs-test-library-1.0.0_p1-0\",@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-sys-kernel-chromeos-kernel-6_6-6.6.99-0\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"relationshipType\": \"CONTAINS\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"spdxElementId\": \"SPDXRef-Package-main\"@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    },@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    {@@@",
-      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-app-shells-bash-2.0.0_p2-0\",@@@",
+      "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-category-package-1.0-0\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"relationshipType\": \"CONTAINS\",@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@      \"spdxElementId\": \"SPDXRef-Package-main\"@@@",
       "@@@STEP_LOG_LINE@baseline-sbom.spdx.json@    }@@@",
@@ -485,7 +477,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate system image SBOM.Compute file hash",
+    "name": "generate and upload baseline SBOM.Compute file hash",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
@@ -516,11 +508,163 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate system image SBOM.gsutil upload",
+    "name": "generate and upload baseline SBOM.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/baseline-sbom.spdx.json@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"generate system image SBOM|gsutil upload\": \"gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/baseline-sbom.spdx.json\"}@@@"
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"generate and upload baseline SBOM|gsutil upload\": \"gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/baseline-sbom.spdx.json\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate and upload kernel SBOM"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"SPDXID\": \"SPDXRef-DOCUMENT\",\n  \"creationInfo\": {\n    \"created\": \"2012-05-14T12:53:27.500000Z\",\n    \"creators\": [\n      \"Organization: Google LLC\",\n      \"Tool: ChromeOsReleaseRecipe-1\"\n    ]\n  },\n  \"dataLicense\": \"CC0-1.0\",\n  \"documentNamespace\": \"https://spdx.google/chromeos/postsubmit/kukui-release-main/8945511751514863184\",\n  \"name\": \"ChromeOS Kernel SBOM: chromeos/postsubmit/kukui-release-main R99-1234.56.0-101\",\n  \"packages\": [\n    {\n      \"SPDXID\": \"SPDXRef-Package-main\",\n      \"downloadLocation\": \"https://www.google.com/\",\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"ChromeOS_Kernel_chromeos/postsubmit/kukui-release-main\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"R99-1234.56.0-101\"\n    },\n    {\n      \"SPDXID\": \"SPDXRef-Package-sys-kernel-chromeos-kernel-6_6-6.6.99-0\",\n      \"description\": \"\",\n      \"downloadLocation\": \"NONE\",\n      \"externalRefs\": [\n        {\n          \"referenceCategory\": \"OTHER\",\n          \"referenceLocator\": \"NOASSERTION\",\n          \"referenceType\": \"NOASSERTION\"\n        }\n      ],\n      \"filesAnalyzed\": false,\n      \"licenseConcluded\": \"NOASSERTION\",\n      \"licenseDeclared\": \"NOASSERTION\",\n      \"name\": \"sys-kernel-chromeos-kernel-6_6\",\n      \"originator\": \"NOASSERTION\",\n      \"supplier\": \"Organization: Google LLC\",\n      \"versionInfo\": \"6.6.99\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-main\",\n      \"relationshipType\": \"DESCRIBES\",\n      \"spdxElementId\": \"SPDXRef-DOCUMENT\"\n    },\n    {\n      \"relatedSpdxElement\": \"SPDXRef-Package-sys-kernel-chromeos-kernel-6_6-6.6.99-0\",\n      \"relationshipType\": \"CONTAINS\",\n      \"spdxElementId\": \"SPDXRef-Package-main\"\n    }\n  ],\n  \"spdxVersion\": \"SPDX-2.3\"\n}",
+      "[CLEANUP]/cros_ssci_tmp_1/kernel-sbom.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate and upload kernel SBOM.write SPDX SBOM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@{@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  \"SPDXID\": \"SPDXRef-DOCUMENT\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  \"creationInfo\": {@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    \"created\": \"2012-05-14T12:53:27.500000Z\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    \"creators\": [@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"Tool: ChromeOsReleaseRecipe-1\"@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    ]@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  },@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  \"dataLicense\": \"CC0-1.0\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  \"documentNamespace\": \"https://spdx.google/chromeos/postsubmit/kukui-release-main/8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  \"name\": \"ChromeOS Kernel SBOM: chromeos/postsubmit/kukui-release-main R99-1234.56.0-101\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  \"packages\": [@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"SPDXID\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"downloadLocation\": \"https://www.google.com/\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"filesAnalyzed\": false,@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"name\": \"ChromeOS_Kernel_chromeos/postsubmit/kukui-release-main\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"versionInfo\": \"R99-1234.56.0-101\"@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    },@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"SPDXID\": \"SPDXRef-Package-sys-kernel-chromeos-kernel-6_6-6.6.99-0\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"description\": \"\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"downloadLocation\": \"NONE\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"externalRefs\": [@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@        {@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@          \"referenceCategory\": \"OTHER\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@          \"referenceLocator\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@          \"referenceType\": \"NOASSERTION\"@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@        }@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      ],@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"filesAnalyzed\": false,@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"licenseConcluded\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"licenseDeclared\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"name\": \"sys-kernel-chromeos-kernel-6_6\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"originator\": \"NOASSERTION\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"supplier\": \"Organization: Google LLC\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"versionInfo\": \"6.6.99\"@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  \"relationships\": [@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-main\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"relationshipType\": \"DESCRIBES\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"spdxElementId\": \"SPDXRef-DOCUMENT\"@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    },@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    {@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"relatedSpdxElement\": \"SPDXRef-Package-sys-kernel-chromeos-kernel-6_6-6.6.99-0\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"relationshipType\": \"CONTAINS\",@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@      \"spdxElementId\": \"SPDXRef-Package-main\"@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@    }@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  ],@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@  \"spdxVersion\": \"SPDX-2.3\"@@@",
+      "@@@STEP_LOG_LINE@kernel-sbom.spdx.json@}@@@",
+      "@@@STEP_LOG_END@kernel-sbom.spdx.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/cros_ssci_tmp_1/kernel-sbom.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate and upload kernel SBOM.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Hash calculated: feedf00d@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/cros_ssci_tmp_1/kernel-sbom.spdx.json",
+      "gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/kernel-sbom.spdx.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate and upload kernel SBOM.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/kernel-sbom.spdx.json@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"generate and upload baseline SBOM|gsutil upload\": \"gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/baseline-sbom.spdx.json\", \"generate and upload kernel SBOM|gsutil upload\": \"gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/kernel-sbom.spdx.json\"}@@@"
     ]
   },
   {
