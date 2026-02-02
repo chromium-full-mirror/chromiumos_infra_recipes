@@ -58,6 +58,8 @@ HISTORICAL_DB = f"{PACKAGE_NAME}-historical.bin"
 VERSIONED_DB = f"{PACKAGE_NAME}-%s.bin"
 
 CHROMEOS_LOCALMIRROR = "gs://chromeos-localmirror"
+# For staging builder
+THROWAWAY_BUCKET = "gs://chromeos-throw-away-bucket"
 
 DISTFILES = "distfiles"
 TOKEN_BUCKET = f"{DISTFILES}/cros_ec/tokens"
@@ -98,8 +100,9 @@ def RunSteps(api, properties):
         .attestation_eligible,
     )
 
-    UpdateHistoricalTokenDatabase(api, location, uploaded_artifacts,
-                                  CHROMEOS_LOCALMIRROR)
+    UpdateHistoricalTokenDatabase(
+        api, location, uploaded_artifacts,
+        THROWAWAY_BUCKET if api.build_menu.is_staging else CHROMEOS_LOCALMIRROR)
 
 
 def _GetStatInfo(api: RecipeApi, gsFile: str, field: str):
