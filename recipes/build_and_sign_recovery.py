@@ -132,7 +132,7 @@ def upload_recovery_prebuilts(api: RecipeTestApi, unsigned_recovery_path: Path,
         non_repo_checkout=True)
     if abandon:
       api.gerrit.abandon_change(change)
-    return 'Updated recovery kernel prebuilts for {target}'
+    return f'Updated recovery kernel prebuilts for {target}'
 
 
 def get_recovery_path(api: RecipeApi, response: SignImageResponse) -> Path:

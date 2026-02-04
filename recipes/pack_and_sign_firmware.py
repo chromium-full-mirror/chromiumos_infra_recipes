@@ -199,7 +199,7 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
         non_repo_checkout=True, upload_options=['banned-words~skip'])
     if abandon:
       api.gerrit.abandon_change(change)
-    return 'Updated firmware prebuilts for {target}'
+    return f'Updated firmware prebuilts for {target}'
 
 
 def get_shellball_path(api: RecipeApi, response: SignImageResponse) -> Path:

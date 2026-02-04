@@ -1,0 +1,18 @@
+// Copyright 2026 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_op_tee_image;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+enum PublishStrategy {
+  UNSPECIFIED = 0;
+  AG_ONLY = 1;
+  AG_AND_DESKTOP = 2;
+  DESKTOP_ONLY = 3;
+}
+
+message BuildOpTeeImageProperties { PublishStrategy publish_strategy = 1; }
