@@ -28,7 +28,6 @@ DEPS = [
 ]
 
 
-
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
   with api.bot_cost.build_cost_context():
     api.cros_source.configure_builder()

@@ -523,7 +523,7 @@
   * [failures:examples/step_failures](#recipes-failures_examples_step_failures)
   * [failures_util:examples/present_run](#recipes-failures_util_examples_present_run)
   * [failures_util:examples/results](#recipes-failures_util_examples_results)
-  * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
+  * [firmware_orchestrator](#recipes-firmware_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [future_utils:tests/error_handler](#recipes-future_utils_tests_error_handler) &mdash; Tests to verify future_utils error handling.
   * [future_utils:tests/happy_path](#recipes-future_utils_tests_happy_path) &mdash; Tests to verify future_utils happy path.
   * [future_utils:tests/retries](#recipes-future_utils_tests_retries) &mdash; Tests to verify future_utils retries.
@@ -15025,14 +15025,14 @@ Tests build failure aggregation by reason.
 
 
 &mdash; **def [RunSteps](/recipe_modules/failures_util/examples/results.py#18)(api):**
-### *recipes* / [firmware\_cq\_orchestrator](/recipes/firmware_cq_orchestrator.py)
+### *recipes* / [firmware\_cq\_orchestrator](/recipes/firmware_orchestrator.py)
 
-[DEPS](/recipes/firmware_cq_orchestrator.py#16): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/firmware_orchestrator.py#16): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe that schedules child builders and watches for failures.
 
-&mdash; **def [RunSteps](/recipes/firmware_cq_orchestrator.py#32)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/firmware_orchestrator.py#32)(api: RecipeApi):**
 ### *recipes* / [future\_utils:tests/error\_handler](/recipe_modules/future_utils/tests/error_handler.py)
 
 [DEPS](/recipe_modules/future_utils/tests/error_handler.py#9): [future\_utils](#recipe_modules-future_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
