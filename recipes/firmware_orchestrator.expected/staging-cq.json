@@ -5,6 +5,66 @@
   },
   {
     "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set manifest_branch",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"firmware-board-5555.B\"@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "child"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "launch"
+  },
+  {
+    "cmd": [],
     "name": "configure builder"
   },
   {
@@ -191,7 +251,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"firmware-board-5555.B\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
@@ -199,7 +259,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
       "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project-a\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromiumos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
@@ -219,7 +279,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromiumos/manifest-internal\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -244,7 +304,22 @@
     "name": "configure builder.cros_infra_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@config not found, assuming deleted@@@"
+      "@@@STEP_LOG_LINE@builder_config_json@{@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"staging-firmware-cq-orchestrator\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"orchestrator\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"childSpecs\": [@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@      {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@        \"name\": \"dynamic-child\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@      }@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    ]@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"applyGerritChanges\": true@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  }@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@}@@@",
+      "@@@STEP_LOG_END@builder_config_json@@@"
     ]
   },
   {
@@ -252,44 +327,6 @@
     "name": "configure builder.cros_infra_config.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.cros_infra_config.read builder configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -326,22 +363,14 @@
     "name": "configure builder.cros_infra_config.update src_state.gerrit_changes.set gerrit_changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@changes@[\"{\\n  \\\"host\\\": \\\"chromium-review.googlesource.com\\\",\\n  \\\"project\\\": \\\"project-a\\\",\\n  \\\"change\\\": \\\"123456\\\",\\n  \\\"patchset\\\": \\\"7\\\"\\n}\"]@@@"
+      "@@@SET_BUILD_PROPERTY@changes@[\"{\\n  \\\"host\\\": \\\"chromium-review.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromiumos/manifest-internal\\\",\\n  \\\"change\\\": \\\"123456\\\",\\n  \\\"patchset\\\": \\\"7\\\"\\n}\"]@@@"
     ]
   },
   {
     "cmd": [],
     "name": "configure builder.determine branch from changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Using manifest branch firmware-board-5555.B.  Found firmware-board-5555.B@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.determine branch from changes.set src_state.gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -362,12 +391,12 @@
       }
     },
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"firmware-board-5555.B\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"firmware-board-5555.B-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -385,7 +414,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"firmware-board-5555.B-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/firmware-board-5555.B\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"staging-snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/staging-snapshot\\\"\\n}\"@@@"
     ]
   },
   {
@@ -393,14 +422,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"firmware-board-5555.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/firmware-board-5555.B\"}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set manifest_branch",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@manifest_branch@\"firmware-board-5555.B\"@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
     ]
   },
   {
@@ -438,7 +460,7 @@
       }
     },
     "name": "launch child.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-firmware-board-5555-cq\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"firmware-board-5555.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/firmware-board-5555.B\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"$recipe_engine/cv\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"firmware-board-5555.B-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-firmware-board-5555-cq\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromiumos/manifest-internal\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"$recipe_engine/cv\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"staging-snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -476,14 +498,14 @@
       "@@@STEP_LOG_LINE@request@            \"change\": \"123456\",@@@",
       "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@request@            \"patchset\": \"7\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"project\": \"project-a\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromiumos/manifest-internal\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        ],@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"id\": \"firmware-board-5555.B-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"id\": \"staging-snapshot-HEAD-SHA\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/firmware-board-5555.B\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/staging-snapshot\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
@@ -516,7 +538,7 @@
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"firmware-board-5555.B-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\",@@@",

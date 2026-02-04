@@ -10,4 +10,7 @@ message OrchestratorProperties {
   // If set, build failures will make the orchestrator fail even if it's a
   // release orchestrator.
   bool build_failures_fatal = 1;
+
+  // Google Storage path to upload buildspecs to.
+  string buildspec_gs_path = 2;
 }

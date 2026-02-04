@@ -197,6 +197,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
     return json_format.MessageToDict(
         ChromeProperties(version=self.chromium_src_ref_cl_tag))
 
+  @property
+  def bump_version(self):
+    return self._properties.bump_version
+
   @contextlib.contextmanager
   def setup_cq_orchestrator(self):
     """Initial setup steps for the cq-orchestrator.
