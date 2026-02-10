@@ -401,7 +401,8 @@ def DoRunSteps(api, config, properties):
         if not properties.skip_paygen and (instructions or
                                            signed_with_local_signing):
           api.cros_release.run_payload_generation(
-              use_split_paygen=properties.use_split_paygen)
+              use_split_paygen=properties.use_split_paygen,
+              skip_n2n_batch=properties.skip_n2n_batch)
         else:
           with api.step.nest('skipping payloads') as pres:
             if properties.skip_paygen:

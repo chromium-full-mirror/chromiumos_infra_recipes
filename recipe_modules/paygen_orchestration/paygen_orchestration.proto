@@ -15,4 +15,7 @@ message PaygenOrchestrationProperties {
   // The time (in seconds) to wait for paygenie builds to finish.
   // Defaults to 8 hours.
   uint32 paygen_children_timeout_sec = 2;
+
+  // Whether to skip N2N batching for this builder.
+  bool skip_n2n_batch = 3;
 }

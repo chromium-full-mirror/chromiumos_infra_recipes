@@ -49,7 +49,7 @@ def RunSteps(api: RecipeApi):
           'max_batch_size']
 
     actual_batches = api.paygen_orchestration._batch_paygen_request_dicts(
-        requests)
+        requests, skip_n2n_batch=api.properties.get('skip_n2n_batch', False))
     api.assertions.assertEqual(batches, actual_batches)
 
 
@@ -165,3 +165,24 @@ def GenTests(api: RecipeTestApi):
               [0].SerializeToString(),
           ])), api.post_check(post_process.StepFailure, 'run test'),
       status='FAILURE')
+
+  yield api.test(
+      'n2n-batching-skipped', api.properties(skip_n2n_batch=True),
+      api.properties(max_batch_size=8),
+      api.properties(
+          paygen_requests=tuple(r.SerializeToString() for r in [
+              api.paygen_orchestration.get_example_gen_requests_full_unsigned()
+              [0],
+              api.paygen_orchestration.get_example_gen_requests_delta_n2n()[0],
+          ])),
+      api.properties(
+          expected_batches=tuple([[
+              api.paygen_orchestration.get_example_gen_requests_delta_n2n()
+              [0].SerializeToString()
+          ],
+                                  [
+                                      api.paygen_orchestration
+                                      .get_example_gen_requests_full_unsigned()
+                                      [0].SerializeToString()
+                                  ]])),
+      api.post_process(post_process.DropExpectation))

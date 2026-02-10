@@ -391,7 +391,7 @@
       }
     },
     "name": "generate payloads.running paygen orchestrator.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"builder_name\": \"kukui\", \"channels\": [], \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"minios\": true, \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\", \"use_split_paygen\": true}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"builder_name\": \"kukui\", \"channels\": [], \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"minios\": true, \"skip_n2n_batch\": true, \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\", \"use_split_paygen\": true}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -438,6 +438,7 @@
       "@@@STEP_LOG_LINE@request@          \"dest_bucket\": \"\",@@@",
       "@@@STEP_LOG_LINE@request@          \"dryrun\": false,@@@",
       "@@@STEP_LOG_LINE@request@          \"minios\": true,@@@",
+      "@@@STEP_LOG_LINE@request@          \"skip_n2n_batch\": true,@@@",
       "@@@STEP_LOG_LINE@request@          \"src_bucket\": \"\",@@@",
       "@@@STEP_LOG_LINE@request@          \"target_chromeos_version\": \"1234.56.0\",@@@",
       "@@@STEP_LOG_LINE@request@          \"use_split_paygen\": true@@@",

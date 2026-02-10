@@ -393,7 +393,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       self, paygen_reqs: List[PaygenProperties.PaygenRequest],
       paygen_mpa: Optional[bool] = False, use_split_paygen: bool = False,
       max_bb_elements: int = 200,
-      paygen_input_provenance_verification_fatal: bool = False) -> List[Build]:
+      paygen_input_provenance_verification_fatal: bool = False,
+      skip_n2n_batch: bool = False) -> List[Build]:
     """Launch paygen builders to generate payloads and run configured tests.
 
     Args:
@@ -403,6 +404,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       max_bb_elements: number of elements per buildbucket call. Default is 200
         but for testing we can use a smaller number.
       paygen_input_provenance_verification_fatal: Whether BCID verification of paygen inputs is fatal.
+      skip_n2n_batch: Whether to skip N2N batching.
 
     Returns:
       A list of completed builds.
@@ -411,7 +413,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
         self._create_paygen_request_dict(paygen_req.generation_request)
         for paygen_req in paygen_reqs
     ]
-    batches = self._batch_paygen_request_dicts(paygen_request_dicts)
+    batches = self._batch_paygen_request_dicts(paygen_request_dicts,
+                                               skip_n2n_batch=skip_n2n_batch)
     schedule_requests = [
         self._create_bb_schedule_request(
             batch, paygen_mpa=paygen_mpa, use_split_paygen=use_split_paygen,
@@ -514,19 +517,21 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     }
 
   def _batch_paygen_request_dicts(
-      self, prds: List[PaygenProperties.PaygenRequest]
+      self, prds: List[PaygenProperties.PaygenRequest],
+      skip_n2n_batch: bool = False
   ) -> List[List[PaygenProperties.PaygenRequest]]:
     """Separate dicts of PaygenRequests into groups to run together.
 
     This method separates all the requests into the following batches:
       - DLC requests are all batched together, respecting self._max_dlc_batch_size
         to cap batch sizes.
-      - N2N requests are batched alongside the corresponding full payload request,
-        because their tests rely on the full images.
+      - N2N requests are batched alongside the corresponding full payload request
+        where size allows.
       - All other requests are sent through in a batch of 1.
 
     Args:
       prds: Dicts representing PaygenRequests to run.
+      skip_n2n_batch: Whether to skip N2N batching.
 
     Returns:
       Each element returned contains a group of dicts representing PaygenRequests that should be run by the same Paygen builder.
@@ -569,7 +574,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     batches = []
     dlcs = []
     for prd in filtered_prds:
-      if _is_n2n(prd):
+      if _is_n2n(prd) and not skip_n2n_batch:
         batched = False
         for full_image_batch in full_image_batches:
           full_image = full_image_batch[0]

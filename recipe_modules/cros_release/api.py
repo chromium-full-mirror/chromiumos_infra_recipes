@@ -422,7 +422,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           manifest_file=manifest_file, manifest_gs_path=manifest_gs_path)
       self.m.easy.set_properties_step(buildspec_gs_uri=manifest_gs_path)
 
-  def run_payload_generation(self, use_split_paygen: bool = False):
+  def run_payload_generation(self, use_split_paygen: bool = False,
+                             skip_n2n_batch: bool = False):
     """Run the generation of release payloads using the context of a build.
 
     This is blocking: it will launch the paygen orchestrator, and wait for it to
@@ -431,6 +432,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
     Args:
       use_split_paygen: Whether to use the new split paygen flow.
+      skip_n2n_batch: Whether to skip N2N payload batching.
     """
     pg_orch_builder = ('staging-paygen-orchestrator'
                        if self.m.build_menu.is_staging or self.m.led.led_build
@@ -458,6 +460,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                            'paygen-orchestrator-mpa')
       if use_split_paygen:
         paygen_properties['use_split_paygen'] = use_split_paygen
+      if skip_n2n_batch:
+        paygen_properties['skip_n2n_batch'] = skip_n2n_batch
       if self.m.signing.local_signing:
         paygen_properties['local_signing'] = True
         paygen_properties['docker_image'] = self.m.signing.signing_docker_image

@@ -181,8 +181,8 @@ def DoRunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   res = api.paygen_orchestration.run_paygen_builders(
       paygen_reqs, paygen_mpa=paygen_mpa,
       use_split_paygen=properties.use_split_paygen,
-      paygen_input_provenance_verification_fatal=paygen_input_provenance_verification_fatal
-  )
+      paygen_input_provenance_verification_fatal=paygen_input_provenance_verification_fatal,
+      skip_n2n_batch=properties.skip_n2n_batch)
 
   # Present results.
   with api.step.nest('results') as pres:

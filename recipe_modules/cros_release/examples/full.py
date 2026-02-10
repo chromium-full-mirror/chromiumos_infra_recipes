@@ -72,7 +72,8 @@ def RunSteps(api):
     api.cros_release.set_output_properties()
     if 'bcid_fail' in api.properties and api.properties['bcid_fail']:
       api.mutable_output(bcid={'existing': ['failed_artifact']})
-    api.cros_release.run_payload_generation(use_split_paygen=True)
+    api.cros_release.run_payload_generation(use_split_paygen=True,
+                                            skip_n2n_batch=True)
 
 
 def GenTests(api):

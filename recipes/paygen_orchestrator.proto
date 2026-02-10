@@ -68,4 +68,7 @@ message PaygenOrchestratorProperties {
 
   // Whether verification of paygen input provenance is fatal.
   bool paygen_input_provenance_verification_fatal = 21;
+
+  // Whether to skip N2N batching for this builder.
+  bool skip_n2n_batch = 22;
 }
