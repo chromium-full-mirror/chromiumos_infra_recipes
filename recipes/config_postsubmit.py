@@ -416,7 +416,8 @@ Flag: EXEMPT desktop only
                 api.file.copytree(
                     f"copy feature XMLs for {project_name}",
                     project_to_feature_xml_output_dir[project_name],
-                    project_path / 'configs/features', allow_override=True)
+                    project_path / 'configs/features' / project_name,
+                    allow_override=True)
 
               if project_name in project_to_feature_from_hal_xml_output_dir:
                 api.file.copytree(
