@@ -34,6 +34,8 @@ DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
+    'recipe_engine/cipd',
+    'recipe_engine/context',
     'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/json',
@@ -74,6 +76,7 @@ SKIP_LEGACY_SIGNING_RE = re.compile(
 INCLUDE_SIGNING_RE = re.compile(r'nt-(ti50|system_test_auto)')
 GENERATE_PAOS_RE = re.compile(r'nt-(perso|ti50)')
 
+TBI_CLIENT_CIPD_PACkAGE = 'infra_internal/tools/crosfw/crosfw_tbi_client/${platform}'
 
 def UploadTestResults(api, location, builder_name):
   if location == common_pb2.PLATFORM_ZEPHYR:
@@ -196,6 +199,21 @@ def RunSteps(api, properties):
       except StepFailure as ex:
         UploadTestResults(api, location, build.builder.builder)
         raise ex
+
+      with api.step.nest('TBI invocation') as pres:
+        # TODO: ayatane - use a deterministic version of the tool.
+        exe_path = api.cipd.ensure_tool(TBI_CLIENT_CIPD_PACkAGE, 'latest')
+        exe_dir = exe_path.parent
+        with api.context(cwd=exe_dir):
+          cmd = [
+              f'./{exe_path.name}',
+              '-project=foo',
+              '-location=bar',
+              '-instance=baz',
+              '-pool=quux',
+              '-env=staging',
+          ]
+          api.step('Build Chrome in TBI', cmd)
 
       uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
           config=config, report_to_spike=api.cros_infra_config.config.artifacts
@@ -637,10 +655,12 @@ def GenTests(api):
   yield test(
       'postsubmit',
       api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield test('cq', api.post_check(post_process.DoesNotRun,
-                                  'snoop: report_stage'), cq=True,
+                                  'snoop: report_stage'),
+             api.post_process(post_process.DropExpectation), cq=True,
              builder='fw-ec-cq')
 
   yield test(
@@ -657,6 +677,7 @@ def GenTests(api):
       api.post_check(
           post_process.DoesNotRun,
           'sending pub/sub notifications.publish artifacts to pubsub'),
+      api.post_process(post_process.DropExpectation),
       cq=True,
       builder='firmware-zephyr-cq',
       input_properties={
@@ -682,6 +703,7 @@ def GenTests(api):
       api.post_check(
           post_process.DoesNotRun,
           'sending pub/sub notifications.publish artifacts to pubsub'),
+      api.post_process(post_process.DropExpectation),
       builder='firmware-zephyr-postsubmit',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -741,6 +763,7 @@ def GenTests(api):
               'artifacts',
               'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/rex/firmware_from_source.tar.bz2'
           ]),
+      api.post_process(post_process.DropExpectation),
       builder='firmware-R126-15885.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -807,6 +830,7 @@ def GenTests(api):
               'artifacts',
               'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
           ]),
+      api.post_process(post_process.DropExpectation),
       builder='firmware-R126-15886.2.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -830,7 +854,8 @@ def GenTests(api):
           .format(sdk_pin_path), api.file.read_text('2022.01.20.073008\n')),
       api.post_check(post_process.DoesNotRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
-      cq=True, builder='firmware-ti50-cq', input_properties={
+      api.post_process(post_process.DropExpectation), cq=True,
+      builder='firmware-ti50-cq', input_properties={
           'firmware_location': 3,
           'chromiumos_sdk_pin_file': sdk_pin_path,
       })
@@ -854,26 +879,28 @@ def GenTests(api):
                       tarball_info=FirmwareArtifactInfo.TarballInfo(
                           board=['betty'], publish_to_goldeneye=True,
                           type='GSC')),
-              ]))), builder='firmware-ti50-postsubmit', input_properties={
-                  'firmware_location': common_pb2.PLATFORM_TI50,
-                  'chromiumos_sdk_pin_file': sdk_pin_path,
-                  'set_suite_scheduling': True,
-                  'signing_allowed_builder_names': [
-                      'staging-firmware-ti50-postsubmit',
-                      'firmware-ti50-postsubmit',
-                  ],
-                  'pao_signing_config': {
-                      "project": "chromeos",
-                      "keyring": "ring",
-                      "key": "pao-key"
-                  },
-              })
+              ]))), api.post_process(post_process.DropExpectation),
+      builder='firmware-ti50-postsubmit', input_properties={
+          'firmware_location': common_pb2.PLATFORM_TI50,
+          'chromiumos_sdk_pin_file': sdk_pin_path,
+          'set_suite_scheduling': True,
+          'signing_allowed_builder_names': [
+              'staging-firmware-ti50-postsubmit',
+              'firmware-ti50-postsubmit',
+          ],
+          'pao_signing_config': {
+              "project": "chromeos",
+              "keyring": "ring",
+              "key": "pao-key"
+          },
+      })
 
   yield test(
       'upload-fail',
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1),
+      api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
   )
 
@@ -883,6 +910,7 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1),
       api.post_check(post_process.DoesNotRun, 'schedule legacy signing build'),
+      api.post_process(post_process.DropExpectation),
       input_properties=({
           'firmware_location': 1
       }),
@@ -893,6 +921,7 @@ def GenTests(api):
       'fw-test-fail',
       api.step_data('test firmware.call build API script', retcode=1),
       api.post_check(post_process.MustRun, 'Upload EC Firmware test results'),
+      api.post_process(post_process.DropExpectation),
       input_properties=({
           'firmware_location': common_pb2.PLATFORM_ZEPHYR
       }),
@@ -908,13 +937,15 @@ def GenTests(api):
           ['Failed to upload test results'],
       ),
       api.post_check(post_process.StepFailure,
-                     'Upload EC Firmware test results.run'), input_properties=({
-                         'firmware_location': common_pb2.PLATFORM_ZEPHYR
-                     }))
+                     'Upload EC Firmware test results.run'),
+      api.post_process(post_process.DropExpectation), input_properties=({
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR
+      }))
 
   yield test(
       'signing-invocation',
       api.post_check(post_process.MustRun, 'schedule legacy signing build'),
+      api.post_process(post_process.DropExpectation),
       builder='fw-ec-postsubmit', input_properties={
           'firmware_location': 1,
           'signing_allowed_builder_names': ['fw-ec-postsubmit'],
@@ -924,6 +955,7 @@ def GenTests(api):
   yield test(
       'staging-signing-invocation',
       api.post_check(post_process.MustRun, 'schedule legacy signing build'),
+      api.post_process(post_process.DropExpectation),
       builder='fw-ec-postsubmit', bucket='staging', input_properties={
           'firmware_location':
               1,
@@ -932,16 +964,20 @@ def GenTests(api):
               get_signing_image_props_for_test(is_staging=True),
       })
 
-  yield test('output-binary-sizes',
-             api.post_check(post_process.MustRun, 'output binary sizes'),
-             api.post_check(post_process.MustRun, 'output got_revision'))
+  yield test(
+      'output-binary-sizes',
+      api.post_check(post_process.MustRun, 'output binary sizes'),
+      api.post_check(post_process.MustRun, 'output got_revision'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield test(
       'create test containers',
       api.post_check(
           post_process.MustRun,
           'Create test containers.create test service containers.upload container metadata.gsutil upload'
-      ), builder='amd64-generic-snapshot', input_properties={
+      ), api.post_process(post_process.DropExpectation),
+      builder='amd64-generic-snapshot', input_properties={
           '$chromeos/build_menu': {
               'build_target': {
                   'name': 'amd64-generic',
@@ -965,6 +1001,7 @@ def GenTests(api):
       ),
       api.post_check(post_process.StepTextContains, 'Create test containers',
                      ['Failed to create containers']),
+      api.post_process(post_process.DropExpectation),
       builder='amd64-generic-snapshot', input_properties={
           '$chromeos/build_menu': {
               'build_target': {
@@ -984,6 +1021,7 @@ def GenTests(api):
           'Create Ti50 Tast artifacts.gsutil list',
           stdout=api.raw_io.output_text(
               'gs://chromeos-image-archive/build0/ti50.tar.bz2')),
+      api.post_process(post_process.DropExpectation),
       builder='firmware-ti50-postsubmit', input_properties={
           '$chromeos/build_menu': {
               'container_version_format':
@@ -1003,6 +1041,7 @@ def GenTests(api):
   yield test(
       'create tast artifacts missing tar files',
       api.step_data('Create Ti50 Tast artifacts.gsutil list', retcode=1),
+      api.post_process(post_process.DropExpectation),
       builder='firmware-ti50-postsubmit', input_properties={
           '$chromeos/build_menu': {
               'container_version_format':
@@ -1026,8 +1065,8 @@ def GenTests(api):
           stdout=api.raw_io.output_text(
               'gs://chromeos-image-archive/build0/ti50.tar.bz2')),
       api.step_data('Create Ti50 Tast artifacts.Extract archive.untar',
-                    retcode=2), builder='firmware-ti50-postsubmit',
-      input_properties={
+                    retcode=2), api.post_process(post_process.DropExpectation),
+      builder='firmware-ti50-postsubmit', input_properties={
           '$chromeos/build_menu': {
               'container_version_format':
                   '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
