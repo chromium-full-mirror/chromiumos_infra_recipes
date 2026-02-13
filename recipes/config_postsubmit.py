@@ -19,6 +19,7 @@ import dataclasses
 import re
 import xml.etree.ElementTree as ET
 
+from typing import Optional
 
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
@@ -74,15 +75,11 @@ class CommitInfo:
   # Commit message.
   message: str
 
-  @property
-  def android_host(self) -> bool:
-    """True if the commit is to an Android Gerrit host."""
-    return not self.project_info.remote in ("cros", "cros-internal")
+  # The root of the workspace where the commit should be created.
+  workspace_path: recipe_api.Path
 
-  @property
-  def workspace_path(self) -> recipe_api.Path:
-    """Path to the root of the workspace."""
-    return self.api.src_state.android_workspace_path if self.android_host else self.api.src_state.workspace_path
+  # Android host to upload the commit to. Should only be set for Android commits.
+  android_host: Optional[str] = None
 
   @property
   def gerrit_host_url(self) -> str:
@@ -96,7 +93,7 @@ class CommitInfo:
     if self.project_info.remote == "cros-internal":  #pragma: nocover
       return "https://chrome-internal-review.googlesource.com"
 
-    return "https://googleplex-android-review.googlesource.com"
+    return f"https://{self.android_host}-review.googlesource.com"
 
 
 def _replicate_public_config(api, _properties, project_infos, dry_run):
@@ -137,7 +134,14 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
         api.file.rmtree('remove dest dir', dest_path)
         api.file.copytree('copy public config', public_config_path, dest_path)
 
-  return [CommitInfo(api, api.repo.project_info(public_repo_path), message)]
+  return [
+      CommitInfo(
+          api,
+          api.repo.project_info(public_repo_path),
+          message,
+          workspace_path=api.src_state.workspace_path,
+      )
+  ]
 
 
 def _update_device_stability(api, properties, _project_infos, dry_run):
@@ -191,11 +195,14 @@ def _update_android_config(api, properties, _project_infos, dry_run):
   """
   del dry_run
 
-  android_manifest = api.src_state.android_internal_manifest
-  api.file.ensure_directory("ensure android workspace path",
-                            api.src_state.android_workspace_path)
-  with api.context(cwd=api.src_state.android_workspace_path):
-    api.repo.init(android_manifest.url, manifest_depth=1)
+  host = properties.android_host or "googleplex-android"
+
+  workspace_path = api.path.cleanup_dir / f"{host}_workspace"
+  manifest_url = f"https://{host}.googlesource.com/platform/manifest"
+
+  api.file.ensure_directory(f"ensure {host} workspace path", workspace_path)
+  with api.context(cwd=workspace_path):
+    api.repo.init(manifest_url, manifest_depth=1)
 
   commit_infos = []
 
@@ -264,7 +271,7 @@ def _update_android_config(api, properties, _project_infos, dry_run):
 
         xsd_schema_path = api.path.mkdtemp("xsd_schema") / "hal_config.xsd"
         xsd_bytes = api.gitiles.download_file(
-            "https://googleplex-android.googlesource.com/device/google/desktop/common",
+            f"https://{host}.googlesource.com/device/google/desktop/common",
             "config/hal_config.xsd",
             step_test_data=lambda: api.gitiles.test_api.make_encoded_file("""
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -387,7 +394,7 @@ def _update_android_config(api, properties, _project_infos, dry_run):
 Flag: EXEMPT desktop only
 '''
 
-        with api.context(cwd=api.src_state.android_workspace_path):
+        with api.context(cwd=workspace_path):
           # If the builder is in project_repo_snapshot_builders, then each
           # project repo gets its own commit. Otherwise all configs are committed
           # to the program repo.
@@ -450,7 +457,10 @@ Flag: EXEMPT desktop only
                       api,
                       api.repo.project_info(project_path,
                                             test_data=project_info_test_data),
-                      commit_message))
+                      commit_message,
+                      android_host=host,
+                      workspace_path=workspace_path,
+                  ))
           else:
             program_name = builder_name.removesuffix('-snapshot')
             repo_path_str = f'device/google/desktop/{program_name}'
@@ -541,7 +551,10 @@ Flag: EXEMPT desktop only
                     api,
                     api.repo.project_info(program_path,
                                           test_data=project_info_test_data),
-                    commit_message))
+                    commit_message,
+                    android_host=host,
+                    workspace_path=workspace_path,
+                ))
 
   return commit_infos
 
@@ -705,6 +718,7 @@ def GenTests(api):
 
   def default_properties(allowed_projects=None, allowed_programs=None,
                          abandon: bool = False, skip_upload: bool = False,
+                         android_host: str = None,
                          snapshot_builders_to_monitor=None):
     if allowed_projects is None:
       allowed_projects = [{'repo_name': 'chromeos/project/galaxy/milkyway'}]
@@ -728,11 +742,13 @@ def GenTests(api):
                 'COPY_TO_INTERNAL': aclc,
                 'REPLICATE_PUBLIC_CONFIG': aclc,
                 'REGENERATE_TEST_PLAN': aclc,
+                'UPDATE_ANDROID_CONFIG': aclc,
             },
             allowed_programs=allowed_programs,
             allowed_projects=allowed_projects,
             snapshot_builders_to_monitor=snapshot_builders_to_monitor,
             project_repo_snapshot_builders=['example-snapshot-project-repo'],
+            android_host=android_host,
         ))
 
   def config_dlm_step_data(api):
@@ -840,7 +856,7 @@ def GenTests(api):
               '.Process builder example-snapshot' \
               '.copy feature from HAL XMLs for example_project',
           [
-              '[CLEANUP]/android_workspace/device/google/desktop/example/'
+              '[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/'
               'configs/features_from_hal/example_project',
           ],
       ),
@@ -1016,6 +1032,32 @@ def GenTests(api):
       ),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'android-host',
+      default_properties(android_host='android'),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api),
+      config_dlm_step_data(api),
+      api.git.diff_check(True),
+      existing_changes_step_data(
+          api,
+          action=_replicate_public_config,
+          host_url="https://chromium-review.googlesource.com",
+      ),
+      existing_changes_step_data(
+          api,
+          action=_update_android_config,
+          host_url="https://android-review.googlesource.com",
+      ),
+      api.post_process(post_process.StepCommandContains,
+                       'Do update_android_config and create CL.repo init', [
+                           'init',
+                           '--manifest-url',
+                           'https://android.googlesource.com/platform/manifest',
+                       ]),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

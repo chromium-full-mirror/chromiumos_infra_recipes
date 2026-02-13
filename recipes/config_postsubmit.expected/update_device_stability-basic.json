@@ -2214,11 +2214,11 @@
       "ensure-directory",
       "--mode",
       "0o777",
-      "[CLEANUP]/android_workspace"
+      "[CLEANUP]/googleplex-android_workspace"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.ensure android workspace path",
+    "name": "Do update_android_config and create CL.ensure googleplex-android workspace path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2236,7 +2236,7 @@
       "1",
       "--verbose"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2264,7 +2264,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2285,7 +2285,7 @@
       "checkout",
       "--force"
     ],
-    "cwd": "[CLEANUP]/android_workspace/.repo/repo",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/.repo/repo",
     "infra_step": true,
     "name": "Do update_android_config and create CL.repo binary update.git checkout",
     "~followup_annotations": [
@@ -2297,7 +2297,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2317,7 +2317,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2594,7 +2594,7 @@
       "--force-checkout",
       "device/google/desktop/example"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2636,7 +2636,7 @@
       "[CLEANUP]/event_log__tmp_3",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.repo stats.event-log",
     "~followup_annotations": [
@@ -2683,7 +2683,7 @@
       "info",
       "device/google/desktop/example"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "name": "Do update_android_config and create CL.Process builder example-snapshot.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2700,7 +2700,7 @@
       "[CLEANUP]/output_hal_xml_tmp_1/hal_config.xml",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.read first hal_config.xml for example_project",
     "~followup_annotations": [
@@ -2719,9 +2719,9 @@
       "ensure-directory",
       "--mode",
       "0o777",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.ensure HAL XML path",
     "~followup_annotations": [
@@ -2737,9 +2737,9 @@
       "/path/to/tmp/json",
       "copy",
       "<HalConfigurations>\n  <HalConfig>\n    <Identity>\n      <sku-id>1</sku-id>\n      <model>project-model</model>\n    </Identity>\n  </HalConfig>\n</HalConfigurations>",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_config.xml"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/hal_config.xml"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.write combined HAL XML for example",
     "~followup_annotations": [
@@ -2765,9 +2765,9 @@
       "copytree",
       "--allow-override",
       "[CLEANUP]/output_feature_xml_tmp_1",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/features/example_project"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/features/example_project"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy feature XMLs for example_project",
     "~followup_annotations": [
@@ -2784,9 +2784,9 @@
       "copytree",
       "--allow-override",
       "[CLEANUP]/output_feature_from_hal_xml_tmp_1",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/features_from_hal/example_project"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/features_from_hal/example_project"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy feature from HAL XMLs for example_project",
     "~followup_annotations": [
@@ -2803,9 +2803,9 @@
       "copytree",
       "--allow-override",
       "[CLEANUP]/output_feature_xml_tmp_2",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/media_profiles"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/media_profiles"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy media profile XMLs for example_project",
     "~followup_annotations": [
@@ -2822,9 +2822,9 @@
       "copytree",
       "--allow-override",
       "[CLEANUP]/output_component_xml_tmp_1",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/components/example_project"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/components/example_project"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy component XMLs for example_project",
     "~followup_annotations": [
@@ -2836,11 +2836,11 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "[CLEANUP]/android_workspace/device/google/desktop/example",
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2870,7 +2870,7 @@
       "status",
       "--porcelain"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "infra_step": true,
     "name": "Do update_android_config and create CL.create CL.git status",
     "~followup_annotations": [
@@ -2882,9 +2882,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "update_android_config",
-      "[CLEANUP]/android_workspace/device/google/desktop/example_program"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2903,9 +2903,9 @@
     "cmd": [
       "git",
       "add",
-      "[CLEANUP]/android_workspace/device/google/desktop/example_program"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "infra_step": true,
     "name": "Do update_android_config and create CL.create CL.git add",
     "~followup_annotations": [
@@ -2928,10 +2928,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "compute_hash",
-      "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
       "."
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "infra_step": true,
     "name": "Do update_android_config and create CL.create CL.query for existing changes.compute hash of device/google/desktop/example_program",
     "~followup_annotations": [
@@ -2965,7 +2965,7 @@
       "owner=None",
       "--verbose"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },

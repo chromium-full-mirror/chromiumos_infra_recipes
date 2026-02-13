@@ -6,7 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.config_postsubmit;
 
-// NEXT ID: 6
+// NEXT ID: 8
 message ConfigPostsubmitProperties {
 
   enum ActionTypes {
@@ -82,4 +82,8 @@ message ConfigPostsubmitProperties {
   // to project repos. Otherwise all configs for the builder are written to a
   // single program repo.
   repeated string project_repo_snapshot_builders = 6;
+
+  // The Gerrit host to upload configs to in the UPDATE_ANDROID_CONFIG step.
+  // Defaults to "googleplex-android" if not set.
+  string android_host = 7;
 }

@@ -63,14 +63,6 @@ class SrcStateApi(recipe_api.RecipeApi):
     return self.m.path.cleanup_dir / common.WORKSPACE
 
   @property
-  def android_workspace_path(self):
-    """The "workspace" checkout path for Android source.
-
-    This path is discarded after the build.
-    """
-    return self.m.path.cleanup_dir / common.ANDROID_WORKSPACE
-
-  @property
   def manifest_name(self):
     """Return the name of the manifest."""
     return ('external'
@@ -102,18 +94,6 @@ class SrcStateApi(recipe_api.RecipeApi):
       (ManifestProject): information about the external manifest.
     """
     return common.ManifestProject.by_name('external', self.workspace_path)
-
-  @property
-  def android_internal_manifest(self):
-    """Information about internal manifest.
-
-    Provides immutable information about the Android internal manifest.
-
-    Returns:
-      (ManifestProject): information about the internal manifest.
-    """
-    return common.ManifestProject.by_name('android_internal',
-                                          self.android_workspace_path)
 
   @property
   def build_manifest(self):

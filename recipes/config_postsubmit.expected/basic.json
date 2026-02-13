@@ -2430,11 +2430,11 @@
       "ensure-directory",
       "--mode",
       "0o777",
-      "[CLEANUP]/android_workspace"
+      "[CLEANUP]/googleplex-android_workspace"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Do update_android_config and create CL.ensure android workspace path",
+    "name": "Do update_android_config and create CL.ensure googleplex-android workspace path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2452,7 +2452,7 @@
       "1",
       "--verbose"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2480,7 +2480,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2501,7 +2501,7 @@
       "checkout",
       "--force"
     ],
-    "cwd": "[CLEANUP]/android_workspace/.repo/repo",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/.repo/repo",
     "infra_step": true,
     "name": "Do update_android_config and create CL.repo binary update.git checkout",
     "~followup_annotations": [
@@ -2513,7 +2513,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2533,7 +2533,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2810,7 +2810,7 @@
       "--force-checkout",
       "device/google/desktop/example"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2852,7 +2852,7 @@
       "[CLEANUP]/event_log__tmp_3",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.repo stats.event-log",
     "~followup_annotations": [
@@ -2899,7 +2899,7 @@
       "info",
       "device/google/desktop/example"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "name": "Do update_android_config and create CL.Process builder example-snapshot.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2916,7 +2916,7 @@
       "[CLEANUP]/output_hal_xml_tmp_1/hal_config.xml",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.read first hal_config.xml for example_project",
     "~followup_annotations": [
@@ -2935,9 +2935,9 @@
       "ensure-directory",
       "--mode",
       "0o777",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.ensure HAL XML path",
     "~followup_annotations": [
@@ -2953,9 +2953,9 @@
       "/path/to/tmp/json",
       "copy",
       "<HalConfigurations>\n  <HalConfig>\n    <Identity>\n      <sku-id>1</sku-id>\n      <model>project-model</model>\n    </Identity>\n  </HalConfig>\n</HalConfigurations>",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/hal_config.xml"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/hal_config.xml"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.write combined HAL XML for example",
     "~followup_annotations": [
@@ -2981,9 +2981,9 @@
       "copytree",
       "--allow-override",
       "[CLEANUP]/output_feature_xml_tmp_1",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/features/example_project"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/features/example_project"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy feature XMLs for example_project",
     "~followup_annotations": [
@@ -3000,9 +3000,9 @@
       "copytree",
       "--allow-override",
       "[CLEANUP]/output_feature_from_hal_xml_tmp_1",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/features_from_hal/example_project"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/features_from_hal/example_project"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy feature from HAL XMLs for example_project",
     "~followup_annotations": [
@@ -3019,9 +3019,9 @@
       "copytree",
       "--allow-override",
       "[CLEANUP]/output_feature_xml_tmp_2",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/media_profiles"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/media_profiles"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy media profile XMLs for example_project",
     "~followup_annotations": [
@@ -3038,9 +3038,9 @@
       "copytree",
       "--allow-override",
       "[CLEANUP]/output_component_xml_tmp_1",
-      "[CLEANUP]/android_workspace/device/google/desktop/example/configs/components/example_project"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/components/example_project"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy component XMLs for example_project",
     "~followup_annotations": [
@@ -3052,11 +3052,11 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "[CLEANUP]/android_workspace/device/google/desktop/example",
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[CLEANUP]/android_workspace",
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3086,7 +3086,7 @@
       "status",
       "--porcelain"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "infra_step": true,
     "name": "Do update_android_config and create CL.create CL.git status",
     "~followup_annotations": [
@@ -3098,9 +3098,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "update_android_config",
-      "[CLEANUP]/android_workspace/device/google/desktop/example_program"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3119,9 +3119,9 @@
     "cmd": [
       "git",
       "add",
-      "[CLEANUP]/android_workspace/device/google/desktop/example_program"
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "infra_step": true,
     "name": "Do update_android_config and create CL.create CL.git add",
     "~followup_annotations": [
@@ -3143,10 +3143,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "compute_hash",
-      "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
       "."
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "infra_step": true,
     "name": "Do update_android_config and create CL.create CL.query for existing changes.compute hash of device/google/desktop/example_program",
     "~followup_annotations": [
@@ -3179,7 +3179,7 @@
       "owner=None",
       "--verbose"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
@@ -3202,7 +3202,7 @@
       "Automatic config update.\n\n- Generated by https://cr-buildbucket.appspot.com/build/0.\n\nFlag: EXEMPT desktop only\n",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "infra_step": true,
     "name": "Do update_android_config and create CL.create CL.write commit message",
     "~followup_annotations": [
@@ -3222,7 +3222,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "infra_step": true,
     "name": "Do update_android_config and create CL.create CL.git commit",
     "~followup_annotations": [
@@ -3300,12 +3300,22 @@
       "--bypass-hooks",
       "--force",
       "--topic",
-      "",
+      "test topic",
+      "--reviewers",
+      "test1@google.com",
+      "--cc",
+      "test2@google.com",
+      "--cc",
+      "test3@google.com",
+      "--hashtag",
+      "ht1",
+      "--hashtag",
+      "ht2",
       "--hashtag",
       "content-hash-cdb4ee2aea69cc6a83331bbe96dc2caa9a299d21329efb0336fc02a82e1839a8",
       "--send-mail"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3329,7 +3339,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/android_workspace/device/google/desktop/example_program",
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3341,6 +3351,83 @@
     "name": "Do update_android_config and create CL.create CL.create gerrit change for device/google/desktop/example_program.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do update_android_config and create CL.create CL.send to CQ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do update_android_config and create CL.create CL.send to CQ.set labels on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Autosubmit\": 1, \"Presubmit-Ready\": 1}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/device/google/desktop/example_program/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do update_android_config and create CL.create CL.send to CQ.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
+    "name": "Do update_android_config and create CL.create CL.send to CQ.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.create CL.send to CQ.set labels on CL 1.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Autosubmit\": 1, \"Presubmit-Ready\": 1}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "cwd": "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example_program",
+    "name": "Do update_android_config and create CL.create CL.send to CQ.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

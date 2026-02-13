@@ -10,9 +10,8 @@ from collections import namedtuple
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
-# api.path.cleanup_dir / [WORKSPACE|ANDROID_WORKSPACE] is source root.
+# api.path.cleanup_dir / WORKSPACE is source root.
 WORKSPACE = 'chromiumos_workspace'
-ANDROID_WORKSPACE = 'android_workspace'
 
 _project_info = namedtuple('project_info', ['host', 'project', 'relpath'])
 _manifests = {
@@ -22,9 +21,6 @@ _manifests = {
     'external':
         _project_info('chromium.googlesource.com', 'chromiumos/manifest',
                       'manifest'),
-    'android_internal':
-        _project_info('googleplex-android.googlesource.com',
-                      'platform/manifest', None),
 }
 
 default_branch = 'main'
