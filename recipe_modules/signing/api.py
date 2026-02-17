@@ -646,6 +646,21 @@ class SigningApi(recipe_api.RecipeApi):
 
     return failed_verifications
 
+  def stage_all_artifacts(
+      self,
+      channels: List['common_pb2.Channel'],
+  ) -> None:
+    """Do everything for signing minus the actual signing.
+
+    This is meant to be a drop-in replacement for `sign_artifacts` with an empty
+    signing config. In this case, we stage all artifacts, and then don't try to
+    sign anything.
+
+    "Everything" turned out to be very little.
+    """
+    _, archive_dir = self.download_release_artifacts([])
+    self.upload_unsigned_artifacts(archive_dir, [], channels)
+
   def sign_artifacts(
       self,
       sign_types: List['common_pb2.ImageType'],

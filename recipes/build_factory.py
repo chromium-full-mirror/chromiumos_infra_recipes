@@ -43,7 +43,7 @@ PROPERTIES = BuildFactoryProperties
 StepDetails = BuildReport.StepDetails
 
 
-def sign_locally(api) -> None:
+def sign_locally(api, skip_signing: bool = False) -> None:
   """Sign the factory image using the local signing flow.
 
   Also uploads the signed artifact to the release bucket.
@@ -53,12 +53,17 @@ def sign_locally(api) -> None:
         'signing_config', api.signing.test_api.signing_config_test_data)
   release_sign_types = api.cros_release.sign_types
   channels = api.cros_release.channels
-  signed_image_response = api.signing.sign_artifacts(
-      sign_types=release_sign_types, channels=channels, include_paygen=False)
-  if signed_image_response:
-    signed_build_list = api.signing_utils.signing_response_to_metadata(
-        signed_image_response)
-    api.build_reporting.publish_signed_build_metadata(signed_build_list)
+  if skip_signing:
+    api.signing.stage_all_artifacts(channels)
+    with api.step.nest('skipping signing') as pres:
+      pres.step_text = 'build configured to skip signing'
+  else:
+    signed_image_response = api.signing.sign_artifacts(
+        sign_types=release_sign_types, channels=channels, include_paygen=False)
+    if signed_image_response:
+      signed_build_list = api.signing_utils.signing_response_to_metadata(
+          signed_image_response)
+      api.build_reporting.publish_signed_build_metadata(signed_build_list)
   with api.step.nest('set up bucket metadata') as step:
     api.cros_release.emit_release_buckets(
         api.build_menu.sysroot.build_target.name, step)
@@ -127,7 +132,7 @@ def RunSteps(api, properties: BuildFactoryProperties):
                                                   artifact_dir)
 
     if api.signing.local_signing:
-      sign_locally(api)
+      sign_locally(api, properties.skip_signing)
     else:
       sign_on_legacy_signer(api, config)
 
@@ -261,6 +266,39 @@ def GenTests(api):
           post_process.StepTextContains,
           'skipping signing',
           ['no signing instructions generated'],
+      ),
+      api.post_process(post_process.DropExpectation),
+      builder='factory-corsola-15197.B-corsola',
+  )
+
+  yield api.build_menu.test(
+      'skip signing',
+      api.properties(
+          **{
+              'skip_signing':
+                  True,
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(local_signing=True)),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url,
+                              branch='main',
+                              manifest_file='buildspecs/100/15197.0.0.xml',
+                          )))
+          }),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'download release artifacts'),
+      api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
+      api.post_check(post_process.MustRun, 'skipping signing'),
+      api.post_check(
+          post_process.StepTextContains,
+          'skipping signing',
+          ['build configured to skip signing'],
       ),
       api.post_process(post_process.DropExpectation),
       builder='factory-corsola-15197.B-corsola',

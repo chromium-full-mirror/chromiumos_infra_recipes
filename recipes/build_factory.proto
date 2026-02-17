@@ -20,4 +20,7 @@ message BuildFactoryProperties {
 
   // Timeout for build images step in seconds.
   int32 build_images_timeout_sec = 4;
+
+  // Whether to skip signing.
+  bool skip_signing = 5;
 }
