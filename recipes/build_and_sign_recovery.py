@@ -155,10 +155,9 @@ def RunSteps(api: RecipeApi, properties: BuildAndSignRecoveryProperties):
       with api.build_menu.setup_workspace_and_chroot():
         api.cros_source.ensure_synced_cache()
 
-        # Full package install to ensure packages deps for cros build-kernel are present.
-        env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+        api.build_menu.setup_sysroot_and_determine_relevance()
         api.build_menu.bootstrap_sysroot(config)
-        api.build_menu.install_packages(config, env_info.packages)
+        # build_packages not required; all dependencies are build in the next step.
 
         recovery_dir = api.path.mkdtemp(prefix='recovery')
         recovery_local_path = api.path.join(recovery_dir, 'vmlinuz.image')
