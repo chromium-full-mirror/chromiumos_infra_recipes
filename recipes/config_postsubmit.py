@@ -292,6 +292,7 @@ def _update_android_config(api, properties, _project_infos, dry_run):
         project_to_feature_xml_output_dir = {}
         project_to_feature_from_hal_xml_output_dir = {}
         project_to_media_profiles_output_dir = {}
+        project_to_media_profiles_from_hal_output_dir = {}
         project_to_component_xml_output_dir = {}
         for jsonproto_path in jsonproto_files:
           # config.jsonproto paths end with patterns like
@@ -373,6 +374,24 @@ def _update_android_config(api, properties, _project_infos, dry_run):
             project_to_media_profiles_output_dir[
                 project_name] = media_profiles_output_dir
 
+            media_profiles_from_hal_output_dir = api.path.mkdtemp(
+                "output_media_profiles_from_hal")
+            api.step(
+                f"Run generate-media-profiles from HAL for {project_name}",
+                [
+                    cros_to_android_script,
+                    "generate-media-profiles",
+                    "--from-hal-config",
+                    "-o",
+                    media_profiles_from_hal_output_dir,
+                    "-d",
+                    dtd_schema,
+                    jsonproto_path,
+                ],
+            )
+            project_to_media_profiles_from_hal_output_dir[project_name] = (
+                media_profiles_from_hal_output_dir)
+
             component_xml_output_dir = api.path.mkdtemp("output_component_xml")
             api.step(
                 f"Run generate-component-xmls for {project_name}",
@@ -438,6 +457,13 @@ Flag: EXEMPT desktop only
                     f"copy media profile XMLs for {project_name}",
                     project_to_media_profiles_output_dir[project_name],
                     project_path / 'configs/media_profiles',
+                    allow_override=True)
+
+              if project_name in project_to_media_profiles_from_hal_output_dir:
+                api.file.copytree(
+                    f"copy media profile from HAL XMLs for {project_name}",
+                    project_to_media_profiles_from_hal_output_dir[project_name],
+                    project_path / 'configs/media_profiles_from_hal',
                     allow_override=True)
 
               if project_name in project_to_component_xml_output_dir:
@@ -532,6 +558,14 @@ Flag: EXEMPT desktop only
                                 media_profiles_output_dir,
                                 program_path / 'configs/media_profiles',
                                 allow_override=True)
+
+            for project, media_profiles_from_hal_output_dir in project_to_media_profiles_from_hal_output_dir.items(
+            ):
+              api.file.copytree(
+                  f"copy media profile from HAL XMLs for {project}",
+                  media_profiles_from_hal_output_dir,
+                  program_path / 'configs/media_profiles_from_hal' / project,
+                  allow_override=True)
 
             for project, component_xml_output_dir in project_to_component_xml_output_dir.items(
             ):

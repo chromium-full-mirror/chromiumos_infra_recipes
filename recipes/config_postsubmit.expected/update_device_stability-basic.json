@@ -2573,6 +2573,23 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/cros_to_android.py",
+      "generate-media-profiles",
+      "--from-hal-config",
+      "-o",
+      "[CLEANUP]/output_media_profiles_from_hal_tmp_1",
+      "-d",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/media_profiles.dtd",
+      "[CLEANUP]/unzip_example-snapshot_tmp_1/[CLEANUP]/unzip_example-snapshot_tmp_1/example_program/chromeos-config-bsp-private-0.0.1/example_project/generated/config.jsonproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.Process example_project from config.jsonproto.Run generate-media-profiles from HAL for example_project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/cros_to_android.py",
       "generate-component-xmls",
       "-o",
       "[CLEANUP]/output_component_xml_tmp_1",
@@ -2808,6 +2825,25 @@
     "cwd": "[CLEANUP]/googleplex-android_workspace",
     "infra_step": true,
     "name": "Do update_android_config and create CL.Process builder example-snapshot.copy media profile XMLs for example_project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "--allow-override",
+      "[CLEANUP]/output_media_profiles_from_hal_tmp_1",
+      "[CLEANUP]/googleplex-android_workspace/device/google/desktop/example/configs/media_profiles_from_hal/example_project"
+    ],
+    "cwd": "[CLEANUP]/googleplex-android_workspace",
+    "infra_step": true,
+    "name": "Do update_android_config and create CL.Process builder example-snapshot.copy media profile from HAL XMLs for example_project",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
