@@ -28,3 +28,6 @@ per-file build_cq.py,OWNERS.cqw=file:chromiumos/owners:v1:/infra/OWNERS.cqw
 
 per-file build_snapshot.py=set noparent
 per-file build_snapshot.py=file:chromiumos/owners:v1:/infra/OWNERS.cqw
+
+per-file firmware* = file:chromiumos/owners:v1:/firmware/OWNERS.cros_ec
+per-file firmware* = file:chromiumos/owners:v1:/firmware/OWNERS.cros_ap
