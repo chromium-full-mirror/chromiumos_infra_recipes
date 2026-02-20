@@ -99,6 +99,24 @@ def UploadTestResults(api, location, builder_name):
           pres.status = api.step.FAILURE
           pres.step_text = 'Failed to upload test results'
 
+  elif location == common_pb2.PLATFORM_RENODE:
+    cros_src_path = api.cros_source.workspace_path
+    with api.step.nest('Upload Renode Firmware test results') as pres:
+      for test_results in api.file.glob_paths(
+          'renode results', cros_src_path, 'src/platform/ec/test_results.json'):
+        try:
+          rdb_cmd = [
+              'vpython3', cros_src_path /
+              'src/platform/ec/util/run_device_tests_to_resultdb.py',
+              '--result=' + str(test_results), '--upload'
+          ]
+          base_variant = {'builder_name': builder_name}
+          api.step('run', api.resultdb.wrap(rdb_cmd, base_variant=base_variant))
+
+        except StepFailure:
+          pres.status = api.step.FAILURE
+          pres.step_text = 'Failed to upload test results'
+
 
 def CreateContainers(api, config):
   with api.step.nest('Create test containers') as pres:
@@ -913,6 +931,22 @@ def GenTests(api):
                      'Upload EC Firmware test results.run'), input_properties=({
                          'firmware_location': common_pb2.PLATFORM_ZEPHYR
                      }))
+
+  yield test(
+      'upload-renode-test-results-fail',
+      api.step_data('Upload Renode Firmware test results.renode results',
+                    api.file.glob_paths(['src/platform/ec/test_results.json'])),
+      api.step_data('Upload Renode Firmware test results.run', retcode=1),
+      api.post_check(
+          post_process.StepTextContains,
+          'Upload Renode Firmware test results',
+          ['Failed to upload test results'],
+      ),
+      api.post_check(post_process.StepFailure,
+                     'Upload Renode Firmware test results.run'),
+      input_properties=({
+          'firmware_location': common_pb2.PLATFORM_RENODE
+      }))
 
   yield test(
       'signing-invocation',
