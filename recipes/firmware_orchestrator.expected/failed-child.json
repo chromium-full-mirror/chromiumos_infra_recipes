@@ -46,24 +46,6 @@
     ]
   },
   {
-    "cmd": [
-      "child"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "launch"
-  },
-  {
     "cmd": [],
     "name": "configure builder"
   },

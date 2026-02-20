@@ -49,7 +49,6 @@ def RunSteps(api: RecipeApi,
     named_child_config = api.cros_infra_config.get_builder_config(
         named_builder, missing_ok=True)
     api.easy.set_properties_step(manifest_branch=branch)
-    api.step('launch', ['child'])
     config = None
     if named_child_config:
       config = api.cros_source.configure_builder()
