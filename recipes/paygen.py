@@ -8,6 +8,7 @@ import copy
 import datetime
 import hashlib
 import json
+import urllib.parse
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -51,6 +52,7 @@ DEPS = [
     'cros_infra_config',
     'cros_sdk',
     'cros_source',
+    'cros_ssci',
     'cros_storage',
     'easy',
     'failures',
@@ -436,6 +438,21 @@ def report_paygen_success_to_snoopy(api: RecipeApi, resp: GenerationResponse,
         file_hash = api.file.file_hash(abspath, test_data='deadbeef')
         # Only generate BCID attestation when local signing is used.
         if req.use_local_signing:
+          with api.step.nest(f'generate and upload payload sbom: {abspath}'):
+            parsed_uri = urllib.parse.urlparse(artifact.remote_uri)
+            gs_bucket = parsed_uri.netloc
+            gs_path = parsed_uri.path.lstrip('/')
+            local_spdx_path = api.path.mkdtemp(
+                'cros_ssci_') / 'payload.spdx.json'
+            api.cros_ssci.generate_payload_sbom(req, local_spdx_path)
+            uploaded_sbom = api.cros_ssci.upload_sbom(
+                local_spdx_path, gs_bucket=gs_bucket,
+                gs_path=f'{gs_path}.spdx.json')
+
+          # Report GCS attestation.
+          api.bcid_reporter.report_sbom(uploaded_sbom.digest,
+                                        uploaded_sbom.gs_url,
+                                        sbom_subjects=[file_hash])
           api.bcid_reporter.report_gcs(file_hash, artifact.remote_uri)
       else:
         raise api.step.StepFailure(
@@ -610,6 +627,15 @@ def GenTests(api: RecipeTestApi):
           'location': 2
       }
   }
+
+  delta_outside_chroot_with_uri = {
+      'local_path': '/tmp/aohiwdadoi/delta.bin',
+      'file_path': {
+          'path': '/path/to/cros_chroot/out/tmp/delta.bin',
+          'location': 2
+      },
+      'remote_uri': full_payload_uri,
+  }
   yield api.test(
       'dryrun',
       api.buildbucket.generic_build(builder='staging-paygen-mpa',
@@ -781,14 +807,24 @@ def GenTests(api: RecipeTestApi):
               'generation_request': delta_dlc_local_signing_req
           }]),
       ),
-      generate_payload_response(api,
-                                versioned_artifacts=[delta_outside_chroot]),
+      generate_payload_response(
+          api, versioned_artifacts=[delta_outside_chroot_with_uri]),
+      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.StepCommandContains,
                      'doing paygen.docker pull', [
                          'docker', 'pull',
                          'us-docker.pkg.dev/chromeos-release-bot/signing/foo'
                      ]),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.snoop: report_sbom'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.snoop: report_gcs'
+      ),
       api.post_process(post_process.DropExpectation),
   )
 

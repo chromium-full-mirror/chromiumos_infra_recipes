@@ -6,6 +6,7 @@
 
 from dataclasses import dataclass
 from datetime import datetime
+import hashlib
 from urllib.parse import quote as url_quote
 from typing import List
 from recipe_engine import step_data
@@ -14,8 +15,10 @@ from recipe_engine.config_types import Path
 from google.protobuf.message import Message
 from google.protobuf import json_format
 
+from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.third_party_inventory import CollectPackageMetadataRequest
+
 from PB.chromiumos.common import Chroot
 from PB.chromiumos import common as common_pb2
 from PB.chromiumos.build.api.third_party_inventory import PackageMetadata
@@ -51,6 +54,41 @@ def _to_spdx_id(p: PackageMetadata) -> str:
   """Construct a stable SPDXID for package."""
   return f'SPDXRef-Package-{p.category}-{p.name}-{p.version}-{p.revision}'
 
+
+def _to_payload_description(req: GenerationRequest) -> str:
+  """Returns a human readable string that explains what payload `req` produces."""
+  tgt_field = req.WhichOneof('tgt_image_oneof')
+  tgt_image = getattr(req, tgt_field)
+
+  if tgt_field == 'tgt_signed_image':
+    type_name = 'SignedImage'
+  elif tgt_field == 'tgt_unsigned_image':
+    type_name = 'UnsignedImage'
+  else:
+    type_name = 'DLCImage'
+
+  prefix = (f"{type_name} {tgt_image.build.build_target.name} "
+            f"{common_pb2.ImageType.Name(tgt_image.image_type)}")
+  if type_name == 'DLCImage':
+    prefix += f" {tgt_image.dlc_id} {tgt_image.dlc_package} {tgt_image.dlc_image}"
+  prefix += ":"
+
+  def _format_details(field_name, image):
+    if field_name.endswith('unsigned_image'):
+      return f"{image.build.channel} {image.build.version} {image.milestone}"
+    if field_name.endswith('signed_image'):
+      return f"{image.build.channel} {image.build.version} {image.key}"
+    return f"{image.build.channel} {image.build.version}"
+
+  src_field = req.WhichOneof('src_image_oneof')
+  if src_field and src_field != 'full_update':
+    src_str = _format_details(src_field, getattr(req, src_field))
+  else:
+    src_str = "full_update"
+
+  tgt_str = _format_details(tgt_field, tgt_image)
+
+  return f"{prefix} {src_str} -> {tgt_str}"
 
 def _to_spdx_package(p: PackageMetadata) -> dict:
   """Construct a SPDX package."""
@@ -231,6 +269,38 @@ class CrosSsciApi(RecipeApi):
       result[common_pb2.IMAGE_TYPE_FLEXOR_KERNEL] = uploaded_sbom
 
     return result
+
+  def generate_payload_sbom(self, paygen_req: GenerationRequest,
+                            out_path: Path) -> step_data.StepData:
+    """Generate a paygen payload SBOM.
+
+    Right now, the SBOM is a stub that indicates the src artifact that this
+    payload is applied on, to transform the src artifact into a target
+    artifact.
+
+    In the future, we could look into referencing the gs// URL of the src
+    and target artifacts.
+    """
+    with self.m.step.nest('generate Payload SBOM'):
+      builder_full_name = self.m.buildbucket.builder_full_name
+      build_id = self.m.buildbucket.build.id
+      version = self.m.cros_version.version
+      unique_id_hash = hashlib.sha256(
+          paygen_req.SerializeToString()).hexdigest()
+
+      spdx_dict = _build_spdx_dict(
+          name=f"ChromeOS Update Payload SBOM: {_to_payload_description(paygen_req)}",
+          unique_id=f'{builder_full_name}/{build_id}/paygen/{unique_id_hash}',
+          creation_time=self.m.time.utcnow(),
+          packages=[],
+          main_package=_build_main_package(
+              name=f"ChromeOS_UpdatePayload_{unique_id_hash}",
+              version=str(version),
+          ),
+      )
+
+      return self.m.file.write_json("write paygen SPDX SBOM", out_path,
+                                    data=spdx_dict, indent=2)
 
 
   def generate_dlc_sbom(self, dlc_name: str,
