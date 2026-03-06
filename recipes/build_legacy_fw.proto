@@ -43,4 +43,7 @@ message BuildLegacyFwProperties {
   // GS path to upload buildspecs to.
   // Defaults to 'gs://chromeos-manifest-versions/buildspecs/'.
   string buildspec_gs_path = 12;
+
+  // Whether to sign firmware images.
+  bool trigger_signing = 13;
 }

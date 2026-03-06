@@ -50,8 +50,10 @@ DEPS = [
     'gcloud',
     'git',
     'metadata_json',
+    'mutable_output',
     'repo',
     'signing',
+    'signing_utils',
     'src_state',
     'test_util',
 ]
@@ -710,32 +712,48 @@ class FirmwareBuilder():
 
   def _push_image(self, build_target, artifact_dir):
     """Push images."""
-    with self.m.step.nest('upload image to GS (formerly "push image")') as pres:
-      # Seems like we always just do canary channel.
-      gs_dir = self.m.signing.get_gs_path_for_channel(
-          common_pb2.Channel.CHANNEL_CANARY,
-          maybe_build_target=build_target.name)
-      gs_path = self.m.path.join(
-          gs_dir,
-          self.m.signing.get_gs_artifact_name(
-              build_target.name, self.m.cros_version.version.legacy_version,
-              common_pb2.IMAGE_TYPE_FIRMWARE))
+    if self.properties.trigger_signing:
+      with self.m.mutable_output.wrap():
+        default_types = [common_pb2.IMAGE_TYPE_FIRMWARE]
+        if self._is_after('7618.0.0'):
+          default_types.append(common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG)
+        sign_types = self.properties.sign_types or default_types
+        signed_image_response = self.m.signing.sign_artifacts(
+            sign_types=sign_types, channels=[common_pb2.Channel.CHANNEL_CANARY],
+            include_paygen=False, local_artifact_dir=artifact_dir)
+        if signed_image_response:
+          signed_build_list = self.m.signing_utils.signing_response_to_metadata(
+              signed_image_response)
+          self.m.build_reporting.publish_signed_build_metadata(
+              signed_build_list)
+    else:
+      with self.m.step.nest(
+          'upload image to GS (formerly "push image")') as pres:
+        # Seems like we always just do canary channel.
+        gs_dir = self.m.signing.get_gs_path_for_channel(
+            common_pb2.Channel.CHANNEL_CANARY,
+            maybe_build_target=build_target.name)
+        gs_path = self.m.path.join(
+            gs_dir,
+            self.m.signing.get_gs_artifact_name(
+                build_target.name, self.m.cros_version.version.legacy_version,
+                common_pb2.IMAGE_TYPE_FIRMWARE))
 
-      artifact_path = self.m.path.join(artifact_dir,
-                                       'firmware_from_source.tar.bz2')
-      if self.m.path.isfile(artifact_path):
-        self.m.gsutil([
-            'cp',
-            '-n',
-            '-r',
-            artifact_path,
-            gs_path,
-        ], multithreaded=True, timeout=30 * 60)
+        artifact_path = self.m.path.join(artifact_dir,
+                                         'firmware_from_source.tar.bz2')
+        if self.m.path.isfile(artifact_path):
+          self.m.gsutil([
+              'cp',
+              '-n',
+              '-r',
+              artifact_path,
+              gs_path,
+          ], multithreaded=True, timeout=30 * 60)
 
-        pres.links[
-            "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{gs_dir.removeprefix("gs://")}'
-      else:
-        pres.step_text = "nothing to upload!"
+          pres.links[
+              "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{gs_dir.removeprefix("gs://")}'
+        else:
+          pres.step_text = "nothing to upload!"
 
   @contextmanager
   def _maybe_step(self, name, cond):
@@ -847,8 +865,9 @@ def GenTests(api):
     targets = kwargs.pop('build_targets', None)
     if targets:
       input_props['build_targets'] = targets
+    target = kwargs.pop('target', 'target')
     kwargs['input_properties'] = input_props
-    build = api.test_util.test_child_build('target', **kwargs).build
+    build = api.test_util.test_child_build(target, **kwargs).build
     return api.test(name, build, version, *args, status=status)
 
   exists = lambda *x: api.path.exists(api.src_state.workspace_path.joinpath(*x))
@@ -903,6 +922,54 @@ def GenTests(api):
           'bump_version': True,
           'set_suite_scheduling': True,
           'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+      })
+
+  yield test(
+      'release-with-signing',
+      api.cros_infra_config.use_custom_builder_config(
+          BuilderConfig(
+              id=BuilderConfig.Id(name='firmware-ti50-postsubmit',
+                                  bucket='firmware'),
+              artifacts=BuilderConfig.Artifacts(
+                  attestation_eligible=True,
+                  artifacts_gs_bucket='chromeos-image-archive',
+                  artifacts_info=common_pb2.ArtifactsByService(
+                      firmware=common_pb2.ArtifactsByService
+                      .Firmware(output_artifacts=[
+                          common_pb2.ArtifactsByService.Firmware.ArtifactInfo(
+                              artifact_types=[
+                                  'FIRMWARE_TARBALL', 'FIRMWARE_TARBALL_INFO'
+                              ], gs_locations=[
+                                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}'
+                              ])
+                      ])))), step_name='checking attestation eligibility'),
+      api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(post_process.StepTextEquals, 'bump version',
+                     'Updated to R109-15236.0.0-101'),
+      api.post_check(post_process.MustRun, 'create buildspec'),
+      api.post_check(post_process.MustRun, 'snoop: report_stage'),
+      suite_scheduling(True),
+      api.post_check(post_process.StepCommandContains,
+                     'build kukui.install packages', ['build_packages']),
+      api.post_check(post_process.StepCommandContains,
+                     'build kukui.install packages', ['--withdebugsymbols']),
+      api.post_check(post_process.MustRun, 'sign artifacts'),
+      api.post_check(post_process.StepCommandDoesNotContain,
+                     'upload artifacts.create firmware archive.create tarball',
+                     [
+                         '-C',
+                         '/build/kukui/usr/share/chromeos-config/yaml',
+                         'config.yaml',
+                     ]), target='kukui',
+      input_properties={
+          'bump_version': True,
+          'set_suite_scheduling': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+          'trigger_signing': True,
+          '$chromeos/signing': {
+              'local_signing': True
+          },
       })
 
   yield test(
