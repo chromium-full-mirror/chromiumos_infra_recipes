@@ -13,6 +13,8 @@ DEPS = [
 def RunSteps(api):
   # Access the property to ensure coverage
   _ = api.orch_menu.bump_version
+  with api.orch_menu.setup_orchestrator():
+    pass
 
 
 def GenTests(api):

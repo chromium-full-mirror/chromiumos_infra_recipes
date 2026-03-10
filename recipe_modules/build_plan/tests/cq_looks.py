@@ -58,16 +58,17 @@ def RunSteps(api, properties):
         child_specs, True, api.cros_infra_config.gerrit_changes,
         common_pb2.GitilesCommit(id=ORIGINAL_INTERNAL_SHA,
                                  host=INTERNAL_HOST_URL),
-        common_pb2.GitilesCommit(id=ORIGINAL_EXTERNAL_SHA,
-                                 host=EXTERNAL_HOST_URL))
+        None if properties.no_external else common_pb2.GitilesCommit(
+            id=ORIGINAL_EXTERNAL_SHA, host=EXTERNAL_HOST_URL))
 
   for request in new_requests:
     if request.gitiles_commit.host == INTERNAL_HOST_URL:
       api.assertions.assertEqual(expected_internal_sha,
                                  request.gitiles_commit.id)
     elif request.gitiles_commit.host == EXTERNAL_HOST_URL:
-      api.assertions.assertEqual(expected_external_sha,
-                                 request.gitiles_commit.id)
+      if not properties.no_external:
+        api.assertions.assertEqual(expected_external_sha,
+                                   request.gitiles_commit.id)
 
 
 def GenTests(api):
@@ -276,5 +277,27 @@ def GenTests(api):
           post_process.StepTextEquals, 'looks for green',
           'No green snapshot found. Using latest minted snapshot.'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'green-no-external',
+      api.cv(run_mode=api.cv.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(),
+      api.properties(
+          CqLooksProperties(
+              expected_internal_sha=MODIFIED_INTERNAL_SHA,
+              no_external=True,
+          ), **{'$chromeos/looks_for_green': {
+              'enable_looks_for_green': True
+          }}),
+      api.buildbucket.simulated_search_results(
+          builds=[green_internal_build],
+          step_name='looks for green.find green snapshot.buildbucket.search'),
+      api.post_check(post_process.MustRun,
+                     'looks for green.find green snapshot'),
+      api.post_process(post_process.StepTextEquals, 'looks for green',
+                       'Found green snapshot.'),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_process(post_process.DropExpectation),
   )

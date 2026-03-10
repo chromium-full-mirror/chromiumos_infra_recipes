@@ -9,17 +9,15 @@ from typing import Generator
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
+from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'bot_cost',
-    'build_menu',
     'cros_infra_config',
-    'cros_release',
     'cros_source',
-    'cros_version',
     'easy',
     'gerrit',
     'git',
@@ -35,7 +33,7 @@ PROPERTIES = OrchestratorProperties
 
 
 def RunSteps(api: RecipeApi,
-             properties: OrchestratorProperties) -> result_pb2.RawResult:
+             _properties: OrchestratorProperties) -> result_pb2.RawResult:
   with api.bot_cost.build_cost_context():
     is_staging = api.cros_infra_config.is_staging
 
@@ -56,25 +54,23 @@ def RunSteps(api: RecipeApi,
       api.orch_menu.schedule_wait_build(named_builder, await_completion=True,
                                         check_failures=True,
                                         step_name='launch child')
-    else:
-      with api.step.nest('launch child') as pres:
-        pres.step_text = 'Builder {} is not configured, attempting to launch dynamic children'.format(
-            named_builder)
-      config = api.orch_menu.setup_orchestrator()
+      if config:
+        api.orch_menu.run_follow_on_orchestrator()
+
+      return api.orch_menu.create_recipe_result()
+
+    with api.step.nest('launch child') as pres:
+      pres.step_text = 'Builder {} is not configured, attempting to launch dynamic children'.format(
+          named_builder)
+    with api.orch_menu.setup_orchestrator() as config:
       if config:
         api.easy.set_properties_step(child_verifier='dynamic')
-        if api.orch_menu.bump_version:
-          with api.build_menu.configure_builder(commit=commit) \
-          as _, api.build_menu.setup_workspace():
-            api.cros_version.bump_version(dry_run=is_staging)
-            api.cros_release.create_buildspec(
-                dry_run=is_staging, gs_location=properties.buildspec_gs_path)
         api.orch_menu.plan_and_run_children()
 
-    if config:
-      api.orch_menu.run_follow_on_orchestrator()
+      if config:
+        api.orch_menu.run_follow_on_orchestrator()
 
-    return api.orch_menu.create_recipe_result()
+      return api.orch_menu.create_recipe_result()
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
@@ -134,25 +130,30 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                               properties=expected_properties, **kwargs)
 
   yield test(
-      'cq', expected_properties={
+      'cq', api.post_check(post_process.DoesNotRun, 'set up orchestrator'),
+      expected_properties={
           'manifest_branch': test_branch,
           'child_verifier': test_builder
       })
 
   yield test(
-      'staging-cq', expected_properties={
+      'staging-cq',
+      api.post_check(post_process.DoesNotRun, 'set up orchestrator'),
+      expected_properties={
           'manifest_branch': test_branch,
           'child_verifier': f'staging-{test_builder}'
       }, bucket='staging')
 
   yield test(
-      'cq-tagged', expected_properties={
+      'cq-tagged', api.post_check(post_process.MustRun, 'set up orchestrator'),
+      expected_properties={
           'manifest_branch': f'{test_base}-main',
           'child_verifier': test_builder
       }, branch=f'{test_base}-main')
 
   yield test(
       'failed-child',
+      api.post_check(post_process.DoesNotRun, 'set up orchestrator'),
       status='FAILURE',
       expected_properties={'manifest_branch': test_branch,
                              'child_verifier': test_builder}) + \
@@ -165,16 +166,21 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
         )
 
   yield test(
-      'no-child', expected_properties={
-          'manifest_branch': f'{test_base}6.B',
-          'child_verifier': 'dynamic'
-      }, branch=f'{test_base}6.B')
+      'no-child', api.post_check(post_process.MustRun, 'set up orchestrator'),
+      api.post_check(post_process.DoesNotRun,
+                     'set up orchestrator.bump version'), expected_properties={
+                         'manifest_branch': f'{test_base}6.B',
+                         'child_verifier': 'dynamic'
+                     }, branch=f'{test_base}6.B')
 
   yield test(
-      'bump-version', expected_properties={
-          'manifest_branch': f'{test_base}6.B',
-          'child_verifier': 'dynamic'
-      }, branch=f'{test_base}6.B', bucket='staging',
+      'bump-version', api.post_check(post_process.MustRun,
+                                     'set up orchestrator'),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.bump version'), expected_properties={
+                         'manifest_branch': f'{test_base}6.B',
+                         'child_verifier': 'dynamic'
+                     }, branch=f'{test_base}6.B', bucket='staging',
       input_properties={'$chromeos/orch_menu': {
           'bump_version': True
       }})

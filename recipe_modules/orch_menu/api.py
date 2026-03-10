@@ -279,7 +279,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           self._is_release_orchestrator = True
           self._create_buildspec()
 
-        if config and config.id.type == BuilderConfig.Id.FACTORY:
+        elif config and config.id.type == BuilderConfig.Id.FACTORY:
           self._is_factory_orchestrator = True
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
             # Uprev packages on factory branches so packages are not stale.
@@ -291,13 +291,21 @@ class OrchMenuApi(recipe_api.RecipeApi):
                 dry_run=is_staging,
                 gs_location=self._properties.buildspec_gs_path)
 
-        if config and config.id.type == BuilderConfig.Id.PUBLIC:
+        elif config and config.id.type == BuilderConfig.Id.PUBLIC:
           self._is_public_orchestrator = True
           # Need to sync to buildspec in the public orchestrator so that
           # chromeos_version.sh accurately reflects the version.
           # b/238330273 for context.
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
             pass
+
+        elif self._properties.bump_version:
+          with self.m.workspace_util.sync_to_commit(staging=is_staging):
+            bump_version = self._properties.bump_version and not is_staging
+            self.m.cros_version.bump_version(dry_run=not bump_version)
+            self.m.cros_release.create_buildspec(
+                dry_run=is_staging,
+                gs_location=self._properties.buildspec_gs_path)
 
       if config and self.gerrit_changes and not self.m.gerrit.changes_submittable(
           self.gerrit_changes):

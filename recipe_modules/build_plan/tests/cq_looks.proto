@@ -10,4 +10,5 @@ message CqLooksProperties {
   reserved 1;
   string expected_internal_sha = 2;
   string expected_external_sha = 3;
+  bool no_external = 4;
 }
