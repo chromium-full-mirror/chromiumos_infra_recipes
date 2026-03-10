@@ -104,6 +104,19 @@ def RunSteps(api, properties):
         presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
         presentation.status = api.step.WARNING
 
+    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
+      try:
+        nb_3d_bb_command = [
+            cmd_path, 'run', '-new-builds-3d-board-based', '-run-id', run_uuid
+        ]
+
+        if not api.cros_infra_config.is_staging:
+          nb_3d_bb_command.append('-prod')
+
+        api.step('launch NEW_BUILD_3D_BOARD_BASED tasks', nb_3d_bb_command)
+      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
+        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
+        presentation.status = api.step.WARNING
 
 
 def GenTests(api):
