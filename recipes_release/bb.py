@@ -187,7 +187,7 @@ class Builds:
         results[builder] = builds
         if verbose:
           print(
-              f'Found {len(results[builder])} builds for {builder} since {earliest_change.hash}.'
+              f'Found {len(results[builder]):3} builds for {builder} since {earliest_change.hash}.'
           )
 
     self._data = results
@@ -463,7 +463,7 @@ def determine_maximum_covered_instance(
         return None
 
     print_if_verbose(
-        f'Found {len(builds)} builds for {builder} since {earliest_change.hash}.'
+        f'Found {len(builds):3} builds for {builder} since {earliest_change.hash}.'
     )
 
     # change_coverage contains the number of builds that ran each change.
@@ -575,8 +575,9 @@ def determine_maximum_covered_instance(
         continue
       if change_coverage_per_build[builder][i] < num_builds_by_builder[builder]:
         print_if_verbose(
-            f'{change.hash} lacking coverage in {builder} ({change_coverage_per_build[builder][i]}/{num_builds_by_builder[builder]} builds).'
-        )
+            f'{change.hash} lacking coverage in {builder} '
+            f'({change_coverage_per_build[builder][i]}/{num_builds_by_builder[builder]} builds).\n'
+            f'  Builder: {get_builder_link(builder)}')
         missing_coverage = True
         break
     if missing_coverage:
