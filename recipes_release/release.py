@@ -6,11 +6,11 @@
 """Release a CrOS infra recipe bundle to prod."""
 
 import argparse
+import logging
 import os
 import pathlib
 import subprocess
 import sys
-import traceback
 import typing
 from typing import List
 from typing import Tuple
@@ -25,6 +25,9 @@ import git
 import gmail
 from protos.recipes_autoreleaser import ReleaseResult  #pylint: disable=no-name-in-module
 import staging_checks
+
+logger = logging.getLogger(__name__)
+
 
 RECIPES_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -101,7 +104,7 @@ class RecipeRelease:
 
     quit_early_if_no_pending_changes(pending_changes)
 
-    print('=== Fetching build results, this may take a minute... ===')
+    logger.info('=== Fetching build results, this may take a minute... ===')
     all_builds = bb.Builds()
     all_builds.initialize(self.staging_checks, pending_changes,
                           verbose=options.verbose)
@@ -109,13 +112,15 @@ class RecipeRelease:
     new_builders = []
     if options.max_covered or options.max_releasable:
       option = 'releasable' if options.max_releasable else 'covered'
-      print(f'=== Determining maximum {option} version ===')
+      logger.info('=== Determining maximum %s version ===', option)
       selected_instance, new_builders = bb.determine_maximum_covered_instance(
           all_builds, pending_changes, self.staging_checks,
           verbose=options.verbose, enforce_success=options.max_releasable)
       if not selected_instance:
-        print(
-            f'Could not find a {option} version. Please rerun without --max-{option}.'
+        logger.error(
+            'Could not find a %s version. Please rerun without --max-%s.',
+            option,
+            option,
         )
         sys.exit(common.RET_CODE_NO_RELEASABLE if options
                  .max_releasable else common.RET_CODE_NO_COVERED)
@@ -136,7 +141,7 @@ class RecipeRelease:
     # released but shouldn't influence our staging checks.
     if not options.show_all:
       pending_changes = git.trim_trivial_suffix(pending_changes)
-    print('=== Check staging status ===')
+    logger.info('=== Check staging status ===')
     bad_builders = bb.check_staging_builders(all_builds, pending_changes,
                                              self.staging_checks, new_builders,
                                              log_messages=True)
@@ -144,8 +149,9 @@ class RecipeRelease:
       if options.ignore_staging_failures:
         print('Ignoring failures, as requested.')
       else:
-        print('Please address the failures in the above builders.')
-        print("When you're certain staging is OK, you may use -s to continue.")
+        logger.error('Please address the failures in the above builders.')
+        logger.error(
+            "When you're certain staging is OK, you may use -s to continue.")
         sys.exit(common.RET_CODE_OK_STAGING_FAILURES)
     else:
       print('Everything looks good!')
@@ -192,13 +198,27 @@ class RecipeRelease:
     )
 
 
+def setup_logging(verbose: bool) -> None:
+  """Setup the logging module."""
+  root_logger = logging.getLogger()
+  root_logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+  formatter = logging.Formatter(
+      fmt="%(asctime)s: %(levelname)s: %(message)s",
+      datefmt="%H:%M:%S",
+  )
+  handler = logging.StreamHandler()
+  handler.setFormatter(formatter)
+  root_logger.addHandler(handler)
+
+
 def main(argv: List[str]):
   options = parse_args(argv)
+  setup_logging(options.verbose)
 
   try:
     setup()
 
-    print(f'=== Releasing recipes bundle "{options.bundle}" ===')
+    logger.info('=== Releasing recipes bundle "%s" ===', options.bundle)
     bundle_config = {
         'infra': INFRA_BUNDLE,
         'release': RELEASE_BUNDLE,
@@ -209,7 +229,7 @@ def main(argv: List[str]):
     if options.result_out:
       options.result_out.write_text(json_format.MessageToJson(result))
   except Exception:  #pylint: disable=broad-except
-    print(traceback.format_exc())
+    logger.exception('Unknown failure')
     sys.exit(common.RET_CODE_INTERNAL_ERROR)
   sys.exit(common.RET_CODE_SUCCESS)
 
@@ -341,7 +361,7 @@ def print_cipd_versions_url():
 def report_pending_changes(pending_changes: List[git.Commit],
                            show_instances: bool, show_all: bool):
   """Pretty-print info about all the pending changes."""
-  print('=== Displaying pending changes ===')
+  logger.info('=== Displaying pending changes ===')
   print('Here are the changes from the provided (or default main) environment:')
   if show_all:
     print(' - --show-all specified, printing all changes')
