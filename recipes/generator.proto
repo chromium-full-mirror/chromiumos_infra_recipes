@@ -252,4 +252,8 @@ message GeneratorProperties {
   // The open changes must be in a single repository, i.e. with no Cq-Depend.
   // Otherwise, the step will fail.
   bool rebase_before_retry = 19;
+
+  // Checkout chrome source tree
+  bool checkout_chrome = 22;
+  string sync_chrome_build_target = 23;
 }

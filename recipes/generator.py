@@ -48,10 +48,12 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/cv',
     'recipe_engine/file',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/scheduler',
     'recipe_engine/step',
+    'chrome',
     'cros_build_api',
     'cros_sdk',
     'cros_source',
@@ -237,6 +239,15 @@ class GeneratorRun:
     with self.m.cros_source.checkout_overlays_context(
     ), self.m.cros_sdk.cleanup_context():
       self.m.cros_source.ensure_synced_cache(manifest_branch_override='main')
+
+      if self.properties.checkout_chrome:
+        chrome_root = self.m.path.start_dir / 'chrome'
+        self.m.chrome.sync(
+            chrome_root, self.m.cros_sdk.chroot,
+            common_pb2.BuildTarget(
+                name=self.properties.sync_chrome_build_target), True,
+            cache_dir=chrome_root / 'chrome_cache')
+        self.m.cros_sdk.set_chrome_root(chrome_root)
 
       policy_info = self.select_policy()
       self.set_policy(policy_info.policy)
@@ -1585,4 +1596,11 @@ def GenTests(
                   ),
           }),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
+  )
+
+  yield api.test(
+      'sync-chrome',
+      _props(checkout_chrome=True, sync_chrome_build_target="betty"),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.post_check(post_process.MustRun, 'sync chrome'),
   )
