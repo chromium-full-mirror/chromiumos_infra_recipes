@@ -246,7 +246,7 @@ class GeneratorRun:
             chrome_root, self.m.cros_sdk.chroot,
             common_pb2.BuildTarget(
                 name=self.properties.sync_chrome_build_target), True,
-            cache_dir=chrome_root / 'chrome_cache')
+            cache_dir=chrome_root / 'chrome_cache', omit_version=True)
         self.m.cros_sdk.set_chrome_root(chrome_root)
 
       policy_info = self.select_policy()
