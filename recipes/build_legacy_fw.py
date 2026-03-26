@@ -720,7 +720,8 @@ class FirmwareBuilder():
         sign_types = self.properties.sign_types or default_types
         signed_image_response = self.m.signing.sign_artifacts(
             sign_types=sign_types, channels=[common_pb2.Channel.CHANNEL_CANARY],
-            include_paygen=False, local_artifact_dir=artifact_dir)
+            include_paygen=False, local_artifact_dir=artifact_dir,
+            target_name=build_target.name)
         if signed_image_response:
           signed_build_list = self.m.signing_utils.signing_response_to_metadata(
               signed_image_response)
@@ -970,7 +971,9 @@ def GenTests(api):
           '$chromeos/signing': {
               'local_signing': True
           },
-      })
+      }, build_targets=[{
+          'name': 'kukui'
+      }])
 
   yield test(
       'release-unibuild',

@@ -296,7 +296,8 @@ class SigningApi(recipe_api.RecipeApi):
           'See output in step "get signed build metadata" or full metadata in '
           'step "parse metadata".')
 
-  def get_config(self) -> BuildTargetSigningConfig:
+  def get_config(self,
+                 target_name: Optional[str] = None) -> BuildTargetSigningConfig:
     """Fetch signing config from the appropriate branch of config-internal."""
     if self._signing_config:
       return self._signing_config
@@ -322,7 +323,7 @@ class SigningApi(recipe_api.RecipeApi):
       signing_config = Parse(signing_config_textproto,
                              BuildTargetSigningConfigs())
 
-      build_target = self.m.build_menu.build_target.name
+      build_target = target_name or self.m.build_menu.build_target.name
       for config in signing_config.build_target_signing_configs:
         if config.build_target == build_target:
           # If we're staging or led or if we specify by property, override the
@@ -355,7 +356,7 @@ class SigningApi(recipe_api.RecipeApi):
   # Public method so we can test it.
   def setup_signing(
       self, sign_types: List['common_pb2.ImageType'],
-      channels: List['common_pb2.Channel']
+      channels: List['common_pb2.Channel'], target_name: Optional[str] = None
   ) -> Tuple[BuildTargetSigningConfig, Path]:
     """Set up the working dir for signing.
 
@@ -369,10 +370,10 @@ class SigningApi(recipe_api.RecipeApi):
       - signing configs
       - dir containing input artifacts
     """
-    build_target_config = self.get_config()
+    build_target_config = self.get_config(target_name)
 
     if not build_target_config.signing_configs:
-      _, archive_dir = self.download_release_artifacts([])
+      _, archive_dir = self.download_release_artifacts([], target_name)
       return None, archive_dir
 
     self._paygen_keyset = build_target_config.keyset
@@ -383,7 +384,7 @@ class SigningApi(recipe_api.RecipeApi):
         relevant_configs.append(signing_config)
 
     relevant_configs, archive_dir = self.download_release_artifacts(
-        relevant_configs)
+        relevant_configs, target_name)
 
     # Create a copy of config for each configured channel.
     channel_configs = []
@@ -445,8 +446,8 @@ class SigningApi(recipe_api.RecipeApi):
 
     return skipped_artifacts
 
-  def get_common_downloads(
-      self, sign_types: List['common_pb2.ImageType']) -> List[str]:
+  def get_common_downloads(self, sign_types: List['common_pb2.ImageType'],
+                           target_name: Optional[str] = None) -> List[str]:
     """Get a list of common files to be downloaded, depending on sign types."""
     # Files to always download for shellballs.
     if any(x in sign_types for x in [
@@ -454,7 +455,7 @@ class SigningApi(recipe_api.RecipeApi):
     ]):
       return []
     # Files to always download for other sign types.
-    build_target = self.m.build_menu.build_target.name
+    build_target = target_name or self.m.build_menu.build_target.name
     version = self.m.cros_version.version.platform_version
     to_download = [
         'image.zip',
@@ -479,8 +480,8 @@ class SigningApi(recipe_api.RecipeApi):
     return to_download
 
   def download_release_artifacts(
-      self, relevant_signing_configs: List[SigningConfig]
-  ) -> Tuple[List[SigningConfig], Path]:
+      self, relevant_signing_configs: List[SigningConfig],
+      target_name: Optional[str] = None) -> Tuple[List[SigningConfig], Path]:
     """Download any needed artifacts so we can support retries with conductor.
 
     As opposed to in situ builds with local artifacts already present.
@@ -500,7 +501,7 @@ class SigningApi(recipe_api.RecipeApi):
     # signing.
     with self.m.step.nest('download release artifacts') as pres:
       sign_types = [sc.image_type for sc in relevant_signing_configs]
-      to_download = set(self.get_common_downloads(sign_types))
+      to_download = set(self.get_common_downloads(sign_types, target_name))
       signing_configured_artifacts = []
 
       for signing_config in relevant_signing_configs:
@@ -532,8 +533,8 @@ class SigningApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=5))
-  def stage_paygen_artifacts(self,
-                             channels: List['common_pb2.Channel']) -> List[str]:
+  def stage_paygen_artifacts(self, channels: List['common_pb2.Channel'],
+                             target_name: Optional[str] = None) -> List[str]:
     """Copy the artifacts needed for paygen into the appropriate GS locations.
 
     Returns:
@@ -568,9 +569,8 @@ class SigningApi(recipe_api.RecipeApi):
           dest_gs_dir = self.get_gs_path_for_channel(channel)
           gs_dirs.append(dest_gs_dir)
           for src_file, upload_path in files_to_copy.items():
-
-            artifact_upload_name = upload_path(
-                self.m.build_menu.build_target.name, version)
+            build_target = target_name or self.m.build_menu.build_target.name
+            artifact_upload_name = upload_path(build_target, version)
             # -n so we don't clobber existing destination artifacts.
             self.m.gsutil([
                 'cp',
@@ -670,6 +670,7 @@ class SigningApi(recipe_api.RecipeApi):
       upload_unsigned: Optional[bool] = True,
       attestation_eligible: bool = False,
       artifact_sbom: dict[str, UploadedSBOM] = None,
+      target_name: Optional[str] = None,
   ) -> SignImageResponse:
     """Implementation for local signing flow.
 
@@ -680,9 +681,12 @@ class SigningApi(recipe_api.RecipeApi):
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
 
+    # Reset for a new target.
+    self._signing_config = None
+
     with self.m.step.nest('sign artifacts') as pres:
       build_target_config, archive_dir = self.setup_signing(
-          sign_types, channels)
+          sign_types, channels, target_name)
 
       signing_configs = []
       if build_target_config:
@@ -710,11 +714,11 @@ class SigningApi(recipe_api.RecipeApi):
 
       gs_dirs = set()
       if include_paygen:
-        gs_dirs.update(self.stage_paygen_artifacts(channels))
+        gs_dirs.update(self.stage_paygen_artifacts(channels, target_name))
       if upload_unsigned:
         gs_dirs.update(
             self.upload_unsigned_artifacts(archive_dir, signing_configs,
-                                           channels))
+                                           channels, target_name))
 
       # Now that we've uploaded the unsigned artifacts, we can short-circuit if
       # there was an empty signing config.
@@ -931,8 +935,12 @@ class SigningApi(recipe_api.RecipeApi):
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
   def upload_unsigned_artifacts(
-      self, archive_dir: Path, signing_configs: List[SigningConfig],
-      channels: List['common_pb2.Channel']) -> List[str]:
+      self,
+      archive_dir: Path,
+      signing_configs: List[SigningConfig],
+      channels: List['common_pb2.Channel'],
+      target_name: Optional[str] = None,
+  ) -> List[str]:
     """Uploads files from archive_dir to GS based on signing config.
 
     Returns:
@@ -940,10 +948,10 @@ class SigningApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(
         f'upload unsigned artifacts to {self.gs_upload_bucket} bucket'):
-      build_target = self.m.build_menu.build_target.name
+      build_target = target_name or self.m.build_menu.build_target.name
       gs_dirs = []
       for channel in channels:
-        gs_dir = self.get_gs_path_for_channel(channel)
+        gs_dir = self.get_gs_path_for_channel(channel, target_name)
         gs_dirs.append(gs_dir)
 
         with self.m.step.nest(
