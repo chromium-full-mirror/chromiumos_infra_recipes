@@ -19,8 +19,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
-from PB.recipes.chromeos.pack_and_sign_firmware import PackAndSignFirmwareProperties
-from PB.recipes.chromeos.pack_and_sign_firmware import PublishStrategy
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 
@@ -58,8 +56,6 @@ DEPS = [
     'src_state',
 ]
 
-PROPERTIES = PackAndSignFirmwareProperties
-
 TEST_SIGNING_CONFIG = '''build_target_signing_configs {
       build_target: "kukui"
       keyset: "kukui-premp"
@@ -75,8 +71,7 @@ CL_REVIEWERS = [
     "bensonchen@google.com",
 ]
 
-AG_HOST = 'googleplex-android'
-DESKTOP_HOST = 'arsp'
+ARSP_HOST = 'arsp'
 
 
 def craft_commit_message(api: RecipeApi, version: str, bbid: str, target: str,
@@ -125,7 +120,7 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
                               ec_component_manifest_path: Path, target: str,
                               version: str, keyset_is_mp: bool,
                               fw_config_path: Path, abandon: bool = True,
-                              host: str = AG_HOST) -> str:
+                              host: str = ARSP_HOST) -> str:
   """Uploads the firmware prebuilts to the android repo.
 
   Returns:
@@ -215,8 +210,7 @@ def get_keyset_is_mp(response: SignImageResponse) -> bool:
   return only_artifact.keyset_is_mp
 
 
-def RunSteps(api: RecipeApi,
-             properties: PackAndSignFirmwareProperties) -> result_pb2.RawResult:
+def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
   with api.mutable_output.wrap():
     with api.cros_source.checkout_overlays_context():
       api.bcid_reporter.report_stage('start')
@@ -317,31 +311,16 @@ def RunSteps(api: RecipeApi,
           new_shellball_version, latest_filename='LATEST-SHELLBALL')
 
       # Open a cl with the new firmware prebuilts.
-      if properties.publish_strategy in (PublishStrategy.UNSPECIFIED,
-                                         PublishStrategy.AG_ONLY,
-                                         PublishStrategy.AG_AND_DESKTOP):
-        ag_msg = upload_firmware_prebuilts(
-            api, output_artifact_shellball, shellball_path,
-            output_artifact_eccm_zip,
-            api.build_menu.build_target.name, new_shellball_version,
-            get_keyset_is_mp(signed_image_response), fw_config_path,
-            abandon=api.cros_infra_config.is_staging, host=AG_HOST)
-      else:
-        ag_msg = 'Not published to AG host'
-      if properties.publish_strategy in (PublishStrategy.DESKTOP_ONLY,
-                                         PublishStrategy.AG_AND_DESKTOP):
-        desktop_msg = upload_firmware_prebuilts(
-            api, output_artifact_shellball, shellball_path,
-            output_artifact_eccm_zip,
-            api.build_menu.build_target.name, new_shellball_version,
-            get_keyset_is_mp(signed_image_response), fw_config_path,
-            abandon=api.cros_infra_config.is_staging, host=DESKTOP_HOST)
-      else:
-        desktop_msg = 'Not published to desktop host'
+      desktop_msg = upload_firmware_prebuilts(
+          api, output_artifact_shellball, shellball_path,
+          output_artifact_eccm_zip,
+          api.build_menu.build_target.name, new_shellball_version,
+          get_keyset_is_mp(signed_image_response), fw_config_path,
+          abandon=api.cros_infra_config.is_staging, host=ARSP_HOST)
 
       api.bcid_reporter.report_stage('upload-complete')
       return result_pb2.RawResult(
-          summary_markdown=f'AG: {ag_msg}\nDesktop:{desktop_msg}',
+          summary_markdown=f'{desktop_msg}',
           status=bb_common_pb2.SUCCESS,
       )
 
@@ -367,7 +346,7 @@ sample_response = SignImageResponse(
 
 def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
-      'success-unspecified-host',
+      'success',
       api.scheduler(triggers=[
           triggers_pb2.Trigger(
               id='123',
@@ -401,7 +380,7 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response)),
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
+          f'https://{ARSP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
       ]),
       api.post_process(post_process.DoesNotRun, 'git clone (2)'),
       api.step_data(
@@ -442,213 +421,6 @@ def GenTests(api: RecipeTestApi):
               'deadbeef', '-gcs-uri',
               'gs://signed-firmware/kukui/4.0/signed_firmware.bin'
           ]),
-      api.post_process(post_process.DropExpectation),
-      build_target='kukui',
-      builder='firmware-packager-android-kukui-main',
-  )
-
-  yield api.build_menu.test(
-      'success-ag-only',
-      api.scheduler(triggers=[
-          triggers_pb2.Trigger(
-              id='123',
-              gitiles=triggers_pb2.GitilesTrigger(
-                  repo='https://chromium.googlesource.com/chromium/src',
-                  ref='refs/tags/79.0.3945.20',
-                  revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
-              ),
-          ),
-          triggers_pb2.Trigger(id='123', noop=triggers_pb2.NoopTrigger(
-              data='foo')),
-      ]),
-      api.properties(
-          **{
-              'publish_strategy':
-                  PublishStrategy.AG_ONLY,
-              '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
-              },
-              '$chromeos/signing':
-                  MessageToDict(
-                      SigningProperties(local_signing=True,
-                                        gs_upload_bucket='signed-firmware'))
-          }),
-      api.cros_build_api.set_api_return(
-          'sign firmware shellball.sign artifacts.call BAPI',
-          'ImageService/SignImage', MessageToJson(sample_response)),
-      api.post_process(post_process.StepCommandContains, 'git clone', [
-          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
-      ]),
-      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
-      api.step_data(
-          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
-          stdout=api.raw_io.output('3.0')),
-      api.path.dirs_exist(api.path.cleanup_dir /
-                          'shellball-dir_tmp_1/ec_component_manifest'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
-          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_AGNOSTIC'
-      ),
-      api.post_check(post_process.MustRun, 'pack firmware'),
-      api.post_check(
-          post_process.StepCommandContains,
-          'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
-          [re.compile('.*"imageType": 20.*')]),
-      api.post_check(
-          post_process.StepCommandContains,
-          'sign firmware shellball.sign artifacts.upload signed artifacts to '
-          'signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.'
-          'gsutil cp', [
-              'gs://signed-firmware/kukui/4.0/',
-          ]),
-      api.post_check(post_process.DoesNotRun, 'remove existing symlink'),
-      api.post_check(post_process.MustRun, 'create symlink'),
-      api.post_check(post_process.DoesNotRun, 'remove existing symlink (2)'),
-      api.post_check(post_process.MustRun, 'create symlink (2)'),
-      api.post_check(post_process.MustRun, 'git commit'),
-      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
-      api.post_check(post_process.DoesNotRun, 'git commit (2)'),
-      api.post_check(post_process.MustRun, 'snoop: report_stage'),
-      api.post_process(post_process.DropExpectation),
-      build_target='kukui',
-      builder='firmware-packager-android-kukui-main',
-  )
-
-  yield api.build_menu.test(
-      'success-desktop-only',
-      api.scheduler(triggers=[
-          triggers_pb2.Trigger(
-              id='123',
-              gitiles=triggers_pb2.GitilesTrigger(
-                  repo='https://chromium.googlesource.com/chromium/src',
-                  ref='refs/tags/79.0.3945.20',
-                  revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
-              ),
-          ),
-          triggers_pb2.Trigger(id='123', noop=triggers_pb2.NoopTrigger(
-              data='foo')),
-      ]),
-      api.properties(
-          **{
-              'publish_strategy':
-                  PublishStrategy.DESKTOP_ONLY,
-              '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
-              },
-              '$chromeos/signing':
-                  MessageToDict(
-                      SigningProperties(local_signing=True,
-                                        gs_upload_bucket='signed-firmware'))
-          }),
-      api.cros_build_api.set_api_return(
-          'sign firmware shellball.sign artifacts.call BAPI',
-          'ImageService/SignImage', MessageToJson(sample_response)),
-      api.post_process(post_process.StepCommandContains, 'git clone', [
-          f'https://{DESKTOP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
-      ]),
-      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
-      api.step_data(
-          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
-          stdout=api.raw_io.output('3.0')),
-      api.path.dirs_exist(api.path.cleanup_dir /
-                          'shellball-dir_tmp_1/ec_component_manifest'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
-          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_AGNOSTIC'
-      ),
-      api.post_check(post_process.MustRun, 'pack firmware'),
-      api.post_check(
-          post_process.StepCommandContains,
-          'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
-          [re.compile('.*"imageType": 20.*')]),
-      api.post_check(
-          post_process.StepCommandContains,
-          'sign firmware shellball.sign artifacts.upload signed artifacts to '
-          'signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.'
-          'gsutil cp', [
-              'gs://signed-firmware/kukui/4.0/',
-          ]),
-      api.post_check(post_process.DoesNotRun, 'remove existing symlink'),
-      api.post_check(post_process.MustRun, 'create symlink'),
-      api.post_check(post_process.DoesNotRun, 'remove existing symlink (2)'),
-      api.post_check(post_process.MustRun, 'create symlink (2)'),
-      api.post_check(post_process.MustRun, 'git commit'),
-      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
-      api.post_check(post_process.DoesNotRun, 'git commit (2)'),
-      api.post_check(post_process.MustRun, 'snoop: report_stage'),
-      api.post_process(post_process.DropExpectation),
-      build_target='kukui',
-      builder='firmware-packager-android-kukui-main',
-  )
-
-  yield api.build_menu.test(
-      'success-ag-and-desktop',
-      api.scheduler(triggers=[
-          triggers_pb2.Trigger(
-              id='123',
-              gitiles=triggers_pb2.GitilesTrigger(
-                  repo='https://chromium.googlesource.com/chromium/src',
-                  ref='refs/tags/79.0.3945.20',
-                  revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
-              ),
-          ),
-          triggers_pb2.Trigger(id='123', noop=triggers_pb2.NoopTrigger(
-              data='foo')),
-      ]),
-      api.properties(
-          **{
-              'publish_strategy':
-                  PublishStrategy.AG_AND_DESKTOP,
-              '$chromeos/cros_release': {
-                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
-              },
-              '$chromeos/signing':
-                  MessageToDict(
-                      SigningProperties(local_signing=True,
-                                        gs_upload_bucket='signed-firmware'))
-          }),
-      api.cros_build_api.set_api_return(
-          'sign firmware shellball.sign artifacts.call BAPI',
-          'ImageService/SignImage', MessageToJson(sample_response)),
-      api.post_process(post_process.StepCommandContains, 'git clone', [
-          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
-      ]),
-      api.post_process(post_process.StepCommandContains, 'git clone (2)', [
-          f'https://{DESKTOP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
-      ]),
-      api.step_data(
-          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
-          stdout=api.raw_io.output('3.0')),
-      api.path.dirs_exist(api.path.cleanup_dir /
-                          'shellball-dir_tmp_1/ec_component_manifest'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
-          'signed-firmware bucket.upload unsigned artifacts for CHANNEL_AGNOSTIC'
-      ),
-      api.post_check(post_process.MustRun, 'pack firmware'),
-      api.post_check(
-          post_process.StepCommandContains,
-          'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
-          [re.compile('.*"imageType": 20.*')]),
-      api.post_check(
-          post_process.StepCommandContains,
-          'sign firmware shellball.sign artifacts.upload signed artifacts to '
-          'signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.'
-          'gsutil cp', [
-              'gs://signed-firmware/kukui/4.0/',
-          ]),
-      api.post_check(post_process.DoesNotRun, 'remove existing symlink'),
-      api.post_check(post_process.MustRun, 'create symlink'),
-      api.post_check(post_process.DoesNotRun, 'remove existing symlink (2)'),
-      api.post_check(post_process.MustRun, 'create symlink (2)'),
-      api.post_check(post_process.MustRun, 'git commit'),
-      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
-      api.post_check(post_process.MustRun, 'git commit (2)'),
-      api.post_check(post_process.DoesNotRun, 'abandon CL 1 (2)'),
-      api.post_check(post_process.MustRun, 'snoop: report_stage'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='firmware-packager-android-kukui-main',
@@ -773,10 +545,8 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.'
           'ImageService/SignImage', 'request',
           ['\"keyset\": \"DevPreMPKeys\"']),
-      api.post_check(
-          post_process.SummaryMarkdown,
-          'AG: No firmware images changed.\nDesktop:Not published to desktop host'
-      ),
+      api.post_check(post_process.SummaryMarkdown,
+                     'No firmware images changed.'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='firmware-packager-android-kukui-main',
