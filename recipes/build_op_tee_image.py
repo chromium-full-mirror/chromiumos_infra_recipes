@@ -10,8 +10,6 @@ from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
-from PB.recipes.chromeos.build_op_tee_image import BuildOpTeeImageProperties
-from PB.recipes.chromeos.build_op_tee_image import PublishStrategy
 from PB.recipe_engine import result as result_pb2
 
 from recipe_engine import post_process
@@ -43,11 +41,9 @@ DEPS = [
     'src_state',
 ]
 
-PROPERTIES = BuildOpTeeImageProperties
 CL_REVIEWERS = ['hiroh@google.com', 'rrangel@google.com', 'nhebert@google.com']
 
-AG_HOST = 'googleplex-android'
-DESKTOP_HOST = 'arsp'
+ARSP_HOST = 'arsp'
 
 
 def create_or_update_symlink(api: RecipeApi, directory: Path, file: str,
@@ -84,7 +80,7 @@ def craft_commit_message(api: RecipeApi, version: str, bbid: str,
 
 def upload_optee_prebuilts(api: RecipeTestApi, optee_path: Path, target: str,
                            version: str, abandon: bool = True,
-                           host: str = AG_HOST) -> str:
+                           host: str = ARSP_HOST) -> str:
   """Uploads the optee firmware prebuilts to the android repo.
 
   Returns:
@@ -131,7 +127,7 @@ def upload_optee_prebuilts(api: RecipeTestApi, optee_path: Path, target: str,
     return f'Updated optee firmware prebuilts for {target}'
 
 
-def RunSteps(api: RecipeApi, properties: BuildOpTeeImageProperties):
+def RunSteps(api: RecipeApi):
   with api.mutable_output.wrap():
     with api.cros_source.checkout_overlays_context():
       config = api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
@@ -163,112 +159,19 @@ def RunSteps(api: RecipeApi, properties: BuildOpTeeImageProperties):
             new_optee_version, latest_filename='LATEST-OPTEEFIRMWARE')
 
         # Open a cl with the new optee firmware prebuilts.
-        if properties.publish_strategy in (PublishStrategy.UNSPECIFIED,
-                                           PublishStrategy.AG_ONLY,
-                                           PublishStrategy.AG_AND_DESKTOP):
-          ag_msg = upload_optee_prebuilts(
-              api, optee_local_path, api.build_menu.build_target.name,
-              new_optee_version, abandon=api.cros_infra_config.is_staging,
-              host=AG_HOST)
-        else:
-          ag_msg = 'Not published to AG host'
-        if properties.publish_strategy in (PublishStrategy.DESKTOP_ONLY,
-                                           PublishStrategy.AG_AND_DESKTOP):
-          desktop_msg = upload_optee_prebuilts(
-              api, optee_local_path, api.build_menu.build_target.name,
-              new_optee_version, abandon=api.cros_infra_config.is_staging,
-              host=DESKTOP_HOST)
-        else:
-          desktop_msg = 'Not published to desktop host'
+        desktop_msg = upload_optee_prebuilts(
+            api, optee_local_path, api.build_menu.build_target.name,
+            new_optee_version, abandon=api.cros_infra_config.is_staging,
+            host=ARSP_HOST)
         return result_pb2.RawResult(
-            summary_markdown=f'AG: {ag_msg}\nDesktop:{desktop_msg}',
+            summary_markdown=f'{desktop_msg}',
             status=bb_common_pb2.SUCCESS,
         )
 
 
 def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
-      'success-unspecified-host',
-      api.post_process(post_process.StepCommandContains, 'git clone', [
-          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
-      ]),
-      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
-      api.step_data(
-          'get latest prebuilt version for kukui.gsutil reading LATEST-OPTEEFIRMWARE version',
-          stdout=api.raw_io.output('1.0')),
-      api.post_check(post_process.MustRun,
-                     'copy prebuilt optee firmware into temp dir'),
-      api.post_check(post_process.MustRun, 'write latest file for version 2.0'),
-      api.post_check(post_process.MustRun,
-                     'gsutil upload LATEST-OPTEEFIRMWARE'),
-      api.post_check(
-          post_process.StepCommandContains, 'write commit message',
-          [re.compile(r'optee: Update prebuilts to version 2\.0.*')]),
-      api.post_check(post_process.MustRun, 'git commit'),
-      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
-      api.post_process(post_process.DropExpectation),
-      build_target='kukui',
-      builder='optee-android-kukui-main',
-  )
-
-  yield api.build_menu.test(
-      'success-ag-only',
-      api.properties(**{
-          'publish_strategy': PublishStrategy.AG_ONLY,
-      }),
-      api.post_process(post_process.StepCommandContains, 'git clone', [
-          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
-      ]),
-      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
-      api.step_data(
-          'get latest prebuilt version for kukui.gsutil reading LATEST-OPTEEFIRMWARE version',
-          stdout=api.raw_io.output('1.0')),
-      api.post_check(post_process.MustRun,
-                     'copy prebuilt optee firmware into temp dir'),
-      api.post_check(post_process.MustRun, 'write latest file for version 2.0'),
-      api.post_check(post_process.MustRun,
-                     'gsutil upload LATEST-OPTEEFIRMWARE'),
-      api.post_check(
-          post_process.StepCommandContains, 'write commit message',
-          [re.compile(r'optee: Update prebuilts to version 2\.0.*')]),
-      api.post_check(post_process.MustRun, 'git commit'),
-      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
-      api.post_check(post_process.DoesNotRun, 'git commit (2)'),
-      api.post_process(post_process.DropExpectation),
-      build_target='kukui',
-      builder='optee-android-kukui-main',
-  )
-
-  yield api.build_menu.test(
-      'success-desktop-only',
-      api.properties(**{
-          'publish_strategy': PublishStrategy.DESKTOP_ONLY,
-      }),
-      api.post_process(post_process.StepCommandContains, 'git clone', [
-          f'https://{DESKTOP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
-      ]),
-      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
-      api.step_data(
-          'get latest prebuilt version for kukui.gsutil reading LATEST-OPTEEFIRMWARE version',
-          stdout=api.raw_io.output('1.0')),
-      api.post_check(post_process.MustRun,
-                     'copy prebuilt optee firmware into temp dir'),
-      api.post_check(post_process.MustRun, 'write latest file for version 2.0'),
-      api.post_check(post_process.MustRun,
-                     'gsutil upload LATEST-OPTEEFIRMWARE'),
-      api.post_check(
-          post_process.StepCommandContains, 'write commit message',
-          [re.compile(r'optee: Update prebuilts to version 2\.0.*')]),
-      api.post_check(post_process.MustRun, 'git commit'),
-      api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
-      api.post_check(post_process.DoesNotRun, 'git commit (2)'),
-      api.post_process(post_process.DropExpectation),
-      build_target='kukui',
-      builder='optee-android-kukui-main',
-  )
-
-  yield api.build_menu.test(
-      'success-ag-and-desktop',
+      'success',
       api.scheduler(triggers=[
           triggers_pb2.Trigger(
               id='123',
@@ -281,15 +184,10 @@ def GenTests(api: RecipeTestApi):
           triggers_pb2.Trigger(id='123', noop=triggers_pb2.NoopTrigger(
               data='foo')),
       ]),
-      api.properties(**{
-          'publish_strategy': PublishStrategy.AG_AND_DESKTOP,
-      }),
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          f'https://{AG_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
+          f'https://{ARSP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
       ]),
-      api.post_process(post_process.StepCommandContains, 'git clone (2)', [
-          f'https://{DESKTOP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
-      ]),
+      api.post_process(post_process.DoesNotRun, 'git clone (2)'),
       api.step_data(
           'get latest prebuilt version for kukui.gsutil reading LATEST-OPTEEFIRMWARE version',
           stdout=api.raw_io.output('1.0')),
@@ -303,8 +201,6 @@ def GenTests(api: RecipeTestApi):
           [re.compile(r'optee: Update prebuilts to version 2\.0.*')]),
       api.post_check(post_process.MustRun, 'git commit'),
       api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
-      api.post_check(post_process.MustRun, 'git commit (2)'),
-      api.post_check(post_process.DoesNotRun, 'abandon CL 2'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='optee-android-kukui-main',
@@ -320,7 +216,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'copy prebuilt optee firmware into temp dir'),
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          'https://googleplex-android.googlesource.com/device/google/desktop/kukui-prebuilts'
+          f'https://{ARSP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
       ]),
       api.post_check(post_process.MustRun, 'remove existing symlink'),
       api.post_check(post_process.StepCommandContains, 'create symlink',
@@ -339,14 +235,12 @@ def GenTests(api: RecipeTestApi):
           'get latest prebuilt version for kukui.gsutil reading LATEST-OPTEEFIRMWARE version',
           stdout=api.raw_io.output('3.0')),
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          'https://googleplex-android.googlesource.com/device/google/desktop/kukui-prebuilts'
+          f'https://{ARSP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
       ]),
       api.post_check(post_process.MustRun,
                      'copy prebuilt optee firmware into temp dir'),
-      api.post_check(
-          post_process.SummaryMarkdown,
-          'AG: No optee firmware prebuilts changed.\nDesktop:Not published to desktop host'
-      ),
+      api.post_check(post_process.SummaryMarkdown,
+                     'No optee firmware prebuilts changed.'),
       api.post_check(post_process.DoesNotRun, 'git commit'),
       api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
       api.post_process(post_process.DropExpectation),
@@ -360,7 +254,7 @@ def GenTests(api: RecipeTestApi):
           'get latest prebuilt version for kukui.gsutil reading LATEST-OPTEEFIRMWARE version',
           stdout=api.raw_io.output('333.0')),
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          'https://googleplex-android.googlesource.com/device/google/desktop/kukui-prebuilts'
+          f'https://{ARSP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
       ]),
       api.post_check(post_process.MustRun,
                      'copy prebuilt optee firmware into temp dir'),
@@ -408,7 +302,7 @@ def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
       'new-latest-version',
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          'https://googleplex-android.googlesource.com/device/google/desktop/kukui-prebuilts'
+          f'https://{ARSP_HOST}.googlesource.com/device/google/desktop/kukui-prebuilts'
       ]),
       api.step_data(
           'get latest prebuilt version for kukui.gsutil reading LATEST-OPTEEFIRMWARE version',
