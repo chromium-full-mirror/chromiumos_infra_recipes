@@ -305,6 +305,7 @@ def RunSteps(api: RecipeApi):
           CHROMIUM_SRC_PROJECT,
           CHROMIUM_VERSION_FILE,
           ref='refs/heads/main',
+          public=False,
           step_name='Fetch ToT version',
           test_output_data=mock_result,
       ).decode()

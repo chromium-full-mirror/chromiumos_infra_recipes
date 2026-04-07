@@ -18,7 +18,9 @@
   {
     "cmd": [
       "curl",
-      "https://chromium.googlesource.com/chromium/src/+/8302b1a80de0995f146605740417cdf78e381157?format=JSON"
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chromium.googlesource.com/a/chromium/src/+/8302b1a80de0995f146605740417cdf78e381157?format=JSON"
     ],
     "luci_context": {
       "realm": {
@@ -31,7 +33,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "fetch commit metadata.curl https://chromium.googlesource.com/chromium/src/+/8302b1a80de0995f146605740417cdf78e381157?format=JSON",
+    "name": "fetch commit metadata.curl https://chromium.googlesource.com/a/chromium/src/+/8302b1a80de0995f146605740417cdf78e381157?format=JSON",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

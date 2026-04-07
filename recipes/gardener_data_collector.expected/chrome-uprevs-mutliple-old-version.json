@@ -231,11 +231,13 @@
       "-f",
       "--write-out",
       "HTTP_CODE=%{http_code}",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
       "--retry",
       "10",
-      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT"
+      "https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT"
     ],
-    "name": "fetch gitiles file.curl https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT",
+    "name": "fetch gitiles file.curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -257,11 +259,13 @@
       "-f",
       "--write-out",
       "HTTP_CODE=%{http_code}",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
       "--retry",
       "10",
-      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT"
+      "https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT"
     ],
-    "name": "fetch gitiles file (2).curl https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT",
+    "name": "fetch gitiles file (2).curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

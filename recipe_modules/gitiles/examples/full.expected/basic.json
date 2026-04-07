@@ -149,9 +149,11 @@
       "-f",
       "--write-out",
       "HTTP_CODE=%{http_code}",
-      "https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT"
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://testgerrit/a/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT"
     ],
-    "name": "fetch gitiles file.curl https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT",
+    "name": "fetch gitiles file.curl https://testgerrit/a/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -168,9 +170,11 @@
   {
     "cmd": [
       "curl",
-      "https://testgerrit/my/project/+/refs/heads/main?format=JSON"
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://testgerrit/a/my/project/+/refs/heads/main?format=JSON"
     ],
-    "name": "fetch commit metadata.curl https://testgerrit/my/project/+/refs/heads/main?format=JSON",
+    "name": "fetch commit metadata.curl https://testgerrit/a/my/project/+/refs/heads/main?format=JSON",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

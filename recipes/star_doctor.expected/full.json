@@ -2265,9 +2265,9 @@
       "HTTP_CODE=%{http_code}",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/platform/release-keys/+/HEAD/generated/keyset.json?format=TEXT"
+      "https://chrome-internal.googlesource.com/a/chromeos/platform/release-keys/+/HEAD/generated/keyset.json?format=TEXT"
     ],
-    "name": "generate binary config.fetch and write keyset configuration.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/platform/release-keys/+/HEAD/generated/keyset.json?format=TEXT",
+    "name": "generate binary config.fetch and write keyset configuration.fetch gitiles file.curl https://chrome-internal.googlesource.com/a/chromeos/platform/release-keys/+/HEAD/generated/keyset.json?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

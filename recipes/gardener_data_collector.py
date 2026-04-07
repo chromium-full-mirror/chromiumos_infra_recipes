@@ -103,7 +103,7 @@ def get_chrome_commit_from_ebuild(api: recipe_api.RecipeApi, revision: str,
                                   path: str) -> str:
   ebuild = api.gitiles.get_file(
       GITILES_HOST, 'chromiumos/overlays/chromiumos-overlay', path,
-      ref=revision, retries=10,
+      ref=revision, retries=10, public=False,
       test_output_data=base64.b64encode(b'\n\nGIT_COMMIT="deadbeef"\n\n'))
   for l in ebuild.splitlines():
     if l.startswith(b'GIT_COMMIT='):
@@ -180,10 +180,11 @@ def parse_lkgm_change_info(
   for revision, revision_info in change_info['revisions'].items():
     new_version = api.gitiles.get_file(
         GITILES_HOST, 'chromium/src', 'chromeos/CHROMEOS_LKGM', ref=revision,
-        retries=10, test_output_data=base64.b64encode(b'16110.0.0-1065034'))
+        retries=10, public=False,
+        test_output_data=base64.b64encode(b'16110.0.0-1065034'))
     old_version = api.gitiles.get_file(
         GITILES_HOST, 'chromium/src', 'chromeos/CHROMEOS_LKGM', retries=10,
-        ref=revision_info['commit']['parents'][0]['commit'],
+        public=False, ref=revision_info['commit']['parents'][0]['commit'],
         test_output_data=base64.b64encode(b'16109.0.0-1065024'))
     if new_version and old_version and new_version != old_version:
       # split('-')[-1] takes the snapshot identifier if it is a snapshot, or the

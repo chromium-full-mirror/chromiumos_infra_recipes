@@ -98,6 +98,8 @@ class GitilesApi(recipe_api.RecipeApi):
             self.m.path.home_dir, _DEFAULT_CREDENTIAL_COOKIE_LOCATION))
     cred_cache_cmd = [] if public else ['-b', credential_cookie_location]
     file_url_part = '/'.join((project, '+', revision_or_ref))
+    if not public:
+      file_url_part = 'a/' + file_url_part
     url = parse.urlunparse(
         ('https', host, file_url_part, '', 'format=JSON', ''))
     with self.m.step.nest(step_name or 'fetch commit metadata') as pres:
@@ -144,6 +146,8 @@ class GitilesApi(recipe_api.RecipeApi):
     curl_retry_cmd = ['--retry', str(retries)] if retries else []
     ref = ref or 'HEAD'
     file_url_part = '/'.join((project, '+', ref, path))
+    if not public:
+      file_url_part = 'a/' + file_url_part
     url = parse.urlunparse(
         ('https', host, file_url_part, '', 'format=TEXT', ''))
     with self.m.step.nest(step_name or 'fetch gitiles file') as pres:

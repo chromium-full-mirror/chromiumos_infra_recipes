@@ -23,7 +23,11 @@
       "-f",
       "--write-out",
       "HTTP_CODE=%{http_code}",
-      "https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/VERSION?format=TEXT"
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "--retry",
+      "3",
+      "https://chromium.googlesource.com/a/chromium/src/+/refs/heads/main/chrome/VERSION?format=TEXT"
     ],
     "luci_context": {
       "realm": {
@@ -36,7 +40,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Fetch ToT version.curl https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/VERSION?format=TEXT",
+    "name": "Fetch ToT version.curl https://chromium.googlesource.com/a/chromium/src/+/refs/heads/main/chrome/VERSION?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -51,7 +55,11 @@
       "-f",
       "--write-out",
       "HTTP_CODE=%{http_code}",
-      "https://chromium.googlesource.com/chromium/src/+/refs/tags/97.0.1291.0/chrome/VERSION?format=TEXT"
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "--retry",
+      "3",
+      "https://chromium.googlesource.com/a/chromium/src/+/refs/tags/97.0.1291.0/chrome/VERSION?format=TEXT"
     ],
     "luci_context": {
       "realm": {
@@ -64,7 +72,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Try fetching the version with incrementing the branch number.curl https://chromium.googlesource.com/chromium/src/+/refs/tags/97.0.1291.0/chrome/VERSION?format=TEXT",
+    "name": "Try fetching the version with incrementing the branch number.curl https://chromium.googlesource.com/a/chromium/src/+/refs/tags/97.0.1291.0/chrome/VERSION?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

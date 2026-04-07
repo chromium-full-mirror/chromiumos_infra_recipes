@@ -106,6 +106,8 @@ def IsVersionAvailable(api: RecipeApi, chrome_version: str) -> bool:
       CHROMIUM_SRC_PROJECT,
       CHROMIUM_VERSION_FILE,
       ref='refs/tags/' + chrome_version,
+      retries=3,
+      public=False,
       step_name='Try fetching the version with incrementing the branch number',
       test_output_data=mock_result,
   )
@@ -136,6 +138,8 @@ def IsVersionOnReleaseBranches(api: RecipeApi, chrome_version: str) -> bool:
       CHROMIUM_SRC_PROJECT,
       CHROMIUM_VERSION_FILE,
       ref='refs/heads/main',
+      retries=3,
+      public=False,
       step_name='Fetch ToT version',
       test_output_data=mock_result,
   ).decode()
@@ -221,7 +225,8 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
 
   if chrome_version is None:
     message = api.gitiles.get_commit_metadata(
-        CHROMIUM_SRC_HOST, CHROMIUM_SRC_PROJECT, buildset.id, test_data={
+        CHROMIUM_SRC_HOST, CHROMIUM_SRC_PROJECT, buildset.id, public=False,
+        test_data={
             'message': ('Roll Chrome Android ARM32 PGO Profile\n\n'
                         'Change-Id: I7e2a0277a1cff4551f4ee17edab0b56d0a20486e\n'
                         'Cr-Commit-Position: refs/heads/main@{#1397757}\n'),
