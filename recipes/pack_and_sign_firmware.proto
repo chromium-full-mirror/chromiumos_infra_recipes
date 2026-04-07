@@ -8,11 +8,4 @@ package recipes.chromeos.pack_and_sign_firmware;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
-enum PublishStrategy {
-  UNSPECIFIED = 0;
-  AG_ONLY = 1;
-  AG_AND_DESKTOP = 2;
-  DESKTOP_ONLY = 3;
-}
-
-message PackAndSignFirmwareProperties { PublishStrategy publish_strategy = 1; }
+message PackAndSignFirmwareProperties { reserved 1; }

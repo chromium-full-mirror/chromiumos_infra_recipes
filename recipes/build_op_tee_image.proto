@@ -8,11 +8,4 @@ package recipes.chromeos.build_op_tee_image;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
-enum PublishStrategy {
-  UNSPECIFIED = 0;
-  AG_ONLY = 1;
-  AG_AND_DESKTOP = 2;
-  DESKTOP_ONLY = 3;
-}
-
-message BuildOpTeeImageProperties { PublishStrategy publish_strategy = 1; }
+message BuildOpTeeImageProperties { reserved 1; }
