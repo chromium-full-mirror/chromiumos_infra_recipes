@@ -137,7 +137,10 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   return [
       CommitInfo(
           api,
-          api.repo.project_info(public_repo_path),
+          api.repo.project_info(
+              public_repo_path,
+              test_data='chromeos/project_public|src/project_public|cros|refs/heads/main|refs/heads/main'
+          ),
           message,
           workspace_path=api.src_state.workspace_path,
       )
@@ -628,7 +631,8 @@ def _create_cl(
   """
   with api.context(
       cwd=commit_info.workspace_path /
-      commit_info.project_info.path), api.step.nest("create CL") as create_step:
+      commit_info.project_info.path), api.step.nest(
+          f"Create CL for {commit_info.project_info.name}") as create_step:
     if api.git.get_working_dir_diff_files():
       api.repo.start(branch_name, projects=[api.context.cwd])
 
@@ -668,6 +672,8 @@ def _create_cl(
           topic=cl_config.topic,
           project_path=api.context.cwd,
       )
+      change_url = api.gerrit.parse_gerrit_change_url(change)
+      create_step.links['Created CL'] = change_url
       if cl_config.send_to_cq:
         with api.step.nest('send to CQ'):
           labels = {
@@ -844,9 +850,10 @@ def GenTests(api):
         step_name=f'Do update_android_config and create CL.Process builder {builder}.Find latest successful build for {builder}',
     )
 
-  def existing_changes_step_data(api, action, host_url, changes=None):
+  def existing_changes_step_data(api, action, host_url, repo_name,
+                                 changes=None):
     return api.gerrit.set_query_changes_response(
-        f"Do {action.__name__.strip('_')} and create CL.create CL.query for existing changes",
+        f"Do {action.__name__.strip('_')} and create CL.Create CL for {repo_name}.query for existing changes",
         host_url=host_url,
         changes=changes or [],
     )
@@ -858,8 +865,16 @@ def GenTests(api):
       snapshot_build_step_data(api),
       config_dlm_step_data(api),
       api.git.diff_check(True),
-      existing_changes_step_data(api, action=_replicate_public_config, host_url="https://chromium-review.googlesource.com",),
-      existing_changes_step_data(api, action=_update_android_config, host_url="https://googleplex-android-review.googlesource.com",),
+      existing_changes_step_data(
+          api,
+          action=_replicate_public_config,
+          host_url="https://chromium-review.googlesource.com",
+          repo_name="chromeos/project_public",
+      ),
+      existing_changes_step_data(
+          api, action=_update_android_config,
+          host_url="https://googleplex-android-review.googlesource.com",
+          repo_name="device/google/desktop/example_program"),
       api.post_process(
           post_process.StepCommandContains,
           'Do replicate_public_config and create CL' \
@@ -908,22 +923,23 @@ def GenTests(api):
           api,
           action=_replicate_public_config,
           host_url="https://chromium-review.googlesource.com",
+          repo_name="chromeos/project_public",
       ),
       existing_changes_step_data(
           api, action=_update_android_config,
           host_url="https://googleplex-android-review.googlesource.com",
-          changes=[{
+          repo_name="device/google/desktop/example_program", changes=[{
               '_number': 123,
               'project': 'example_repo',
           }]),
       api.post_process(
           post_process.StepTextContains,
-          'Do update_android_config and create CL.create CL.query for existing changes.query https://googleplex-android-review.googlesource.com',
+          'Do update_android_config and create CL.Create CL for device/google/desktop/example_program.query for existing changes.query https://googleplex-android-review.googlesource.com',
           ['found 1 matching CL'],
       ),
       api.post_check(
           post_process.DoesNotRunRE,
-          r'Do update_android_config and create CL.create CL.create gerrit change for .*\.git_cl upload'
+          r'Do update_android_config and create CL.Create CL for .*.create gerrit change for .*\.git_cl upload'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -960,7 +976,8 @@ def GenTests(api):
       config_dlm_step_data(api),
       existing_changes_step_data(
           api, action=_update_android_config,
-          host_url="https://googleplex-android-review.googlesource.com"),
+          host_url="https://googleplex-android-review.googlesource.com",
+          repo_name="device/google/desktop/example_project"),
       api.post_process(
           post_process.StepCommandContains,
           'Do update_android_config and create CL.Process builder '
@@ -983,9 +1000,10 @@ def GenTests(api):
           api,
           action=_replicate_public_config,
           host_url="https://chromium-review.googlesource.com",
+          repo_name="chromeos/project_public",
       ),
       api.post_check(post_process.MustRunRE,
-                     r'Do \w* and create CL.create CL.abandon CL 1'),
+                     r'Do \w* and create CL.Create CL for .*.abandon CL 1'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -1034,7 +1052,8 @@ def GenTests(api):
       config_dlm_step_data(api),
       existing_changes_step_data(
           api, action=_update_android_config,
-          host_url="https://googleplex-android-review.googlesource.com"),
+          host_url="https://googleplex-android-review.googlesource.com",
+          repo_name="device/google/desktop/example_program"),
       api.step_data(
           'Do update_android_config and create CL.Process builder example-snapshot.find jsonproto files',
           api.file.glob_paths([
@@ -1079,11 +1098,13 @@ def GenTests(api):
           api,
           action=_replicate_public_config,
           host_url="https://chromium-review.googlesource.com",
+          repo_name="chromeos/project_public",
       ),
       existing_changes_step_data(
           api,
           action=_update_android_config,
           host_url="https://android-review.googlesource.com",
+          repo_name="device/google/desktop/example_program",
       ),
       api.post_process(post_process.StepCommandContains,
                        'Do update_android_config and create CL.repo init', [
@@ -1104,6 +1125,7 @@ def GenTests(api):
           api,
           action=_replicate_public_config,
           host_url="https://chromium-review.googlesource.com",
+          repo_name="chromeos/project_public",
       ),
       api.post_process(post_process.DoesNotRunRE, r'.*git_cl upload'),
       api.post_process(post_process.DropExpectation),
