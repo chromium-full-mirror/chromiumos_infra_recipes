@@ -29,6 +29,17 @@ This will also regenerate the README.recipes.md documentation. That file and the
 expectation data in `*.expected` directories should be checked in with your
 changes.
 
+### Testing with api proto changes
+
+If you changed some of the protos in `chromiumos/infra/proto` and want to test
+the recipes with those new changes, use this command:
+
+```sh
+$HOME/chromiumos/infra/proto_branched/generate.sh && \
+$HOME/chromiumos/chromite/api/compile_build_api_proto && \
+./recipes.py -O chromiumos_proto=$HOME/chromiumos/infra/proto_branched test train
+```
+
 ## Navigating the code
 
 The top-level code for the main set of builders can be found in the

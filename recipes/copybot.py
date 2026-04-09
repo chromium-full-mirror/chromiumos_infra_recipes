@@ -7,6 +7,9 @@
 This recipe calls the RunCopybot endpoint from the Build API CopybotService.
 """
 
+from PB.go.chromium.org.luci.buildbucket.proto import (
+    common as buildbucket_common,)
+from PB.recipe_engine.result import RawResult
 from PB.recipes.chromeos.copybot import CopybotProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -34,7 +37,7 @@ def RunSteps(api: RecipeApi, properties: CopybotProperties):
       api.build_menu.configure_builder(missing_ok=True),
       api.build_menu.setup_workspace(),
   ):
-    run_copybot(api, properties)
+    return run_copybot(api, properties)
 
 
 def run_copybot(api: RecipeApi, properties: CopybotProperties):
@@ -55,6 +58,10 @@ def run_copybot(api: RecipeApi, properties: CopybotProperties):
     presentation.properties["copybot_response"] = response
     if retcode != 0:
       raise api.step.StepFailure(f"Run Copybot Failed (return code {retcode})")
+    return RawResult(
+        summary_markdown=response.summary_markdown,
+        status=buildbucket_common.Status.SUCCESS,
+    )
 
 
 def GenTests(api: RecipeTestApi):
@@ -64,6 +71,22 @@ def GenTests(api: RecipeTestApi):
           post_process.StepSuccess,
           "Run Copybot.call chromite.api.CopybotService/RunCopybot",
       ),
+  )
+
+  yield api.build_menu.test(
+      "success_with_warning",
+      api.build_menu.set_build_api_return(
+          "Run Copybot",
+          "CopybotService/RunCopybot",
+          retcode=0,
+          data='{ "summary_markdown": "Warning: 1234 commits not yet uploaded" }',
+      ),
+      api.post_check(
+          post_process.StepSuccess,
+          "Run Copybot.call chromite.api.CopybotService/RunCopybot",
+      ),
+      api.post_process(post_process.SummaryMarkdown,
+                       'Warning: 1234 commits not yet uploaded'),
   )
 
   yield api.build_menu.test(
