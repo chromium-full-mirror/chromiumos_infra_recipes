@@ -44,7 +44,6 @@ DEPS = [
     'cros_infra_config',
     'cros_release',
     'cros_sdk',
-    'cros_source',
     'cros_version',
     'easy',
     'failures',
@@ -233,25 +232,17 @@ class FirmwareBuilder():
         self.properties.set_suite_scheduling and not dry_run)
 
   def _uprev(self):
+    # TODO(b/181786185): Once we have a good "push the uprevs" method, we should
+    # switch to calling cros_source.uprev_packages, and pushing them, for
+    # branches that are new enough.
+
     with self.m.step.nest('uprev packages') as pres:
-      push = not bool(self.m.cv.active or self._is_staging or
-                      self.m.src_state.gerrit_changes)
-
-      # BAPI added support for uprevs via PackageService.Uprev in 12299.0.0
-      # (https://crrev.com/c/1656516). Branches newer than this use the
-      # standard BAPI uprev mechanism.
-      if self._is_after('12299.0.0'):
-        if push:
-          self.m.cros_source.uprev_and_push_packages()
-        else:
-          self.m.cros_source.uprev_packages(
-              workspace_path=self.m.src_state.workspace_path)
-        return
-
       # The build team supports using the tip-of-tree cros_mark_as_stable to
       # uprev older branches until such time as they have a long-term answer.
       # This is not true for other chromite commands.
       self._ensure_chromite_main()
+      push = not bool(self.m.cv.active or self._is_staging or
+                      self.m.src_state.gerrit_changes)
       drop_file = self.m.path.mkstemp()
       manifest = 0 if not self._config else self._config.general.manifest
 
@@ -1192,8 +1183,6 @@ def GenTests(api):
                      'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun,
                      'upload image to GS (formerly "push image")'),
-      api.post_check(post_process.MustRun,
-                     'uprev packages.uprev and push packages'),
       version='R122-15709.22.0',
   )
 
@@ -1213,34 +1202,3 @@ def GenTests(api):
   yield test('chroot-exists', exists('chroot'))
 
   yield test('old-cq', exists('src', 'scripts', 'setup_board'), cq=True)
-
-  yield test(
-      'bapi-uprev-nopush',
-      api.properties(chroot_outside=True),
-      suite_scheduling(False),
-      api.post_check(post_process.MustRun, 'uprev packages.uprev packages'),
-      api.post_process(post_process.DropExpectation),
-      version='R122-15709.22.0',
-      cq=True,
-  )
-
-  yield test(
-      'legacy-uprev-push',
-      api.properties(chroot_outside=True),
-      suite_scheduling(False),
-      api.post_check(post_process.MustRun,
-                     'uprev packages.call cros_mark_as_stable push'),
-      api.post_process(post_process.DropExpectation),
-      version='R70-11000.0.0',
-  )
-
-  yield test(
-      'legacy-uprev-nopush',
-      api.properties(chroot_outside=True),
-      suite_scheduling(False),
-      api.post_check(post_process.DoesNotRun,
-                     'uprev packages.call cros_mark_as_stable push'),
-      api.post_process(post_process.DropExpectation),
-      version='R70-11000.0.0',
-      cq=True,
-  )
