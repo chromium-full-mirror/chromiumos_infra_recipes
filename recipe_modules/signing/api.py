@@ -496,6 +496,13 @@ class SigningApi(recipe_api.RecipeApi):
     """
     local_dir = self.m.path.mkdtemp('signing-dir')
     gs_dir = self.m.build_menu.artifacts_gs_path()[len('gs://'):]
+    # If target_name is provided, it indicates a sub-target whose artifacts
+    # are in a subdirectory named after the target. Append the target_name to
+    # the artifact path.
+    if target_name:
+      local_dir = local_dir / target_name
+      self.m.file.ensure_directory('ensure target dir exists', local_dir)
+      gs_dir = os.path.join(gs_dir, target_name)
 
     # Otherwise, only the image types specified in |sign_types| are marked for
     # signing.

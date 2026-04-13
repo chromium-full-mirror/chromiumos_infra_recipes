@@ -27,9 +27,10 @@ PROPERTIES = SigningTestProperties
 def RunSteps(api: RecipeApi, properties: SigningTestProperties):
   signing_configs = properties.signing_configs
   relevant_signing_configs, archive_dir = api.signing.download_release_artifacts(
-      signing_configs)
+      signing_configs, "target")
   api.assertions.assertEqual(signing_configs, relevant_signing_configs)
-  api.assertions.assertEqual(str(archive_dir), '[CLEANUP]/signing-dir_tmp_1')
+  api.assertions.assertEqual(
+      str(archive_dir), '[CLEANUP]/signing-dir_tmp_1/target')
 
   # No top-level keyset configured.
   with api.assertions.assertRaises(ValueError):
@@ -55,21 +56,22 @@ def GenTests(api: RecipeTestApi):
           }),
       api.properties(
           SigningTestProperties(signing_configs=basic_signing_configs)),
+      api.post_check(post_process.MustRun, 'ensure target dir exists'),
       api.post_check(
           post_process.MustRun, 'download release artifacts.gsutil download '
           'recovery_image.tar.xz from chromeos-image-archive/'
-          'amd64-generic-release/R99-1234.56.0-101'),
+          'amd64-generic-release/R99-1234.56.0-101/target'),
       # Don't duplicate downloads.
       api.post_check(
           post_process.DoesNotRun,
-          'download release artifacts.gsutil download recovery_image.tar.xz from chromeos-image-archive/amd64-generic-release/R99-1234.56.0-101 (2)'
+          'download release artifacts.gsutil download recovery_image.tar.xz from chromeos-image-archive/amd64-generic-release/R99-1234.56.0-101 (2)/target'
       ),
       # Must download dirs.
       api.post_check(
           post_process.StepCommandContains,
           'download release artifacts.gsutil download '
           'dlc from chromeos-image-archive/'
-          'amd64-generic-release/R99-1234.56.0-101', ['-r']),
+          'amd64-generic-release/R99-1234.56.0-101/target', ['-r']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -86,7 +88,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data(
           'download release artifacts.gsutil download '
           'recovery_image.tar.xz from chromeos-image-archive/'
-          'amd64-generic-release/R99-1234.56.0-101', retcode=1),
+          'amd64-generic-release/R99-1234.56.0-101/target', retcode=1),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -111,7 +113,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.DoesNotRun, 'download release artifacts.gsutil download '
           'recovery_image.tar.xz from chromeos-image-archive/'
-          'amd64-generic-release/R99-1234.56.0-101'),
+          'amd64-generic-release/R99-1234.56.0-101/target'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -136,6 +138,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun, 'download release artifacts.gsutil download '
           'flexor_vmlinuz.tar.zst from chromeos-image-archive/'
-          'amd64-generic-release/R99-1234.56.0-101'),
+          'amd64-generic-release/R99-1234.56.0-101/target'),
       api.post_process(post_process.DropExpectation),
   )

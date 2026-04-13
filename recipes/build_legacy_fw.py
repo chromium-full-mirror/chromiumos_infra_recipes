@@ -976,6 +976,50 @@ def GenTests(api):
       }])
 
   yield test(
+      'release-with-signing-two-targets',
+      api.cros_infra_config.use_custom_builder_config(
+          BuilderConfig(
+              id=BuilderConfig.Id(name='firmware-ti50-postsubmit',
+                                  bucket='firmware'),
+              artifacts=BuilderConfig.Artifacts(
+                  attestation_eligible=True,
+                  artifacts_gs_bucket='chromeos-image-archive',
+                  artifacts_info=common_pb2.ArtifactsByService(
+                      firmware=common_pb2.ArtifactsByService
+                      .Firmware(output_artifacts=[
+                          common_pb2.ArtifactsByService.Firmware.ArtifactInfo(
+                              artifact_types=[
+                                  'FIRMWARE_TARBALL', 'FIRMWARE_TARBALL_INFO'
+                              ], gs_locations=[
+                                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}'
+                              ])
+                      ])))), step_name='checking attestation eligibility'),
+      suite_scheduling(True),
+      # Check that the download path includes the target name.
+      api.post_check(
+          post_process.StepCommandContains,
+          'kukui.sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2 from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui',
+          [
+              'cp', '-r',
+              'gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2',
+              '[CLEANUP]/signing-dir_tmp_1/kukui'
+          ]),
+      input_properties={
+          'bump_version': True,
+          'set_suite_scheduling': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+          'trigger_signing': True,
+          '$chromeos/signing': {
+              'local_signing': True
+          },
+      },
+      build_targets=[{
+          'name': 'kukui'
+      }, {
+          'name': 'kukui'
+      }])
+
+  yield test(
       'release-unibuild',
       exists('chroot', 'build', 'target', 'usr', 'share', 'chromeos-config',
              'yaml', 'config.yaml'),
