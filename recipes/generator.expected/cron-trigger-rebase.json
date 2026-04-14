@@ -2358,6 +2358,66 @@
   },
   {
     "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.comment on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@comment text@[Rebase] A rebased CL is uploaded. CQ will need to rerun everything.@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "chromium/src",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.comment on CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-i",
+      "1",
+      "-a",
+      "[Rebase] A rebased CL is uploaded. CQ will need to rerun everything."
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.comment on CL 1.git_cl comment",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

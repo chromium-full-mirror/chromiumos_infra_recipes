@@ -491,12 +491,23 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           cqstep.status = 'SUCCESS'
         if gerrit_mergeable and not cq_mergable:
           self.m.gerrit.rebase_change_remote(changes_to_retry[0])
+          self.m.gerrit.add_change_comment(
+              changes_to_retry[0],
+              ('[Auto-Rebase] Rebased via Gerrit to save CQ time. '
+               'Previously passed CQ results will be reused. '
+               'It is completely expected for this changeset to now '
+               'show as an `add` instead of a `rename`.'))
+          # A rebase resets the CQ+1/+2 status.
+          running = False
         elif not gerrit_mergeable:
           self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
                                             patch_set_to_retry.change_id)
           title = 'rebased by {}'.format(self.m.buildbucket.build_url())
           self.upload_new_patch_set(patch_set_to_retry, title=title,
                                     description='+')
+          self.m.gerrit.add_change_comment(
+              changes_to_retry[0], ('[Rebase] A rebased CL is uploaded. '
+                                    'CQ will need to rerun everything.'))
           # A new patchset upload resets CQ+1/+2 status.
           running = False
 
