@@ -1,0 +1,76 @@
+// Copyright 2026 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_gsc_firmware;
+
+import "chromiumos/common.proto";
+import "recipes/chromeos/sign_image.proto";
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message PaoSigningConfigProperties {
+  // Project of the key.
+  string project = 1;
+
+  // Keyring of the key.
+  string keyring = 2;
+
+  // Key name to use.
+  string key = 3;
+}
+
+message BuildGscFirmwareProperties {
+  // Firmware location.  See chromite.api.firmware.
+  chromiumos.FwLocation firmware_location = 1;
+
+  reserved 2;
+
+  // Whether to pass --code-coverage to firmware_builder.py.
+  bool code_coverage = 3;
+
+  // Legacy signing properties for sign_image builder (Currently only being used
+  // for TI50).
+  sign_image.SignImageProperties sign_image_properties = 4;
+
+  // Builder names for which signing will be invoked (Currently only being used
+  // for TI50).
+  repeated string signing_allowed_builder_names = 5;
+
+  // Location of the file containing the chromiumos-sdk pin (relative to the
+  // workspace root).
+  // Currently only being used for TI50, see b/217247914 for context.
+  string chromiumos_sdk_pin_file = 6;
+
+  reserved 7;
+
+  // The manifest to check out. There is DANGER that there could be
+  // unexpected interactions between unbranched recipes and branched
+  // cros_build_api calls. You are on your own if you attempt to use this
+  // recipe on a branch, and that branch should be as short-lived as possible.
+  // You probably don't want this recipe, you want build_legacy_fw instead.
+  buildbucket.v2.GitilesCommit gitiles_commit = 8;
+
+  // Whether to bump the version.
+  bool bump_version = 9;
+
+  // Feature flag: whether to set suite_scheduling=True
+  bool set_suite_scheduling = 10;
+
+  // GS path to upload buildspecs to.
+  // Defaults to 'gs://chromeos-manifest-versions/buildspecs/'.
+  string buildspec_gs_path = 11;
+
+  // The build targets to build.
+  repeated chromiumos.BuildTarget build_targets = 12;
+
+  // Keyset to use for signing requests.
+  string signing_keyset = 13;
+
+  // PAO signing config.
+  PaoSigningConfigProperties pao_signing_config = 14;
+
+  // Build target with avb.
+  bool avb_enabled = 15;
+}
