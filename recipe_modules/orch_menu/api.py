@@ -879,6 +879,32 @@ class OrchMenuApi(recipe_api.RecipeApi):
                                check_failures=check_failures,
                                step_name='run follow on orchestrator')
 
+  def run_follow_on_builders(self, config: Optional[BuilderConfig] = None,
+                             check_failures: bool = False):
+    """Run the follow_on_builders, if any. Wait if necessary."""
+    if self.builds_status.fatal_failures:
+      return
+
+    config = config or self.config
+    followers = config.orchestrator.follow_on_builders
+    if not followers.names:
+      return
+
+    props = {'bump_version': followers.rev_bump}
+
+    with self.m.step.nest('run follow on builders'):
+      builds = []
+      for name in followers.names:
+        build = self.schedule_wait_build(
+            name, await_completion=False, properties=props,
+            check_failures=check_failures,
+            step_name=f'run follow on builder {name}')
+        builds.append(build)
+
+      if followers.await_completion:
+        self._collect_builds([b.id for b in builds],
+                             collect_name='collect follow on builders')
+
   def schedule_wait_build(self, builder, await_completion=False,
                           properties=None, check_failures=False, step_name=None,
                           timeout_sec=None):

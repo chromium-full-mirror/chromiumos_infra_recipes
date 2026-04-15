@@ -55,8 +55,8 @@ def RunSteps(
       api.orch_menu.schedule_wait_build(named_builder, await_completion=True,
                                         check_failures=True,
                                         step_name='launch child')
-      if config:
-        api.orch_menu.run_follow_on_orchestrator()
+      # This is used to run android firmware builders after the rest with a distinct version number.
+      api.orch_menu.run_follow_on_builders(config=config)
 
       return api.orch_menu.create_recipe_result()
 
@@ -68,8 +68,8 @@ def RunSteps(
         api.easy.set_properties_step(child_verifier='dynamic')
         api.orch_menu.plan_and_run_children()
 
-      if config:
-        api.orch_menu.run_follow_on_orchestrator()
+      # This is used to run android firmware builders after the rest with a distinct version number.
+      api.orch_menu.run_follow_on_builders(config=config)
 
       return api.orch_menu.create_recipe_result()
 
@@ -110,12 +110,19 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     orch_config.orchestrator.child_specs.add().name = 'dynamic-child'
     orch_config.build.apply_gerrit_changes = True
 
+    if name == 'follow-on-builders':
+      followers = orch_config.orchestrator.follow_on_builders
+      followers.names.extend(
+          ['chromeos/firmware/firmware-android-R148-16640.2.B-branch'])
+      followers.await_completion = True
+      followers.rev_bump = True
+
     # Add config for the dynamic child
     dynamic_child = builder_config_data.builder_configs.add()
     dynamic_child.id.name = 'dynamic-child'
 
     # Add the named child config only if not 'no-child' test
-    if name not in ['no-child', 'bump-version']:
+    if name not in ['no-child', 'bump-version', 'follow-on-builders']:
       builder = builder_config_data.builder_configs.add()
       builder.id.name = child_builder_name
       # Add bucket to ensure config is valid/found
@@ -185,3 +192,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       input_properties={'$chromeos/orch_menu': {
           'bump_version': True
       }})
+
+  yield test(
+      'follow-on-builders',
+      api.post_check(
+          post_process.MustRun,
+          'run follow on builders.run follow on builder chromeos/firmware/firmware-android-R148-16640.2.B-branch'
+      ), api.post_process(post_process.DropExpectation), expected_properties={
+          'manifest_branch': test_branch,
+          'child_verifier': test_builder
+      })
