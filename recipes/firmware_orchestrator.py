@@ -8,7 +8,7 @@ from typing import Generator
 
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.recipe_engine import result as result_pb2
-from PB.recipes.chromeos.orchestrator import OrchestratorProperties
+from PB.recipes.chromeos.firmware_orchestrator import FirmwareOrchestratorProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -29,11 +29,12 @@ DEPS = [
     'test_util',
 ]
 
-PROPERTIES = OrchestratorProperties
+PROPERTIES = FirmwareOrchestratorProperties
 
 
-def RunSteps(api: RecipeApi,
-             _properties: OrchestratorProperties) -> result_pb2.RawResult:
+def RunSteps(
+    api: RecipeApi,
+    _properties: FirmwareOrchestratorProperties) -> result_pb2.RawResult:
   with api.bot_cost.build_cost_context():
     is_staging = api.cros_infra_config.is_staging
 
