@@ -25,7 +25,7 @@ from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import common as resultdb_common_pb2
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
   import CrosToolRunnerEnvProperties
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
@@ -1031,11 +1031,11 @@ def _prepare_resultdb_sources_file(api, properties):
     # of sources under test incomplete.
     if is_dirty_provision:
       with api.step.nest('mark sources dirty') as step:
-        test_sources = invocation_pb2.Sources()
+        test_sources = resultdb_common_pb2.Sources()
         sources_proto = api.file.read_proto('read sources proto',
                                             sources_local_path,
-                                            invocation_pb2.Sources, 'JSONPB',
-                                            test_proto=test_sources)
+                                            resultdb_common_pb2.Sources,
+                                            'JSONPB', test_proto=test_sources)
 
         sources_proto.is_dirty = sources_proto.is_dirty or is_dirty_provision
         api.file.write_proto('write sources proto', sources_local_path,

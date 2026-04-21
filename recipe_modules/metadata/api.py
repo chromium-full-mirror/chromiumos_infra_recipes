@@ -23,7 +23,7 @@ from PB.chromiumos.test.api.test_case_metadata import TestCaseMetadataList
 from PB.chromiumos.test.api.test_harness_metadata import TastFixtureMetadata
 from PB.chromiumos.test.api.test_harness_metadata import TestHarnessMetadata
 from PB.chromiumos.test.api.test_harness_metadata import TestHarnessMetadataList
-from PB.go.chromium.org.luci.resultdb.proto.v1.invocation import Sources
+from PB.go.chromium.org.luci.resultdb.proto.v1.common import Sources
 
 
 class MetadataApi(recipe_api.RecipeApi):

@@ -29,7 +29,6 @@ from PB.chromiumos import builder_config as builder_config_pb2
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as rdb_common_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 
 from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
 
@@ -1468,7 +1467,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.gobin.call('suite_publisher', cmd)
 
   def upload_sources(self,
-                     config: BuilderConfig) -> Optional[invocation_pb2.Sources]:
+                     config: BuilderConfig) -> Optional[rdb_common_pb2.Sources]:
     """Add the Sources file to the build metadata artifact dir.
 
     Note: This should only be called after syncing to the manifest.

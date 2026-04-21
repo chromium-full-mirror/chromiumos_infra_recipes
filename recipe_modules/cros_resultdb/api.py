@@ -16,6 +16,7 @@ from google.protobuf.json_format import ParseDict
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import recorder as recorder_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import test_exoneration as test_exoneration_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.test_platform.request import Request
 from recipe_engine import recipe_api
@@ -598,12 +599,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
       unexpected_results = x.test_results
 
       test_exonerations.extend([
-          test_result_pb2.TestExoneration(
+          test_exoneration_pb2.TestExoneration(
               test_id=result.test_id, variant=result.variant,
               explanation_html='unexpectedly skipped but is not critical'
               if result.status == test_result_pb2.SKIP else
               'failed but is not critical',
-              reason=test_result_pb2.ExonerationReason.NOT_CRITICAL)
+              reason=test_exoneration_pb2.ExonerationReason.NOT_CRITICAL)
           for result in unexpected_results
           # Unexpected passes are currently exonerated by default.
           if not result.expected and result.status != test_result_pb2.PASS and
@@ -649,11 +650,11 @@ class ResultDBCommand(recipe_api.RecipeApi):
           elif _is_exonerated(result):
             log_line += 'exonerated'
             test_exonerations.append(
-                test_result_pb2.TestExoneration(
+                test_exoneration_pb2.TestExoneration(
                     test_id=result.test_id, variant=result.variant,
                     explanation_html='failed but is exonerated',
-                    reason=test_result_pb2.ExonerationReason.OCCURS_ON_OTHER_CLS
-                ))
+                    reason=test_exoneration_pb2.ExonerationReason
+                    .OCCURS_ON_OTHER_CLS))
           else:
             log_line += 'not exonerated'
           log_lines.append(log_line)

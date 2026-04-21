@@ -8,8 +8,7 @@
 from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1.common import GerritChange, GitilesCommit
-from PB.go.chromium.org.luci.resultdb.proto.v1.invocation import Sources
+from PB.go.chromium.org.luci.resultdb.proto.v1.common import GerritChange, GitilesCommit, Sources
 from PB.recipe_modules.chromeos.build_menu.tests.test import TestProperties
 
 from recipe_engine import post_process
