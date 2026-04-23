@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Test util function for looks_for_green."""
+
 from typing import Callable, Dict
 
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus

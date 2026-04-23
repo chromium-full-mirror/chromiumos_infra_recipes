@@ -5,7 +5,7 @@
 """Tests for the should_lfg function."""
 
 from recipe_engine import post_process
-from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
+from RECIPE_MODULES.chromeos.looks_for_green.test_api import LooksStatusEquals
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus

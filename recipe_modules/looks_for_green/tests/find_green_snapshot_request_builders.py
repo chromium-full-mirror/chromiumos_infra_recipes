@@ -13,7 +13,7 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
   LooksForGreenProperties
 from PB.recipe_modules.chromeos.looks_for_green.tests.test import \
   FindGreenSnapshotProperties
-from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
+from RECIPE_MODULES.chromeos.looks_for_green.test_api import LooksStatusEquals
 from recipe_engine import post_process
 
 DEPS = [
