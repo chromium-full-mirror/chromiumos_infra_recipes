@@ -22,13 +22,14 @@ DEPS = [
 def RunSteps(api: RecipeApi) -> None:
   with api.cros_source.checkout_overlays_context():
     api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
+    api.cros_source.ensure_synced_cache()
 
     api.step('gcloud auth configure-docker',
              ['gcloud', 'auth', 'configure-docker', 'us-docker.pkg.dev'])
 
     with api.context(api.src_state.workspace_path / 'crostools' /
                      'signing_docker'):
-      api.step('docker build', ['./setup.py', '-d', '-l', '-t signing:latest'])
+      api.step('docker build', ['./setup.py', '-l', '-d', '-t signing:latest'])
 
 
 def GenTests(api: RecipeTestApi) -> Generator:
