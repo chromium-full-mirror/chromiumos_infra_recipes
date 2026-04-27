@@ -1,0 +1,16 @@
+// Copyright 2026 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.hsm_manager;
+
+import "chromite/api/signing.proto";
+
+message HSMManagerProperties {
+  chromite.api.CreateKeysHsmRequest create_keys_hsm_request = 1;
+
+  // Buganizer ID to be associated with the HSM key creation request.
+  int64 bug = 2;
+}

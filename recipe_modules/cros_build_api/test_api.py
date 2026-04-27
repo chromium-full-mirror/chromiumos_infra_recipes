@@ -804,6 +804,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['CreateCert'] = '{}'
     responses['SignTi50Paos'] = '{}'
     responses['SignViaOnlineHsm'] = '{}'
+    responses['CreateKeysHsm'] = '{}'
     return responses
 
   @property

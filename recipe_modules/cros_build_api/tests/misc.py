@@ -231,6 +231,7 @@ def RunSteps(api):
           'CreateCert': signing.CreateCertResponse,
           'SignTi50Paos': signing.SignTi50PaosResponse,
           'SignViaOnlineHsm': signing.SignViaOnlineHsmResponse,
+          'CreateKeysHsm': signing.CreateKeysHsmResponse,
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,
