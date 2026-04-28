@@ -29,7 +29,7 @@ def RunSteps(api: RecipeApi) -> None:
 
     with api.context(api.src_state.workspace_path / 'crostools' /
                      'signing_docker'):
-      api.step('docker build', ['./setup.py', '-l', '-d', '-t signing:latest'])
+      api.step('docker build', ['./setup.py', '-r', '-d', '-t signing:latest'])
 
 
 def GenTests(api: RecipeTestApi) -> Generator:
