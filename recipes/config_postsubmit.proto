@@ -29,11 +29,6 @@ message ConfigPostsubmitProperties {
 
     // Update Android configs from snapshot artifacts.
     UPDATE_ANDROID_CONFIG = 5;
-
-    // Downloads the latest component_ids.star file for each build target
-    // listed in android_target_to_cros_repo and commits the file to the
-    // corresponding CrOS repo.
-    UPDATE_COMPONENT_IDS = 6;
   }
 
   message ActionCLConfig {
@@ -91,9 +86,4 @@ message ConfigPostsubmitProperties {
   // The Gerrit host to upload configs to in the UPDATE_ANDROID_CONFIG step.
   // Defaults to "googleplex-android" if not set.
   string android_host = 7;
-
-  // Map from Android target to CrOS repo path.
-  // Expected format: {"<project>-trunk_staging-userdebug":
-  // "src/project/<program>/<project>"}
-  map<string, string> android_target_to_cros_path = 8;
 }

@@ -3035,13 +3035,6 @@
   },
   {
     "cmd": [],
-    "name": "Do update_component_ids_from_android and create CL",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@No mapping provided@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"main\", \"call\": \"checkout_tip_of_tree\"}@@@"
