@@ -6,7 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.config_postsubmit;
 
-// NEXT ID: 8
+// NEXT ID: 9
 message ConfigPostsubmitProperties {
 
   enum ActionTypes {
@@ -29,6 +29,11 @@ message ConfigPostsubmitProperties {
 
     // Update Android configs from snapshot artifacts.
     UPDATE_ANDROID_CONFIG = 5;
+
+    // Downloads the latest component_ids.star file for each project
+    // listed in android_project_to_cros_path and commits the file to the
+    // corresponding CrOS repo.
+    UPDATE_COMPONENT_IDS = 6;
   }
 
   message ActionCLConfig {
@@ -86,4 +91,8 @@ message ConfigPostsubmitProperties {
   // The Gerrit host to upload configs to in the UPDATE_ANDROID_CONFIG step.
   // Defaults to "googleplex-android" if not set.
   string android_host = 7;
+
+  // Map from Android project name to CrOS repo path.
+  // Expected format: {"moonstone": "src/project/galaxy/moonstone"}
+  map<string, string> android_project_to_cros_path = 8;
 }
