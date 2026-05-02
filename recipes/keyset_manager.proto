@@ -1,0 +1,21 @@
+// Copyright 2026 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.keyset_manager;
+
+message KeysetManagerProperties {
+  // Buganizer ID to be associated with the request (for logging/future use).
+  int64 bug = 1;
+
+  // Dry run flag. If true, abandon the CL.
+  bool dry_run = 2;
+
+  // The keyset to bump. Required if update_all is false.
+  string keyset = 3;
+
+  // If true, update all targets. Must be set if keyset is empty.
+  bool update_all = 4;
+}
