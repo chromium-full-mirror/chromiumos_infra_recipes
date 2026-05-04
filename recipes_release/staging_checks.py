@@ -177,7 +177,6 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
 )
 
 RELEASE_BUNDLE_STAGING_CHECKS_RE = (
-    StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess', num_builds=3),
     StagingReCheck('chromeos', 'staging',
                    r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator',
                    num_builds=2),
