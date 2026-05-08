@@ -4612,6 +4612,107 @@
         "name": "fwpackager-cq",
         "type": "CQ"
       }
+    },
+    {
+      "id": {
+        "name": "firmware-ec-R148-16640.2.B-branch",
+        "type": "POSTSUBMIT",
+        "bucket": "firmware"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdkCacheVersion": 1,
+        "manifest": "PRIVATE",
+        "firmwareLocation": "PLATFORM_ZEPHYR",
+        "publishImageSizes": true
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "toolchain": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CLANG_CRASH_DIAGNOSES"
+                ]
+              }
+            ]
+          },
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "LICENSE_CREDITS"
+                ]
+              }
+            ]
+          },
+          "sysroot": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DEBUG_SYMBOLS"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "BREAKPAD_DEBUG_SYMBOLS"
+                ]
+              }
+            ]
+          },
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ],
+                "gsLocations": [
+                  "firmware-image-archive/firmware-ec-R148-16640.2.B/{platform_version}"
+                ],
+                "location": "PLATFORM_ZEPHYR"
+              }
+            ]
+          }
+        },
+        "attestationEligible": true
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "sdkUpdate": {
+          "sdkUpdateRunSpec": "NO_RUN"
+        },
+        "installPackages": {
+          "disableGoma": true,
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      },
+      "updateChroot": {
+        "runSpec": "NO_RUN"
+      }
     }
   ]
 }

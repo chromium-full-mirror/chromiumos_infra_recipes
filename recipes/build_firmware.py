@@ -16,8 +16,10 @@ a branch, and that branch should be as short-lived as possible.
 import collections
 import re
 import os
+from pathlib import Path
 
 from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import Parse as JsonToProto
 
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
@@ -648,11 +650,13 @@ def GenTests(api):
     }
 
   def test(name, *args, **kwargs):
+    version_str = kwargs.pop('version', 'R99-1234.56.0')
+    version = api.cros_version.workspace_version(version_str)
     status = kwargs.pop('status', 'SUCCESS')
     kwargs.setdefault('builder', 'fw-ec-postsubmit')
     kwargs.setdefault('input_properties', {'firmware_location': 1})
     build = api.test_util.test_child_build(None, **kwargs).build
-    return api.test(name, build, *args, status=status)
+    return api.test(name, build, version, *args, status=status)
 
   yield test(
       'postsubmit',
@@ -837,6 +841,44 @@ def GenTests(api):
               'host': 'chrome-internal.googlesource.com',
               'project': 'chromeos/manifest-internal',
               'ref': 'refs/heads/firmware-R126-15886.2.B',
+          },
+          'set_suite_scheduling': True,
+      },
+  )
+
+  # A test that is as real as possible. Copied from go/bbid/8682355855772186353
+  # Config lives in recipe_modules/cros_infra_config/test_builder_configs.json
+  # not here.
+  yield test(
+      'firmware-ec-R148-16640.2.B-branch',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          (Path(__file__).parent.resolve() /
+           'firmware_test_r148_zephyr_artifacts.json').read_text()),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      api.step_data(
+          'sending pub/sub notifications.read fw metadata',
+          api.file.read_proto(
+              JsonToProto(
+                  (Path(__file__).parent.resolve() /
+                   'firmware_test_r148_zephyr_metadata.jsonpb').read_text(),
+                  FirmwareArtifactInfo(), ignore_unknown_fields=True))),
+      version='R148-16640.2.39',
+      builder='firmware-ec-R148-16640.2.B-branch',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'attestation_eligible': True,
+          'avb_enabled': False,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+          'bump_version': False,
+          'gitiles_commit': {
+              'host': 'chrome-internal.googlesource.com',
+              'project': 'chromeos/manifest-internal',
+              'ref': 'refs/heads/firmware-R148-16640.2.B',
           },
           'set_suite_scheduling': True,
       },
