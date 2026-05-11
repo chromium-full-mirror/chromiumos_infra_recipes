@@ -734,7 +734,8 @@ class GerritApi(RecipeApi):
     """
     # Convert Labels to strings so they can be easily used outside this module.
     str_labels = {label.key: value for label, value in labels.items()}
-    with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
+    with self.m.step.nest('set labels on CL %d' % gerrit_change.change,
+                          status='last') as pres:
       pres.logs['labels'] = self.m.json.dumps(str_labels)
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
       change_num = gerrit_change.change
