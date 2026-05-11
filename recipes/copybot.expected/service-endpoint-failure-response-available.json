@@ -3278,7 +3278,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Run Copybot Failed (return code 2)"
+      "humanReason": "Run Copybot Failed (return code 2)\n"
     },
     "name": "$result"
   }

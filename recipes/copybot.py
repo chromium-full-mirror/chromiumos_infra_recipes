@@ -57,7 +57,9 @@ def run_copybot(api: RecipeApi, properties: CopybotProperties):
     )
     presentation.properties["copybot_response"] = response
     if retcode != 0:
-      raise api.step.StepFailure(f"Run Copybot Failed (return code {retcode})")
+      raise api.step.StepFailure(
+          f"Run Copybot Failed (return code {retcode})\n{response.summary_markdown}"
+      )
     return RawResult(
         summary_markdown=response.summary_markdown,
         status=buildbucket_common.Status.SUCCESS,
