@@ -21,7 +21,7 @@ def int_or_zero(n):
 
 CHROMEOS_VERSION_STRING_RES = [(
     re.compile(r'^(R(?P<chrome_branch>\d+)-)?(?P<build>\d+)'
-               r'\.(?P<branch>\d+)(.(?P<patch>\d)+)?(\-(?P<snapshot>\d+))?$'),
+               r'\.(?P<branch>\d+)(\.(?P<patch>\d+))?(\-(?P<snapshot>\d+))?$'),
     lambda cls, grps: cls(
         int_or_none(grps['chrome_branch']), int(grps['build']),
         int(grps['branch']), int(grps['patch']), int_or_none(grps['snapshot'])))

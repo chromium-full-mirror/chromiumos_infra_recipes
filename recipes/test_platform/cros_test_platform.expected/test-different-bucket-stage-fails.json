@@ -301,7 +301,7 @@
       "POST",
       "-H",
       "@/tmp/headers.txt",
-      "https://chromeosmoblab.googleapis.com/v1beta1/buildTargets/brya/models/foo/builds/33333.222.1/artifacts/foo:stage?filter=type=release"
+      "https://chromeosmoblab.googleapis.com/v1beta1/buildTargets/brya/models/foo/builds/33333.222.111/artifacts/foo:stage?filter=type=release"
     ],
     "infra_step": true,
     "luci_context": {
