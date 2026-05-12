@@ -7,11 +7,13 @@
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
+from PB.chromiumos.build_report import BuildReport
+from PB.chromiumos.common import Channel, ImageType
+
 
 class MassDeployApi(recipe_api.RecipeApi):
 
-  @staticmethod
-  def _select_signed_recovery_images(signing_metadata):
+  def _select_signed_recovery_images(self, signing_metadata):
     """Returns just the metadata for the signed recovery images.
 
     Only LTS mass deploy images are distributed to end users, but build mass
@@ -23,17 +25,19 @@ class MassDeployApi(recipe_api.RecipeApi):
     massdeploy_channels = ('ltc', 'lts', 'stable')
     result = []
 
-    for metadata in signing_metadata.values():
-      if (metadata['channel'] in massdeploy_channels and
-          metadata['type'] == 'recovery'):
-        result.append(metadata)
+    for build in signing_metadata:
+      channel_str = self.m.cros_release_util.channel_to_short_string(
+          build.channel)
+      image_type_str = self.m.cros_release_util.image_type_to_str(build.type)
+      if (channel_str in massdeploy_channels and image_type_str == 'recovery'):
+        result.append(build)
 
     return result
 
   def _select_zip(self, build_metadata):
     """Finds the zipped version of the signed image. Insists there be only 1."""
     image_zip = [
-        out for out in build_metadata['outputs'] if out.endswith('.zip')
+        f.filename for f in build_metadata.files if f.filename.endswith('.zip')
     ]
     # Validate that there's precisely one zip that we've picked up.
     num_zips = len(image_zip)
@@ -51,8 +55,13 @@ class MassDeployApi(recipe_api.RecipeApi):
     result = []
 
     for build in builds_metadata:
-      release_milestone = build['version']['milestone']
-      release_directory = build['release_directory']
+      release_milestone = ""
+      for v in build.versions:
+        if v.kind == BuildReport.SignedBuildMetadata.VersionKind.VERSION_KIND_MILESTONE:
+          release_milestone = v.value
+          break
+
+      release_directory = build.release_directory
       input_zip = self._select_zip(build)
       properties = {
           'input_image': f'{release_directory}/{input_zip}',
@@ -67,11 +76,49 @@ class MassDeployApi(recipe_api.RecipeApi):
 
     return result
 
+  def _convert_legacy_metadata_to_proto(self, legacy_metadata):
+    """Convert legacy dict metadata to list of protos."""
+    proto_list = []
+    for _, data in legacy_metadata.items():
+      build = BuildReport.SignedBuildMetadata()
+
+      channel_str = data['channel']
+      channel_enum = Channel.Value('CHANNEL_' + channel_str.upper())
+      build.channel = channel_enum
+
+      try:
+        image_type_str = data['type']
+        if image_type_str == 'uefi-kernel':
+          type_enum = ImageType.IMAGE_TYPE_FLEXOR_KERNEL
+        else:
+          image_type_str_enum = image_type_str.replace('-', '_').upper()
+          type_enum = ImageType.Value('IMAGE_TYPE_' + image_type_str_enum)
+        build.type = type_enum
+      except KeyError:
+        pass
+
+      build.release_directory = data['release_directory']
+
+      v_milestone = build.versions.add()
+      v_milestone.kind = BuildReport.SignedBuildMetadata.VersionKind.VERSION_KIND_MILESTONE
+      v_milestone.value = data['version']['milestone']
+
+      for filename in data['outputs'].keys():
+        f = build.files.add()
+        f.filename = filename
+
+      proto_list.append(build)
+    return proto_list
+
   def run_mass_deploy_generation(self, signing_metadata):
     """Run the generation of the mass deployment image, but don't wait for it.
 
     This assumes signed builds have already been generated.
     """
+    if hasattr(signing_metadata, 'items'):
+      signing_metadata = self._convert_legacy_metadata_to_proto(
+          signing_metadata)
+
     with self.m.step.nest('generate mass deploy builds'):
       with self.m.step.nest(
           'only run on LTC, LTS or stable builds') as presentation:

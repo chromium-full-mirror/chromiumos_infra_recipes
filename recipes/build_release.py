@@ -7,6 +7,7 @@ from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
 from PB.chromite.api.sysroot import Sysroot
+from PB.chromite.api.image import SignImageResponse
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.checkpoint import RetryStep
@@ -300,6 +301,10 @@ def DoRunSteps(api, config, properties):
       signed_build_list = api.signing_utils.signing_response_to_metadata(
           signed_image_response)
       api.build_reporting.publish_signed_build_metadata(signed_build_list)
+      # If building mass deploy image, trigger that now, but don't wait for it
+      # to finish.
+      if properties.build_mass_deploy_image:
+        api.mass_deploy.run_mass_deploy_generation(signed_build_list)
 
   gs_image_dir = None
   instructions = None
@@ -436,6 +441,15 @@ def DoRunSteps(api, config, properties):
   api.easy.set_properties_step(
       suite_scheduling=str(not api.cros_infra_config.is_staging))
 
+# Sample SignImageResponse for testing.
+sign_image_resp = SignImageResponse()
+archive = sign_image_resp.signed_artifacts.archive_artifacts.add()
+archive.channel = common_pb2.Channel.CHANNEL_STABLE
+archive.image_type = common_pb2.ImageType.IMAGE_TYPE_RECOVERY
+archive.build_target = 'kukui'
+archive.signing_status = BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
+art = archive.signed_artifacts.add()
+art.signed_artifact_name = 'chromeos_1234.56.0_kukui_recovery_stable-channel_mp-v2.bin.zip'
 
 def GenTests(api):
   manifest_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
@@ -1299,7 +1313,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
 
   # Release build with mass deploy.
   yield api.build_menu.test(
-      'release-build-mass-deploy',
+      'release-build-mass-deploy-legacy',
       api.properties(
           **{
               '$chromeos/cros_source':
@@ -1317,6 +1331,35 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       # This needs some work. signing needs to be mocked differently.
       api.post_check(post_process.MustRun, 'get signed build metadata'),
       api.post_check(post_process.MustRun, 'generate mass deploy builds'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'release-build-mass-deploy',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True)),
+              'build_mass_deploy_image':
+                  True
+          }),
+      api.cros_build_api.set_api_return('sign artifacts.call BAPI',
+                                        'ImageService/SignImage',
+                                        MessageToJson(sign_image_resp)),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.schedule mass deploy build(s)'),
+      api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
