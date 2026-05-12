@@ -521,17 +521,19 @@ class CrosBuildApiApi(RecipeApi):
       failed_packages = ': ' + failed_packages
     return failed_packages
 
-  def __call__(
-      self, endpoint: str, input_proto: message.Message,
-      output_type: descriptor.Descriptor,
-      test_output_data: Optional[str] = None,
-      test_teelog_data: Optional[str] = None, name: Optional[str] = None,
-      infra_step: bool = False, timeout: Optional[int] = None,
-      response_lambda: Optional[Callable[[message.Message], str]] = None,
-      pkg_logs_lambda: Optional[Callable[[message.Message, message.Message],
-                                         Tuple[str, str]]] = None,
-      step_text: Optional[str] = None,
-      retcode_fn: Optional[Callable[[int], None]] = None) -> message.Message:
+  def __call__(self, endpoint: str, input_proto: message.Message,
+               output_type: descriptor.Descriptor,
+               test_output_data: Optional[str] = None,
+               test_teelog_data: Optional[str] = None,
+               name: Optional[str] = None, infra_step: bool = False,
+               timeout: Optional[int] = None,
+               response_lambda: Optional[Callable[[message.Message],
+                                                  str]] = None,
+               pkg_logs_lambda: Optional[Callable[
+                   [message.Message, message.Message],
+                   Tuple[str, str]]] = None, step_text: Optional[str] = None,
+               retcode_fn: Optional[Callable[[int], None]] = None,
+               skip_endpoint_retrieval: bool = False) -> message.Message:
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -560,6 +562,9 @@ class CrosBuildApiApi(RecipeApi):
       step_text: text to put on the step for the call.
       retcode_fn: Called with the return code from Build API. This is useful for
         when the return code is 2 (RETURN_CODE_UNSUCCESSFUL_RESPONSE_AVAILABLE).
+      skip_endpoint_retrieval: skip retrieving the full list of endpoints. This
+        is only called in here for caching purposes, but in builds where we
+        never use has_endpoint this can break on sufficiently old branches.
 
     Returns:
       The parsed response proto.
@@ -567,8 +572,8 @@ class CrosBuildApiApi(RecipeApi):
     # Fetch the endpoint list on the first call, rather than first call to
     # has_endpoint. This should reduce the expectations churn as has_endpoint
     # calls are added.  Avoid recusion though.
-    if (not self._api_endpoints and
-        endpoint != 'chromite.api.MethodService/Get'):
+    if not (skip_endpoint_retrieval or self._api_endpoints or
+            endpoint == 'chromite.api.MethodService/Get'):
       _ = self._endpoints
 
     response_lambda = response_lambda or (lambda op: '')

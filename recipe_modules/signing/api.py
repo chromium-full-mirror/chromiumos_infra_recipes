@@ -820,7 +820,8 @@ class SigningApi(recipe_api.RecipeApi):
                       location=common_pb2.Path.Location.OUTSIDE,
                   )), tmp_path=self.m.path.abspath(docker_tmp_dir),
               docker_image=self.signing_docker_image)
-          response = self.m.cros_build_api.ImageService.SignImage(request)
+          response = self.m.cros_build_api.ImageService.SignImage(
+              request, skip_endpoint_retrieval=True)
           self.add_kms_logs_as_step_logs(archive_dir)
           # Turn the step red if any failures are present.
           for archive in response.signed_artifacts.archive_artifacts:
