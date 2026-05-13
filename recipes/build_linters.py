@@ -34,7 +34,6 @@ DEPS = [
     'recipe_engine/step',
     'build_menu',
     'chrome',
-    'chromite',
     'cros_build_api',
     'cros_sdk',
     'cros_source',
