@@ -11,4 +11,13 @@ import "chromiumos/common.proto";
 message BuildFirmwareHistoricalDbProperties {
   // Firmware location.  See chromite.api.firmware.
   chromiumos.FwLocation firmware_location = 1;
+
+  // The Gerrit host for uploading EC token prebuilts.
+  string gob_host = 2;
+
+  // The Gerrit project for uploading EC token prebuilts.
+  string gob_project = 3;
+
+  // The Gerrit branch for uploading EC token prebuilts.
+  string gob_branch = 4;
 }

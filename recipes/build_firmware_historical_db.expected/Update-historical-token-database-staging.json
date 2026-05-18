@@ -72,7 +72,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -153,7 +153,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -192,7 +192,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -221,7 +221,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -261,7 +261,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -294,7 +294,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -305,12 +305,12 @@
       }
     },
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -328,7 +328,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"staging-snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/staging-snapshot\\\"\\n}\"@@@"
     ]
   },
   {
@@ -336,7 +336,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
     ]
   },
   {
@@ -352,7 +352,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -398,12 +398,12 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/staging-chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -441,7 +441,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -487,7 +487,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -533,7 +533,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -585,7 +585,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -623,7 +623,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -655,7 +655,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -685,7 +685,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -713,7 +713,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -743,7 +743,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -777,7 +777,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -801,12 +801,12 @@
       "/path/to/tmp/json",
       "copy",
       "initial-chromeos-source-snapshot",
-      "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
+      "[CACHE]/infra_versions/staging-chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -819,8 +819,8 @@
     "name": "source cache.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
-      "@@@STEP_LOG_END@chromeos-main-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@staging-chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromeos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -844,7 +844,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -888,7 +888,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -918,7 +918,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -948,7 +948,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -978,7 +978,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1008,7 +1008,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1034,7 +1034,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1085,7 +1085,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1109,7 +1109,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1130,7 +1130,7 @@
     "name": "sync cached directory.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"staging-snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1141,13 +1141,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1161,7 +1161,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1173,7 +1173,7 @@
     "name": "sync cached directory.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"staging-snapshot\" branch@@@"
     ]
   },
   {
@@ -1191,7 +1191,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1213,10 +1213,10 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "snapshot",
+      "staging-snapshot",
       "--groups",
       "all",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--verbose"
     ],
     "cwd": "[CACHE]/chromeos",
@@ -1231,7 +1231,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1271,7 +1271,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1296,7 +1296,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1328,7 +1328,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1360,7 +1360,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1390,7 +1390,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1434,7 +1434,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1480,7 +1480,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1522,7 +1522,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1569,7 +1569,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1616,7 +1616,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1674,7 +1674,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1697,13 +1697,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1717,7 +1717,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1734,7 +1734,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1768,7 +1768,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1798,7 +1798,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1828,7 +1828,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1858,7 +1858,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1888,7 +1888,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1915,7 +1915,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1939,7 +1939,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1963,7 +1963,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/staging-snapshot-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -1973,7 +1973,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1983,7 +1983,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
+    "name": "sync to gitiles commit.fetch staging-snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2004,7 +2004,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2027,7 +2027,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--manifest-name",
       "../tmp_manifest",
       "--manifest-depth",
@@ -2046,7 +2046,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2086,7 +2086,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2111,7 +2111,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2143,7 +2143,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2175,7 +2175,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2218,7 +2218,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2265,7 +2265,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2323,7 +2323,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2365,7 +2365,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2403,7 +2403,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2430,13 +2430,13 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:"
+      "staging-snapshot-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2461,7 +2461,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2480,14 +2480,14 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
+      "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2551,7 +2551,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2581,7 +2581,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2606,7 +2606,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2641,7 +2641,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2677,7 +2677,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2757,7 +2757,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2797,7 +2797,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2852,7 +2852,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2882,7 +2882,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2907,7 +2907,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2943,7 +2943,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2979,7 +2979,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3061,7 +3061,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3104,7 +3104,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3134,7 +3134,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3215,7 +3215,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3245,7 +3245,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3270,7 +3270,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3305,7 +3305,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3341,7 +3341,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3426,7 +3426,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3505,7 +3505,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3535,7 +3535,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3560,7 +3560,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3595,7 +3595,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3630,7 +3630,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3732,7 +3732,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3756,7 +3756,7 @@
     "cmd": [],
     "name": "output got_revision",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@got_revision@\"snapshot-HEAD-SHA\"@@@"
+      "@@@SET_BUILD_PROPERTY@got_revision@\"staging-snapshot-HEAD-SHA\"@@@"
     ]
   },
   {
@@ -3774,7 +3774,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3798,7 +3798,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3906,7 +3906,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3941,7 +3941,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3976,7 +3976,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4089,7 +4089,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4124,7 +4124,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4159,7 +4159,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4211,7 +4211,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4255,7 +4255,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4286,7 +4286,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4310,13 +4310,13 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
+      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4340,14 +4340,14 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
+      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
       "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4376,7 +4376,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4403,7 +4403,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4424,14 +4424,13 @@
       "storage",
       "cp",
       "--if-generation-match=1702318339485920",
-      "--predefined-acl=publicRead",
       "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
+      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4467,7 +4466,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4489,14 +4488,13 @@
       "storage",
       "cp",
       "--if-generation-match=0",
-      "--predefined-acl=publicRead",
       "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/version/historical.deadbeef.bin"
+      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/version/historical.deadbeef-staging.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4516,14 +4514,13 @@
       "gcloud",
       "storage",
       "cp",
-      "--predefined-acl=publicRead",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/version/historical.deadbeef.bin",
-      "gs://chromeos-localmirror/distfiles/chromeos-ec-token-historical.bin"
+      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/version/historical.deadbeef-staging.bin",
+      "gs://chromeos-throw-away-bucket/distfiles/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4543,14 +4540,13 @@
       "gcloud",
       "storage",
       "cp",
-      "--predefined-acl=publicRead",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/version/historical.deadbeef.bin",
-      "gs://chromeos-localmirror/distfiles/chromeos-ec-token-2012.05.14.125342.bin"
+      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/version/historical.deadbeef-staging.bin",
+      "gs://chromeos-throw-away-bucket/distfiles/chromeos-ec-token-2012.05.14.125342_alpha.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4569,8 +4565,7 @@
     "cmd": [],
     "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/+/1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -4581,14 +4576,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2012.05.14.125342",
+      "2012.05.14.125342_alpha",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/VERSION-PIN"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4601,7 +4596,7 @@
     "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.write version pin file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@2012.05.14.125342@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@2012.05.14.125342_alpha@@@",
       "@@@STEP_LOG_END@VERSION-PIN@@@"
     ]
   },
@@ -4622,7 +4617,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4658,7 +4653,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4694,7 +4689,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4719,7 +4714,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4742,14 +4737,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "VERSION-PIN: updating version pin chromeos-ec-token to 2012.05.14.125342\n\nCL generated by job https://cr-buildbucket.appspot.com/build/8945511751514863184",
+      "VERSION-PIN: updating version pin chromeos-ec-token to 2012.05.14.125342_alpha\n\nCL generated by job https://cr-buildbucket.appspot.com/build/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4762,7 +4757,7 @@
     "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@VERSION-PIN: updating version pin chromeos-ec-token to 2012.05.14.125342@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@VERSION-PIN: updating version pin chromeos-ec-token to 2012.05.14.125342_alpha@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@CL generated by job https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
@@ -4779,7 +4774,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4796,276 +4791,9 @@
   },
   {
     "cmd": [],
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token exists",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "info",
-      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token exists.repo info",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@7@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--topic",
-      "chromeos-ec-token",
-      "--send-mail"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.git_cl upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.set labels on CL 1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.set labels on CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.set labels on CL 1.git rebase",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.upload CL to gerrit.set labels on CL 1.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@CL@https://chromium-review.googlesource.com/c/platform/vendor/google/firmware/desktop/ec-prebuilts/+/1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -5081,7 +4809,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5111,7 +4839,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5136,7 +4864,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5161,7 +4889,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5191,7 +4919,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5221,7 +4949,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5253,7 +4981,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5277,7 +5005,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5303,7 +5031,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5342,7 +5070,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5376,7 +5104,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5411,7 +5139,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5428,36 +5156,32 @@
   },
   {
     "cmd": [],
-    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1",
+    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.abandon CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/platform/vendor/google/firmware/desktop/ec-prebuilts/+/1@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "/platform/vendor/google/firmware/desktop/ec-prebuilts",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "abandon",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--change",
+      "1",
+      "--json_file",
+      "/path/to/tmp/json"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
+    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5467,62 +5191,31 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.repo forall",
+    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.abandon CL 1.gerrit abandon",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@/platform/vendor/google/firmware/desktop/ec-prebuilts|src//platform/vendor/google/firmware/desktop/ec-prebuilts|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/vendor/google/firmware/desktop/ec-prebuilts",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.git rebase",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/vendor/google/firmware/desktop/ec-prebuilts",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"ABANDONED\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -5539,7 +5232,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5593,7 +5286,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5645,7 +5338,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5674,7 +5367,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5699,7 +5392,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5733,7 +5426,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5767,7 +5460,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5811,7 +5504,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5837,7 +5530,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5856,7 +5549,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
     ]
   },
   {
@@ -5871,7 +5564,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5896,7 +5589,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5919,7 +5612,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5944,7 +5637,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5976,7 +5669,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
