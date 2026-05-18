@@ -175,6 +175,17 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
                                f'ec_component_manifest_{version}.zip',
                                'ec_component_manifest_LATEST.zip')
 
+    with api.step.nest('upload to cipd'):
+      pkg_def = api.cipd.PackageDefinition(
+          package_name=f'android/desktop/firmware/{target}/ap',
+          package_root=checkout / 'firmware')
+      pkg_def.add_file(checkout / 'firmware' / directory /
+                       f'chromeos-firmwareupdate_{version}')
+      if ec_component_manifest_path:
+        pkg_def.add_file(checkout / 'firmware/ec_component_manifest' /
+                         f'ec_component_manifest_{version}.zip')
+      api.cipd.create_from_pkg(pkg_def=pkg_def, tags={'version': version})
+
     # Check to make sure there was actually a change.
     diff_lines = api.git.get_working_dir_diff_files()
     if not diff_lines:
