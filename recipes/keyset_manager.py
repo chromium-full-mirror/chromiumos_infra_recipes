@@ -61,7 +61,7 @@ def RunSteps(api: RecipeApi,
 
   script_args = ["--all"
                 ] if properties.update_all else ["-k", properties.keyset]
-  script_args += ["--bug", str(properties.bug)]
+  script_args += ["-b", str(properties.bug)]
 
   dry_run = properties.dry_run or api.build_menu.is_staging
 
@@ -143,7 +143,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(
           post_process.StepCommandContains,
           "increment kernel version.run increment_kernel_version.py",
-          ["--all", "--bug", "12345"],
+          ["--all", "-b", "12345"],
       ),
       api.post_check(post_process.MustRun, "git commit"),
       api.post_check(
@@ -173,7 +173,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(
           post_process.StepCommandContains,
           "increment kernel version.run increment_kernel_version.py",
-          ["-k", "atlas", "--bug", "12345"],
+          ["-k", "atlas", "-b", "12345"],
       ),
       api.post_check(post_process.MustRun, "git commit"),
       api.post_check(
