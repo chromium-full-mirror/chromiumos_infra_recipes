@@ -4601,6 +4601,14 @@
   },
   {
     "cmd": [],
+    "name": "reading metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
+      "@@@STEP_LOG_END@debug@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "schedule legacy signing build",
     "~followup_annotations": [
       "@@@STEP_TEXT@builder_name=fw-ec-postsubmit<br/>signing_allowed_builder_names=['fw-ec-postsubmit']<br/>sign_image_properties=image_type: IMAGE_TYPE_GSC_FIRMWARE<br/>keyset: \"test-keyset\"<br/>signer_type: SIGNER_PRODUCTION<br/>gsc_instructions {<br/>  target: PREPVT<br/>}<br/>allow_non_release_signer_bucket: true<br/><br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@"
@@ -5208,7 +5216,6 @@
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
-      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
       "@@@STEP_LOG_END@debug@@@",
       "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"

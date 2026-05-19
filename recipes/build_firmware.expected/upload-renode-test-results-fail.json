@@ -4601,10 +4601,17 @@
   },
   {
     "cmd": [],
+    "name": "reading metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
+      "@@@STEP_LOG_END@debug@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
-      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
       "@@@STEP_LOG_END@debug@@@",
       "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"

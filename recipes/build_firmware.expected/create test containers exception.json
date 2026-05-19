@@ -5782,6 +5782,14 @@
   },
   {
     "cmd": [],
+    "name": "reading metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_END@debug@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",

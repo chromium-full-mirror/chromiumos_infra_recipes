@@ -4892,6 +4892,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "reading metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
+      "@@@STEP_LOG_END@debug@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
@@ -5515,7 +5523,6 @@
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
-      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['from_source.tar.bz2']}]@@@",
       "@@@STEP_LOG_LINE@debug@from_source.tar.bz2 was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['fw_metadata.json']}]@@@",

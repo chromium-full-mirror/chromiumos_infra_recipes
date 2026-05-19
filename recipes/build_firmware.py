@@ -223,6 +223,31 @@ def RunSteps(api, properties):
           .attestation_eligible, use_file_paths=True,
           build_targets=firmware_targets)
 
+      # Read metadata jsonpb
+      metadata_by_name = {}
+      with api.step.nest('reading metadata') as step:
+        step.logs['debug'] = ''
+        for metadata_path in uploaded_artifacts.files_by_artifact.get(
+            'FIRMWARE_TARBALL_INFO', []):
+          # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
+          metadata_path = api.path.abspath(
+              api.path.join(artifact_dir, metadata_path))
+          if api.path.exists(metadata_path):
+            step.logs['debug'] += f'Reading proto from {metadata_path}\n'
+            metadata = api.file.read_proto(
+                'read fw metadata',
+                metadata_path,
+                FirmwareArtifactInfo,
+                'JSONPB',
+            )
+            for obj in metadata.objects:
+              step.logs[
+                  'debug'] += f'metadata_by_name[{obj.file_name}]={obj.tarball_info}\n'
+              metadata_by_name[obj.file_name] = obj.tarball_info
+          else:
+            step.logs['debug'] += f'{metadata_path} does not exist\n'
+
+
       with api.failures.ignore_exceptions():
         if api.cros_infra_config.config.artifacts.attestation_eligible:
           api.bcid_reporter.report_stage('upload-complete')
@@ -322,26 +347,6 @@ def RunSteps(api, properties):
           step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
           step.logs[
               'debug'] += 'Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO\n'
-          metadata_by_name = {}
-          for metadata_path in uploaded_artifacts.files_by_artifact.get(
-              'FIRMWARE_TARBALL_INFO', []):
-            # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
-            metadata_path = api.path.abspath(
-                api.path.join(artifact_dir, metadata_path))
-            if api.path.exists(metadata_path):
-              step.logs['debug'] += f'Reading proto from {metadata_path}\n'
-              metadata = api.file.read_proto(
-                  'read fw metadata',
-                  metadata_path,
-                  FirmwareArtifactInfo,
-                  'JSONPB',
-              )
-              for obj in metadata.objects:
-                step.logs[
-                    'debug'] += f'metadata_by_name[{obj.file_name}]={obj.tarball_info}\n'
-                metadata_by_name[obj.file_name] = obj.tarball_info
-            else:
-              step.logs['debug'] += f'{metadata_path} does not exist\n'
           if uploaded_artifacts.published:
             for atype, dests in uploaded_artifacts.published.items():
               step.logs['debug'] += f'published: {atype}:{dests}\n'
@@ -700,7 +705,7 @@ def GenTests(api):
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data('sending pub/sub notifications.read fw metadata',
+      api.step_data('reading metadata.read fw metadata',
                     api.file.read_proto(ZEPHYR_METADATA)),
       # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
       api.post_check(
@@ -724,7 +729,7 @@ def GenTests(api):
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data('sending pub/sub notifications.read fw metadata',
+      api.step_data('reading metadata.read fw metadata',
                     api.file.read_proto(ZEPHYR_METADATA)),
       # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
       api.post_check(
@@ -790,7 +795,7 @@ def GenTests(api):
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data('sending pub/sub notifications.read fw metadata',
+      api.step_data('reading metadata.read fw metadata',
                     api.file.read_proto(ZEPHYR_METADATA)),
       # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
       api.post_check(
@@ -861,7 +866,7 @@ def GenTests(api):
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data(
-          'sending pub/sub notifications.read fw metadata',
+          'reading metadata.read fw metadata',
           api.file.read_proto(
               JsonToProto(
                   (Path(__file__).parent.resolve() /
@@ -908,7 +913,7 @@ def GenTests(api):
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data(
-          'sending pub/sub notifications.read fw metadata',
+          'reading metadata.read fw metadata',
           api.file.read_proto(
               FirmwareArtifactInfo(objects=[
                   FirmwareArtifactInfo.ObjectInfo(

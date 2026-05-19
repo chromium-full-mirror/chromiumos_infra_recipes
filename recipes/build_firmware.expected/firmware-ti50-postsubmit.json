@@ -4898,6 +4898,63 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "reading metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@debug@Reading proto from [CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb@@@",
+      "@@@STEP_LOG_LINE@debug@metadata_by_name[dt-ti50.tar.bz2]=type: GSC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"betty\"@@@",
+      "@@@STEP_LOG_LINE@debug@publish_to_goldeneye: true@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_END@debug@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "reading metadata.read fw metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@{@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"objects\": [@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"file_name\": \"dt-ti50.tar.bz2\",@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"tarball_info\": {@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"board\": [@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@          \"betty\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        ],@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"publish_to_goldeneye\": true,@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"GSC\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    }@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  ]@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@}@@@",
+      "@@@STEP_LOG_END@firmware_metadata.jsonpb@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
@@ -5853,11 +5910,6 @@
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
-      "@@@STEP_LOG_LINE@debug@Reading proto from [CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb@@@",
-      "@@@STEP_LOG_LINE@debug@metadata_by_name[dt-ti50.tar.bz2]=type: GSC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"betty\"@@@",
-      "@@@STEP_LOG_LINE@debug@publish_to_goldeneye: true@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['nt-ti50.tar.bz2']}]@@@",
       "@@@STEP_LOG_LINE@debug@nt-ti50.tar.bz2 was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]@@@",
@@ -5865,51 +5917,6 @@
       "@@@STEP_LOG_END@debug@@@",
       "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['nt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['nt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.read fw metadata",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@{@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"objects\": [@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    {@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"file_name\": \"dt-ti50.tar.bz2\",@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"tarball_info\": {@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"board\": [@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@          \"betty\"@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        ],@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"publish_to_goldeneye\": true,@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"GSC\"@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    }@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  ]@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@}@@@",
-      "@@@STEP_LOG_END@firmware_metadata.jsonpb@@@"
     ]
   },
   {

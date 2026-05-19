@@ -5409,32 +5409,9 @@
     ]
   },
   {
-    "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-stage",
-      "-stage",
-      "upload-complete"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "snoop: report_stage (2)"
-  },
-  {
     "cmd": [],
-    "name": "sending pub/sub notifications",
+    "name": "reading metadata",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
       "@@@STEP_LOG_LINE@debug@Reading proto from [CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb@@@",
       "@@@STEP_LOG_LINE@debug@metadata_by_name[brox.EC.tar.bz2]=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
@@ -5460,46 +5437,7 @@
       "@@@STEP_LOG_LINE@debug@metadata_by_name[rex/firmware_from_source.tar.bz2]=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'rex/firmware_from_source.tar.bz2']}]@@@",
-      "@@@STEP_LOG_LINE@debug@brox.EC.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub brox.EC.tar.bz2 for brox@@@",
-      "@@@STEP_LOG_LINE@debug@brox.EC_elf.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub brox.EC_elf.tar.bz2 for brox@@@",
-      "@@@STEP_LOG_LINE@debug@karis.EC.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub karis.EC.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@karis.EC_elf.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub karis.EC_elf.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@screebo.EC.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub screebo.EC.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@screebo.EC_elf.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub screebo.EC_elf.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@brox/firmware_from_source.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub brox/firmware_from_source.tar.bz2 for brox@@@",
-      "@@@STEP_LOG_LINE@debug@rex/firmware_from_source.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub rex/firmware_from_source.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]@@@",
-      "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
-      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TOKEN_DATABASE:[{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['tokens.bin']}]@@@",
-      "@@@STEP_LOG_LINE@debug@tokens.bin was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
-      "@@@STEP_LOG_END@debug@@@",
-      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-zephyr-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'rex/firmware_from_source.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'rex/firmware_from_source.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}], 'FIRMWARE_TOKEN_DATABASE': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['tokens.bin']}]})@@@",
-      "@@@STEP_LOG_END@uploaded_artifacts@@@"
+      "@@@STEP_LOG_END@debug@@@"
     ]
   },
   {
@@ -5527,7 +5465,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sending pub/sub notifications.read fw metadata",
+    "name": "reading metadata.read fw metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@{@@@",
@@ -5607,6 +5545,75 @@
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  ]@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@}@@@",
       "@@@STEP_LOG_END@firmware_metadata.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "upload-complete"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "snoop: report_stage (2)"
+  },
+  {
+    "cmd": [],
+    "name": "sending pub/sub notifications",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'rex/firmware_from_source.tar.bz2']}]@@@",
+      "@@@STEP_LOG_LINE@debug@brox.EC.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub brox.EC.tar.bz2 for brox@@@",
+      "@@@STEP_LOG_LINE@debug@brox.EC_elf.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub brox.EC_elf.tar.bz2 for brox@@@",
+      "@@@STEP_LOG_LINE@debug@karis.EC.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub karis.EC.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@karis.EC_elf.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub karis.EC_elf.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@screebo.EC.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub screebo.EC.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@screebo.EC_elf.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub screebo.EC_elf.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@brox/firmware_from_source.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub brox/firmware_from_source.tar.bz2 for brox@@@",
+      "@@@STEP_LOG_LINE@debug@rex/firmware_from_source.tar.bz2 was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@SKIPPING Pub/sub rex/firmware_from_source.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]@@@",
+      "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TOKEN_DATABASE:[{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['tokens.bin']}]@@@",
+      "@@@STEP_LOG_LINE@debug@tokens.bin was published to chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
+      "@@@STEP_LOG_END@debug@@@",
+      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-zephyr-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'rex/firmware_from_source.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'rex/firmware_from_source.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}], 'FIRMWARE_TOKEN_DATABASE': [{'gs_location': 'chromeos-image-archive/firmware-zephyr-postsubmit-firmware/R99-1234.56.0/', 'files': ['tokens.bin']}]})@@@",
+      "@@@STEP_LOG_END@uploaded_artifacts@@@"
     ]
   },
   {
