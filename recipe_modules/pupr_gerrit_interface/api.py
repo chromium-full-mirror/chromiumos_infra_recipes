@@ -491,7 +491,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           cqstep.status = 'SUCCESS'
         if gerrit_mergeable and not cq_mergable:
           self.m.gerrit.rebase_change_remote(changes_to_retry[0])
-          self.m.gerrit.add_change_comment(
+          self.m.gerrit.add_change_comment_remote(
               changes_to_retry[0],
               ('[Auto-Rebase] Rebased via Gerrit to save CQ time. '
                'Previously passed CQ results will be reused. '
