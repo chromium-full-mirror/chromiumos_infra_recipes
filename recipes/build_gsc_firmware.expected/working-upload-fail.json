@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "checking attestation eligibility",
     "~followup_annotations": [
-      "@@@STEP_TEXT@fw-ec-postsubmit NOT attestation eligible@@@"
+      "@@@STEP_TEXT@fw-ti50-postsubmit NOT attestation eligible@@@"
     ]
   },
   {
@@ -59,7 +59,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"fw-ec-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"fw-ti50-postsubmit\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"CQ\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"cq\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
@@ -2592,7 +2592,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1/sources.jsonpb",
-      "gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
+      "gs://chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -2612,8 +2612,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {

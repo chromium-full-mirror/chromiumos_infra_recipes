@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "checking attestation eligibility",
     "~followup_annotations": [
-      "@@@STEP_TEXT@fw-ec-postsubmit NOT attestation eligible@@@"
+      "@@@STEP_TEXT@fw-ti50-postsubmit NOT attestation eligible@@@"
     ]
   },
   {
@@ -59,7 +59,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"fw-ec-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"fw-ti50-postsubmit\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"CQ\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"cq\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
@@ -2592,7 +2592,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1/sources.jsonpb",
-      "gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
+      "gs://chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -2612,8 +2612,8 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@",
-      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"upload sources metadata|gsutil upload\": \"gs://chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb\"}@@@"
     ]
   },
   {
@@ -4183,7 +4183,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -4552,7 +4552,7 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184\"@@@"
     ]
   },
   {
@@ -4569,7 +4569,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4596,7 +4596,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
     ]
   },
   {
@@ -4606,7 +4606,7 @@
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
       "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
       "@@@STEP_LOG_END@debug@@@",
-      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@",
+      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"
     ]
   },

@@ -4713,6 +4713,33 @@
       "updateChroot": {
         "runSpec": "NO_RUN"
       }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_EC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "fw-ti50-postsubmit",
+        "type": "CQ"
+      }
     }
   ]
 }

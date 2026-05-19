@@ -75,48 +75,6 @@ INCLUDE_SIGNING_RE = re.compile(r'nt-(ti50|system_test_auto)')
 GENERATE_PAOS_RE = re.compile(r'nt-(perso|ti50)')
 
 
-def UploadTestResults(api, location, builder_name):
-  if location == common_pb2.PLATFORM_ZEPHYR:
-    cros_src_path = api.cros_source.workspace_path
-    with api.step.nest('Upload EC Firmware test results') as pres:
-      for test_results in api.file.glob_paths(
-          'twister dirs', cros_src_path,
-          'src/platform/ec/twister-out*/twister.json', test_data=[
-              'src/platform/ec/twister-out-host/twister.json',
-              'src/platform/ec/twister-out-llvm/twister.json'
-          ]):
-        try:
-          rdb_cmd = [
-              'vpython3',
-              cros_src_path / 'src/platform/ec/util/zephyr_to_resultdb.py',
-              '--result=' + str(test_results), '--upload=True'
-          ]
-          base_variant = {'builder_name': builder_name}
-          api.step('run', api.resultdb.wrap(rdb_cmd, base_variant=base_variant))
-
-        except StepFailure:
-          pres.status = api.step.FAILURE
-          pres.step_text = 'Failed to upload test results'
-
-  elif location == common_pb2.PLATFORM_RENODE:
-    cros_src_path = api.cros_source.workspace_path
-    with api.step.nest('Upload Renode Firmware test results') as pres:
-      for test_results in api.file.glob_paths(
-          'renode results', cros_src_path, 'src/platform/ec/test_results.json'):
-        try:
-          rdb_cmd = [
-              'vpython3', cros_src_path /
-              'src/platform/ec/util/run_device_tests_to_resultdb.py',
-              '--result=' + str(test_results), '--upload'
-          ]
-          base_variant = {'builder_name': builder_name}
-          api.step('run', api.resultdb.wrap(rdb_cmd, base_variant=base_variant))
-
-        except StepFailure:
-          pres.status = api.step.FAILURE
-          pres.step_text = 'Failed to upload test results'
-
-
 def CreateContainers(api, config):
   with api.step.nest('Create test containers') as pres:
     try:
@@ -204,16 +162,12 @@ def RunSteps(api, properties):
                                    step_name='output got_revision')
 
       build = api.buildbucket.build
-      try:
-        service.TestAllFirmware(
-            TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                   code_coverage=properties.code_coverage,
-                                   firmware_targets=firmware_targets,
-                                   avb_enabled=properties.avb_enabled),
-            name='test firmware')
-      except StepFailure as ex:
-        UploadTestResults(api, location, build.builder.builder)
-        raise ex
+      service.TestAllFirmware(
+          TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
+                                 code_coverage=properties.code_coverage,
+                                 firmware_targets=firmware_targets,
+                                 avb_enabled=properties.avb_enabled),
+          name='test firmware')
 
       uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
           config=config, report_to_spike=api.cros_infra_config.config.artifacts
@@ -349,10 +303,6 @@ def RunSteps(api, properties):
                       'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
                   if metadata:
                     for board in metadata.board:
-                      if metadata.type == FirmwareArtifactInfo.TarballInfo.FirmwareType.EC and branch == 'snapshot':
-                        step.logs[
-                            'debug'] += f'SKIPPING Pub/sub {file} for {board}\n'
-                        continue
                       step.logs['debug'] += f'Pub/sub {file} for {board}\n'
                       api.build_reporting.reset_build_report(board)
                       build_report = api.build_reporting.merged_build_report
@@ -377,8 +327,6 @@ def RunSteps(api, properties):
                           UploadedArtifacts(gs_bucket, gs_path,
                                             {atype: [file]}), artifact_dir,
                           force_publish=metadata.publish_to_goldeneye)
-
-      UploadTestResults(api, location, build.builder.builder)
 
       CreateContainers(api, config)
 
@@ -494,99 +442,6 @@ def _find_files_with_suffix(api, bucket, path, suffix):
 
 def GenTests(api):
 
-  ZEPHYR_ARTIFACTS = '''{
-  "artifacts": {
-    "artifacts": [
-      {
-        "artifactType": 31,
-        "location": 2,
-        "paths": [
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb"
-          }
-        ]
-      },
-      {
-        "artifactType": 30,
-        "location": 2,
-        "paths": [
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/brox.EC.tar.bz2"
-          },
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/brox.EC_elf.tar.bz2"
-          },
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/karis.EC.tar.bz2"
-          },
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/karis.EC_elf.tar.bz2"
-          },
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/screebo.EC.tar.bz2"
-          },
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/screebo.EC_elf.tar.bz2"
-          },
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2"
-          },
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2"
-          }
-        ]
-      },
-      {
-        "artifactType": 55,
-        "location": 2,
-        "paths": [
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/tokens.bin"
-          }
-        ]
-      }
-    ]
-  }
-}'''
-  ZEPHYR_METADATA = FirmwareArtifactInfo(objects=[
-      FirmwareArtifactInfo.ObjectInfo(
-          file_name='brox.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
-          .TarballInfo(type='EC', board=['brox'])),
-      FirmwareArtifactInfo.ObjectInfo(
-          file_name='brox.EC_elf.tar.bz2', tarball_info=FirmwareArtifactInfo
-          .TarballInfo(type='EC', board=['brox'])),
-      FirmwareArtifactInfo.ObjectInfo(
-          file_name='karis.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
-          .TarballInfo(type='EC', board=['rex'])),
-      FirmwareArtifactInfo.ObjectInfo(
-          file_name='karis.EC_elf.tar.bz2', tarball_info=FirmwareArtifactInfo
-          .TarballInfo(type='EC', board=['rex'])),
-      FirmwareArtifactInfo.ObjectInfo(
-          file_name='screebo.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
-          .TarballInfo(type='EC', board=['rex'])),
-      FirmwareArtifactInfo.ObjectInfo(
-          file_name='screebo.EC_elf.tar.bz2', tarball_info=FirmwareArtifactInfo
-          .TarballInfo(type='EC', board=['rex'])),
-      FirmwareArtifactInfo.ObjectInfo(
-          file_name='brox/firmware_from_source.tar.bz2',
-          tarball_info=FirmwareArtifactInfo.TarballInfo(type='EC',
-                                                        board=['brox'])),
-      FirmwareArtifactInfo.ObjectInfo(
-          file_name='rex/firmware_from_source.tar.bz2',
-          tarball_info=FirmwareArtifactInfo.TarballInfo(type='EC',
-                                                        board=['rex'])),
-  ])
-
   TI50_ARTIFACTS = '''{
   "artifacts": {
     "artifacts": [
@@ -607,13 +462,7 @@ def GenTests(api):
           {
             "location": 2,
             "path": "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
-          }
-        ]
-      },
-      {
-        "artifactType": 30,
-        "location": 3,
-        "paths": [
+          },
           {
             "location": 2,
             "path": "[CLEANUP]/artifacts_tmp_1/nt-ti50.tar.bz2"
@@ -647,7 +496,7 @@ def GenTests(api):
 
   def test(name, *args, **kwargs):
     status = kwargs.pop('status', 'SUCCESS')
-    kwargs.setdefault('builder', 'fw-ec-postsubmit')
+    kwargs.setdefault('builder', 'fw-ti50-postsubmit')
     kwargs.setdefault('input_properties', {'firmware_location': 1})
     build = api.test_util.test_child_build(None, **kwargs).build
     return api.test(name, build, *args, status=status)
@@ -657,186 +506,11 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
   )
 
-  yield test('cq', api.post_check(post_process.DoesNotRun,
-                                  'snoop: report_stage'), cq=True,
-             builder='fw-ec-cq')
-
   yield test(
-      'firmware-zephyr-cq',
-      api.cros_build_api.set_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          '{}'),
-      api.cros_build_api.set_api_return(
-          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          ZEPHYR_ARTIFACTS),
-      api.path.files_exist(api.path.cleanup_dir /
-                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      # CQ runs should not send pub/sub.
-      api.post_check(
-          post_process.DoesNotRun,
-          'sending pub/sub notifications.publish artifacts to pubsub'),
-      cq=True,
-      builder='firmware-zephyr-cq',
+      'bump-version',
       input_properties={
-          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
-          'bump_version': False,
-          'set_suite_scheduling': True,
-          'avb_enabled': True,
-      })
-
-  yield test(
-      'firmware-zephyr-postsubmit',
-      api.cros_build_api.set_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          '{}'),
-      api.cros_build_api.set_api_return(
-          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          ZEPHYR_ARTIFACTS),
-      api.path.files_exist(api.path.cleanup_dir /
-                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data('sending pub/sub notifications.read fw metadata',
-                    api.file.read_proto(ZEPHYR_METADATA)),
-      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
-      api.post_check(
-          post_process.DoesNotRun,
-          'sending pub/sub notifications.publish artifacts to pubsub'),
-      builder='firmware-zephyr-postsubmit',
-      input_properties={
-          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
-          'bump_version': False,
-          'set_suite_scheduling': True,
-          'avb_enabled': False,
-      })
-
-  yield test(
-      'fw-branch-postsubmit',
-      api.cros_build_api.set_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          '{}'),
-      api.cros_build_api.set_api_return(
-          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          ZEPHYR_ARTIFACTS),
-      api.path.files_exist(api.path.cleanup_dir /
-                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data('sending pub/sub notifications.read fw metadata',
-                    api.file.read_proto(ZEPHYR_METADATA)),
-      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (2).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/brox/firmware_from_source.tar.bz2'
-          ]),
-      api.post_check(
-          post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/rex/firmware_from_source.tar.bz2'
-          ]),
-      builder='firmware-R126-15885.B-branch',
-      input_properties={
-          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
-          'attestation_eligible': True,
           'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
           'bump_version': True,
-          'gitiles_commit': {
-              'host': 'chrome-internal.googlesource.com',
-              'project': 'chromeos/manifest-internal',
-              'ref': 'refs/heads/firmware-R126-15885.B',
-          },
-          'set_suite_scheduling': True,
-      },
-  )
-
-  yield test(
-      'ec-branch-postsubmit',
-      api.cros_build_api.set_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          '{}'),
-      api.cros_build_api.set_api_return(
-          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          ZEPHYR_ARTIFACTS),
-      api.path.files_exist(api.path.cleanup_dir /
-                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data('sending pub/sub notifications.read fw metadata',
-                    api.file.read_proto(ZEPHYR_METADATA)),
-      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (2).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2'
-          ]),
-      api.post_check(
-          post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
-          ]),
-      builder='firmware-R126-15886.2.B-branch',
-      input_properties={
-          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
-          'attestation_eligible': True,
-          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
-          'bump_version': True,
-          'gitiles_commit': {
-              'host': 'chrome-internal.googlesource.com',
-              'project': 'chromeos/manifest-internal',
-              'ref': 'refs/heads/firmware-R126-15886.2.B',
-          },
-          'set_suite_scheduling': True,
       },
   )
 
@@ -906,45 +580,6 @@ def GenTests(api):
       }),
       status='INFRA_FAILURE',
   )
-
-  yield test(
-      'fw-test-fail',
-      api.step_data('test firmware.call build API script', retcode=1),
-      api.post_check(post_process.MustRun, 'Upload EC Firmware test results'),
-      input_properties=({
-          'firmware_location': common_pb2.PLATFORM_ZEPHYR
-      }),
-      status='FAILURE',
-  )
-
-  yield test(
-      'upload-test-results-fail',
-      api.step_data('Upload EC Firmware test results.run', retcode=1),
-      api.post_check(
-          post_process.StepTextContains,
-          'Upload EC Firmware test results',
-          ['Failed to upload test results'],
-      ),
-      api.post_check(post_process.StepFailure,
-                     'Upload EC Firmware test results.run'), input_properties=({
-                         'firmware_location': common_pb2.PLATFORM_ZEPHYR
-                     }))
-
-  yield test(
-      'upload-renode-test-results-fail',
-      api.step_data('Upload Renode Firmware test results.renode results',
-                    api.file.glob_paths(['src/platform/ec/test_results.json'])),
-      api.step_data('Upload Renode Firmware test results.run', retcode=1),
-      api.post_check(
-          post_process.StepTextContains,
-          'Upload Renode Firmware test results',
-          ['Failed to upload test results'],
-      ),
-      api.post_check(post_process.StepFailure,
-                     'Upload Renode Firmware test results.run'),
-      input_properties=({
-          'firmware_location': common_pb2.PLATFORM_RENODE
-      }))
 
   yield test(
       'signing-invocation',
