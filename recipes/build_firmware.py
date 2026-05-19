@@ -14,7 +14,6 @@ a branch, and that branch should be as short-lived as possible.
 """
 
 import collections
-import re
 import os
 from pathlib import Path
 
@@ -26,7 +25,6 @@ from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
 from PB.chromiumos.build_report import BuildReport
-from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig, SigningConfig
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -66,17 +64,6 @@ DEPS = [
 
 
 PROPERTIES = BuildFirmwareProperties
-
-# Artifacts that don't need to be signed via legacy signing.
-# `host_emulation` (and `he`) will never need to be signed.
-# `nuvotitan_cw310_a1 fpga` will never need to be signed.
-# `opentitan` (and `nt`) will need to be signed in the future, but signing
-# isn't set up for that target yet.
-SKIP_LEGACY_SIGNING_RE = re.compile(
-    r'^(host_emulation|he|opentitan|nt|nuvotitan_cw310)-')
-INCLUDE_SIGNING_RE = re.compile(r'nt-(ti50|system_test_auto)')
-GENERATE_PAOS_RE = re.compile(r'nt-(perso|ti50)')
-
 
 def UploadTestResults(api, location, builder_name):
   if location == common_pb2.PLATFORM_ZEPHYR:
@@ -336,7 +323,6 @@ def RunSteps(api, properties):
           api.bcid_reporter.report_stage('upload-complete')
 
       # Invoke signing if applies.
-      signing_scheduled = False
       if _invoke_signing_for_current_build(build.builder.builder,
                                            uploaded_artifacts, properties):
         requests = []
@@ -353,11 +339,8 @@ def RunSteps(api, properties):
               f'sign_image_properties={properties.sign_image_properties}',
               f'uploaded_artifacts={uploaded_artifacts}',
           ])
-          for artifact_name in [
-              a
-              for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-              if not SKIP_LEGACY_SIGNING_RE.match(a)
-          ]:
+          for artifact_name in uploaded_artifacts.files_by_artifact[
+              'FIRMWARE_TARBALL']:
             archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
                                          uploaded_artifacts.gs_path,
                                          artifact_name)
@@ -367,55 +350,6 @@ def RunSteps(api, properties):
                                                  properties=sign_image_props))
 
           api.buildbucket.schedule(requests)
-          signing_scheduled = True
-        # Signing requests:
-        with api.step.nest('sign artifacts'):
-          signing_configs = []
-          for artifact_name in [
-              a
-              for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-              if INCLUDE_SIGNING_RE.match(a)
-          ]:
-            signing_configs.append(
-                SigningConfig(
-                    image_type=common_pb2.IMAGE_TYPE_GSC_FIRMWARE,
-                    ensure_no_password=True,
-                    archive_path=artifact_name,
-                    channel=common_pb2.CHANNEL_AGNOSTIC,
-                    output_names=[
-                        f"@CHIP@_@KEYSET_VER@_{artifact_name.removesuffix('.tar.bz2')}"
-                    ],
-                ))
-
-          # Set up the custom version number to indicate Ti50.
-          version = api.cros_version.version
-          api.signing_utils.custom_artifact_version = f'ti50/nt-signed/{version}'
-          api.signing.signing_operation(
-              config=BuildTargetSigningConfigs(build_target_signing_configs=[
-                  BuildTargetSigningConfig(
-                      keyset=properties.signing_keyset,
-                      version=version.platform_version,
-                      signing_configs=signing_configs,
-                  )
-              ]),
-              local_artifact_dir=artifact_dir,
-          )
-          signing_scheduled = True
-
-      if properties.pao_signing_config.key and uploaded_artifacts and len(
-          uploaded_artifacts) > 2:
-        with api.step.nest("signing PAOs in artifact"):
-          with api.deferrals.raise_exceptions_at_end():
-            for artifact_name in [
-                a for a in
-                uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-                if GENERATE_PAOS_RE.match(a)
-            ]:
-              with api.deferrals.defer_exceptions():
-                api.signing.sign_ti50_paos(
-                    artifact_dir, properties.pao_signing_config.project,
-                    properties.pao_signing_config.keyring,
-                    properties.pao_signing_config.key, artifact_name)
 
       # Publish tar files to pubsub.
       if not api.cv.active:
@@ -474,62 +408,9 @@ def RunSteps(api, properties):
 
       CreateContainers(api, config)
 
-      # Tast artifacts are only required by ToT builders since those are the only
-      # builders that generate signed outputs.
-      # Ideally we would have an ArtifactType and key off of that.
-      if location == common_pb2.PLATFORM_TI50 and signing_scheduled:
-        CreateTi50TastArtifacts(api, config)
-
       api.easy.set_properties_step(
           suite_scheduling=str(properties.set_suite_scheduling and
                                not is_staging))
-
-
-def CreateTi50TastArtifacts(api, config):
-  """Create directories and files of artifacts needed by Ti50 Tast tests."""
-  with api.step.nest('Create Ti50 Tast artifacts'):
-
-    artifacts_gs_bucket = config.artifacts.artifacts_gs_bucket
-    artifacts_gs_path = _artifacts_gs_path(api, config)
-
-    tars = _find_files_with_suffix(api, artifacts_gs_bucket, artifacts_gs_path,
-                                   '.tar.bz2')
-    if len(tars) == 0:
-      return
-
-    temp_dir = api.path.mkdtemp()
-    tast_dir = api.path.join(temp_dir, 'tast')
-    tast_dir_empty = True
-    download_dir = api.path.join(temp_dir, 'download')
-    api.file.ensure_directory('Create download directory', download_dir)
-    for tar_file in tars:
-      api.gsutil.download(artifacts_gs_bucket, tar_file, download_dir,
-                          name='download tarfile')
-      base = os.path.basename(tar_file)
-      downloaded_file = os.path.join(download_dir, base)
-      parts = base[:-len('.tar.bz2')].split('-')
-      board = parts[0]
-      image = '-'.join(parts[1:])
-      # andreiboard tarballs are the default, they don't have a board prefix.
-      if image == '':
-        image = board
-        board = 'andreiboard'
-      tast_subdir = os.path.join(tast_dir, '-'.join((board, image)))
-      # Extract image binary and opentitantool config json files into tast_subdir
-      with api.step.nest('Extract archive') as presentation:
-        try:
-          api.step('untar', [
-              'tar', '-x', '--exclude=*_key*', '--wildcards',
-              '*opentitantool_*.json', '--wildcards', '*.bin',
-              r'--xform=s=^.*/\([^/]*\)$=\1=', '--one-top-level=' + tast_subdir,
-              '-f', downloaded_file
-          ])
-          tast_dir_empty = False
-        except api.step.StepFailure:
-          presentation.step_text = 'No interesting files in archive.'
-    if not tast_dir_empty:
-      api.gsutil.upload(tast_dir, artifacts_gs_bucket, artifacts_gs_path,
-                        ['-r'])
 
 
 def _read_chromiumos_sdk_pin(api, properties):
@@ -557,31 +438,6 @@ def _invoke_signing_for_current_build(builder_name, uploaded_artifacts,
   valid_builder = builder_name in properties.signing_allowed_builder_names and properties.sign_image_properties
   artifact_upload_succeeded = uploaded_artifacts and len(uploaded_artifacts) > 2
   return valid_builder and artifact_upload_succeeded
-
-
-def _artifacts_gs_path(api, config):
-  """The artifacts gs path given the builder config"""
-  # target won't be used to construct the artifacts_gs_path since only using
-  # gs_path in the template but it needs to be provided to avoid a crash
-  target = collections.namedtuple('target', 'name')(name='')
-  return api.cros_artifacts.artifacts_gs_path(config.id.name, target,
-                                              config.id.type,
-                                              template='{gs_path}')
-
-
-def _find_files_with_suffix(api, bucket, path, suffix):
-  """Find files ending in <suffix> in gs://<bucket>/<path>"""
-  bucket_part = 'gs://{}/'.format(bucket)
-  paths = []
-  try:
-    list_out = api.gsutil.list(bucket_part + path + '/**/*' + suffix, ['-r'],
-                               stdout=api.raw_io.output_text())
-
-    paths = list_out.stdout.splitlines()
-  except api.step.InfraFailure:
-    pass
-
-  return [p.strip()[len(bucket_part):] for p in paths]
 
 
 def GenTests(api):
@@ -678,43 +534,6 @@ def GenTests(api):
           tarball_info=FirmwareArtifactInfo.TarballInfo(type='EC',
                                                         board=['rex'])),
   ])
-
-  TI50_ARTIFACTS = '''{
-  "artifacts": {
-    "artifacts": [
-      {
-        "artifactType": 31,
-        "location": 3,
-        "paths": [
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb"
-          }
-        ]
-      },
-      {
-        "artifactType": 30,
-        "location": 3,
-        "paths": [
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
-          }
-        ]
-      },
-      {
-        "artifactType": 30,
-        "location": 3,
-        "paths": [
-          {
-            "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/nt-ti50.tar.bz2"
-          }
-        ]
-      }
-    ]
-  }
-}'''
 
   def get_signing_image_props_for_test(is_staging=False):
     """
@@ -972,52 +791,21 @@ def GenTests(api):
       },
   )
 
-  sdk_pin_path = 'src/platform/ti50/sdk-version'
+  sdk_pin_path = 'src/platform/foobar/sdk-version'
   yield test(
-      'firmware-ti50-cq',
+      'cq-sdk-pin',
       api.step_data(
           'read chromiumos-sdk pin.read [CLEANUP]/chromiumos_workspace/{}'
           .format(sdk_pin_path), api.file.read_text('2022.01.20.073008\n')),
       api.post_check(post_process.DoesNotRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
-      cq=True, builder='firmware-ti50-cq', input_properties={
+      cq=True,
+      builder='fw-ec-cq',
+      input_properties={
           'firmware_location': 3,
           'chromiumos_sdk_pin_file': sdk_pin_path,
-      })
-
-  yield test(
-      'firmware-ti50-postsubmit',
-      api.cros_build_api.set_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          '{}'),
-      api.cros_build_api.set_api_return(
-          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          TI50_ARTIFACTS),
-      api.path.files_exist(api.path.cleanup_dir /
-                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data(
-          'reading metadata.read fw metadata',
-          api.file.read_proto(
-              FirmwareArtifactInfo(objects=[
-                  FirmwareArtifactInfo.ObjectInfo(
-                      file_name='dt-ti50.tar.bz2',
-                      tarball_info=FirmwareArtifactInfo.TarballInfo(
-                          board=['betty'], publish_to_goldeneye=True,
-                          type='GSC')),
-              ]))), builder='firmware-ti50-postsubmit', input_properties={
-                  'firmware_location': common_pb2.PLATFORM_TI50,
-                  'chromiumos_sdk_pin_file': sdk_pin_path,
-                  'set_suite_scheduling': True,
-                  'signing_allowed_builder_names': [
-                      'staging-firmware-ti50-postsubmit',
-                      'firmware-ti50-postsubmit',
-                  ],
-                  'pao_signing_config': {
-                      "project": "chromeos",
-                      "keyring": "ring",
-                      "key": "pao-key"
-                  },
-              })
+      },
+  )
 
   yield test(
       'upload-fail',
@@ -1142,71 +930,6 @@ def GenTests(api):
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }
-      })
-
-  yield test(
-      'create tast artifacts',
-      api.step_data(
-          'Create Ti50 Tast artifacts.gsutil list',
-          stdout=api.raw_io.output_text(
-              'gs://chromeos-image-archive/build0/ti50.tar.bz2')),
-      builder='firmware-ti50-postsubmit', input_properties={
-          '$chromeos/build_menu': {
-              'container_version_format':
-                  '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
-          },
-          '$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          },
-          'firmware_location':
-              common_pb2.PLATFORM_TI50,
-          'signing_allowed_builder_names': [
-              'staging-firmware-ti50-postsubmit',
-              'firmware-ti50-postsubmit',
-          ],
-      })
-
-  yield test(
-      'create tast artifacts missing tar files',
-      api.step_data('Create Ti50 Tast artifacts.gsutil list', retcode=1),
-      builder='firmware-ti50-postsubmit', input_properties={
-          '$chromeos/build_menu': {
-              'container_version_format':
-                  '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
-          },
-          '$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          },
-          'firmware_location':
-              common_pb2.PLATFORM_TI50,
-          'signing_allowed_builder_names': [
-              'staging-firmware-ti50-postsubmit',
-              'firmware-ti50-postsubmit',
-          ],
-      })
-
-  yield test(
-      'create tast artifacts archive missing json and bin files',
-      api.step_data(
-          'Create Ti50 Tast artifacts.gsutil list',
-          stdout=api.raw_io.output_text(
-              'gs://chromeos-image-archive/build0/ti50.tar.bz2')),
-      api.step_data('Create Ti50 Tast artifacts.Extract archive.untar',
-                    retcode=2), builder='firmware-ti50-postsubmit',
-      input_properties={
-          '$chromeos/build_menu': {
-              'container_version_format':
-                  '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
-          },
-          '$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          },
-          'firmware_location':
-              common_pb2.PLATFORM_TI50,
-          'signing_allowed_builder_names': [
-              'staging-firmware-ti50-postsubmit',
-              'firmware-ti50-postsubmit',
-          ],
       })
 
   yield test(
