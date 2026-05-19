@@ -5790,6 +5790,10 @@
   },
   {
     "cmd": [],
+    "name": "publish artifacts by board"
+  },
+  {
+    "cmd": [],
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",

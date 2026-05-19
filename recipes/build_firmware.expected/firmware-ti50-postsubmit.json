@@ -4955,6 +4955,81 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "publish artifacts by board",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs publish dir: NO BOARD@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-ti50-postsubmit/1234.56.0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/nt-ti50.tar.bz2",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/firmware_metadata.jsonpb",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp (2)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
@@ -4980,7 +5055,7 @@
     "cmd": [],
     "name": "schedule legacy signing build",
     "~followup_annotations": [
-      "@@@STEP_TEXT@builder_name=firmware-ti50-postsubmit<br/>signing_allowed_builder_names=['staging-firmware-ti50-postsubmit', 'firmware-ti50-postsubmit']<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['nt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['nt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]})@@@"
+      "@@@STEP_TEXT@builder_name=firmware-ti50-postsubmit<br/>signing_allowed_builder_names=['staging-firmware-ti50-postsubmit', 'firmware-ti50-postsubmit']<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['nt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['nt-ti50.tar.bz2']}, {'gs_location': 'firmware-image-archive/firmware-ti50-postsubmit/1234.56.0', 'files': ['nt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}, {'gs_location': 'firmware-image-archive/firmware-ti50-postsubmit/1234.56.0', 'files': ['firmware_metadata.jsonpb']}]})@@@"
     ]
   },
   {
@@ -5910,12 +5985,14 @@
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
-      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['nt-ti50.tar.bz2']}]@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['nt-ti50.tar.bz2']}, {'gs_location': 'firmware-image-archive/firmware-ti50-postsubmit/1234.56.0', 'files': ['nt-ti50.tar.bz2']}]@@@",
       "@@@STEP_LOG_LINE@debug@nt-ti50.tar.bz2 was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
-      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]@@@",
+      "@@@STEP_LOG_LINE@debug@nt-ti50.tar.bz2 was published to firmware-image-archive/firmware-ti50-postsubmit/1234.56.0 metadata=None@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}, {'gs_location': 'firmware-image-archive/firmware-ti50-postsubmit/1234.56.0', 'files': ['firmware_metadata.jsonpb']}]@@@",
       "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
+      "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to firmware-image-archive/firmware-ti50-postsubmit/1234.56.0 metadata=None@@@",
       "@@@STEP_LOG_END@debug@@@",
-      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['nt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['nt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]})@@@",
+      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['nt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['nt-ti50.tar.bz2']}, {'gs_location': 'firmware-image-archive/firmware-ti50-postsubmit/1234.56.0', 'files': ['nt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}, {'gs_location': 'firmware-image-archive/firmware-ti50-postsubmit/1234.56.0', 'files': ['firmware_metadata.jsonpb']}]})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"
     ]
   },

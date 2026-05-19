@@ -78,9 +78,6 @@
       "@@@STEP_LOG_LINE@builder_config_json@              \"FIRMWARE_TARBALL\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@              \"FIRMWARE_TARBALL_INFO\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@              \"FIRMWARE_TOKEN_DATABASE\"@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@            ],@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@            \"gsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@              \"firmware-image-archive/firmware-R126-15886.2.B/{platform_version}\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@            ]@@@",
       "@@@STEP_LOG_LINE@builder_config_json@          }@@@",
       "@@@STEP_LOG_LINE@builder_config_json@        ]@@@",
@@ -6044,10 +6041,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-R126-15886.2.B/1234.56.0@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-R126-15886.2.B/1234.56.0@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TOKEN_DATABASE@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-R126-15886.2.B/1234.56.0@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -6073,9 +6067,6 @@
       "@@@STEP_LOG_LINE@request@          30,@@@",
       "@@@STEP_LOG_LINE@request@          31,@@@",
       "@@@STEP_LOG_LINE@request@          55@@@",
-      "@@@STEP_LOG_LINE@request@        ],@@@",
-      "@@@STEP_LOG_LINE@request@        \"gsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@          \"firmware-image-archive/firmware-R126-15886.2.B/{platform_version}\"@@@",
       "@@@STEP_LOG_LINE@request@        ]@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
@@ -6160,7 +6151,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30,\n          31,\n          55\n        ],\n        \"gsLocations\": [\n          \"firmware-image-archive/firmware-R126-15886.2.B/{platform_version}\"\n        ]\n      }\n    ]\n  },\n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30,\n          31,\n          55\n        ]\n      }\n    ]\n  },\n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6289,9 +6280,6 @@
       "@@@STEP_LOG_LINE@request@            30,@@@",
       "@@@STEP_LOG_LINE@request@            31,@@@",
       "@@@STEP_LOG_LINE@request@            55@@@",
-      "@@@STEP_LOG_LINE@request@          ],@@@",
-      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@            \"firmware-image-archive/firmware-R126-15886.2.B/{platform_version}\"@@@",
       "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
@@ -6317,7 +6305,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"buildTarget\": {}\n  },\n  \"artifactInfo\": {\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30,\n            31,\n            55\n          ],\n          \"gsLocations\": [\n            \"firmware-image-archive/firmware-R126-15886.2.B/{platform_version}\"\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"buildTarget\": {}\n  },\n  \"artifactInfo\": {\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30,\n            31,\n            55\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6472,199 +6460,6 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.publish artifacts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-R126-15886.2.B/1234.56.0@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-R126-15886.2.B/1234.56.0@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TOKEN_DATABASE@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-R126-15886.2.B/1234.56.0@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/brox.EC.tar.bz2",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/brox.EC_elf.tar.bz2",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/karis.EC.tar.bz2",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/karis.EC_elf.tar.bz2",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/screebo.EC.tar.bz2",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/screebo.EC_elf.tar.bz2",
-      "gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.publish artifacts.gsutil cp",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/brox/firmware_from_source.tar.bz2",
-      "gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/brox/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.publish artifacts.gsutil cp (2)",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/rex/firmware_from_source.tar.bz2",
-      "gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/rex/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.publish artifacts.gsutil cp (3)",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/firmware_metadata.jsonpb",
-      "gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.publish artifacts.gsutil cp (4)",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/tokens.bin",
-      "gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.publish artifacts.gsutil cp (5)",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload artifacts.publish artifact GS paths",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"brox.EC.tar.bz2\", \"brox.EC_elf.tar.bz2\", \"karis.EC.tar.bz2\", \"karis.EC_elf.tar.bz2\", \"screebo.EC.tar.bz2\", \"screebo.EC_elf.tar.bz2\", \"brox/firmware_from_source.tar.bz2\", \"rex/firmware_from_source.tar.bz2\"], \"gs_location\": \"firmware-image-archive/firmware-R126-15886.2.B/1234.56.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"firmware_metadata.jsonpb\"], \"gs_location\": \"firmware-image-archive/firmware-R126-15886.2.B/1234.56.0\"}], \"FIRMWARE_TOKEN_DATABASE\": [{\"files\": [\"tokens.bin\"], \"gs_location\": \"firmware-image-archive/firmware-R126-15886.2.B/1234.56.0\"}]}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "reading metadata",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Reading proto from [CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb@@@",
@@ -6804,48 +6599,265 @@
   },
   {
     "cmd": [],
+    "name": "publish artifacts by board",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs publish dir: brox@https://console.cloud.google.com/storage/browser/firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0@@@",
+      "@@@STEP_LINK@gs publish dir: rex@https://console.cloud.google.com/storage/browser/firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0@@@",
+      "@@@STEP_LINK@gs publish dir: NO BOARD@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-R126-15886.2.B/1234.56.0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/brox.EC.tar.bz2",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/brox.EC_elf.tar.bz2",
+      "gs://firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/brox/firmware_from_source.tar.bz2",
+      "gs://firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0/brox/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp (2)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/karis.EC.tar.bz2",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/karis.EC_elf.tar.bz2",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/screebo.EC.tar.bz2",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/screebo.EC_elf.tar.bz2",
+      "gs://firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp (3)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/rex/firmware_from_source.tar.bz2",
+      "gs://firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0/rex/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp (4)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/firmware_metadata.jsonpb",
+      "gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp (5)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/tokens.bin",
+      "gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp (6)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
-      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'firmware-image-archive/firmware-R126-15886.2.B/1234.56.0', 'files': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'rex/firmware_from_source.tar.bz2']}]@@@",
-      "@@@STEP_LOG_LINE@debug@brox.EC.tar.bz2 was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0', 'files': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2']}, {'gs_location': 'firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0', 'files': ['karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'rex/firmware_from_source.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2']}]@@@",
+      "@@@STEP_LOG_LINE@debug@brox.EC.tar.bz2 was published to firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
       "@@@STEP_LOG_LINE@debug@Pub/sub brox.EC.tar.bz2 for brox@@@",
-      "@@@STEP_LOG_LINE@debug@brox.EC_elf.tar.bz2 was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@brox.EC_elf.tar.bz2 was published to firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
       "@@@STEP_LOG_LINE@debug@Pub/sub brox.EC_elf.tar.bz2 for brox@@@",
-      "@@@STEP_LOG_LINE@debug@karis.EC.tar.bz2 was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@Pub/sub karis.EC.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@karis.EC_elf.tar.bz2 was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@Pub/sub karis.EC_elf.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@screebo.EC.tar.bz2 was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@Pub/sub screebo.EC.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@screebo.EC_elf.tar.bz2 was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@Pub/sub screebo.EC_elf.tar.bz2 for rex@@@",
-      "@@@STEP_LOG_LINE@debug@brox/firmware_from_source.tar.bz2 was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@brox/firmware_from_source.tar.bz2 was published to firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
       "@@@STEP_LOG_LINE@debug@Pub/sub brox/firmware_from_source.tar.bz2 for brox@@@",
-      "@@@STEP_LOG_LINE@debug@rex/firmware_from_source.tar.bz2 was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@karis.EC.tar.bz2 was published to firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@Pub/sub karis.EC.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@karis.EC_elf.tar.bz2 was published to firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@Pub/sub karis.EC_elf.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@rex/firmware_from_source.tar.bz2 was published to firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
       "@@@STEP_LOG_LINE@debug@Pub/sub rex/firmware_from_source.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@screebo.EC.tar.bz2 was published to firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@Pub/sub screebo.EC.tar.bz2 for rex@@@",
+      "@@@STEP_LOG_LINE@debug@screebo.EC_elf.tar.bz2 was published to firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0 metadata=type: EC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
+      "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@Pub/sub screebo.EC_elf.tar.bz2 for rex@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'firmware-image-archive/firmware-R126-15886.2.B/1234.56.0', 'files': ['firmware_metadata.jsonpb']}]@@@",
       "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=None@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TOKEN_DATABASE:[{'gs_location': 'firmware-image-archive/firmware-R126-15886.2.B/1234.56.0', 'files': ['tokens.bin']}]@@@",
       "@@@STEP_LOG_LINE@debug@tokens.bin was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=None@@@",
       "@@@STEP_LOG_END@debug@@@",
-      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'rex/firmware_from_source.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'firmware-image-archive/firmware-R126-15886.2.B/1234.56.0', 'files': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'rex/firmware_from_source.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'firmware-image-archive/firmware-R126-15886.2.B/1234.56.0', 'files': ['firmware_metadata.jsonpb']}], 'FIRMWARE_TOKEN_DATABASE': [{'gs_location': 'firmware-image-archive/firmware-R126-15886.2.B/1234.56.0', 'files': ['tokens.bin']}]})@@@",
+      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'rex/firmware_from_source.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin']}, published={})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"
     ]
   },
@@ -6854,7 +6866,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC.tar.bz2']}, published=None)@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='brox/firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -6950,7 +6962,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC_elf.tar.bz2']}, published=None)@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='brox/firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC_elf.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -7046,8 +7058,69 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['karis.EC.tar.bz2']}, published=None)@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='brox/firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['brox/firmware_from_source.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sending pub/sub notifications.publish artifacts to pubsub (3).Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sending pub/sub notifications.publish artifacts to pubsub (3).compute file size for brox/firmware_from_source.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@filesizes@[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
     ]
   },
   {
@@ -7066,7 +7139,7 @@
       "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-R126-15886.2.B\"@@@",
       "@@@STEP_LOG_LINE@message@    },@@@",
       "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\": \"rex\"@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"brox\"@@@",
       "@@@STEP_LOG_LINE@message@    },@@@",
       "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
       "@@@STEP_LOG_LINE@message@      {@@@",
@@ -7091,6 +7164,16 @@
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"3\"@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
@@ -7101,7 +7184,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKigSJgoMU1RFUF9PVkVSQUxMEhYIARBkGhAKBgjDgMT9BBIGCN6AxP0EQAM=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI6ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgYKBGJyb3gyBggFEgI5OTINCAQSCTEyMzQuNTYuMCooEiYKDFNURVBfT1ZFUkFMTBIWCAEQZBoQCgYIw4DE/QQSBgjegMT9BDp2CAMSZgpkZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Jyb3gvZmlybXdhcmUtUjEyNi0xNTg4Ni4yLkIvMTIzNC41Ni4wL2Jyb3gvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AD',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -7128,7 +7211,7 @@
       }
     },
     "name": "sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKigSJgoMU1RFUF9PVkVSQUxMEhYIARBkGhAKBgjDgMT9BBIGCN6AxP0EQAM=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI6ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgYKBGJyb3gyBggFEgI5OTINCAQSCTEyMzQuNTYuMCooEiYKDFNURVBfT1ZFUkFMTBIWCAEQZBoQCgYIw4DE/QQSBgjegMT9BDp2CAMSZgpkZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Jyb3gvZmlybXdhcmUtUjEyNi0xNTg4Ni4yLkIvMTIzNC41Ni4wL2Jyb3gvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AD\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -7142,7 +7225,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['karis.EC_elf.tar.bz2']}, published=None)@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='rex/firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['karis.EC.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -7238,7 +7321,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (5)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['screebo.EC.tar.bz2']}, published=None)@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='rex/firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['karis.EC_elf.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -7334,8 +7417,69 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (6)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['screebo.EC_elf.tar.bz2']}, published=None)@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='rex/firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['rex/firmware_from_source.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sending pub/sub notifications.publish artifacts to pubsub (6).Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sending pub/sub notifications.publish artifacts to pubsub (6).compute file size for rex/firmware_from_source.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@filesizes@[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
     ]
   },
   {
@@ -7379,6 +7523,16 @@
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"6\"@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
@@ -7389,7 +7543,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKBgjDgMT9BBIMCOKAxP0EEIDKte4BQAY=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKBgjDgMT9BBIMCOKAxP0EEIDKte4BOnQIAxJkCmJnczovL2Zpcm13YXJlLWltYWdlLWFyY2hpdmUvcmV4L2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CLzEyMzQuNTYuMC9yZXgvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AG',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -7416,7 +7570,7 @@
       }
     },
     "name": "sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKBgjDgMT9BBIMCOKAxP0EEIDKte4BQAY=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKBgjDgMT9BBIMCOKAxP0EEIDKte4BOnQIAxJkCmJnczovL2Zpcm13YXJlLWltYWdlLWFyY2hpdmUvcmV4L2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CLzEyMzQuNTYuMC9yZXgvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AG\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -7430,69 +7584,8 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (7)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['brox/firmware_from_source.tar.bz2']}, published=None)@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='rex/firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['screebo.EC.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.publish artifacts to pubsub (7).Compute file hash",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "filesizes",
-      "[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.publish artifacts to pubsub (7).compute file size for brox/firmware_from_source.tar.bz2",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@filesizes@[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2: \t111@@@",
-      "@@@STEP_LOG_END@filesizes@@@"
     ]
   },
   {
@@ -7511,7 +7604,7 @@
       "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-R126-15886.2.B\"@@@",
       "@@@STEP_LOG_LINE@message@    },@@@",
       "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\": \"brox\"@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"rex\"@@@",
       "@@@STEP_LOG_LINE@message@    },@@@",
       "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
       "@@@STEP_LOG_LINE@message@      {@@@",
@@ -7536,16 +7629,6 @@
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  },@@@",
-      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
-      "@@@STEP_LOG_LINE@message@    {@@@",
-      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
-      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
-      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
-      "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"7\"@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
@@ -7556,7 +7639,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI6ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgYKBGJyb3gyBggFEgI5OTINCAQSCTEyMzQuNTYuMCooEiYKDFNURVBfT1ZFUkFMTBIWCAEQZBoQCgYIw4DE/QQSBgjkgMT9BDpxCAMSYQpfZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CLzEyMzQuNTYuMC9icm94L2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABw==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKigSJgoMU1RFUF9PVkVSQUxMEhYIARBkGhAKBgjDgMT9BBIGCOSAxP0EQAc=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -7583,7 +7666,7 @@
       }
     },
     "name": "sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI6ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgYKBGJyb3gyBggFEgI5OTINCAQSCTEyMzQuNTYuMCooEiYKDFNURVBfT1ZFUkFMTBIWCAEQZBoQCgYIw4DE/QQSBgjkgMT9BDpxCAMSYQpfZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CLzEyMzQuNTYuMC9icm94L2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABw==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKigSJgoMU1RFUF9PVkVSQUxMEhYIARBkGhAKBgjDgMT9BBIGCOSAxP0EQAc=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -7597,69 +7680,8 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (8)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['rex/firmware_from_source.tar.bz2']}, published=None)@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='rex/firmware-R126-15886.2.B/1234.56.0', files_by_artifact={'FIRMWARE_TARBALL': ['screebo.EC_elf.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.publish artifacts to pubsub (8).Compute file hash",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "filesizes",
-      "[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.publish artifacts to pubsub (8).compute file size for rex/firmware_from_source.tar.bz2",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@filesizes@[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2: \t111@@@",
-      "@@@STEP_LOG_END@filesizes@@@"
     ]
   },
   {
@@ -7703,16 +7725,6 @@
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  },@@@",
-      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
-      "@@@STEP_LOG_LINE@message@    {@@@",
-      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
-      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
-      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
-      "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"8\"@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
@@ -7723,7 +7735,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKBgjDgMT9BBIMCOWAxP0EEIDKte4BOnAIAxJgCl5nczovL2Zpcm13YXJlLWltYWdlLWFyY2hpdmUvZmlybXdhcmUtUjEyNi0xNTg4Ni4yLkIvMTIzNC41Ni4wL3JleC9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAg=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKBgjDgMT9BBIMCOWAxP0EEIDKte4BQAg=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -7750,7 +7762,7 @@
       }
     },
     "name": "sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKBgjDgMT9BBIMCOWAxP0EEIDKte4BOnAIAxJgCl5nczovL2Zpcm13YXJlLWltYWdlLWFyY2hpdmUvZmlybXdhcmUtUjEyNi0xNTg4Ni4yLkIvMTIzNC41Ni4wL3JleC9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAg=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI5ChkKF2Zpcm13YXJlLVIxMjYtMTU4ODYuMi5CGgUKA3JleDIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKBgjDgMT9BBIMCOWAxP0EEIDKte4BQAg=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

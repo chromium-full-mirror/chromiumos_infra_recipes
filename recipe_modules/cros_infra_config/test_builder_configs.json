@@ -3865,9 +3865,6 @@
                   "FIRMWARE_TARBALL",
                   "FIRMWARE_TARBALL_INFO",
                   "FIRMWARE_TOKEN_DATABASE"
-                ],
-                "gsLocations": [
-                  "firmware-image-archive/firmware-R126-15886.2.B/{platform_version}"
                 ]
               }
             ]
@@ -4678,9 +4675,6 @@
                   "FIRMWARE_TARBALL",
                   "FIRMWARE_TARBALL_INFO",
                   "FIRMWARE_TOKEN_DATABASE"
-                ],
-                "gsLocations": [
-                  "firmware-image-archive/firmware-ec-R148-16640.2.B/{platform_version}"
                 ],
                 "location": "PLATFORM_ZEPHYR"
               }

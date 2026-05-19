@@ -222,6 +222,8 @@ def RunSteps(api, properties):
           config=config, report_to_spike=api.cros_infra_config.config.artifacts
           .attestation_eligible, use_file_paths=True,
           build_targets=firmware_targets)
+      published = collections.defaultdict(list)
+      published.update(uploaded_artifacts.published)
 
       # Read metadata jsonpb
       metadata_by_name = {}
@@ -247,6 +249,87 @@ def RunSteps(api, properties):
           else:
             step.logs['debug'] += f'{metadata_path} does not exist\n'
 
+      # Publish files by board. Artifact types FIRMWARE_TARBALL,
+      # FIRMWARE_TARBALL_INFO, and FIRMWARE_TOKEN_DATABASE get written to
+      # gs://firmware-image-archive/{board}/{build.builder.builder}/{version}/artifact.
+      # If the file has no boards, omit the board dir.
+
+      if not api.cv.active:
+        with api.step.nest('publish artifacts by board') as step:
+          # Go through all the files, and group by board.
+          artifacts_by_board = collections.defaultdict(
+              lambda: collections.defaultdict(list))
+          for artifact_type in uploaded_artifacts.files_by_artifact.keys():
+            if artifact_type not in (
+                'FIRMWARE_TARBALL',
+                'FIRMWARE_TARBALL_INFO',
+                'FIRMWARE_TOKEN_DATABASE',
+            ):
+              continue
+            for artifact_name in uploaded_artifacts.files_by_artifact[
+                artifact_type]:
+              file_metadata = metadata_by_name.get(artifact_name)
+              if file_metadata and file_metadata.board:
+                for board in file_metadata.board:
+                  artifacts_by_board[board][artifact_type].append(artifact_name)
+              else:
+                artifacts_by_board[None][artifact_type].append(artifact_name)
+
+          version = api.cros_version.version
+          publish_builder_name = build.builder.builder
+          if publish_builder_name.endswith('-branch'):
+            publish_builder_name = publish_builder_name[:-len('-branch')]
+          gsutil_timeout_seconds = 15 * 60
+          publish_bucket = "firmware-image-archive"
+          if api.build_menu.is_staging:
+            publish_bucket = 'staging-chromeos-image-archive'
+          for (board, artifacts) in artifacts_by_board.items():
+            if board:
+              publish_loc = f'{publish_bucket}/{board}/{publish_builder_name}/{version.platform_version}'
+            else:
+              publish_loc = f'{publish_bucket}/{publish_builder_name}/{version.platform_version}'
+            if board:
+              link_name = f'gs publish dir: {board}'
+            else:
+              link_name = 'gs publish dir: NO BOARD'
+            link_value = (
+                'https://console.cloud.google.com/storage/browser/%s' %
+                publish_loc)
+            upload_uri = 'gs://%s/%s' % (uploaded_artifacts.gs_bucket,
+                                         uploaded_artifacts.gs_path)
+            step.links[link_name] = link_value
+            for (aname, files) in artifacts.items():
+              files = [x for x in files if x != '.']
+              if files:
+                publish_uri = 'gs://' + publish_loc
+                if not publish_uri.endswith('/'):
+                  publish_uri += '/'
+                dir_to_files = collections.defaultdict(list)
+                for path in files:
+                  path_dir = os.path.dirname(path)
+                  if path_dir:
+                    path_dir += '/'
+                  dir_to_files[path_dir].append(path)
+                for publish_loc_suffix, files_in_group in dir_to_files.items():
+                  cmd = ['cp', '-r']
+                  cmd += [
+                      '%s/%s' % (upload_uri, path) for path in files_in_group
+                  ]
+                  cmd.append(publish_uri + publish_loc_suffix)
+                  max_retries = 3
+                  for retries in range(max_retries):
+                    try:
+                      api.gsutil(cmd, multithreaded=True,
+                                 timeout=gsutil_timeout_seconds)
+                      break
+                    except StepFailure as ex:
+                      if ex.had_timeout and retries < max_retries - 1:
+                        continue
+                      raise
+                published[aname].append({
+                    'gs_location': publish_loc,
+                    'files': files
+                })
 
       with api.failures.ignore_exceptions():
         if api.cros_infra_config.config.artifacts.attestation_eligible:
@@ -347,8 +430,8 @@ def RunSteps(api, properties):
           step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
           step.logs[
               'debug'] += 'Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO\n'
-          if uploaded_artifacts.published:
-            for atype, dests in uploaded_artifacts.published.items():
+          if published:
+            for atype, dests in published.items():
               step.logs['debug'] += f'published: {atype}:{dests}\n'
               for loc in dests:
                 for file in loc['files']:
@@ -807,9 +890,12 @@ def GenTests(api):
           'sending pub/sub notifications.publish artifacts to pubsub (2).build status pubsub update',
           'message', ['artifacts']),
       api.post_check(
-          post_process.LogDoesNotContain,
+          post_process.LogContains,
           'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
-          'message', ['artifacts']),
+          'message', [
+              'artifacts',
+              'gs://firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2'
+          ]),
       api.post_check(
           post_process.LogDoesNotContain,
           'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
@@ -819,23 +905,20 @@ def GenTests(api):
           'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
           'message', ['artifacts']),
       api.post_check(
-          post_process.LogDoesNotContain,
+          post_process.LogContains,
           'sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update',
+          'message', [
+              'artifacts',
+              'gs://firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
+          ]),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update',
           'message', ['artifacts']),
       api.post_check(
-          post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2'
-          ]),
-      api.post_check(
-          post_process.LogContains,
+          post_process.LogDoesNotContain,
           'sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
-          ]),
+          'message', ['artifacts']),
       builder='firmware-R126-15886.2.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -1125,3 +1208,66 @@ def GenTests(api):
               'firmware-ti50-postsubmit',
           ],
       })
+
+  yield test(
+      'gsutil-publish-timeout-retry-success',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          ZEPHYR_ARTIFACTS),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      api.step_data('reading metadata.read fw metadata',
+                    api.file.read_proto(ZEPHYR_METADATA)),
+      api.step_data('publish artifacts by board.gsutil cp',
+                    times_out_after=901),
+      builder='firmware-R126-15886.2.B-branch',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'attestation_eligible': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+          'bump_version': True,
+          'gitiles_commit': {
+              'host': 'chrome-internal.googlesource.com',
+              'project': 'chromeos/manifest-internal',
+              'ref': 'refs/heads/firmware-R126-15886.2.B',
+          },
+          'set_suite_scheduling': True,
+      },
+  )
+
+  yield test(
+      'gsutil-publish-timeout-retry-fail',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          ZEPHYR_ARTIFACTS),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      api.step_data('reading metadata.read fw metadata',
+                    api.file.read_proto(ZEPHYR_METADATA)),
+      api.step_data('publish artifacts by board.gsutil cp',
+                    times_out_after=901),
+      api.step_data('publish artifacts by board.gsutil cp (2)',
+                    times_out_after=901),
+      api.step_data('publish artifacts by board.gsutil cp (3)',
+                    times_out_after=901),
+      builder='firmware-R126-15886.2.B-branch',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'attestation_eligible': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+          'bump_version': True,
+          'gitiles_commit': {
+              'host': 'chrome-internal.googlesource.com',
+              'project': 'chromeos/manifest-internal',
+              'ref': 'refs/heads/firmware-R126-15886.2.B',
+          },
+          'set_suite_scheduling': True,
+      },
+      status='INFRA_FAILURE',
+  )

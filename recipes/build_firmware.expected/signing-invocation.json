@@ -4609,6 +4609,115 @@
   },
   {
     "cmd": [],
+    "name": "publish artifacts by board",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs publish dir: NO BOARD@https://console.cloud.google.com/storage/browser/firmware-image-archive/fw-ec-postsubmit/1234.56.0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/from_source.tar.bz2",
+      "gs://firmware-image-archive/fw-ec-postsubmit/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/fw_metadata.json",
+      "gs://firmware-image-archive/fw-ec-postsubmit/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp (2)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/tokens.bin",
+      "gs://firmware-image-archive/fw-ec-postsubmit/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts by board.gsutil cp (3)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "schedule legacy signing build",
     "~followup_annotations": [
       "@@@STEP_TEXT@builder_name=fw-ec-postsubmit<br/>signing_allowed_builder_names=['fw-ec-postsubmit']<br/>sign_image_properties=image_type: IMAGE_TYPE_GSC_FIRMWARE<br/>keyset: \"test-keyset\"<br/>signer_type: SIGNER_PRODUCTION<br/>gsc_instructions {<br/>  target: PREPVT<br/>}<br/>allow_non_release_signer_bucket: true<br/><br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@"
@@ -5216,6 +5325,12 @@
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'firmware-image-archive/fw-ec-postsubmit/1234.56.0', 'files': ['from_source.tar.bz2']}]@@@",
+      "@@@STEP_LOG_LINE@debug@from_source.tar.bz2 was published to firmware-image-archive/fw-ec-postsubmit/1234.56.0 metadata=None@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'firmware-image-archive/fw-ec-postsubmit/1234.56.0', 'files': ['fw_metadata.json']}]@@@",
+      "@@@STEP_LOG_LINE@debug@fw_metadata.json was published to firmware-image-archive/fw-ec-postsubmit/1234.56.0 metadata=None@@@",
+      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TOKEN_DATABASE:[{'gs_location': 'firmware-image-archive/fw-ec-postsubmit/1234.56.0', 'files': ['tokens.bin']}]@@@",
+      "@@@STEP_LOG_LINE@debug@tokens.bin was published to firmware-image-archive/fw-ec-postsubmit/1234.56.0 metadata=None@@@",
       "@@@STEP_LOG_END@debug@@@",
       "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"
