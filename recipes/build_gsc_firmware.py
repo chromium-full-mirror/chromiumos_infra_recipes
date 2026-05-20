@@ -72,7 +72,7 @@ PROPERTIES = BuildGscFirmwareProperties
 SKIP_LEGACY_SIGNING_RE = re.compile(
     r'^(host_emulation|he|opentitan|nt|nuvotitan_cw310)-')
 INCLUDE_SIGNING_RE = re.compile(r'nt-(ti50|system_test_auto)')
-GENERATE_PAOS_RE = re.compile(r'nt-(perso|ti50)')
+GENERATE_PAOS_RE = re.compile(r'nt-(perso|ti50)|cr50')
 
 
 def CreateContainers(api, config):
@@ -473,6 +473,33 @@ def GenTests(api):
   }
 }'''
 
+  CR50_ARTIFACTS = '''{
+  "artifacts": {
+    "artifacts": [
+      {
+        "artifactType": 31,
+        "location": 3,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb"
+          }
+        ]
+      },
+      {
+        "artifactType": 30,
+        "location": 3,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/cr50.tar.bz2"
+          }
+        ]
+      }
+    ]
+  }
+}'''
+
   def get_signing_image_props_for_test(is_staging=False):
     """
     Get SignImageProperties for test.
@@ -668,6 +695,36 @@ def GenTests(api):
               'firmware-ti50-postsubmit',
           ],
       })
+
+  yield test(
+      'firmware-cr50-pao',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          CR50_ARTIFACTS),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      api.step_data(
+          'sending pub/sub notifications.read fw metadata',
+          api.file.read_proto(
+              FirmwareArtifactInfo(objects=[
+                  FirmwareArtifactInfo.ObjectInfo(
+                      file_name='cr50.tar.bz2',
+                      tarball_info=FirmwareArtifactInfo.TarballInfo(
+                          board=['betty'], publish_to_goldeneye=True,
+                          type='GSC')),
+              ]))), builder='firmware-cr50-postsubmit', input_properties={
+                  'firmware_location': common_pb2.PLATFORM_CR50,
+                  'chromiumos_sdk_pin_file': sdk_pin_path,
+                  'set_suite_scheduling': True,
+                  'pao_signing_config': {
+                      "project": "chromeos",
+                      "keyring": "ring",
+                      "key": "pao-key"
+                  },
+              })
 
   yield test(
       'create tast artifacts missing tar files',
