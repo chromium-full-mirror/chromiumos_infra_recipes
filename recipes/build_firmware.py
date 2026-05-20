@@ -18,12 +18,13 @@ import os
 from pathlib import Path
 
 from google.protobuf.json_format import MessageToDict
-from google.protobuf.json_format import Parse as JsonToProto
+from google.protobuf import json_format
 
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
+from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.build_report import BuildReport
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 from recipe_engine import post_process
@@ -689,6 +690,40 @@ def GenTests(api):
 
   yield test(
       'ec-branch-postsubmit',
+      api.cros_infra_config.override_builder_configs_test_data(
+          json_format.Parse(
+              """{
+  "builderConfigs": [
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_ZEPHYR"
+      },
+      "id": {
+        "bucket": "firmware",
+        "name": "firmware-R126-15886.2.B-branch",
+        "type": "POSTSUBMIT"
+      }
+    }
+  ]
+}""", BuilderConfigs()), step_name='checking attestation eligibility'),
       api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           '{}'),
@@ -758,6 +793,110 @@ def GenTests(api):
   # not here.
   yield test(
       'firmware-ec-R148-16640.2.B-branch',
+      api.cros_infra_config.override_builder_configs_test_data(
+          json_format.Parse(
+              """{
+  "builderConfigs": [
+    {
+      "id": {
+        "name": "firmware-ec-R148-16640.2.B-branch",
+        "type": "POSTSUBMIT",
+        "bucket": "firmware"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdkCacheVersion": 1,
+        "manifest": "PRIVATE",
+        "firmwareLocation": "PLATFORM_ZEPHYR",
+        "publishImageSizes": true
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "toolchain": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CLANG_CRASH_DIAGNOSES"
+                ]
+              }
+            ]
+          },
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "LICENSE_CREDITS"
+                ]
+              }
+            ]
+          },
+          "sysroot": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DEBUG_SYMBOLS"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "BREAKPAD_DEBUG_SYMBOLS"
+                ]
+              }
+            ]
+          },
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ],
+                "location": "PLATFORM_ZEPHYR"
+              }
+            ]
+          }
+        },
+        "attestationEligible": true
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "sdkUpdate": {
+          "sdkUpdateRunSpec": "NO_RUN"
+        },
+        "installPackages": {
+          "disableGoma": true,
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      },
+      "updateChroot": {
+        "runSpec": "NO_RUN"
+      }
+    }
+  ]
+}""", BuilderConfigs()), step_name='checking attestation eligibility'),
       api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           '{}'),
@@ -770,7 +909,7 @@ def GenTests(api):
       api.step_data(
           'reading metadata.read fw metadata',
           api.file.read_proto(
-              JsonToProto(
+              json_format.Parse(
                   (Path(__file__).parent.resolve() /
                    'firmware_test_r148_zephyr_metadata.jsonpb').read_text(),
                   FirmwareArtifactInfo(), ignore_unknown_fields=True))),
@@ -934,6 +1073,40 @@ def GenTests(api):
 
   yield test(
       'gsutil-publish-timeout-retry-success',
+      api.cros_infra_config.override_builder_configs_test_data(
+          json_format.Parse(
+              """{
+  "builderConfigs": [
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_ZEPHYR"
+      },
+      "id": {
+        "bucket": "firmware",
+        "name": "firmware-R126-15886.2.B-branch",
+        "type": "POSTSUBMIT"
+      }
+    }
+  ]
+}""", BuilderConfigs()), step_name='checking attestation eligibility'),
       api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           '{}'),
@@ -963,6 +1136,40 @@ def GenTests(api):
 
   yield test(
       'gsutil-publish-timeout-retry-fail',
+      api.cros_infra_config.override_builder_configs_test_data(
+          json_format.Parse(
+              """{
+  "builderConfigs": [
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_ZEPHYR"
+      },
+      "id": {
+        "bucket": "firmware",
+        "name": "firmware-R126-15886.2.B-branch",
+        "type": "POSTSUBMIT"
+      }
+    }
+  ]
+}""", BuilderConfigs()), step_name='checking attestation eligibility'),
       api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           '{}'),
