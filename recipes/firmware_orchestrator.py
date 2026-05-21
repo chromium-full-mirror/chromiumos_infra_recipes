@@ -49,7 +49,7 @@ def RunSteps(
         named_builder, missing_ok=True)
     api.easy.set_properties_step(manifest_branch=branch)
     config = None
-    if named_child_config:
+    if named_child_config and api.buildbucket.build.builder.builder != named_builder:
       config = api.cros_source.configure_builder()
       api.easy.set_properties_step(child_verifier=named_builder)
       api.orch_menu.schedule_wait_build(named_builder, await_completion=True,
