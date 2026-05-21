@@ -2230,6 +2230,35 @@
   },
   {
     "cmd": [],
+    "name": "generate CLs.check if project src/[CLEANUP]/chromiumos_workspace/src/overlay exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "src/[CLEANUP]/chromiumos_workspace/src/overlay"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "generate CLs.check if project src/[CLEANUP]/chromiumos_workspace/src/overlay exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate CLs.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -2342,6 +2371,35 @@
     "name": "generate CLs.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate CLs.check if project src/[CLEANUP]/chromiumos_workspace/src/private-overlay exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "src/[CLEANUP]/chromiumos_workspace/src/private-overlay"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "generate CLs.check if project src/[CLEANUP]/chromiumos_workspace/src/private-overlay exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

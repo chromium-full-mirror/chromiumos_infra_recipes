@@ -559,6 +559,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'version': '1.2.3',
         'modified_ebuilds': modified_ebuilds
     }])
+    responses['UprevVersionFile'] = jsonify(responses=[{
+        'version': '1.2.3',
+        'modified_files': [self.src_path(e) for e in ebuilds]
+    }])
     return responses
 
   @property

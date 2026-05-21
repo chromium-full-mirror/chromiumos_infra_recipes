@@ -8,6 +8,7 @@ import collections
 import json
 import re
 from typing import Any, DefaultDict, List, NamedTuple, Optional
+from urllib.parse import urlparse
 
 from recipe_engine import config_types
 from recipe_engine import recipe_api
@@ -16,6 +17,7 @@ from PB.chromite.api import packages as packages_pb2
 from PB.chromite.api import sdk as sdk_pb2
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.recipes.chromeos import generator as generator_pb2
 from RECIPE_MODULES.chromeos.repo import api as repo_api
 
 # The label written in the commit message to store versions information of
@@ -41,6 +43,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     self._allow_partial_uprev = False
     self.packages: List[common_pb2.PackageInfo] = []
     self._build_targets: List[common_pb2.BuildTarget] = []
+    self._uprev_target_kind: Optional['generator_pb2.UprevTargetKind'] = None
+    self._version_files: List[str] = []
 
   @property
   def workspace_path(self) -> config_types.Path:
@@ -51,7 +55,9 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       self, additional_commit_message: str = '',
       additional_commit_footer: str = '', allow_partial_uprev: bool = False,
       packages: Optional[List[common_pb2.PackageInfo]] = None,
-      build_targets: Optional[List[common_pb2.BuildTarget]] = None) -> None:
+      build_targets: Optional[List[common_pb2.BuildTarget]] = None,
+      uprev_target_kind: Optional['generator_pb2.UprevTargetKind'] = None,
+      version_files: Optional[List[str]] = None) -> None:
     """Set attributes whose values are determined in Generator.
 
     Args:
@@ -60,10 +66,12 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       additional_commit_footer: Additional footer to be added in the commit
         description.
       allow_partial_uprev: Whether to generate CLs when either of the packages
-        had no modified file.
+          had no modified file.
       packages: The packages that this build should uprev.
       build_targets: The build targets to uprev. Only relevant if required by
-        endpoint.
+          endpoint.
+      uprev_target_kind: The uprev target kind.
+      version_files: The version files to uprev.
 
     TODO(b/262302698): All of these attributes should be moved from
     generator.proto to pupr_local_uprev.proto.
@@ -73,6 +81,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     self._allow_partial_uprev = allow_partial_uprev
     self.packages = packages if packages is not None else []
     self._build_targets = build_targets if build_targets is not None else []
+    self._uprev_target_kind = uprev_target_kind
+    self._version_files = version_files if version_files is not None else []
 
   def uprev_packages(
       self,
@@ -142,9 +152,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
       valid_responses: List[packages_pb2.UprevPackagesResponse] = []
       with self.m.step.nest('verify updates'):
-        # only act on files that are actually modified
         for uprev_resp in response.responses:
-          if self._uprev_response_has_changes(uprev_resp):
+          if self._uprev_packages_response_has_changes(uprev_resp):
             valid_responses.append(uprev_resp)
 
       if not valid_responses:
@@ -405,8 +414,18 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      modified_projects = self.uprev_packages(existing_versions, topic,
-                                              change_id=change_id)
+      if self._uprev_target_kind == generator_pb2.UprevTargetKind.VERSION_FILE:
+        version_file_refs = [
+            packages_pb2.UprevVersionFileRequest.GitRef(repository=v.repository,
+                                                        ref=v.ref,
+                                                        revision=v.revision)
+            for v in existing_versions
+        ]
+        modified_projects = self.uprev_version_files(version_file_refs, topic,
+                                                     change_id=change_id)
+      else:
+        modified_projects = self.uprev_packages(existing_versions, topic,
+                                                change_id=change_id)
       if not modified_projects:
         raise recipe_api.StepFailure('The uprev had no file.')
       if len(modified_projects) > 1:
@@ -414,16 +433,226 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
             'The uprev requires multi-repo commit. Cannot be rebased. {}'
             .format(sorted(modified_projects)))
 
-  def _uprev_response_has_changes(
-      self, response: packages_pb2.UprevVersionedPackageResponse) -> bool:
-    """Return whether the given `UprevVersionedPackageResponse` has changes."""
-    for ebuild in response.modified_ebuilds:
-      path = ebuild.path
+  def uprev_version_files(
+      self,
+      versions: List[packages_pb2.UprevVersionFileRequest.GitRef],
+      topic: str,
+      change_id: str = '',
+  ) -> Optional[List[repo_api.ProjectInfo]]:
+    """Try to uprev the specified version files. If successful, commit the uprev.
+
+    Args:
+      versions: The versions to consider for an update.
+      change_id: If given, set Change-Id to the commit message.
+      topic: A short string with which to tag all generated commits.
+
+    Returns:
+      If version files are successfully uprevved, return a list of ProjectInfos
+        for all repo projects with modified code.
+      If not all version files are uprevved and allow_partial_uprev==False, return
+        None. This signifies that the PUpr run should terminate immediately.
+    """
+    modified_file_paths: List[str] = []
+    all_valid_responses: List[packages_pb2.UprevFileResponse] = []
+    for file_path in self._version_files:
+      file_responses = self._uprev_version_file(file_path, versions)
+      if file_responses:
+        all_valid_responses.extend(file_responses)
+        modified_file_paths.append(file_path)
+      elif not self._allow_partial_uprev:
+        return None
+    if not all_valid_responses:
+      return None
+
+    return self._commit_file_uprevs(versions, all_valid_responses, topic,
+                                    change_id=change_id)
+
+  def _uprev_version_file(
+      self,
+      file_path: str,
+      versions: List[packages_pb2.UprevVersionFileRequest.GitRef],
+  ) -> List[packages_pb2.UprevFileResponse]:
+    """Locally uprev a single version file.
+
+    Args:
+      file_path: The file path to uprev.
+      versions: The versions to consider for an update.
+
+    Returns:
+      List of UprevFileResponses that actually changed code.
+    """
+    with self.m.step.nest('try uprev {}'.format(file_path)) as presentation:
+      request = packages_pb2.UprevVersionFileRequest(
+          chroot=self.m.cros_sdk.chroot,
+          file_path=file_path,
+          versions=versions,
+      )
+      presentation.logs['request'] = str(request)
+      response = self.m.cros_build_api.PackageService.UprevVersionFile(
+          request, name='uprev version file')
+
+      if not response.responses:
+        presentation.step_text = 'no new versions for {}'.format(file_path)
+        return []
+
+      valid_responses: List[packages_pb2.UprevFileResponse] = []
+      with self.m.step.nest('verify updates'):
+        for uprev_resp in response.responses:
+          if self._uprev_file_response_has_changes(uprev_resp):
+            valid_responses.append(uprev_resp)
+
+      if not valid_responses:
+        presentation.step_text = (
+            'skipping uprev for {}. no modified files'.format(file_path))
+        return []
+
+      presentation.logs['uprev versions'] = [
+          resp.version for resp in valid_responses
+      ]
+    return valid_responses
+
+  def _commit_file_uprevs(
+      self, versions: List[packages_pb2.UprevVersionFileRequest.GitRef],
+      uprev_file_responses: List[packages_pb2.UprevFileResponse], topic: str,
+      change_id: str = '') -> List[repo_api.ProjectInfo]:
+    """Commit the file uprevs on the local filesystem.
+
+    Args:
+      versions: The versions to consider for an update.
+      uprev_file_responses: BAPI responses for all uprevs that actually
+          produced code changes.
+      change_id: If given, set Change-Id to the commit message.
+      topic: A short string with which to tag all generated commits.
+
+    Returns:
+      A list of ProjectInfos for repo projects with modified code.
+    """
+    with self.m.step.nest('commit uprev'):
+      # Flatten the list of modified files.
+      modified_files: List[str] = []
+      for uprev_resp in uprev_file_responses:
+        modified_files.extend(uprev_resp.modified_files)
+
+      chrome_files: List[str] = []
+      repo_files_by_project: DefaultDict[repo_api.ProjectInfo, List[str]]
+      repo_files_by_project = collections.defaultdict(list)
+
+      chrome_root = self.m.path.start_dir / 'chrome'
+      chrome_root_str = str(self.m.path.abs_to_path(chrome_root))
+      for path in modified_files:
+        if str(self.m.path.abs_to_path(path)).startswith(chrome_root_str):
+          chrome_files.append(path)
+        else:
+          with self.m.context(cwd=self.workspace_path):
+            dirname = self.m.path.dirname(path)
+            project_info = self.m.repo.project_infos(projects=[dirname])[0]
+            repo_files_by_project[project_info].append(path)
+
+      # Create branches
+      if repo_files_by_project:
+        self._create_pupr_branches(list(repo_files_by_project))
+      if chrome_files:
+        chrome_src_root = chrome_root / 'src'
+        with self.m.context(cwd=chrome_src_root):
+          if self.m.git.branch_exists('pupr'):
+            head = self.m.git.head_commit()
+            self.m.git.checkout(commit=head)
+            self.m.git.delete_local_branch('pupr')
+          self.m.git.checkout(branch='pupr')
+
+      # For each repository, make the commit.
+      modified_projects = []
+      for project, paths in sorted(repo_files_by_project.items()):
+        name = self.m.path.basename(project.path)
+        root = self.workspace_path / project.path
+        rel_paths = [
+            str(self.m.path.relpath(self.m.path.abs_to_path(p), root))
+            for p in paths
+        ]
+        prefix = ', '.join(rel_paths)
+        uprevved_versions = sorted(set(r.version for r in uprev_file_responses))
+        target_refs = [
+            packages_pb2.UprevVersionedPackageRequest.GitRef(
+                repository=v.repository, ref=v.ref, revision=v.revision)
+            for v in versions
+        ]
+        commit_message = self._create_commit_message(
+            prefix,
+            uprevved_versions,
+            topic,
+            target_refs=target_refs,
+            change_id=change_id,
+        )
+        with self.m.step.nest(f'commit in {name}'), self.m.context(cwd=root):
+          self.m.git.add(paths)
+          self.m.git.commit(commit_message)
+        modified_projects.append(project)
+
+      if chrome_files:
+        chrome_src_root = chrome_root / 'src'
+        uprevved_versions = sorted(set(r.version for r in uprev_file_responses))
+        target_refs = [
+            packages_pb2.UprevVersionedPackageRequest.GitRef(
+                repository=v.repository, ref=v.ref, revision=v.revision)
+            for v in versions
+        ]
+        rel_paths = [
+            str(
+                self.m.path.relpath(
+                    self.m.path.abs_to_path(p), chrome_src_root))
+            for p in chrome_files
+        ]
+        prefix = ', '.join(rel_paths)
+        commit_message = self._create_commit_message(
+            prefix,
+            uprevved_versions,
+            topic,
+            target_refs=target_refs,
+            change_id=change_id,
+        )
+        with self.m.step.nest('commit in chrome'), self.m.context(
+            cwd=chrome_src_root):
+          rel_paths = [
+              self.m.path.relpath(p, chrome_src_root) for p in chrome_files
+          ]
+          self.m.git.add(rel_paths)
+          self.m.git.commit(commit_message)
+          # Resolve project info for chrome repository
+          remote_url = self.m.git.remote_url(remote='origin')
+          remote_host = urlparse(remote_url).netloc
+          remote = 'cros-internal' if 'chrome-internal' in remote_host else 'cros'
+          branch = self.m.git.current_branch() or 'main'
+          chrome_project = repo_api.ProjectInfo(
+              remote=remote,
+              name=urlparse(remote_url).path.strip('/'),
+              branch=branch,
+              rrev='refs/heads/' + branch,
+              path=str(chrome_src_root),
+          )
+        modified_projects.append(chrome_project)
+
+    return modified_projects
+
+  def _uprev_packages_response_has_changes(
+      self, response: packages_pb2.UprevPackagesResponse) -> bool:
+    """Return whether the given `UprevPackagesResponse` has changes."""
+    return self._has_git_changes(
+        [ebuild.path for ebuild in response.modified_ebuilds])
+
+  def _uprev_file_response_has_changes(
+      self, response: packages_pb2.UprevFileResponse) -> bool:
+    """Return whether the given `UprevFileResponse` has changes."""
+    return self._has_git_changes(response.modified_files)
+
+  def _has_git_changes(self, paths: List[str]) -> bool:
+    """Return whether any of the given paths has git diff changes."""
+    for path in paths:
       with self.m.context(
           cwd=self.m.path.abs_to_path(self.m.path.dirname(path))):
         if self.m.git.diff_check(path):
           return True
     return False
+
 
 
 def _deserialize_versions(

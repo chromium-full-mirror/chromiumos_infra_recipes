@@ -18,6 +18,9 @@ enum UprevTargetKind {
 
   // The ChromiumOS SDK.
   SDK = 2;
+
+  // One or more version files, e.g. a file containing version strings.
+  VERSION_FILE = 3;
 }
 
 // A reviewer must be some user known by Gerrit. Could be an email
@@ -256,4 +259,8 @@ message GeneratorProperties {
   // Checkout chrome source tree
   bool checkout_chrome = 22;
   string sync_chrome_build_target = 23;
+
+  // The version files to uprev.
+  // Required if uprev_target_kind is VERSION_FILE.
+  repeated string version_files = 24;
 }

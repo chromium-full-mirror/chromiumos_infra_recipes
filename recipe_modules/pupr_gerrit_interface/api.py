@@ -307,11 +307,25 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     with self.m.step.nest('generate CLs'):
       changes = []
       for project in sorted(repo_projects):
+        is_repo = False
+        try:
+          self.m.path.abs_to_path(project.path)
+        except ValueError:  # pragma: no cover
+          with self.m.context(cwd=self.workspace_path):  # pragma: no cover
+            if self.m.repo.project_exists(project.path):  # pragma: no cover
+              is_repo = True  # pragma: no cover
+        if is_repo:
+          cwd = self.workspace_path / project.path  # pragma: no cover
+        else:
+          cwd = self.m.path.abs_to_path(project.path)
+
         changes.append(
             self.m.gerrit.create_change(
                 project.path,
                 reviewers=[reviewer.email for reviewer in policy.reviewers],
                 topic=topic,
+                project_path=None if is_repo else cwd,
+                non_repo_checkout=not is_repo,
             ))
       self.m.easy.set_properties_step(
           generated_cls=[MessageToDict(change) for change in changes])

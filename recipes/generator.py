@@ -122,6 +122,12 @@ class GeneratorRun:
     return (self.properties.uprev_target_kind is
             generator_pb2.UprevTargetKind.SDK)
 
+  @property
+  def is_version_file_uprevver(self) -> bool:
+    """Return whether this generator run is a version file uprevver."""
+    return (self.properties.uprev_target_kind
+            is generator_pb2.UprevTargetKind.VERSION_FILE)
+
   @functools.cached_property
   def triggers(self) -> List[triggers_pb2.Trigger]:
     """Get this run's triggers, all of which have the gitiles field set."""
@@ -145,6 +151,25 @@ class GeneratorRun:
     assert self._is_package_uprevver
     return [
         packages_pb2.UprevVersionedPackageRequest.GitRef(
+            repository=urllib.parse.urlparse(trigger.gitiles.repo).path,
+            ref=trigger.gitiles.ref,
+            revision=(self.target_version_from_gitiles or
+                      trigger.gitiles.revision),
+        ) for trigger in self.triggers
+    ]
+
+  @property
+  def target_version_file_versions(
+      self,
+  ) -> List[packages_pb2.UprevVersionFileRequest.GitRef]:
+    """Return the version file versions to try to uprev to.
+
+    Raises:
+      InfraFailure: If this generator does not uprev version files.
+    """
+    assert self.is_version_file_uprevver
+    return [
+        packages_pb2.UprevVersionFileRequest.GitRef(
             repository=urllib.parse.urlparse(trigger.gitiles.repo).path,
             ref=trigger.gitiles.ref,
             revision=(self.target_version_from_gitiles or
@@ -188,6 +213,9 @@ class GeneratorRun:
       return self.cpvs[0]
     if self._is_sdk_uprevver:
       return 'cros_sdk'
+    if self.is_version_file_uprevver:
+      return self.m.path.basename(
+          self.properties.version_files[0]).lower().replace('_', '-')
     raise recipe_api.InfraFailure(
         'Not sure how to generate topic')  # pragma: nocover
 
@@ -232,6 +260,8 @@ class GeneratorRun:
         allow_partial_uprev=self.properties.allow_partial_uprev,
         build_targets=self.properties.build_targets,
         packages=self.properties.packages,
+        uprev_target_kind=self.properties.uprev_target_kind,
+        version_files=self.properties.version_files,
     )
     self.m.pupr_gerrit_interface.rebase_before_retry = (
         self.properties.rebase_before_retry)
@@ -320,6 +350,9 @@ class GeneratorRun:
           self.target_package_versions, self.topic)
     if self._is_sdk_uprevver:
       return self.m.pupr_local_uprev.uprev_sdk(self.topic)
+    if self.is_version_file_uprevver:
+      return self.m.pupr_local_uprev.uprev_version_files(
+          self.target_version_file_versions, self.topic)
     raise recipe_api.InfraFailure('Not sure how to uprev.')  # pragma: nocover
 
   def _validate_properties(self) -> None:
@@ -332,6 +365,9 @@ class GeneratorRun:
       if self._is_package_uprevver and not self.properties.packages:
         raise recipe_api.StepFailure(
             'must set packages to uprev for a package uprevver')
+      if self.is_version_file_uprevver and not self.properties.version_files:
+        raise recipe_api.StepFailure(
+            'must set version_files to uprev for a version file uprevver')
 
       # Retrieve version information from Gitiles API.
       if self.properties.HasField('gitiles_info'):
@@ -1603,4 +1639,38 @@ def GenTests(
       _props(checkout_chrome=True, sync_chrome_build_target="betty"),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.post_check(post_process.MustRun, 'sync chrome'),
+  )
+
+  yield api.test(
+      'version-file-uprev',
+      _props(
+          uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
+          version_files=['chrome/src/chromeos/CHROMEOS_LKGM'],
+          packages=[],
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(
+              gitiles=triggers_pb2.GitilesTrigger(
+                  repo='https://chrome-internal.googlesource.com/chromeos/manifest-internal',
+                  ref='refs/heads/snapshot',
+                  revision='50a00e4166dc7fca08f026792b8d53f751d536b7',
+              ),
+          ),
+      ]),
+      api.step_data(
+          'try uprev chrome/src/chromeos/CHROMEOS_LKGM.uprev version file'
+          '.read output file',
+          api.file.read_raw(
+              content='{"responses": [{"version": "16626.0.0-1076201", "modified_files": ["[START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM"]}]}'
+          )),
+      api.git.diff_check(True),
+  )
+
+  yield api.test(
+      'version-file-uprev-no-file',
+      _props(
+          uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
+          packages=[],
+      ),
+      status='FAILURE',
   )

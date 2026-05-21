@@ -50,12 +50,19 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
         no_existing_cls_policy=properties.send_to_cq_policy,
         cr_policy=properties.cr_policy,
     )
-  projects = [
-      ProjectInfo(name=f'galaxy{i}', path=f'project{i}', remote='cros',
-                  branch=api.src_state.workspace_path,
-                  rrev=api.src_state.workspace_path)
-      for i in range(1, properties.projects + 1)
-  ]
+  if properties.projects == 0:
+    projects = [
+        ProjectInfo(name='chrome-project', path='[START_DIR]/chrome/src',
+                    remote='cros', branch=api.src_state.workspace_path,
+                    rrev=api.src_state.workspace_path)
+    ]
+  else:
+    projects = [
+        ProjectInfo(name=f'galaxy{i}', path=f'project{i}', remote='cros',
+                    branch=api.src_state.workspace_path,
+                    rrev=api.src_state.workspace_path)
+        for i in range(1, properties.projects + 1)
+    ]
 
   summary = api.pupr_gerrit_interface.create_uprev_cls(projects, [],
                                                        properties.existing_cls,
@@ -186,4 +193,14 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           post_process.SummaryMarkdown,
           'created [chromium:123](https://crrev.com/c/123) '
           '[chrome-internal:456](https://crrev.com/i/456)'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'non-repo-project', api.properties(send_to_cq_policy=DRY_RUN, projects=0),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for [START_DIR]/chrome/src',
+          'https://host-review.googlesource.com/c/project/+/123'),
+      api.path.exists(api.src_state.workspace_path),
+      api.post_check(post_process.StepSuccess,
+                     'update CL labels.set labels on CL 123'),
       api.post_process(post_process.DropExpectation))
