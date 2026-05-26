@@ -211,7 +211,8 @@ def RunSteps(api, properties):
           .attestation_eligible, use_file_paths=True,
           build_targets=firmware_targets)
       published = collections.defaultdict(list)
-      published.update(uploaded_artifacts.published)
+      if uploaded_artifacts.published:
+        published.update(uploaded_artifacts.published)
 
       # Read metadata jsonpb
       metadata_by_name = {}
@@ -572,7 +573,7 @@ def GenTests(api):
   )
 
   yield test('cq', api.post_check(post_process.DoesNotRun,
-                                  'snoop: report_stage'), cq=True,
+                                  'snoop: report_stage'), cq=True, dry_run=True,
              builder='fw-ec-cq')
 
   yield test(
@@ -590,6 +591,7 @@ def GenTests(api):
           post_process.DoesNotRun,
           'sending pub/sub notifications.publish artifacts to pubsub'),
       cq=True,
+      dry_run=True,
       builder='firmware-zephyr-cq',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -939,6 +941,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
       cq=True,
+      dry_run=True,
       builder='fw-ec-cq',
       input_properties={
           'firmware_location': 3,

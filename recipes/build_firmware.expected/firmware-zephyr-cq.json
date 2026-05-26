@@ -5399,6 +5399,14 @@
   },
   {
     "cmd": [],
+    "name": "upload artifacts.skip publish artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Not publishing artifacts in dry run@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "reading metadata",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Reading proto from [CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb@@@",
