@@ -53,6 +53,57 @@ def RunSteps(api):
   api.assertions.assertEqual(retry_cl_is_passed, False)
   api.assertions.assertEqual(retry_cl_is_running, False)
 
+  # Test label vote checking for Commit-Queue+2
+  changes = [{
+      'info': {
+          '_number': 10,
+          'created': '2020-10-22 18:54:00.000000000',
+          'hashtags': [],
+          'labels': {
+              'Commit-Queue': {
+                  'all': [{
+                      'value': 2
+                  }]
+              }
+          },
+          'messages': [],
+      }
+  }]
+  open_cls = _patch_set_from_dict(changes)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  api.assertions.assertEqual(cl.change_id, 10)
+  api.assertions.assertEqual(cq_label, 2)
+  api.assertions.assertEqual(message,
+                             'There are CQ+2 run(s) ongoing: https:///c/10')
+  api.assertions.assertEqual(retry_cl_is_passed, False)
+  api.assertions.assertEqual(retry_cl_is_running, True)
+
+  # Test label vote checking for Commit-Queue+1 (dry run)
+  changes = [{
+      'info': {
+          '_number': 11,
+          'created': '2020-10-22 18:54:00.000000000',
+          'hashtags': [],
+          'labels': {
+              'Commit-Queue': {
+                  'all': [{
+                      'value': 1
+                  }]
+              }
+          },
+          'messages': [],
+      }
+  }]
+  open_cls = _patch_set_from_dict(changes)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  api.assertions.assertEqual(cl.change_id, 11)
+  api.assertions.assertEqual(cq_label, 1)
+  api.assertions.assertEqual(message, 'Found running cl: https:///c/11')
+  api.assertions.assertEqual(retry_cl_is_passed, False)
+  api.assertions.assertEqual(retry_cl_is_running, True)
+
   changes = [
       {
           'info': {

@@ -78,6 +78,11 @@ def is_running_cl(c, dry_run=False):
   run type (full or dry). If the most recent state was of the other run type or
   is of the given run type but is not running, this function will return False.
   """
+  if c.labels is not None:
+    label_info = c.labels.get('Commit-Queue', {})
+    if 'all' in label_info:
+      val = 1 if dry_run else 2
+      return any(x.get('value') == val for x in label_info.get('all', []))
   return is_cl_in_state(c, RunState.RUNNING, dry_run)
 
 

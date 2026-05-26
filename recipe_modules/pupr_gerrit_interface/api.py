@@ -471,8 +471,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         RetryClPolicy.Name(policy.retry_cl_policy))) as presentation:
       if not open_changes:
         return
-      open_patch_sets = self.m.gerrit.fetch_patch_sets(open_changes,
-                                                       include_messages=True)
+      open_patch_sets = self.m.gerrit.fetch_patch_sets(
+          open_changes, include_messages=True, include_detailed_labels=True)
       if most_recent_uprev:
         open_patch_sets = [
             ps for ps in open_patch_sets
