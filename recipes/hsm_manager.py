@@ -90,8 +90,12 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
     # set them here (potentially overwriting existing values).
     create_keys_hsm_request.docker_image = api.signing.signing_docker_image
     create_keys_hsm_request.release_keys_checkout = str(release_keys_path)
-    create_keys_hsm_request.dry_run = is_staging
+    # Default to dry run in staging.
+    if not create_keys_hsm_request.HasField("dry_run"):
+      create_keys_hsm_request.dry_run = is_staging
     api.cros_build_api.SigningService.CreateKeysHsm(create_keys_hsm_request)
+
+    # TODO(b/505067933): Notify quorum members that there is a new quorum operation.
 
     # TODO(b/505067810): Commit keyset to release-keys after files changes.
     # with api.step.nest("commit keyset to release-keys"), api.context(
