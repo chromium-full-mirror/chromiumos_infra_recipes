@@ -45,7 +45,6 @@ DEPS = [
     'cros_release',
     'cros_sdk',
     'cros_version',
-    'deferrals',
     'easy',
     'failures',
     'gcloud',
@@ -61,7 +60,8 @@ DEPS = [
 
 
 PROPERTIES = BuildLegacyFwProperties
-
+# Return value in case GCS upload fails
+_GCS_PRECONDITION_FAILURE = 412
 _FIRMWARE_TARBALL_NAME = 'firmware_from_source.tar.bz2'
 _FIRMWARE_METADATA_NAME = 'firmware_metadata.jsonpb'
 
@@ -699,17 +699,16 @@ class FirmwareBuilder():
       presentation.links[
           "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{bucket.removeprefix("gs://")}/{branch}/{self._bcs_version.platform_version}'
 
-      with self.m.deferrals.raise_exceptions_at_end():
-        for source in tar_list:
-          file_name = self.m.path.basename(source)
-          with self.m.deferrals.defer_exceptions():
-            self.m.gcloud.storage_cp(
-                source,
-                f'{bucket}/{branch}/{self._bcs_version.platform_version}/{file_name}',
-                flags=[
-                    '--if-generation-match=0',
-                ],
-            )
+      for source in tar_list:
+        file_name = self.m.path.basename(source)
+        self.m.gcloud.storage_cp(
+            source,
+            f'{bucket}/{branch}/{self._bcs_version.platform_version}/{file_name}',
+            flags=[
+                '--if-generation-match=0',
+            ],
+            ok_ret=(0, 1, _GCS_PRECONDITION_FAILURE),
+        )
 
   def _push_image(self, build_target, artifact_dir):
     """Push images."""
@@ -825,10 +824,7 @@ class FirmwareBuilder():
                 continue
               all_uploaded.append(bt_uploaded)
               self._push_image(bt, artifact_dir)
-              try:
-                self._push_to_firmware_bucket(bt, branch)
-              except Exception as e:  # pylint: disable=broad-exception-caught
-                step_failures.append(e)
+              self._push_to_firmware_bucket(bt, branch)
 
     with self.m.failures.ignore_exceptions():
       if self.m.cros_infra_config.config.artifacts.attestation_eligible:
@@ -1250,43 +1246,3 @@ def GenTests(api):
   yield test('chroot-exists', exists('chroot'))
 
   yield test('old-cq', exists('src', 'scripts', 'setup_board'), cq=True)
-
-  yield test(
-      'push-failed',
-      api.step_data('push per device FW.gcloud storage cp', retcode=1),
-      api.step_data('push per device FW.gcloud storage cp (2)', retcode=1),
-      api.step_data('push per device FW.gcloud storage cp (3)', retcode=1),
-      api.post_check(post_process.StepFailure, 'push per device FW'),
-      api.post_check(post_process.MustRun,
-                     'push per device FW.gcloud storage cp'),
-      api.post_check(post_process.MustRun,
-                     'push per device FW.gcloud storage cp (2)'),
-      api.post_check(post_process.MustRun,
-                     'push per device FW.gcloud storage cp (3)'),
-      api.post_check(post_process.MustRun,
-                     'push per device FW.deferring exception until later'),
-      api.post_check(post_process.MustRun,
-                     'push per device FW.gcloud storage cp (4)'),
-      api.post_process(post_process.DropExpectation),
-      status='FAILURE',
-  )
-
-  yield test(
-      'some-boards-push-failed',
-      api.step_data('board1.push per device FW.gcloud storage cp', retcode=1),
-      api.step_data('board1.push per device FW.gcloud storage cp (2)',
-                    retcode=1),
-      api.step_data('board1.push per device FW.gcloud storage cp (3)',
-                    retcode=1),
-      api.post_check(post_process.StepFailure, 'board1.push per device FW'),
-      api.post_check(post_process.StepSuccess, 'board2.push per device FW'),
-      api.post_check(post_process.MustRun,
-                     'board2.push per device FW.gcloud storage cp'),
-      api.post_process(post_process.DropExpectation),
-      build_targets=[{
-          'name': 'board1'
-      }, {
-          'name': 'board2'
-      }],
-      status='FAILURE',
-  )
