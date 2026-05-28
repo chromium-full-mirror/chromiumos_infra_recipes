@@ -272,11 +272,61 @@ class GeneratorRun:
 
       if self.properties.checkout_chrome:
         chrome_root = self.m.path.start_dir / 'chrome'
-        self.m.chrome.sync(
-            chrome_root, self.m.cros_sdk.chroot,
-            common_pb2.BuildTarget(
-                name=self.properties.sync_chrome_build_target), True,
-            cache_dir=chrome_root / 'chrome_cache', omit_version=True)
+        # We perform a custom git checkout here instead of using chrome.sync()
+        # because the generator only needs the repository files of chrome/src to
+        # modify/read them (e.g., for LKGM version file uprevs) and doesn't build
+        # Chrome. Using chrome.sync() is extremely slow (taking 30+ minutes on a
+        # smaller infra bot, not a huge builder bot) and unnecessary since it runs
+        # gclient sync, which checks out hundreds of dependency repositories (DEPS),
+        # runs gclient hooks (downloading toolchains, sysroots, etc.), and copies
+        # the git objects from the cache directory to src/.git rather than reusing
+        # them via alternates. Instead, we fetch refs into a local git repository
+        # utilizing alternates pointing to the persistent git cache, which is
+        # extremely fast and avoids copying git objects, downloading DEPS, or
+        # running hooks.
+        with self.m.step.nest('checkout chrome'):
+          # Use a subdirectory inside the persistent chrome_root for the cache
+          # to avoid polluting chrome/src with the .gclient file (which would
+          # break git cl upload by looking for a nested src/src directory).
+          chrome_cache_path = chrome_root / 'cache_tmp'
+          self.m.chrome.cache_sync(cache_path=chrome_cache_path, sync=False,
+                                   step_name='populate chrome cache')
+          chrome_src = chrome_root / 'src'
+          chrome_cache_objects_dir = chrome_cache_path.joinpath(
+              'chrome_cache/chromium.googlesource.com-chromium-src/objects')
+
+          self.m.file.ensure_directory('ensure chrome src', chrome_src)
+
+          with self.m.context(cwd=chrome_src):
+            if not self.m.path.exists(chrome_src / '.git'):
+              self.m.step('git init', ['git', 'init'])
+
+            self.m.step('git remote add origin', [
+                'git', 'remote', 'add', 'origin',
+                'https://chromium.googlesource.com/chromium/src.git'
+            ], ok_ret=(0, 128))
+            self.m.step('git remote set-url origin', [
+                'git', 'remote', 'set-url', 'origin',
+                'https://chromium.googlesource.com/chromium/src.git'
+            ])
+
+            git_objects_info_dir = chrome_src / '.git/objects/info'
+            self.m.file.ensure_directory('ensure .git/objects/info',
+                                         git_objects_info_dir)
+            self.m.file.write_text('create chrome git reference',
+                                   git_objects_info_dir / 'alternates',
+                                   str(chrome_cache_objects_dir))
+
+            refspecs = [
+                '+refs/heads/*:refs/remotes/origin/*',
+                '+refs/tags/*:refs/tags/*',
+                '+refs/branch-heads/*:refs/branch-heads/*',
+            ]
+            self.m.git.fetch(
+                remote='https://chromium.googlesource.com/chromium/src.git',
+                refs=refspecs)
+            self.m.git.checkout('refs/remotes/origin/main', force=True)
+
         self.m.cros_sdk.set_chrome_root(chrome_root)
 
       policy_info = self.select_policy()
@@ -1638,7 +1688,11 @@ def GenTests(
       'sync-chrome',
       _props(checkout_chrome=True, sync_chrome_build_target="betty"),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.post_check(post_process.MustRun, 'sync chrome'),
+      api.post_check(post_process.MustRun, 'checkout chrome'),
+      api.post_check(post_process.MustRun,
+                     'checkout chrome.populate chrome cache'),
+      api.post_check(post_process.MustRun, 'checkout chrome.git fetch'),
+      api.post_check(post_process.MustRun, 'checkout chrome.git checkout'),
   )
 
   yield api.test(

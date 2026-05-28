@@ -1295,10 +1295,13 @@
   },
   {
     "cmd": [],
-    "name": "sync chrome",
+    "name": "checkout chrome"
+  },
+  {
+    "cmd": [],
+    "name": "checkout chrome.populate chrome cache",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
-      "@@@STEP_LOG_END@gclient configuration@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1311,20 +1314,12 @@
       "ensure-directory",
       "--mode",
       "0o777",
-      "[START_DIR]/chrome"
+      "[START_DIR]/chrome/cache_tmp/src"
     ],
     "infra_step": true,
-    "name": "sync chrome.ensure chrome root",
+    "name": "checkout chrome.populate chrome cache.ensure chrome src directory",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync chrome.read chromeos version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1334,63 +1329,15 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
-      "/path/to/tmp/"
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/chrome/cache_tmp/chrome_cache"
     ],
-    "cwd": "[START_DIR]/chrome",
     "infra_step": true,
-    "name": "sync chrome.read chromeos version.read chromeos_version.sh",
+    "name": "checkout chrome.populate chrome cache.ensure chrome cache directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync chrome.read chromeos version.read snapshot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "sync chrome.read chromeos version.read snapshot.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "sync chrome.read chromeos version.read snapshot.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
-      "--position-num"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "sync chrome.read chromeos version.read snapshot.read git footers",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1400,9 +1347,9 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
-      "cache_dir = '[START_DIR]/chrome/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
+      "solutions = [\n    {\n        'url': 'https://chromium.googlesource.com/chromium/src.git',\n        'managed': False,\n        'name': 'src',\n        'custom_deps': {},\n        'custom_vars': {\n            'checkout_src_internal': True,\n            'checkout_google_internal': True\n        }\n    }\n]\ncache_dir = '../chrome_cache'"
     ],
-    "cwd": "[START_DIR]/chrome",
+    "cwd": "[START_DIR]/chrome/cache_tmp/src",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1413,7 +1360,108 @@
       ]
     },
     "infra_step": true,
-    "name": "sync chrome.gclient config",
+    "name": "checkout chrome.populate chrome cache.gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cache.py",
+      "populate",
+      "-v",
+      "--cache-dir",
+      "../chrome_cache",
+      "https://chromium.googlesource.com/chromium/src.git",
+      "--reset-fetch-config"
+    ],
+    "cwd": "[START_DIR]/chrome/cache_tmp/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout chrome.populate chrome cache.populate git cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/chrome/src"
+    ],
+    "infra_step": true,
+    "name": "checkout chrome.ensure chrome src",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "init"
+    ],
+    "cwd": "[START_DIR]/chrome/src",
+    "name": "checkout chrome.git init",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "add",
+      "origin",
+      "https://chromium.googlesource.com/chromium/src.git"
+    ],
+    "cwd": "[START_DIR]/chrome/src",
+    "name": "checkout chrome.git remote add origin",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "set-url",
+      "origin",
+      "https://chromium.googlesource.com/chromium/src.git"
+    ],
+    "cwd": "[START_DIR]/chrome/src",
+    "name": "checkout chrome.git remote set-url origin",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/chrome/src/.git/objects/info"
+    ],
+    "cwd": "[START_DIR]/chrome/src",
+    "infra_step": true,
+    "name": "checkout chrome.ensure .git/objects/info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1426,55 +1474,44 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chrome/.gclient",
-      "/path/to/tmp/"
+      "[START_DIR]/chrome/cache_tmp/chrome_cache/chromium.googlesource.com-chromium-src/objects",
+      "[START_DIR]/chrome/src/.git/objects/info/alternates"
     ],
-    "cwd": "[START_DIR]/chrome",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
+    "cwd": "[START_DIR]/chrome/src",
     "infra_step": true,
-    "name": "sync chrome.gclient contents",
+    "name": "checkout chrome.create chrome git reference",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
-      "@@@STEP_LOG_END@.gclient@@@"
+      "@@@STEP_LOG_LINE@alternates@[START_DIR]/chrome/cache_tmp/chrome_cache/chromium.googlesource.com-chromium-src/objects@@@",
+      "@@@STEP_LOG_END@alternates@@@"
     ]
   },
   {
     "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_REPO[depot_tools]/gclient.py",
-      "sync",
-      "--verbose",
-      "--reset",
-      "--force",
-      "--upstream",
-      "--no-nag-max",
-      "--with_branch_heads",
-      "--with_tags",
-      "--delete_unversioned_trees",
-      "--nohooks"
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/chromium/src.git",
+      "+refs/heads/*:refs/remotes/origin/*",
+      "+refs/tags/*:refs/tags/*",
+      "+refs/branch-heads/*:refs/branch-heads/*"
     ],
-    "cwd": "[START_DIR]/chrome",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]",
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
+    "cwd": "[START_DIR]/chrome/src",
     "infra_step": true,
-    "name": "sync chrome.gclient sync",
-    "timeout": 10800,
+    "name": "checkout chrome.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "refs/remotes/origin/main"
+    ],
+    "cwd": "[START_DIR]/chrome/src",
+    "infra_step": true,
+    "name": "checkout chrome.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
