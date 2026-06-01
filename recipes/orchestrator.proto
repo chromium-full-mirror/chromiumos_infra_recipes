@@ -13,4 +13,7 @@ message OrchestratorProperties {
 
   // Google Storage path to upload buildspecs to.
   string buildspec_gs_path = 2;
+
+  // If set, skip stateful throttling check (release orchestrator only).
+  bool skip_throttling = 3;
 }

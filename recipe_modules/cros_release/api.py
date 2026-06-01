@@ -60,6 +60,23 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     if not set(self.sign_types).issubset(SUPPORTED_SIGN_TYPES):
       raise StepFailure('attempting to sign type not in supported sign types')
 
+  def check_stateful_throttling(self):
+    """Queries Buildbucket to see if a successful build occurred in the last 20h."""
+    builder_id = self.m.buildbucket.build.builder
+    predicate = builds_service_pb2.BuildPredicate(
+        builder=builder_id,
+        status=common_pb2.SUCCESS,
+    )
+    # Fetch the most recent successful build.
+    builds = self.m.buildbucket.search(predicate, limit=1,
+                                       step_name='check stateful throttling')
+    if builds:
+      last_build = builds[0]
+      # Check if created in last 20 hours.
+      if last_build.create_time.seconds > self.m.time.time() - 20 * 3600:
+        return True
+    return False
+
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
     self._release_bucket = properties.release_bucket

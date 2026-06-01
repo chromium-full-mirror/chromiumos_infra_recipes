@@ -39,6 +39,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cv',
     'recipe_engine/properties',
+    'recipe_engine/time',
 ]
 
 
@@ -51,6 +52,11 @@ def RunSteps(api: RecipeApi,
   api.checkpoint.register()
   with api.orch_menu.setup_orchestrator() as config:
     if config:
+      if api.orch_menu.is_release_orchestrator and not api.build_menu.is_staging and not properties.skip_throttling:
+        if api.cros_release.check_stateful_throttling():
+          return result_pb2.RawResult(
+              status=common_pb2.SUCCESS,
+              summary_markdown="Throttled: Daily build satisfied.")
       DoRunSteps(api)
 
     is_release = api.orch_menu.is_release_orchestrator
@@ -148,7 +154,12 @@ def GenTests(api: RecipeTestApi):
 
   data = api.orch_menu.standard_test_data()
 
-  yield api.orch_menu.test('basic', data.ctp_normal, with_manifest_refs=True)
+  yield api.orch_menu.test(
+      'basic',
+      data.ctp_normal,
+      api.post_check(post_process.DoesNotRun, 'check stateful throttling'),
+      with_manifest_refs=True,
+  )
 
   def get_public_orch():
     output = build_pb2.Build.Output()
@@ -199,6 +210,73 @@ def GenTests(api: RecipeTestApi):
       with_manifest_refs=True,
       sheriff_rotations=['chromeos'],
       bot_size='medium')
+
+  yield api.orch_menu.test(
+      'release-orchestrator-throttled',
+      api.empty_test_data(),
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'channels': [Channel.CHANNEL_STABLE],
+          },
+      }),
+      api.time.seed(1600000000),
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(id=123, status=common_pb2.SUCCESS,
+                          create_time={'seconds': 1600000000 - 10 * 3600})
+      ], step_name='check stateful throttling'),
+      api.post_check(post_process.DoesNotRun, 'run builds'),
+      api.post_process(post_process.DropExpectation),
+      builder='release-main-orchestrator',
+  )
+
+  yield api.orch_menu.test(
+      'release-orchestrator-not-throttled',
+      data.ctp_normal,
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'channels': [Channel.CHANNEL_STABLE],
+          },
+      }),
+      api.time.seed(1600000000),
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(id=123, status=common_pb2.SUCCESS,
+                          create_time={'seconds': 1600000000 - 30 * 3600})
+      ], step_name='check stateful throttling'),
+      api.post_check(post_process.MustRun, 'run builds'),
+      api.post_process(post_process.DropExpectation),
+      builder='release-main-orchestrator',
+  )
+
+  yield api.orch_menu.test(
+      'release-orchestrator-staging-not-throttled',
+      api.empty_test_data(),
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'channels': [Channel.CHANNEL_STABLE],
+          },
+      }),
+      api.time.seed(1600000000),
+      api.post_check(post_process.DoesNotRun, 'check stateful throttling'),
+      api.post_check(post_process.MustRun, 'run builds'),
+      api.post_process(post_process.DropExpectation),
+      builder='staging-release-main-orchestrator',
+  )
+
+  yield api.orch_menu.test(
+      'release-orchestrator-skip-throttling',
+      data.ctp_normal,
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [Channel.CHANNEL_STABLE],
+              },
+              'skip_throttling': True,
+          }),
+      api.time.seed(1600000000),
+      api.post_check(post_process.MustRun, 'run builds'),
+      api.post_process(post_process.DropExpectation),
+      builder='release-main-orchestrator',
+  )
 
   yield api.orch_menu.test(
       'release-orchestrator-snapshot',
