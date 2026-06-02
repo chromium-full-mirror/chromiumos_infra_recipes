@@ -164,9 +164,19 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
         orchestrator_exemption, cq_cancelled_exemption, merge_conflict_exemption
     ], num_builds=20),
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
-    StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit',
+    # build_firmware recipe
+    StagingReCheck('chromeos', 'staging', 'staging-firmware-zephyr-cq',
                    [image_builder_exemption, build_firmware_exemption]),
-    StagingReCheck('chromeos', 'staging', r'staging-recipes_autoreleaser_infra',
+    StagingReCheck('chromeos', 'staging', 'staging-firmware-zephyr-postsubmit',
+                   [image_builder_exemption]),
+    # build_gsc_firmware recipe
+    StagingReCheck('chromeos', 'staging', 'staging-firmware-ti50-postsubmit',
+                   [image_builder_exemption, build_firmware_exemption]),
+    # build_legacy_fw recipe
+    StagingReCheck('chromeos', 'staging',
+                   'staging-firmware-skywalker-16378.B-branch',
+                   [image_builder_exemption], num_builds=1),
+    StagingReCheck('chromeos', 'staging', 'staging-recipes_autoreleaser_infra',
                    [autoreleaser_no_releasable_changes_exemption],
                    num_builds=1),
     StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
