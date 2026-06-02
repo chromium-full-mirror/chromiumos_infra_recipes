@@ -45,6 +45,7 @@ DEPS = [
     'cros_release',
     'cros_sdk',
     'cros_version',
+    'deferrals',
     'easy',
     'failures',
     'gcloud',
@@ -60,8 +61,7 @@ DEPS = [
 
 
 PROPERTIES = BuildLegacyFwProperties
-# Return value in case GCS upload fails
-_GCS_PRECONDITION_FAILURE = 412
+
 _FIRMWARE_TARBALL_NAME = 'firmware_from_source.tar.bz2'
 _FIRMWARE_METADATA_NAME = 'firmware_metadata.jsonpb'
 
@@ -133,6 +133,7 @@ class FirmwareBuilder():
     self._tot_chromite = None
     # TODO(b/188555398): Make this False once the root-cause is identified.
     self._debug = True
+    self._uploaded_per_device_fw_paths = {}
 
   def sdk_call(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
@@ -693,22 +694,52 @@ class FirmwareBuilder():
       self._build_per_device_firmware_archive(sysroot, temp_dir)
 
       tar_list = self.m.file.listdir(
-          'list files', temp_dir, recursive=True,
-          test_data=['foo/ec-private/fingerprint/bar', 'bar/file'])
+          'list files', temp_dir, recursive=True, test_data=[
+              'adl_ish_lite.EC.15236.0.0.tar.bz2',
+              'adlrvp_n.15236.0.0.tar.bz2',
+              'anraggar.EC_elf.15236.0.0.tar.bz2',
+          ])
 
       presentation.links[
           "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{bucket.removeprefix("gs://")}/{branch}/{self._bcs_version.platform_version}'
 
-      for source in tar_list:
-        file_name = self.m.path.basename(source)
-        self.m.gcloud.storage_cp(
-            source,
-            f'{bucket}/{branch}/{self._bcs_version.platform_version}/{file_name}',
-            flags=[
-                '--if-generation-match=0',
-            ],
-            ok_ret=(0, 1, _GCS_PRECONDITION_FAILURE),
-        )
+      version_suffix = f'.{self._bcs_version.platform_version}.tar.bz2'
+
+      with self.m.deferrals.raise_exceptions_at_end():
+        for source in tar_list:
+          file_name = self.m.path.basename(source)
+          dest_path = f'{bucket}/{branch}/{self._bcs_version.platform_version}/{file_name}'
+          dest_dir = f'{bucket}/{branch}/{self._bcs_version.platform_version}'
+
+          device_target = file_name
+          if file_name.endswith(version_suffix):
+            device_target = file_name[:-len(version_suffix)]
+
+          with self.m.step.nest(device_target) as device_pres:
+            if dest_path in self._uploaded_per_device_fw_paths:
+              previous_board = self._uploaded_per_device_fw_paths[dest_path]
+              device_pres.step_text = (
+                  f'skipped due to duplication (already uploaded by {previous_board})'
+              )
+              continue
+
+            device_pres.step_text = f'destination: {dest_dir}'
+            with self.m.deferrals.defer_exceptions():
+              ls_result = self.m.gcloud.storage_ls(dest_path)
+              if ls_result.retcode == 0:
+                device_pres.step_text = 'skipped (already exists in GCS)'
+                self._uploaded_per_device_fw_paths[
+                    dest_path] = 'GCS (pre-existing)'
+                continue
+
+              self.m.gcloud.storage_cp(
+                  source,
+                  dest_path,
+                  flags=[
+                      '--if-generation-match=0',
+                  ],
+              )
+              self._uploaded_per_device_fw_paths[dest_path] = board
 
   def _push_image(self, build_target, artifact_dir):
     """Push images."""
@@ -824,7 +855,10 @@ class FirmwareBuilder():
                 continue
               all_uploaded.append(bt_uploaded)
               self._push_image(bt, artifact_dir)
-              self._push_to_firmware_bucket(bt, branch)
+              try:
+                self._push_to_firmware_bucket(bt, branch)
+              except Exception as e:  # pylint: disable=broad-exception-caught
+                step_failures.append(e)
 
     with self.m.failures.ignore_exceptions():
       if self.m.cros_infra_config.config.artifacts.attestation_eligible:
@@ -867,8 +901,43 @@ def GenTests(api):
     if targets:
       input_props['build_targets'] = targets
     target = kwargs.pop('target', 'target')
+    custom_files = kwargs.pop('mock_ls_files', None)
+    mock_ls_exists = kwargs.pop('mock_ls_exists', False)
+    mock_ls = kwargs.pop('mock_ls', True)
     kwargs['input_properties'] = input_props
     build = api.test_util.test_child_build(target, **kwargs).build
+
+    # Dynamic mocking for storage_ls
+    actual_targets = targets or [{'name': target}]
+    platform_version = version_str
+    if '-' in version_str:
+      platform_version = version_str.split('-', 1)[1]
+    suffix_stripped = platform_version == '15236.0.0'
+
+    if custom_files:
+      files = custom_files
+    else:
+      if suffix_stripped:
+        files = ['adl_ish_lite.EC', 'adlrvp_n', 'anraggar.EC_elf']
+      else:
+        files = [
+            'adl_ish_lite.EC.15236.0.0.tar.bz2',
+            'adlrvp_n.15236.0.0.tar.bz2',
+            'anraggar.EC_elf.15236.0.0.tar.bz2',
+        ]
+    default_retcode = 0 if mock_ls_exists else 1
+
+    ls_mocks = []
+    show_board = len(actual_targets) > 1
+    if mock_ls and actual_targets:
+      board = actual_targets[0]['name']
+      prefix = f'{board}.' if show_board else ''
+      for f in files:
+        step_name = f'{prefix}push per device FW.{f}.gcloud storage ls'
+        ls_mocks.append(api.step_data(step_name, retcode=default_retcode))
+
+    args = list(args) + ls_mocks
+
     return api.test(name, build, version, *args, status=status)
 
   exists = lambda *x: api.path.exists(api.src_state.workspace_path.joinpath(*x))
@@ -1192,6 +1261,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'upload image to GS (formerly "push image")'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
+      mock_ls=False,
       status='FAILURE',
   )
 
@@ -1200,6 +1270,14 @@ def GenTests(api):
       api.step_data(
           'board1.upload artifacts.create firmware archive.list files',
           api.file.listdir()),
+      api.step_data(
+          'board2.push per device FW.adl_ish_lite.EC.gcloud storage ls',
+          retcode=1),
+      api.step_data('board2.push per device FW.adlrvp_n.gcloud storage ls',
+                    retcode=1),
+      api.step_data(
+          'board2.push per device FW.anraggar.EC_elf.gcloud storage ls',
+          retcode=1),
       suite_scheduling(False),
       api.post_check(post_process.StepFailure, 'board1.upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -1209,6 +1287,7 @@ def GenTests(api):
       api.post_check(post_process.StepSuccess, 'board2.upload artifacts'),
       api.post_check(post_process.MustRun,
                      'board2.upload image to GS (formerly "push image")'),
+      mock_ls=False,
       build_targets=[{
           'name': 'board1'
       }, {
@@ -1246,3 +1325,107 @@ def GenTests(api):
   yield test('chroot-exists', exists('chroot'))
 
   yield test('old-cq', exists('src', 'scripts', 'setup_board'), cq=True)
+
+  yield test(
+      'push-failed',
+      api.step_data('push per device FW.adl_ish_lite.EC.gcloud storage cp',
+                    retcode=1),
+      api.step_data('push per device FW.adl_ish_lite.EC.gcloud storage cp (2)',
+                    retcode=1),
+      api.step_data('push per device FW.adl_ish_lite.EC.gcloud storage cp (3)',
+                    retcode=1),
+      api.post_check(post_process.StepFailure, 'push per device FW'),
+      api.post_check(post_process.MustRun,
+                     'push per device FW.adl_ish_lite.EC.gcloud storage cp'),
+      api.post_check(
+          post_process.MustRun,
+          'push per device FW.adl_ish_lite.EC.gcloud storage cp (2)'),
+      api.post_check(
+          post_process.MustRun,
+          'push per device FW.adl_ish_lite.EC.gcloud storage cp (3)'),
+      api.post_check(
+          post_process.MustRun,
+          'push per device FW.adl_ish_lite.EC.deferring exception until later'),
+      api.post_check(post_process.MustRun,
+                     'push per device FW.adlrvp_n.gcloud storage cp'),
+      api.post_check(post_process.MustRun,
+                     'push per device FW.anraggar.EC_elf.gcloud storage cp'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield test(
+      'some-boards-push-failed',
+      api.step_data(
+          'board1.push per device FW.adl_ish_lite.EC.gcloud storage cp',
+          retcode=1),
+      api.step_data(
+          'board1.push per device FW.adl_ish_lite.EC.gcloud storage cp (2)',
+          retcode=1),
+      api.step_data(
+          'board1.push per device FW.adl_ish_lite.EC.gcloud storage cp (3)',
+          retcode=1),
+      api.step_data(
+          'board2.push per device FW.adl_ish_lite.EC.gcloud storage ls',
+          retcode=1),
+      api.post_check(post_process.StepFailure, 'board1.push per device FW'),
+      api.post_check(post_process.StepSuccess, 'board2.push per device FW'),
+      api.post_check(
+          post_process.MustRun,
+          'board2.push per device FW.adl_ish_lite.EC.gcloud storage cp'),
+      api.post_process(post_process.DropExpectation),
+      build_targets=[{
+          'name': 'board1'
+      }, {
+          'name': 'board2'
+      }],
+      status='FAILURE',
+  )
+
+  yield test(
+      'duplicate-uploads-skipped',
+      api.step_data(
+          'board1.push per device FW.list files',
+          api.file.listdir([
+              'foo/ec-private/fingerprint/bar.15236.0.0.tar.bz2',
+              'bar/file.15236.0.0.tar.bz2'
+          ])),
+      api.step_data(
+          'board2.push per device FW.list files',
+          api.file.listdir([
+              'foo/ec-private/fingerprint/bar.15236.0.0.tar.bz2',
+              'bar/file.15236.0.0.tar.bz2'
+          ])),
+      api.post_check(post_process.MustRun,
+                     'board1.push per device FW.bar.gcloud storage cp'),
+      api.post_check(post_process.MustRun,
+                     'board1.push per device FW.file.gcloud storage cp'),
+      api.post_check(post_process.DoesNotRun,
+                     'board2.push per device FW.bar.gcloud storage cp'),
+      api.post_check(post_process.DoesNotRun,
+                     'board2.push per device FW.file.gcloud storage cp'),
+      api.post_check(post_process.StepTextEquals,
+                     'board2.push per device FW.bar',
+                     'skipped due to duplication (already uploaded by board1)'),
+      api.post_check(post_process.StepTextEquals,
+                     'board2.push per device FW.file',
+                     'skipped due to duplication (already uploaded by board1)'),
+      api.post_process(post_process.DropExpectation),
+      mock_ls_files=['bar', 'file'],
+      build_targets=[{
+          'name': 'board1'
+      }, {
+          'name': 'board2'
+      }],
+  )
+
+  yield test(
+      'push-skipped-already-exists',
+      api.post_check(post_process.DoesNotRun,
+                     'push per device FW.adl_ish_lite.EC.gcloud storage cp'),
+      api.post_check(post_process.StepTextEquals,
+                     'push per device FW.adl_ish_lite.EC',
+                     'skipped (already exists in GCS)'),
+      api.post_process(post_process.DropExpectation),
+      mock_ls_exists=True,
+  )

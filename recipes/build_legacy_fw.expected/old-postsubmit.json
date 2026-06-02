@@ -4643,19 +4643,26 @@
     "name": "push per device FW.list files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/bar/file@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/foo/ec-private/fingerprint/bar@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/adl_ish_lite.EC.15236.0.0.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/adlrvp_n.15236.0.0.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/anraggar.EC_elf.15236.0.0.tar.bz2@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
   {
+    "cmd": [],
+    "name": "push per device FW.adl_ish_lite.EC.15236.0.0.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/firmware-board-9999.B/6301.202.44@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "storage",
-      "cp",
-      "--if-generation-match=0",
-      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/bar/file",
-      "gs://firmware-image-archive/firmware-board-9999.B/6301.202.44/file"
+      "ls",
+      "gs://firmware-image-archive/firmware-board-9999.B/6301.202.44/adl_ish_lite.EC.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4678,9 +4685,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "push per device FW.gcloud storage cp",
+    "name": "push per device FW.adl_ish_lite.EC.15236.0.0.tar.bz2.gcloud storage ls",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -4689,8 +4696,8 @@
       "storage",
       "cp",
       "--if-generation-match=0",
-      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/foo/ec-private/fingerprint/bar",
-      "gs://firmware-image-archive/firmware-board-9999.B/6301.202.44/bar"
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/adl_ish_lite.EC.15236.0.0.tar.bz2",
+      "gs://firmware-image-archive/firmware-board-9999.B/6301.202.44/adl_ish_lite.EC.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4713,9 +4720,161 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "push per device FW.gcloud storage cp (2)",
+    "name": "push per device FW.adl_ish_lite.EC.15236.0.0.tar.bz2.gcloud storage cp",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push per device FW.adlrvp_n.15236.0.0.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/firmware-board-9999.B/6301.202.44@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "ls",
+      "gs://firmware-image-archive/firmware-board-9999.B/6301.202.44/adlrvp_n.15236.0.0.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push per device FW.adlrvp_n.15236.0.0.tar.bz2.gcloud storage ls",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "--if-generation-match=0",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/adlrvp_n.15236.0.0.tar.bz2",
+      "gs://firmware-image-archive/firmware-board-9999.B/6301.202.44/adlrvp_n.15236.0.0.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push per device FW.adlrvp_n.15236.0.0.tar.bz2.gcloud storage cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push per device FW.anraggar.EC_elf.15236.0.0.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/firmware-board-9999.B/6301.202.44@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "ls",
+      "gs://firmware-image-archive/firmware-board-9999.B/6301.202.44/anraggar.EC_elf.15236.0.0.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push per device FW.anraggar.EC_elf.15236.0.0.tar.bz2.gcloud storage ls",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "--if-generation-match=0",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/anraggar.EC_elf.15236.0.0.tar.bz2",
+      "gs://firmware-image-archive/firmware-board-9999.B/6301.202.44/anraggar.EC_elf.15236.0.0.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push per device FW.anraggar.EC_elf.15236.0.0.tar.bz2.gcloud storage cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
