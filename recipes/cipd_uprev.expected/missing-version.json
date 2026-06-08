@@ -15,6 +15,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@response@{}@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "No new version provided for package chromiumos/infra/phosphorus/linux-amd64"

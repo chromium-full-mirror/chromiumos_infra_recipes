@@ -139,6 +139,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@response@{\"newVersions\": [{\"id\": \"resolved-instance_id-of-foo-version_bump\", \"packageName\": \"chromiumos/infra/version_bumper/linux-amd64\"}], \"oldVersions\": [{\"id\": \"resolved-instance_id-of-foo-version_bump\", \"packageName\": \"chromiumos/infra/version_bumper/linux-amd64\"}]}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

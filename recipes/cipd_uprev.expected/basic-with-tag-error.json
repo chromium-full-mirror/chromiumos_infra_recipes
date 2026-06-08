@@ -250,6 +250,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@response@{\"newVersions\": [{\"id\": \"resolved-instance_id-of-foo-phosphorus-v\", \"packageName\": \"chromiumos/infra/phosphorus/linux-amd64\"}], \"oldVersions\": [{\"id\": \"resolved-instance_id-of-foo-phosphorus-r\", \"packageName\": \"chromiumos/infra/phosphorus/linux-amd64\"}, {\"id\": \"resolved-instance_id-of-foo-recipe-ref--\", \"packageName\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\"}]}@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "Failed to set cipd tag. Check the stdout for the step for errors."

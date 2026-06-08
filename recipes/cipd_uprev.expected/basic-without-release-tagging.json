@@ -218,6 +218,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@response@{\"newVersions\": [{\"id\": \"resolved-instance_id-of-foo-phosphorus-v\", \"packageName\": \"chromiumos/infra/phosphorus/linux-amd64\"}, {\"id\": \"resolved-instance_id-of-foo-recipe-versi\", \"packageName\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\"}], \"oldVersions\": [{\"id\": \"resolved-instance_id-of-foo-phosphorus-r\", \"packageName\": \"chromiumos/infra/phosphorus/linux-amd64\"}, {\"id\": \"resolved-instance_id-of-foo-recipe-ref--\", \"packageName\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\"}]}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

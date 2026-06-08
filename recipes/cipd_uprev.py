@@ -12,6 +12,7 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
+from google.protobuf import json_format
 
 DEPS = [
     'recipe_engine/cipd',
@@ -22,6 +23,7 @@ DEPS = [
     'recipe_engine/time',
     'deferrals',
     'golucibin',
+    'easy',
 ]
 
 
@@ -111,28 +113,35 @@ def uprev_package(api: RecipeApi, instruction: cipd_uprev.Instruction,
 
 
 def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
-  release_tag_time = api.time.utcnow().isoformat()
-  with api.deferrals.raise_exceptions_at_end():
-    for instruction in properties.config.instructions:
-      with api.step.nest('package %s' % instruction.package_name):
-        validate(api, instruction)
-        properties.response.old_versions.extend(
-            [get_current_instance(api, instruction)])
-        package_tags = {}
-        if properties.config.release_version_tag:
-          release_tag_key = properties.config.release_version_tag
-          if release_tag_key == _CI_RELEASE_VERSION_TAG:
-            release_tag_value = 'ci_{}'
-          else:
-            release_tag_value = 'ctp_{}'
-          package_tags[release_tag_key] = release_tag_value.format(
-              release_tag_time)
-        with api.deferrals.defer_exceptions():
-          package = uprev_package(api, instruction, package_tags)
-          properties.response.new_versions.extend([package])
-    for luci_instruction in properties.config.luci_instructions:  # pragma: no cover
-      api.golucibin.execute_luciexe(luci_instruction.package_name,
-                                    luci_instruction.ref, luci_instruction.args)
+  try:
+    release_tag_time = api.time.utcnow().isoformat()
+    with api.deferrals.raise_exceptions_at_end():
+      for instruction in properties.config.instructions:
+        with api.step.nest('package %s' % instruction.package_name):
+          validate(api, instruction)
+          properties.response.old_versions.extend(
+              [get_current_instance(api, instruction)])
+          package_tags = {}
+          if properties.config.release_version_tag:
+            release_tag_key = properties.config.release_version_tag
+            if release_tag_key == _CI_RELEASE_VERSION_TAG:
+              release_tag_value = 'ci_{}'
+            else:
+              release_tag_value = 'ctp_{}'
+            package_tags[release_tag_key] = release_tag_value.format(
+                release_tag_time)
+          with api.deferrals.defer_exceptions():
+            package = uprev_package(api, instruction, package_tags)
+            properties.response.new_versions.extend([package])
+      for luci_instruction in properties.config.luci_instructions:  # pragma: no cover
+        api.golucibin.execute_luciexe(luci_instruction.package_name,
+                                      luci_instruction.ref,
+                                      luci_instruction.args)
+  finally:
+    api.easy.set_properties_step(
+        'set output properties',
+        response=json_format.MessageToDict(properties.response))
+
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
