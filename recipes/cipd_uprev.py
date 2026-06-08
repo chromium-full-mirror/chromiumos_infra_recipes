@@ -64,8 +64,14 @@ def get_current_instance(
   with api.step.nest(
       'get instance ID of package "%s" currently tagged with ref "%s"' %
       (instruction.package_name, instruction.ref)):
-    instance_id = api.cipd.describe(package_name=instruction.package_name,
-                                    version=instruction.ref).pin.instance_id
+    try:
+      instance_id = api.cipd.describe(package_name=instruction.package_name,
+                                      version=instruction.ref).pin.instance_id
+    except api.cipd.Error as e:
+      if 'no such ref' in str(e):
+        return cipd_uprev.PackageInstance(package_name=instruction.package_name,
+                                          id='')
+      raise
     return cipd_uprev.PackageInstance(package_name=instruction.package_name,
                                       id=instance_id)
 
@@ -227,4 +233,33 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'package chromiumos/infra/phosphorus/linux-amd64.validate package instructions'
       ),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'ref-does-not-exist',
+      api.properties(
+          cipd_uprev.Properties(
+              config=cipd_uprev.Config(instructions=[
+                  cipd_uprev.Instruction(
+                      package_name='chromiumos/infra/phosphorus/linux-amd64',
+                      ref='prod', version='staging'),
+              ]))),
+      api.step_data(
+          'package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package "chromiumos/infra/phosphorus/linux-amd64" currently tagged with ref "prod".cipd describe chromiumos/infra/phosphorus/linux-amd64',
+          api.cipd.example_error('no such ref')),
+  )
+
+  yield api.test(
+      'ref-describe-fails-other-error',
+      api.properties(
+          cipd_uprev.Properties(
+              config=cipd_uprev.Config(instructions=[
+                  cipd_uprev.Instruction(
+                      package_name='chromiumos/infra/phosphorus/linux-amd64',
+                      ref='prod', version='staging'),
+              ]))),
+      api.step_data(
+          'package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package "chromiumos/infra/phosphorus/linux-amd64" currently tagged with ref "prod".cipd describe chromiumos/infra/phosphorus/linux-amd64',
+          api.cipd.example_error('some other error')),
+      status='INFRA_FAILURE',
   )

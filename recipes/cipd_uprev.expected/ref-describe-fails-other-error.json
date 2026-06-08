@@ -1,0 +1,52 @@
+[
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.validate package instructions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package \"chromiumos/infra/phosphorus/linux-amd64\" currently tagged with ref \"prod\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "describe",
+      "chromiumos/infra/phosphorus/linux-amd64",
+      "-version",
+      "prod",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package \"chromiumos/infra/phosphorus/linux-amd64\" currently tagged with ref \"prod\".cipd describe chromiumos/infra/phosphorus/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"error\": \"some other error\",@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": null@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "CIPD('cipd describe chromiumos/infra/phosphorus/linux-amd64') failed with: some other error"
+    },
+    "name": "$result"
+  }
+]
