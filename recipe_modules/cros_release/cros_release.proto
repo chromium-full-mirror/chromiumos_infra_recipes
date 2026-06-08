@@ -45,4 +45,9 @@ message CrosReleaseProperties {
 
   // Whether to run paygen on MPA bots.
   bool paygen_mpa = 11;
+
+  // The threshold percentage of child builds that must succeed for a build
+  // to be considered successful for throttling purposes.
+  // If not set or 0, defaults to 50.
+  int32 throttling_threshold_percent = 12;
 }

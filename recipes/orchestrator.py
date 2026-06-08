@@ -161,12 +161,24 @@ def GenTests(api: RecipeTestApi):
       with_manifest_refs=True,
   )
 
-  def get_public_orch():
+  def get_success_orch(create_time=None):
     output = build_pb2.Build.Output()
     child_build_ids = [str(8922054662172514001 + x) for x in range(3)]
-    output.properties.update({'child_builds': child_build_ids})
-    return build_pb2.Build(id=8922054662172514000, output=output,
-                           status=common_pb2.SUCCESS)
+    properties = {
+        'child_builds': child_build_ids,
+        'child_build_info': [{
+            'status': 'SUCCESS'
+        }],
+    }
+    output.properties.update(properties)
+    build_kwargs = {
+        'id': 8922054662172514000,
+        'output': output,
+        'status': common_pb2.SUCCESS,
+    }
+    if create_time is not None:
+      build_kwargs['create_time'] = create_time
+    return build_pb2.Build(**build_kwargs)
 
   yield api.orch_menu.test(
       'release-orchestrator',
@@ -192,7 +204,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       api.buildbucket.simulated_collect_output(
-          [get_public_orch()], step_name='collect public orchestrator.collect'),
+          [get_success_orch()],
+          step_name='collect public orchestrator.collect'),
       # On ToT, shouldn't be getting branch.
       api.post_check(post_process.DoesNotRun, 'get chrome branch'),
       api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
@@ -220,10 +233,9 @@ def GenTests(api: RecipeTestApi):
           },
       }),
       api.time.seed(1600000000),
-      api.buildbucket.simulated_search_results([
-          build_pb2.Build(id=123, status=common_pb2.SUCCESS,
-                          create_time={'seconds': 1600000000 - 10 * 3600})
-      ], step_name='check stateful throttling'),
+      api.buildbucket.simulated_search_results(
+          [get_success_orch(create_time={'seconds': 1600000000 - 10 * 3600})],
+          step_name='check stateful throttling'),
       api.post_check(post_process.DoesNotRun, 'run builds'),
       api.post_process(post_process.DropExpectation),
       builder='release-main-orchestrator',
@@ -238,10 +250,9 @@ def GenTests(api: RecipeTestApi):
           },
       }),
       api.time.seed(1600000000),
-      api.buildbucket.simulated_search_results([
-          build_pb2.Build(id=123, status=common_pb2.SUCCESS,
-                          create_time={'seconds': 1600000000 - 30 * 3600})
-      ], step_name='check stateful throttling'),
+      api.buildbucket.simulated_search_results(
+          [get_success_orch(create_time={'seconds': 1600000000 - 30 * 3600})],
+          step_name='check stateful throttling'),
       api.post_check(post_process.MustRun, 'run builds'),
       api.post_process(post_process.DropExpectation),
       builder='release-main-orchestrator',
@@ -296,7 +307,8 @@ def GenTests(api: RecipeTestApi):
               }
           }),
       api.buildbucket.simulated_collect_output(
-          [get_public_orch()], step_name='collect public orchestrator.collect'),
+          [get_success_orch()],
+          step_name='collect public orchestrator.collect'),
       # On ToT, shouldn't be getting branch.
       api.post_check(post_process.DoesNotRun, 'get chrome branch'),
       api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),

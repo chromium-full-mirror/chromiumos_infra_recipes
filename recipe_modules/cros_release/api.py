@@ -67,15 +67,40 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         builder=builder_id,
         status=common_pb2.SUCCESS,
     )
-    # Fetch the most recent successful build.
-    builds = self.m.buildbucket.search(predicate, limit=1,
+    # Fetch the most recent successful builds - up to 10 to find non-throttled.
+    builds = self.m.buildbucket.search(predicate, limit=10,
                                        step_name='check stateful throttling')
-    if builds:
-      last_build = builds[0]
+    threshold = self.throttling_threshold_percent or 50
+    for build in builds:
       # Check if created in last 20 hours.
-      if last_build.create_time.seconds > self.m.time.time() - 20 * 3600:
+      if build.create_time.seconds <= self.m.time.time() - 20 * 3600:
+        # Builds are ordered by create_time desc.
+        break
+      if self._is_valid_successful_build(build, threshold):
         return True
     return False
+
+  def _is_valid_successful_build(self, build, threshold_percent):
+    """Checks if a build is a valid successful build for throttling.
+
+    It must have run child builds and met the success threshold.
+    """
+    properties = build.output.properties
+    if 'child_build_info' not in properties:
+      return False
+
+    child_build_info = properties['child_build_info']
+    if not child_build_info:
+      return False
+
+    total_children = len(child_build_info)
+
+    successful_children = sum(
+        1 for child in child_build_info
+        if 'status' in child and child['status'] == 'SUCCESS')
+
+    success_rate = (successful_children / total_children) * 100
+    return success_rate >= threshold_percent
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
@@ -92,6 +117,11 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     self._minios_unsupported = properties.minios_unsupported
     self._dynamic_qs_account = properties.dynamic_qs_account
     self._paygen_mpa = properties.paygen_mpa
+    self._throttling_threshold_percent = properties.throttling_threshold_percent
+
+  @property
+  def throttling_threshold_percent(self) -> int:
+    return self._throttling_threshold_percent
 
   @property
   def buildspec(self):
