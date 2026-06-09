@@ -258,7 +258,8 @@ message GeneratorProperties {
 
   // Checkout chrome source tree
   bool checkout_chrome = 22;
-  string sync_chrome_build_target = 23;
+  reserved "sync_chrome_build_target";
+  reserved 23;
 
   // The version files to uprev.
   // Required if uprev_target_kind is VERSION_FILE.

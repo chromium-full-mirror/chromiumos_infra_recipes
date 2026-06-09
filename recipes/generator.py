@@ -1686,7 +1686,7 @@ def GenTests(
 
   yield api.test(
       'sync-chrome',
-      _props(checkout_chrome=True, sync_chrome_build_target="betty"),
+      _props(checkout_chrome=True),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.post_check(post_process.MustRun, 'checkout chrome'),
       api.post_check(post_process.MustRun,
