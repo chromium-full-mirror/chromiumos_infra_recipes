@@ -44,6 +44,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@response@{}@@@"
+    ]
+  },
+  {
     "failure": {
       "humanReason": "CIPD('cipd describe chromiumos/infra/phosphorus/linux-amd64') failed with: some other error"
     },

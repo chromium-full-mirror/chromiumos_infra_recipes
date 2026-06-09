@@ -83,6 +83,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@response@{\"newVersions\": [{\"id\": \"resolved-instance_id-of-staging---------\", \"packageName\": \"chromiumos/infra/phosphorus/linux-amd64\"}], \"oldVersions\": [{\"packageName\": \"chromiumos/infra/phosphorus/linux-amd64\"}]}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
