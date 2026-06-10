@@ -117,7 +117,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(
           post_process.MustRun,
-          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 1234'
+          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.add comment on CL 1234'
       ),
       api.post_check(
           post_process.DoesNotRun,
@@ -137,7 +137,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(
           post_process.DoesNotRun,
-          'act on outdated CLs with policy: OUTDATED_ABANDON.comment on CL 1234'
+          'act on outdated CLs with policy: OUTDATED_ABANDON.add comment on CL 1234'
       ),
       api.post_check(
           post_process.MustRun,
@@ -154,7 +154,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(
           post_process.MustRun,
-          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 1234'
+          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.add comment on CL 1234'
       ),
       api.post_check(
           post_process.DoesNotRun,

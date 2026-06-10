@@ -2906,7 +2906,7 @@
   },
   {
     "cmd": [],
-    "name": "update CL labels.comment on CL 1",
+    "name": "update CL labels.add comment on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:@@@",
@@ -2914,63 +2914,69 @@
       "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).@@@",
-      "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/[CLEANUP]/chromiumos_workspace/src/overlay/+/1@@@"
+      "@@@STEP_LOG_END@comment text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.add comment on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "src/[CLEANUP]/chromiumos_workspace/src/overlay",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "update CL labels.comment on CL 1.repo forall",
+    "name": "update CL labels.add comment on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/overlay|src/src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [
       "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "comment",
-      "-i",
-      "1",
-      "-a",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/overlay",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "update CL labels.comment on CL 1.git_cl comment",
+    "infra_step": true,
+    "name": "update CL labels.add comment on CL 1.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\\nSend-to-cq policy for this case is DO_NOTHING.\\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).\"}]}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "update CL labels.add comment on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update CL labels.comment on CL 1 (2)",
+    "name": "update CL labels.add comment on CL 1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:@@@",
@@ -2978,56 +2984,62 @@
       "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).@@@",
-      "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/[CLEANUP]/chromiumos_workspace/src/private-overlay/+/1@@@"
+      "@@@STEP_LOG_END@comment text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.add comment on CL 1 (2).ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "src/[CLEANUP]/chromiumos_workspace/src/private-overlay",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "update CL labels.comment on CL 1 (2).repo forall",
+    "name": "update CL labels.add comment on CL 1 (2).ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/private-overlay|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [
       "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "comment",
-      "-i",
-      "1",
-      "-a",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DO_NOTHING.\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s)."
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "update CL labels.comment on CL 1 (2).git_cl comment",
+    "infra_step": true,
+    "name": "update CL labels.add comment on CL 1 (2).ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Found 2 open CL(s) for Gerrit topic chromeos-base/chromite:\\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\\nSend-to-cq policy for this case is DO_NOTHING.\\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).\"}]}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "update CL labels.add comment on CL 1 (2).curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

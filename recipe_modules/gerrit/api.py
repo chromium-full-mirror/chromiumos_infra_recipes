@@ -756,7 +756,8 @@ class GerritApi(RecipeApi):
       gerrit_change: The change to comment on.
       comment: The comment to leave.
     """
-    with self.m.step.nest(f'add comment on CL {gerrit_change.change}'):
+    with self.m.step.nest(f'add comment on CL {gerrit_change.change}') as pres:
+      pres.logs['comment text'] = comment
       comment_map = {'/PATCHSET_LEVEL': [{'message': comment}]}
       self._do_post(
           f'https://{gerrit_change.host}/changes/{gerrit_change.change}/revisions/current/review',

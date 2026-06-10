@@ -6,8 +6,11 @@
 
 from enum import Enum
 import re
+from typing import List, Tuple
 
 from recipe_engine import recipe_api
+
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
 from PB.recipes.chromeos.generator import (
     RETRY_LATEST_OR_LATEST_PINNED,
@@ -144,6 +147,15 @@ def sorted_cls(cls):
   return sorted(cls, key=lambda cl: cl.created, reverse=True)
 
 
+def count_running_cls(open_patch_sets: List[PatchSet]) -> int:
+  """Count how many of the open patch sets are currently running CQ."""
+  running_count = 0
+  for ps in open_patch_sets:
+    if is_running_cl(ps, dry_run=True) or is_running_cl(ps, dry_run=False):
+      running_count += 1
+  return running_count
+
+
 class PuprApi(recipe_api.RecipeApi):
   """A module for PUpr steps."""
 
@@ -178,6 +190,23 @@ class PuprApi(recipe_api.RecipeApi):
                if ('tag' in m and DRY_RUN_TAG_RE.match(m['tag']) and
                    FAILED_RE.match(m['message'])))
 
+  def check_concurrent_cq_limit(
+      self, open_patch_sets: List[PatchSet],
+      max_concurrent_cq_runs: int) -> Tuple[bool, int]:
+    """Check if the concurrent CQ runs limit is reached or exceeded.
+
+    Args:
+      open_patch_sets: Open CL patch sets.
+      max_concurrent_cq_runs: Max concurrent CQ runs allowed.
+
+    Returns:
+      (Whether limit is exceeded, currently running count)
+    """
+    if max_concurrent_cq_runs <= 0:
+      return False, 0
+    running_count = count_running_cls(open_patch_sets)
+    return running_count >= max_concurrent_cq_runs, running_count
+
   def identify_retry(self, retry_policy, no_existing_cls_policy, open_cls):
     """Identify the CL to be retried based on retry_policy.
 
@@ -190,6 +219,7 @@ class PuprApi(recipe_api.RecipeApi):
           FULL_RUN.
       * Most recent CL with a failed full run.
       * Most recent CL with a failed dry run.
+      * The latest open CL if no_existing_cls_policy == FULL_RUN.
 
     Args:
       retry_policy (RetryClPolicy): The retry policy to follow. Can be NO_RETRY,
@@ -198,6 +228,7 @@ class PuprApi(recipe_api.RecipeApi):
         follows when no CL exists. If FULL_RUN, we will look for any successful
         dry runs, allowing us to retry the latest one as a full run. If no
         successful dry run is found or if DRY_RUN, we will look for a failed CL.
+        Also, if FULL_RUN, we fallback to retrying the latest open CL.
       open_cls (List[PatchSet]): List of CLs.
 
     Returns:
@@ -295,5 +326,9 @@ class PuprApi(recipe_api.RecipeApi):
         return retry_if_rebase(
             retry_cl, True, False,
             'Found running cl: {}'.format(retry_cl.display_url))
+
+    if no_existing_cls_policy == FULL_RUN:
+      if open_cls:
+        return with_retry(open_cls[0], False, False)
 
     return no_retry()

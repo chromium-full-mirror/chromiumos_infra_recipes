@@ -274,8 +274,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
                                       'PUpr has been set to remind you that it'
                                       ' likely should be abandoned.').format(
                                           obviating_uprev.display_url)
-          self.m.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
-                                           outdated_comment_message)
+          self.m.gerrit.add_change_comment_remote(
+              outdated_cl.to_gerrit_change_proto(), outdated_comment_message)
         elif outdated_cls_policy == OUTDATED_ABANDON:
           outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                       'PUpr has been set to abandon.').format(
@@ -303,6 +303,17 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     send_to_cq_policy = (
         policy.existing_cls_policy
         if existing_cls else policy.no_existing_cls_policy)
+
+    limit_exceeded = False
+    running_count = 0
+    if (send_to_cq_policy in [DRY_RUN, DRY_RUN_NOT_APPROVED, FULL_RUN] and
+        policy.max_concurrent_cq_runs > 0 and open_changes):
+      with self.m.step.nest('check concurrent CQ runs') as presentation:
+        open_patch_sets = self.m.gerrit.fetch_patch_sets(
+            open_changes, include_messages=True, include_detailed_labels=True)
+        limit_exceeded, running_count = self.m.pupr.check_concurrent_cq_limit(
+            open_patch_sets, policy.max_concurrent_cq_runs)
+        presentation.step_text = f'running: {running_count}, limit: {policy.max_concurrent_cq_runs}'
 
     with self.m.step.nest('generate CLs'):
       changes = []
@@ -373,24 +384,30 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
             'Reviewers may also want to abandon the open CL(s).',
         ))
 
+        if limit_exceeded:
+          message_lines.append(
+              'However, the concurrent CQ run limit of {} has been reached or exceeded '
+              '(currently running: {}). Therefore, this CL will NOT be set to CQ.'
+              .format(policy.max_concurrent_cq_runs, running_count))
+
         message = '\n'.join(message_lines)
         if send_to_cq_policy == ABANDON:
           self.m.gerrit.abandon_change(change, message=message)
         else:
-          self.m.gerrit.add_change_comment(change, message)
+          self.m.gerrit.add_change_comment_remote(change, message)
 
         # Then set labels.
         labels = {
             DRY_RUN: {
                 Label.BOT_COMMIT: 1,
-                Label.COMMIT_QUEUE: 1,
+                Label.COMMIT_QUEUE: 0 if limit_exceeded else 1,
             },
             DRY_RUN_NOT_APPROVED: {
-                Label.COMMIT_QUEUE: 1,
+                Label.COMMIT_QUEUE: 0 if limit_exceeded else 1,
             },
             FULL_RUN: {
                 Label.BOT_COMMIT: 1,
-                Label.COMMIT_QUEUE: 2,
+                Label.COMMIT_QUEUE: 0 if limit_exceeded else 2,
             },
             SUBMIT: {
                 Label.BOT_COMMIT: 1,
@@ -519,7 +536,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           title = 'rebased by {}'.format(self.m.buildbucket.build_url())
           self.upload_new_patch_set(patch_set_to_retry, title=title,
                                     description='+')
-          self.m.gerrit.add_change_comment(
+          self.m.gerrit.add_change_comment_remote(
               changes_to_retry[0], ('[Rebase] A rebased CL is uploaded. '
                                     'CQ will need to rerun everything.'))
           # A new patchset upload resets CQ+1/+2 status.
@@ -528,6 +545,16 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       if running:
         # Already running for CQ. No need to retry.
         return
+
+      if policy.max_concurrent_cq_runs > 0:
+        limit_exceeded, running_count = self.m.pupr.check_concurrent_cq_limit(
+            open_patch_sets, policy.max_concurrent_cq_runs)
+        if limit_exceeded:
+          presentation.step_text = (
+              f'{message} (Retry skipped: concurrent CQ run limit of '
+              f'{policy.max_concurrent_cq_runs} reached, currently running: {running_count})'
+          )
+          return
 
       self.retry_cl(patch_set_to_retry, cq_label)
 

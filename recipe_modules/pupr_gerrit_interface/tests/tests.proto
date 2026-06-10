@@ -17,6 +17,7 @@ message ApplyRetryPolicyProperties {
   bool retry_only = 5;
   bool rebase_before_retry = 6;
   int32 changes = 7;
+  int32 max_concurrent_cq_runs = 8;
 }
 
 message CreateUprevClsProperties {
@@ -24,6 +25,8 @@ message CreateUprevClsProperties {
   bool existing_cls = 2;
   int32 projects = 3;
   recipes.chromeos.generator.CrPolicy cr_policy = 4;
+  int32 max_concurrent_cq_runs = 5;
+  repeated buildbucket.v2.GerritChange open_changes = 6;
 }
 
 message FindOpenUprevCLsProperties {

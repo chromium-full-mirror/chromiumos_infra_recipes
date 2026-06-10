@@ -1126,7 +1126,12 @@
     "cmd": [],
     "name": "performing retries.retry build 2222.add comment on CL 234567",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@comment text@The previous build (https://cr-buildbucket.appspot.com/build/2222) is being automatically retried for the following reasons:@@@",
+      "@@@STEP_LOG_LINE@comment text@- Some tests are now retryable:builder1.hw.suite@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@Did you notice a bug or UX issue with this retry? Please provide feedback: go/cros-auto-retry-bug.@@@",
+      "@@@STEP_LOG_END@comment text@@@"
     ]
   },
   {

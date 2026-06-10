@@ -182,6 +182,12 @@ message BranchPolicy {
   // Abandon CL when it has failed CQ full run for this many times. Negative
   // value means the CL can fail arbitrarily many times. Defaults to -1.
   int32 max_cq_retry = 11;
+
+  // Limit the number of concurrent running CLs (either CQ+1 or CQ+2).
+  // If set to > 0, and the number of currently running CLs for this
+  // topic/projects meets or exceeds this limit, we should set CQ to 0 (not
+  // start CQ) on new or retried CLs.
+  int32 max_concurrent_cq_runs = 12;
 }
 
 // Holds information needed for packages who need to fetch a file from the

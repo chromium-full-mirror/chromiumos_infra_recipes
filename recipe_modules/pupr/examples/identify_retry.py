@@ -621,6 +621,33 @@ def RunSteps(api):
   api.assertions.assertEqual(retry_cl_is_passed, False)
   api.assertions.assertEqual(retry_cl_is_running, True)
 
+  # Test fallback to latest open CL when no_existing_cls_policy is FULL_RUN
+  changes = [{
+      'info': {
+          '_number': 100,
+          'created': '2020-11-26 18:54:00.000000000',
+          'hashtags': [],
+          'messages': [],
+      }
+  }]
+  open_cls = _patch_set_from_dict(changes)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  api.assertions.assertEqual(cl.change_id, 100)
+  api.assertions.assertEqual(cq_label, 2)
+  api.assertions.assertEqual(message, 'Found cl: https:///c/100')
+  api.assertions.assertEqual(retry_cl_is_passed, False)
+  api.assertions.assertEqual(retry_cl_is_running, False)
+
+  # Should not fallback if no_existing_cls_policy is DRY_RUN
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
+      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls)
+  api.assertions.assertEqual(cl, None)
+  api.assertions.assertEqual(cq_label, 0)
+  api.assertions.assertEqual(message, 'No open CL was found to retry.')
+  api.assertions.assertEqual(retry_cl_is_passed, False)
+  api.assertions.assertEqual(retry_cl_is_running, False)
+
 
 def GenTests(api):
   yield api.test('basic')

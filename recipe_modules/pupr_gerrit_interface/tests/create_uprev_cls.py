@@ -41,6 +41,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
         reviewers=[Reviewer(email='a@example.com')],
         existing_cls_policy=properties.send_to_cq_policy,
         cr_policy=properties.cr_policy,
+        max_concurrent_cq_runs=properties.max_concurrent_cq_runs,
     )
   else:
     branch_policy = BranchPolicy(
@@ -49,6 +50,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
         reviewers=[Reviewer(email='a@example.com')],
         no_existing_cls_policy=properties.send_to_cq_policy,
         cr_policy=properties.cr_policy,
+        max_concurrent_cq_runs=properties.max_concurrent_cq_runs,
     )
   if properties.projects == 0:
     projects = [
@@ -64,10 +66,33 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
         for i in range(1, properties.projects + 1)
     ]
 
-  summary = api.pupr_gerrit_interface.create_uprev_cls(projects, [],
-                                                       properties.existing_cls,
-                                                       branch_policy, 'a topic')
+  summary = api.pupr_gerrit_interface.create_uprev_cls(
+      projects, list(properties.open_changes), properties.existing_cls,
+      branch_policy, 'a topic')
   return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
+
+
+OPEN_CHANGES_LIST = [
+    common.GerritChange(host='host-review.googlesource.com', change=1,
+                        project='project', patchset=1)
+]
+FETCH_RESPONSE_RUNNING = {
+    1: {
+        '_number': 1,
+        'project': 'project',
+        'patch_set': 1,
+        'branch': 'main',
+        'created': '2023-01-09 13:11:20.000000000',
+        'labels': {
+            'Commit-Queue': {
+                'all': [{
+                    'value': 1
+                }]
+            }
+        },
+        'messages': [],
+    }
+}
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
@@ -203,4 +228,71 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
+      api.post_process(post_process.DropExpectation))
+
+  open_changes_list = [
+      common.GerritChange(host='host-review.googlesource.com', change=1,
+                          project='project', patchset=1)
+  ]
+  fetch_response_running = {
+      1: {
+          '_number': 1,
+          'project': 'project',
+          'patch_set': 1,
+          'branch': 'main',
+          'created': '2023-01-09 13:11:20.000000000',
+          'labels': {
+              'Commit-Queue': {
+                  'all': [{
+                      'value': 1
+                  }]
+              }
+          },
+          'messages': [],
+      }
+  }
+
+  yield api.test(
+      'limit-exceeded',
+      api.properties(
+          CreateUprevClsProperties(send_to_cq_policy=DRY_RUN, projects=1,
+                                   max_concurrent_cq_runs=1,
+                                   open_changes=open_changes_list)),
+      api.gerrit.set_gerrit_fetch_changes_response('check concurrent CQ runs',
+                                                   open_changes_list,
+                                                   fetch_response_running),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for project1',
+          'https://host-review.googlesource.com/c/project/+/123'),
+      api.path.exists(api.src_state.workspace_path),
+      api.post_check(post_process.StepSuccess,
+                     'update CL labels.set labels on CL 123'),
+      check_label(123, 'Commit-Queue', 0),
+      api.post_check(post_process.LogContains,
+                     'update CL labels.add comment on CL 123', 'comment text',
+                     ['limit of 1 has been reached']),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'limit-not-exceeded',
+      api.properties(
+          CreateUprevClsProperties(send_to_cq_policy=DRY_RUN, projects=1,
+                                   max_concurrent_cq_runs=2,
+                                   open_changes=open_changes_list)),
+      api.gerrit.set_gerrit_fetch_changes_response('check concurrent CQ runs',
+                                                   open_changes_list,
+                                                   fetch_response_running),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for project1',
+          'https://host-review.googlesource.com/c/project/+/123'),
+      api.path.exists(api.src_state.workspace_path),
+      api.post_check(post_process.StepSuccess,
+                     'update CL labels.set labels on CL 123'),
+      check_label(123, 'Commit-Queue', 1),
+      api.post_check(post_process.LogContains,
+                     'update CL labels.add comment on CL 123', 'comment text',
+                     ['Send-to-cq policy for this case is DRY_RUN']),
+      api.post_check(post_process.LogDoesNotContain,
+                     'update CL labels.add comment on CL 123', 'comment text',
+                     ['limit of 2 has been reached']),
       api.post_process(post_process.DropExpectation))

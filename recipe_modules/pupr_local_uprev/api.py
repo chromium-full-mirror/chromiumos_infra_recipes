@@ -554,6 +554,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       if chrome_files:
         chrome_src_root = chrome_root / 'src'
         with self.m.context(cwd=chrome_src_root):
+          base_branch = self.m.git.current_branch() or 'main'
           if self.m.git.branch_exists('pupr'):
             head = self.m.git.head_commit()
             self.m.git.checkout(commit=head)
@@ -621,10 +622,15 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
           remote_url = self.m.git.remote_url(remote='origin')
           remote_host = urlparse(remote_url).netloc
           remote = 'cros-internal' if 'chrome-internal' in remote_host else 'cros'
-          branch = self.m.git.current_branch() or 'main'
+          branch = base_branch
+          project_name = urlparse(remote_url).path.strip('/')
+          if project_name.startswith('a/'):
+            project_name = project_name[2:]
+          if project_name.endswith('.git'):
+            project_name = project_name[:-4]
           chrome_project = repo_api.ProjectInfo(
               remote=remote,
-              name=urlparse(remote_url).path.strip('/'),
+              name=project_name,
               branch=branch,
               rrev='refs/heads/' + branch,
               path=str(chrome_src_root),

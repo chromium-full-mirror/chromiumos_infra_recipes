@@ -118,6 +118,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield _with_repo_infos(
       'basic',
       api.git.diff_check(True),
+      api.step_data(
+          'commit uprev.commit in chrome.git remote',
+          api.raw_io.stream_output_text(
+              'https://chromium.googlesource.com/a/chromium/src.git')),
       api.post_check(post_process.MustRun, 'commit uprev'),
       api.post_process(post_process.DropExpectation),
   )

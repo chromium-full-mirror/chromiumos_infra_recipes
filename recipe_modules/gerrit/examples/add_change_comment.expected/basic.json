@@ -60,7 +60,11 @@
   },
   {
     "cmd": [],
-    "name": "add comment on CL 123"
+    "name": "add comment on CL 123",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@comment text@my comment@@@",
+      "@@@STEP_LOG_END@comment text@@@"
+    ]
   },
   {
     "cmd": [],

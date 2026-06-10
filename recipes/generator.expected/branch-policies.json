@@ -3226,7 +3226,7 @@
   },
   {
     "cmd": [],
-    "name": "update CL labels.comment on CL 1",
+    "name": "update CL labels.add comment on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromeos-chrome:@@@",
@@ -3234,56 +3234,62 @@
       "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DRY_RUN.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+1@@@",
-      "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+      "@@@STEP_LOG_END@comment text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.add comment on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "src/overlay",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "update CL labels.comment on CL 1.repo forall",
+    "name": "update CL labels.add comment on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@src/overlay|src/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [
       "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "comment",
-      "-i",
-      "1",
-      "-a",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromeos-chrome:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DRY_RUN.\nTherefore, marking CL as CQ+1"
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "update CL labels.comment on CL 1.git_cl comment",
+    "infra_step": true,
+    "name": "update CL labels.add comment on CL 1.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Found 2 open CL(s) for Gerrit topic chromeos-base/chromeos-chrome:\\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\\nSend-to-cq policy for this case is DRY_RUN.\\nTherefore, marking CL as CQ+1\"}]}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "update CL labels.add comment on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3328,7 +3334,7 @@
       "/path/to/tmp/json",
       "copy",
       "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_1"
+      "[CLEANUP]/service_account_auth_token_tmp_2"
     ],
     "infra_step": true,
     "name": "update CL labels.set labels on CL 1.ensure auth token.Write auth token to temp file",
@@ -3343,7 +3349,7 @@
       "-X",
       "POST",
       "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
       "-H",
       "Content-Type: application/json",
       "-d",
@@ -3357,7 +3363,7 @@
   },
   {
     "cmd": [],
-    "name": "update CL labels.comment on CL 1 (2)",
+    "name": "update CL labels.add comment on CL 1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-base/chromeos-chrome:@@@",
@@ -3365,56 +3371,62 @@
       "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DRY_RUN.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+1@@@",
-      "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+      "@@@STEP_LOG_END@comment text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.add comment on CL 1 (2).ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "src/private-overlay",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "update CL labels.comment on CL 1 (2).repo forall",
+    "name": "update CL labels.add comment on CL 1 (2).ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@src/private-overlay|src/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [
       "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "comment",
-      "-i",
-      "1",
-      "-a",
-      "Found 2 open CL(s) for Gerrit topic chromeos-base/chromeos-chrome:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DRY_RUN.\nTherefore, marking CL as CQ+1"
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_3"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "update CL labels.comment on CL 1 (2).git_cl comment",
+    "infra_step": true,
+    "name": "update CL labels.add comment on CL 1 (2).ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_3",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Found 2 open CL(s) for Gerrit topic chromeos-base/chromeos-chrome:\\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\\nSend-to-cq policy for this case is DRY_RUN.\\nTherefore, marking CL as CQ+1\"}]}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "update CL labels.add comment on CL 1 (2).curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3459,7 +3471,7 @@
       "/path/to/tmp/json",
       "copy",
       "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_2"
+      "[CLEANUP]/service_account_auth_token_tmp_4"
     ],
     "infra_step": true,
     "name": "update CL labels.set labels on CL 1 (2).ensure auth token.Write auth token to temp file",
@@ -3474,7 +3486,7 @@
       "-X",
       "POST",
       "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "@[CLEANUP]/service_account_auth_token_tmp_4",
       "-H",
       "Content-Type: application/json",
       "-d",
