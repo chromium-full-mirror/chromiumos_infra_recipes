@@ -5,6 +5,7 @@
 """Setup for the cros_lkgm module."""
 
 from PB.recipe_modules.chromeos.cros_lkgm.cros_lkgm import (CrosLkgmProperties)
+from .api import CrosLkgmApi as API
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -16,9 +17,12 @@ DEPS = [
     'cros_snapshot',
     'cros_source',
     'cros_version',
+    'greenness',
+    'recipe_engine/scheduler',
+    'recipe_engine/properties',
+    'src_state',
+    'gitiles',
 ]
 
 
 PROPERTIES = CrosLkgmProperties
-
-from .api import CrosLkgmApi as API

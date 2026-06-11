@@ -116,6 +116,7 @@ def DoRunSteps(api: RecipeApi):
       extra_child_props=extra_child_props,
   )
   testable_builds = builds_status.testable_builds
+  api.cros_lkgm.do_lkgm_via_pupr()
 
   # Run any HW tests.
   if not api.orch_menu.is_public_orchestrator:

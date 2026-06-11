@@ -83,6 +83,7 @@ def DoRunSteps(api: RecipeApi):
   )
 
   testable_builds = builds_status.testable_builds
+  api.cros_lkgm.do_lkgm_via_pupr()
   # Run any HW tests.
   api.snapshot_orch_menu.plan_and_run_tests(testable_builds=testable_builds)
 

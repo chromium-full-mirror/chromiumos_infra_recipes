@@ -16,4 +16,14 @@ message CrosLkgmProperties {
   // Percent of release and public builders that must be green for the build
   // to be considered an LKGM candidate. Should be a value in [0, 100].
   int32 builder_threshold_percentage = 3;
+
+  // Disable the legacy LKGM uprev approach (which synchronously runs the
+  // chrome_chromeos_lkgm script within this builder).
+  bool disable_legacy = 4;
+
+  // Enable triggering PUpr for LKGM uprev.
+  bool enable_pupr = 5;
+
+  // The name of the PUpr builder to trigger.
+  string pupr_builder_name = 6;
 }

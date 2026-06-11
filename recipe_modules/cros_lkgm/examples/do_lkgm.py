@@ -120,6 +120,19 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'assess LKGM readiness'),
       api.post_process(post_process.DropExpectation),
   )
+  yield api.test(
+      'disable-legacy',
+      api.test_util.test_orchestrator(
+          bucket='release', builder='release-main-orchestrator').build,
+      api.properties(**{
+          '$chromeos/cros_lkgm': {
+              'enable_lkgm': True,
+              'disable_legacy': True,
+          },
+      }),
+      api.post_check(post_process.DoesNotRun, 'assess LKGM readiness'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield lgkm_test(
       'lkgm-candidate',

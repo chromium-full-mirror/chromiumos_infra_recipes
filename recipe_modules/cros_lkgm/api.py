@@ -43,6 +43,9 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     self._enable_lkgm = properties.enable_lkgm
+    self._disable_legacy = properties.disable_legacy
+    self._enable_pupr = properties.enable_pupr
+    self._pupr_builder_name = properties.pupr_builder_name
     self._full_run = properties.full_run
     self._builder_threshold_percentage = properties.builder_threshold_percentage
     self._public_build = None
@@ -113,7 +116,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
           self._public_build.id, step_name='collect', timeout=60 * 60 * 13)
 
   def _success_build_count(self, builds):
-    return sum([b.status == common_pb2.SUCCESS for b in builds])
+    return sum(b.status == common_pb2.SUCCESS for b in builds)
 
   def _success_percent(self, builds):
     successful_builds = self._success_build_count(builds)
@@ -147,6 +150,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         number of external manifest position to the script.
     """
     if not self._enable_lkgm:
+      return
+    if self._disable_legacy:
       return
     with self.m.step.nest('assess LKGM readiness') as presentation:
       if not self._is_lkgm_candidate(release_build_results):
@@ -274,3 +279,73 @@ class CrosLkgmApi(recipe_api.RecipeApi):
           result = False
 
     return result
+
+  def do_lkgm_via_pupr(self):
+    """Triggers cros_lkgm.pupr if conditions are met.
+
+    Checks if enable_pupr is True, and if builder aggregated greenness
+    is >= builder_threshold_percentage.
+    """
+    if not self._enable_pupr:
+      return
+
+    with self.m.step.nest('do lkgm via pupr') as presentation:
+      if not self._pupr_builder_name:
+        presentation.step_text = 'no PUpr builder name configured, skipping'
+        return
+
+      # Intentionally catch all exceptions to ensure we do not break snapshot
+      # and release builders at this experimental stage.
+      try:
+        critical_build_scores = [
+            gt.build_score
+            for gt in self.m.greenness.builder_greenness_dict.values()
+            if gt.critical and gt.build_score != -1
+        ]
+        if not critical_build_scores:
+          aggregated_greenness = 0
+        else:
+          aggregated_greenness = sum(critical_build_scores) / len(
+              critical_build_scores)
+
+        presentation.step_text = (
+            'aggregated greenness: {:.2f}%, threshold: {:d}%'.format(
+                aggregated_greenness, self._builder_threshold_percentage))
+
+        if aggregated_greenness >= self._builder_threshold_percentage:
+          self._trigger_pupr()
+        else:
+          presentation.step_text += ' (below threshold, skipping PUpr)'
+      except Exception as e:  # pylint: disable=broad-exception-caught
+        presentation.status = self.m.step.FAILURE
+        presentation.step_text = f'failed: {e}'
+
+  def _trigger_pupr(self):
+    is_staging = self.m.cros_infra_config.is_staging
+
+    project = 'chromeos'
+    job = self._pupr_builder_name
+    if is_staging and not job.startswith('staging-'):
+      job = f'staging-{job}'
+
+    gitiles_commit = self.m.src_state.gitiles_commit
+    repo = self.m.gitiles.repo_url(gitiles_commit)
+    properties = {
+        'triggers': [{
+            'gitiles': {
+                'repo': repo,
+                'ref': gitiles_commit.ref,
+                'revision': gitiles_commit.id,
+            }
+        }]
+    }
+    trigger = self.m.scheduler.BuildbucketTrigger(
+        properties=properties,
+        inherit_tags=False,
+    )
+    self.m.scheduler.emit_trigger(
+        trigger,
+        project=project,
+        jobs=[job],
+        step_name=f'trigger {job}',
+    )
