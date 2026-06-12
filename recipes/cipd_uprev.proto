@@ -12,6 +12,11 @@ message Properties {
 
   // This property is set by the recipe execution, not by the caller.
   Response response = 2;
+
+  // The CIPD version to rollback to. Set by the caller.
+  // This overrides the versions in the config, to make it easier for the
+  // caller. I.e. bb add firmware-uprev-rollback -p rollback_to=VERSION
+  string rollback_to = 3;
 }
 
 // Config contains the complete instructions of how to perform the uprev.
@@ -41,7 +46,8 @@ message Instruction {
   string ref = 2;
   // The new version for the label. Can be either a CIPD instance_id (e.g
   // "aNJTdkkZzER61Hc0TACV73oLGdlZCQXT2LtVNBFDclAC") or another label (e.g.
-  // "latest").
+  // "latest") or a tag (e.g. "luci_build:prod/infra-packager-linux-64/65569")
+  // if the tag is unique.
   string version = 3;
 }
 

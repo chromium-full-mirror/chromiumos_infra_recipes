@@ -1,0 +1,299 @@
+[
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64"
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.validate package instructions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.get instance ID of package \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\" currently tagged with ref \"prod\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64/+/resolved-instance_id-of-prod------------@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "describe",
+      "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64",
+      "-version",
+      "prod",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.get instance ID of package \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\" currently tagged with ref \"prod\".cipd describe chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"package\": \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"refs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"modified_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"modified_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"latest\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ],@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"registered_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"buildbot_build:some.waterfall/builder/1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_repository:https://chromium.googlesource.com/some/repo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_revision:397a2597cdc237f3026e6143b683be4b9ab60540\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.apply the \"prod\" ref of the \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\" package to \"fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64/+/resolved-instance_id-of-fw_provisioning_@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "set-ref",
+      "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64",
+      "-version",
+      "fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562",
+      "-ref",
+      "prod",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.apply the \"prod\" ref of the \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\" package to \"fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562\".cipd set-ref chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"instance_id\": \"resolved-instance_id-of-fw_provisioning_\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"package\": \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64"
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64.validate package instructions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64.get instance ID of package \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\" currently tagged with ref \"prod\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64/+/resolved-instance_id-of-prod------------@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "describe",
+      "chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64",
+      "-version",
+      "prod",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "package chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64.get instance ID of package \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\" currently tagged with ref \"prod\".cipd describe chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"package\": \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"refs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"modified_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"modified_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"latest\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ],@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"registered_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"buildbot_build:some.waterfall/builder/1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_repository:https://chromium.googlesource.com/some/repo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_revision:397a2597cdc237f3026e6143b683be4b9ab60540\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64.apply the \"prod\" ref of the \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\" package to \"fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64/+/resolved-instance_id-of-fw_provisioning_@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "set-ref",
+      "chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64",
+      "-version",
+      "fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562",
+      "-ref",
+      "prod",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "package chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64.apply the \"prod\" ref of the \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\" package to \"fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562\".cipd set-ref chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"instance_id\": \"resolved-instance_id-of-fw_provisioning_\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"package\": \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure container_uprev (fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562)"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562",
+      "-ensure-file",
+      "chromiumos/infra/container_uprev/${platform} fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "ensure container_uprev (fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562).ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-fw_provisioning_\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/container_uprev/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562/container_uprev",
+      "--output",
+      "[CLEANUP]/tmp_tmp_1/sub_build.pb",
+      "--",
+      "uprev",
+      "-target",
+      "firmware-filter,cros-fw-provision",
+      "-prod",
+      "-to-tag",
+      "prod",
+      "-from-tag",
+      "fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562"
+    ],
+    "env": {
+      "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TEMP": "[CLEANUP]/tmp_tmp_2",
+      "TEMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TMP": "[CLEANUP]/tmp_tmp_2",
+      "TMPDIR": "[CLEANUP]/tmp_tmp_2"
+    },
+    "name": "container_uprev sub-build",
+    "stdin": "\u0012\u00002\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@step.sub_build@{@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@  \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@}@@@",
+      "@@@STEP_LOG_END@step.sub_build@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@response@{\"newVersions\": [{\"id\": \"resolved-instance_id-of-fw_provisioning_\", \"packageName\": \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\"}, {\"id\": \"resolved-instance_id-of-fw_provisioning_\", \"packageName\": \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\"}], \"oldVersions\": [{\"id\": \"resolved-instance_id-of-prod------------\", \"packageName\": \"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64\"}, {\"id\": \"resolved-instance_id-of-prod------------\", \"packageName\": \"chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64\"}]}@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

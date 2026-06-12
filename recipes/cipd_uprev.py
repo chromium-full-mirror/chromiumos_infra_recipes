@@ -32,7 +32,8 @@ PROPERTIES = cipd_uprev.Properties
 _CI_RELEASE_VERSION_TAG = 'ci_release_version'
 
 
-def validate(api: RecipeApi, instruction: cipd_uprev.Instruction) -> None:
+def validate(api: RecipeApi, instruction: cipd_uprev.Instruction,
+             override_version=None) -> None:
   """Validate instructions for uprevving a specific package.
 
   Args:
@@ -45,7 +46,8 @@ def validate(api: RecipeApi, instruction: cipd_uprev.Instruction) -> None:
     if not instruction.ref:
       raise StepFailure('No ref to update for package %s' %
                         instruction.package_name)
-    if not instruction.version:
+    version = override_version or instruction.version
+    if not version:
       raise StepFailure('No new version provided for package %s' %
                         instruction.package_name)
 
@@ -82,7 +84,8 @@ def get_current_instance(
 
 
 def uprev_package(api: RecipeApi, instruction: cipd_uprev.Instruction,
-                  package_tags=None) -> cipd_uprev.PackageInstance:
+                  package_tags=None,
+                  override_version=None) -> cipd_uprev.PackageInstance:
   """Change CIPD ref of a package according to the instructions.
 
   Args:
@@ -95,12 +98,13 @@ def uprev_package(api: RecipeApi, instruction: cipd_uprev.Instruction,
     A StepFailure if the CIPD tool call fails.
   """
   package_tags = package_tags or {}
+  version = override_version or instruction.version
   with api.step.nest(
       'apply the "%s" ref of the "%s" package to "%s"' %
-      (instruction.ref, instruction.package_name, instruction.version)) as pres:
+      (instruction.ref, instruction.package_name, version)) as pres:
     for tag_key, tag_value in package_tags.items():
       try:
-        api.cipd.set_tag(instruction.package_name, instruction.version,
+        api.cipd.set_tag(instruction.package_name, version,
                          {tag_key: tag_value})
       except Exception as e:
         pres.step_text = 'Failed to set cipd tag. Check the stdout for the step for errors.'
@@ -108,8 +112,7 @@ def uprev_package(api: RecipeApi, instruction: cipd_uprev.Instruction,
         raise StepFailure(
             'Failed to set cipd tag. Check the stdout for the step for errors.'
         ) from e
-    instance_id = api.cipd.set_ref(instruction.package_name,
-                                   instruction.version,
+    instance_id = api.cipd.set_ref(instruction.package_name, version,
                                    [instruction.ref]).instance_id
     pres.links[
         instruction.
@@ -124,7 +127,7 @@ def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
     with api.deferrals.raise_exceptions_at_end():
       for instruction in properties.config.instructions:
         with api.step.nest('package %s' % instruction.package_name):
-          validate(api, instruction)
+          validate(api, instruction, properties.rollback_to)
           properties.response.old_versions.extend(
               [get_current_instance(api, instruction)])
           package_tags = {}
@@ -137,12 +140,17 @@ def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
             package_tags[release_tag_key] = release_tag_value.format(
                 release_tag_time)
           with api.deferrals.defer_exceptions():
-            package = uprev_package(api, instruction, package_tags)
+            package = uprev_package(api, instruction, package_tags,
+                                    properties.rollback_to)
             properties.response.new_versions.extend([package])
-      for luci_instruction in properties.config.luci_instructions:  # pragma: no cover
-        api.golucibin.execute_luciexe(luci_instruction.package_name,
-                                      luci_instruction.ref,
-                                      luci_instruction.args)
+      for luci_instruction in properties.config.luci_instructions:
+        args = list(luci_instruction.args)
+        if properties.rollback_to:
+          args.append('-from-tag')
+          args.append(properties.rollback_to)
+        api.golucibin.execute_luciexe(
+            luci_instruction.package_name, properties.rollback_to or
+            luci_instruction.ref, args)
   finally:
     api.easy.set_properties_step(
         'set output properties',
@@ -277,4 +285,195 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package "chromiumos/infra/phosphorus/linux-amd64" currently tagged with ref "prod".cipd describe chromiumos/infra/phosphorus/linux-amd64',
           api.cipd.example_error('some other error')),
       status='INFRA_FAILURE',
+  )
+
+  yield api.test(
+      'firmware-uprev-staging',
+      api.properties(
+          cipd_uprev.Properties(
+              config=cipd_uprev.Config(
+                  instructions=[
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+                          ref='staging', version='latest'),
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64',
+                          ref='staging', version='latest'),
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/container_uprev/linux-amd64',
+                          ref='fw_staging', version='latest'),
+                  ],
+                  luci_instructions=[
+                      cipd_uprev.LuciExeInstruction(
+                          package_name='container_uprev', ref='fw_staging',
+                          args=[
+                              'build',
+                              '-target',
+                              'firmware-filter,cros-fw-provision',
+                          ]),
+                  ],
+                  release_version_tag='fw_provisioning_release_version',
+              ))),
+      api.golucibin.set_execute_luciexe_response('', 'container_uprev'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.get instance ID of package "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64" currently tagged with ref "staging".cipd describe chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+          [
+              'describe',
+              'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+              '-version', 'staging'
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.apply the "staging" ref of the "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64" package to "latest".cipd set-tag chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+          [
+              'set-tag',
+              'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+              '-version', 'latest', '-tag',
+              'fw_provisioning_release_version:ctp_2012-05-14T12:53:21.500000'
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.apply the "staging" ref of the "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64" package to "latest".cipd set-ref chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+          [
+              'set-ref',
+              'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+              '-version', 'latest', '-ref', 'staging'
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/container_uprev/linux-amd64.get instance ID of package "chromiumos/infra/container_uprev/linux-amd64" currently tagged with ref "fw_staging".cipd describe chromiumos/infra/container_uprev/linux-amd64',
+          [
+              'describe', 'chromiumos/infra/container_uprev/linux-amd64',
+              '-version', 'fw_staging'
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/container_uprev/linux-amd64.apply the "fw_staging" ref of the "chromiumos/infra/container_uprev/linux-amd64" package to "latest".cipd set-ref chromiumos/infra/container_uprev/linux-amd64',
+          [
+              'set-ref', 'chromiumos/infra/container_uprev/linux-amd64',
+              '-version', 'latest', '-ref', 'fw_staging'
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'container_uprev sub-build',
+          ['--', 'build', '-target', 'firmware-filter,cros-fw-provision'],
+      ),
+  )
+
+  yield api.test(
+      'firmware-uprev-prod',
+      api.properties(
+          cipd_uprev.Properties(
+              config=cipd_uprev.Config(
+                  instructions=[
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+                          ref='prod', version='staging'),
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64',
+                          ref='prod', version='staging'),
+                  ],
+                  luci_instructions=[
+                      cipd_uprev.LuciExeInstruction(
+                          package_name='container_uprev', ref='fw_staging',
+                          args=[
+                              'uprev', '-target',
+                              'firmware-filter,cros-fw-provision', '-prod',
+                              '-from-tag', 'staging', '-to-tag', 'prod'
+                          ]),
+                  ],
+              ))),
+      api.golucibin.set_execute_luciexe_response('', 'container_uprev'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.get instance ID of package "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64" currently tagged with ref "prod".cipd describe chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+          [
+              'describe',
+              'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+              '-version', 'prod'
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.apply the "prod" ref of the "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64" package to "staging".cipd set-ref chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+          [
+              'set-ref',
+              'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+              '-version', 'staging', '-ref', 'prod'
+          ],
+      ),
+      api.post_check(post_process.DoesNotRunRE, r'.*cipd set-tag.*'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'container_uprev sub-build',
+          [
+              '--', 'uprev', '-target', 'firmware-filter,cros-fw-provision',
+              '-prod', '-from-tag', 'staging', '-to-tag', 'prod'
+          ],
+      ),
+  )
+
+  # Simulate bb add chromeos/infra/firmware-uprev-rollback -p rollback_to="fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562"
+  yield api.test(
+      'firmware-uprev-rollback',
+      api.properties(
+          cipd_uprev.Properties(
+              rollback_to="fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562",
+              config=cipd_uprev.Config(
+                  instructions=[
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+                          ref='prod',
+                      ),
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/cft/provision/cros-fw-provision/linux-amd64',
+                          ref='prod',
+                      ),
+                  ],
+                  luci_instructions=[
+                      cipd_uprev.LuciExeInstruction(
+                          package_name='container_uprev', args=[
+                              'uprev', '-target',
+                              'firmware-filter,cros-fw-provision', '-prod',
+                              '-to-tag', 'prod'
+                          ]),
+                  ],
+              ))),
+      api.golucibin.set_execute_luciexe_response('', 'container_uprev'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.get instance ID of package "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64" currently tagged with ref "prod".cipd describe chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+          [
+              'describe',
+              'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+              '-version', 'prod'
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.apply the "prod" ref of the "chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64" package to "fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562".cipd set-ref chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+          [
+              'set-ref',
+              'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+              '-version',
+              'fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562',
+              '-ref', 'prod'
+          ],
+      ),
+      api.post_check(post_process.DoesNotRunRE, r'.*cipd set-tag.*'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'container_uprev sub-build',
+          [
+              '--', 'uprev', '-target', 'firmware-filter,cros-fw-provision',
+              '-prod', '-to-tag', 'prod', '-from-tag',
+              'fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562'
+          ],
+      ),
   )

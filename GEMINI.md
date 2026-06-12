@@ -33,3 +33,18 @@ Read all the essential documentation before working on this repo.
 ### Testing Changes
 
 Run `./recipes.py test train` to test changes to the recipes. This may generate changes in the expectation files.
+
+## Development Tips
+
+### Running Tests
+*   **PATH Dependency:** The `recipes.py` script requires `cipd` (from `depot_tools`) to be in your `PATH`. If it is not globally available, you can use the version in the workspace (relative to `infra/recipes` directory):
+    ```bash
+    PATH=$(realpath ../../src/chromium/depot_tools):$PATH ./recipes.py test train
+    ```
+*   **Filtering Tests:** Running all tests can take time. You can filter to a specific recipe using the `--filter` option:
+    ```bash
+    ./recipes.py test train --filter <recipe_name>
+    ```
+
+### Recipe Engine Gotchas
+*   **Exception Attributes:** When catching exceptions raised by recipe modules (e.g., `api.cipd.Error`), custom attributes like `message` might not be available on the exception object. Use `str(e)` or `e.args` to inspect the error content.
