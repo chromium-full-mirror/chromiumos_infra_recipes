@@ -14,7 +14,8 @@
     "cmd": [],
     "name": "package chromiumos/infra/version_bumper/linux-amd64.get instance ID of package \"chromiumos/infra/version_bumper/linux-amd64\" currently tagged with ref \"foo-version_bumper-ref\"",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/version_bumper/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/version_bumper/linux-amd64/+/resolved-instance_id-of-foo-version_bump@@@"
     ]
   },
   {
@@ -73,7 +74,8 @@
     "cmd": [],
     "name": "package chromiumos/infra/version_bumper/linux-amd64.apply the \"foo-version_bumper-ref\" ref of the \"chromiumos/infra/version_bumper/linux-amd64\" package to \"foo-version_bumper-version\"",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/version_bumper/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/version_bumper/linux-amd64/+/resolved-instance_id-of-foo-version_bump@@@"
     ]
   },
   {

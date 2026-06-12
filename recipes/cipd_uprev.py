@@ -65,7 +65,7 @@ def get_current_instance(
   """
   with api.step.nest(
       'get instance ID of package "%s" currently tagged with ref "%s"' %
-      (instruction.package_name, instruction.ref)):
+      (instruction.package_name, instruction.ref)) as step:
     try:
       instance_id = api.cipd.describe(package_name=instruction.package_name,
                                       version=instruction.ref).pin.instance_id
@@ -74,6 +74,9 @@ def get_current_instance(
         return cipd_uprev.PackageInstance(package_name=instruction.package_name,
                                           id='')
       raise
+    step.links[
+        instruction.
+        package_name] = f'https://chrome-infra-packages.appspot.com/p/{instruction.package_name}/+/{instance_id}'
     return cipd_uprev.PackageInstance(package_name=instruction.package_name,
                                       id=instance_id)
 
@@ -108,6 +111,9 @@ def uprev_package(api: RecipeApi, instruction: cipd_uprev.Instruction,
     instance_id = api.cipd.set_ref(instruction.package_name,
                                    instruction.version,
                                    [instruction.ref]).instance_id
+    pres.links[
+        instruction.
+        package_name] = f'https://chrome-infra-packages.appspot.com/p/{instruction.package_name}/+/{instance_id}'
     return cipd_uprev.PackageInstance(package_name=instruction.package_name,
                                       id=instance_id)
 

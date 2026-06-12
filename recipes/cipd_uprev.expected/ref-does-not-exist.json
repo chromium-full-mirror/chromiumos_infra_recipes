@@ -47,7 +47,8 @@
     "cmd": [],
     "name": "package chromiumos/infra/phosphorus/linux-amd64.apply the \"prod\" ref of the \"chromiumos/infra/phosphorus/linux-amd64\" package to \"staging\"",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/phosphorus/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/phosphorus/linux-amd64/+/resolved-instance_id-of-staging---------@@@"
     ]
   },
   {

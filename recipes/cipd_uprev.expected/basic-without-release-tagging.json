@@ -14,7 +14,8 @@
     "cmd": [],
     "name": "package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package \"chromiumos/infra/phosphorus/linux-amd64\" currently tagged with ref \"foo-phosphorus-ref\"",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/phosphorus/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/phosphorus/linux-amd64/+/resolved-instance_id-of-foo-phosphorus-r@@@"
     ]
   },
   {
@@ -73,7 +74,8 @@
     "cmd": [],
     "name": "package chromiumos/infra/phosphorus/linux-amd64.apply the \"foo-phosphorus-ref\" ref of the \"chromiumos/infra/phosphorus/linux-amd64\" package to \"foo-phosphorus-version\"",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@chromiumos/infra/phosphorus/linux-amd64@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/phosphorus/linux-amd64/+/resolved-instance_id-of-foo-phosphorus-v@@@"
     ]
   },
   {
@@ -123,7 +125,8 @@
     "cmd": [],
     "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.get instance ID of package \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" currently tagged with ref \"foo-recipe-ref\"",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes@https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/resolved-instance_id-of-foo-recipe-ref--@@@"
     ]
   },
   {
@@ -182,7 +185,8 @@
     "cmd": [],
     "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.apply the \"foo-recipe-ref\" ref of the \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" package to \"foo-recipe-version\"",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes@https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/resolved-instance_id-of-foo-recipe-versi@@@"
     ]
   },
   {
