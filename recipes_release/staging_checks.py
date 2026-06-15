@@ -76,6 +76,14 @@ def build_firmware_exemption(build: Dict[str, Any]) -> bool:
   return "Step('build firmware.call build API script')" in summary
 
 
+def test_firmware_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for failures during the `test_firmware` step."""
+  if build.get('status') == 'INFRA_FAILURE':
+    return False
+  summary = build.get('summaryMarkdown', '')
+  return "Step('test firmware.call build API script')" in summary
+
+
 def autoreleaser_no_releasable_changes_exemption(build: Dict[str, Any]) -> bool:
   """Exemption function for autoreleaser builds with no releasable changes."""
   summary = build.get('summaryMarkdown', '')
@@ -165,13 +173,23 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     ], num_builds=20),
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     # build_firmware recipe
-    StagingReCheck('chromeos', 'staging', 'staging-firmware-zephyr-cq',
-                   [image_builder_exemption, build_firmware_exemption]),
+    StagingReCheck('chromeos', 'staging', 'staging-firmware-zephyr-cq', [
+        image_builder_exemption,
+        build_firmware_exemption,
+        test_firmware_exemption,
+    ]),
     StagingReCheck('chromeos', 'staging', 'staging-firmware-zephyr-postsubmit',
-                   [image_builder_exemption]),
+                   [
+                       image_builder_exemption,
+                       build_firmware_exemption,
+                       test_firmware_exemption,
+                   ]),
     # build_gsc_firmware recipe
-    StagingReCheck('chromeos', 'staging', 'staging-firmware-ti50-postsubmit',
-                   [image_builder_exemption, build_firmware_exemption]),
+    StagingReCheck('chromeos', 'staging', 'staging-firmware-ti50-postsubmit', [
+        image_builder_exemption,
+        build_firmware_exemption,
+        test_firmware_exemption,
+    ]),
     # build_legacy_fw recipe
     StagingReCheck('chromeos', 'staging',
                    'staging-firmware-skywalker-16378.B-branch',
