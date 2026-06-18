@@ -152,10 +152,10 @@ def DoRunSteps(api, config, properties):
   api.easy.set_properties_step('set critical property', critical=critical)
 
   api.build_menu.bootstrap_sysroot(config)
+  artifact_sbom = {}
 
   with api.checkpoint.retry(RetryStep.STAGE_ARTIFACTS) as run_step:
     if run_step:
-      artifact_sbom = {}
       try:
         if api.build_menu.install_packages(config, env_info.packages):
           # TODO(b/231739303): Make this step critical once cloud container build stablizes.

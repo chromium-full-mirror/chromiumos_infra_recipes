@@ -20,6 +20,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/step',
     'build_menu',
     'build_reporting',
     'cros_release',
@@ -53,6 +54,8 @@ def RunSteps(api):
       channels = api.cros_release.channels
       _ = api.signing.sign_artifacts(sign_types=release_sign_types,
                                      channels=channels)
+      with api.step.nest('set up bucket metadata') as step:
+        api.cros_release.emit_release_buckets(sysroot.build_target.name, step)
     else:
       # Test data for instruction files are defined in
       # recipe_modules/cros_build_api/test_api.py.

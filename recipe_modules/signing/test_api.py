@@ -47,6 +47,30 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
     ensure_no_password: true
     firmware_update: true
   }
+}
+build_target_signing_configs {
+  build_target: "eve"
+  keyset: "eve-foo-bar"
+  signing_configs {
+    image_type: IMAGE_TYPE_BASE
+    keyset: "eve-foo-bar"
+  }
+}
+build_target_signing_configs {
+  build_target: "staging-eve"
+  keyset: "eve-foo-bar"
+  signing_configs {
+    image_type: IMAGE_TYPE_BASE
+    keyset: "eve-foo-bar"
+  }
+}
+build_target_signing_configs {
+  build_target: "betty-arc-r"
+  keyset: "betty-foo-bar"
+  signing_configs {
+    image_type: IMAGE_TYPE_BASE
+    keyset: "betty-foo-bar"
+  }
 }'''
 
 

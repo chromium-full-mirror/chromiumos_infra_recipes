@@ -425,8 +425,8 @@ def GenTests(api: RecipeTestApi):
       api.properties(**{
           '$chromeos/signing':
               MessageToDict(SigningProperties(local_signing=True))
-      }), api.post_process(post_process.DropExpectation), build_target='eve',
-      builder='eve-release-main', status='FAILURE')
+      }), api.post_process(post_process.DropExpectation),
+      build_target='octopus', builder='octopus-release-main', status='FAILURE')
 
   yield api.test(
       'no-builder-config',
