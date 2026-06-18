@@ -13,7 +13,6 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure, StepFailure
 
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
-from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import (
     Channel, IMAGE_TYPE_RECOVERY, IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
@@ -630,44 +629,22 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'https://console.cloud.google.com/storage/browser/%s' % gs_directory)
 
   def push_and_sign_images(self, config, sysroot):
-    """Call the Push Image Build API endpoint for the build.
-
-    This pushes the image files to the appropriate bucket and prepares them
-    for signing. The actual execution of these procedures is handled in the
-    underlying script, chromite/scripts/push_image.py. Must be used in the
-    context of a build.
+    """Deprecated. This step is no longer used due to local signing.
 
     Args:
       config (BuilderConfig): The Builder Config for the build.
       sysroot (Sysroot): sysroot to use.
 
     Return:
-      Tuple of (gs_image_dir, instructions_uris):
-        gs_image_dir is the GS directory the image was pushed from.
-        instructions_uris is a list of URIs to instructions files for the
-          pushed images.
+      Tuple of (gs_image_dir, instructions_uris)
     """
     with self.m.step.nest('push images') as presentation:
-      # Get the gs image directory.
       gs_image_dir = self.get_image_dir(config, sysroot, presentation)
-      sysroot = Sysroot(build_target=self.m.build_menu.build_target)
-      # Validate sign types given.
-      self.validate_sign_types()
-
-      # Emit release bucket for each channel.
-      self.emit_release_buckets(sysroot.build_target.name, presentation)
-
-      response = self.m.cros_artifacts.push_image(
-          self.m.build_menu.chroot, gs_image_dir, sysroot,
-          sign_types=self.sign_types,
-          dest_bucket='gs://' + self._release_bucket, channels=self._channels)
-      instructions_uris = [
-          i.instructions_file_path for i in response.instructions
-      ]
-      self.m.easy.set_properties_step(
-          signing_instructions_uris=instructions_uris)
-
-      return (gs_image_dir, instructions_uris)
+      presentation.step_text = (
+          'push_and_sign_images is deprecated. Please see go/cros-signing-help'
+          ' to onboard to local signing.')
+      self.m.easy.set_properties_step(signing_instructions_uris=[])
+      return (gs_image_dir, [])
 
   def set_output_properties(self):
     """Set release-related output properties for the build."""

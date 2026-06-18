@@ -74,21 +74,9 @@ def sign_on_legacy_signer(api, config: Optional[BuilderConfig]) -> None:
   _, instructions = api.cros_release.push_and_sign_images(
       config, api.build_menu.sysroot)
 
-  if instructions and not api.build_menu.is_staging:
-    with api.step.nest('get signed build metadata') as pres:
-      metadata = api.signing.wait_for_signing(instructions)
-      signed_build_metadata_list = (
-          api.signing.get_signed_build_metadata(metadata))
-      # Publish any signed build metadata we have on the pubsub.
-      api.build_reporting.publish_signed_build_metadata(
-          signed_build_metadata_list)
-      api.signing.verify_signing_success(metadata, pres)
-  else:
-    with api.step.nest('skipping signing') as pres:
-      if not instructions:
-        pres.step_text = 'no signing instructions generated'
-      if api.build_menu.is_staging:
-        pres.step_text = 'signing is not run in staging'
+  with api.step.nest('skipping signing') as pres:
+    if not instructions:
+      pres.step_text = 'no signing instructions generated'
 
 
 def RunSteps(api, properties: BuildFactoryProperties):
@@ -141,7 +129,7 @@ def GenTests(api):
   manifest_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
   yield api.build_menu.test(
-      'basic',
+      'basic-legacy-signing',
       api.properties(
           BuildFactoryProperties(build_images_timeout_sec=3 * 60 * 60), **{
               '$chromeos/cros_source':
@@ -158,14 +146,12 @@ def GenTests(api):
           api.file.read_text(
               text_content=api.cros_version.chromeos_version_contents(
                   'R92-14929.158.0'))),
-      # Make sure signing times out after 5 seconds to not explode test runs.
-      api.signing.set_timeout(timeout=5),
-      # Mock signing responses.
-      api.signing.setup_mocks(board='corsola'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.MustRun, 'get signed build metadata'),
+      api.post_check(post_process.StepTextContains, 'push images',
+                     ['push_and_sign_images is deprecated']),
+      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
       api.post_check(post_process.DoesNotRun,
                      'uploading factory artifacts for older branch'),
       builder='factory-corsola-15197.B-corsola',
@@ -217,6 +203,14 @@ def GenTests(api):
       'staging',
       api.properties(
           **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui'
+                  }
+              },
+              '$chromeos/cros_release': {
+                  'sign_types': [common_pb2.IMAGE_TYPE_FACTORY],
+              },
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -224,51 +218,19 @@ def GenTests(api):
                               manifest_repo_url=manifest_url,
                               branch='main',
                               manifest_file='buildspecs/100/15197.0.0.xml',
-                          )))
+                          ))),
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(local_signing=True))
           }),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.MustRun, 'skipping signing'),
       api.post_check(
-          post_process.StepTextContains,
-          'skipping signing',
-          ['signing is not run in staging'],
-      ),
+          post_process.LogContains,
+          'sign artifacts.call BAPI.call chromite.api.ImageService/SignImage',
+          'request', ['\"keyset\": \"DevPreMPKeys\"']),
       api.post_process(post_process.DropExpectation),
       builder='staging-factory-corsola-15197.B-corsola',
-  )
-
-  yield api.build_menu.test(
-      'no instructions',
-      api.properties(
-          **{
-              '$chromeos/cros_source':
-                  MessageToDict(
-                      CrosSourceProperties(
-                          sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url,
-                              branch='main',
-                              manifest_file='buildspecs/100/15197.0.0.xml',
-                          )))
-          }),
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.cros_build_api.set_api_return(
-          parent_step_name='push images',
-          endpoint='ImageService/PushImage',
-          data='{}',
-          retcode=0,
-      ),
-      api.post_check(post_process.MustRun, 'skipping signing'),
-      api.post_check(
-          post_process.StepTextContains,
-          'skipping signing',
-          ['no signing instructions generated'],
-      ),
-      api.post_process(post_process.DropExpectation),
-      builder='factory-corsola-15197.B-corsola',
   )
 
   yield api.build_menu.test(
@@ -308,6 +270,14 @@ def GenTests(api):
       'version-before-14000',
       api.properties(
           **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui'
+                  }
+              },
+              '$chromeos/cros_release': {
+                  'sign_types': [common_pb2.IMAGE_TYPE_FACTORY],
+              },
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -315,17 +285,15 @@ def GenTests(api):
                               manifest_repo_url=manifest_url,
                               branch='main',
                               manifest_file='buildspecs/99/13928.55.0.xml',
-                          )))
+                          ))),
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(local_signing=True))
           }),
       api.step_data(
           'read chromeos version.read chromeos_version.sh',
           api.file.read_text(
               text_content=api.cros_version.chromeos_version_contents(
                   'R99-13928.55.0'))),
-      # Make sure signing times out after 5 seconds to not explode test runs.
-      api.signing.set_timeout(timeout=5),
-      # Mock signing responses.
-      api.signing.setup_mocks(board='corsola'),
       api.post_check(post_process.MustRun,
                      'uploading factory artifacts for older branch'),
       api.post_process(post_process.DropExpectation),

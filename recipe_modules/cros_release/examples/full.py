@@ -57,16 +57,8 @@ def RunSteps(api):
       with api.step.nest('set up bucket metadata') as step:
         api.cros_release.emit_release_buckets(sysroot.build_target.name, step)
     else:
-      # Test data for instruction files are defined in
-      # recipe_modules/cros_build_api/test_api.py.
       _, instructions = api.cros_release.push_and_sign_images(config, sysroot)
-      api.assertions.assertEqual(
-          instructions,
-          [
-              'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions',
-              'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions',
-          ],
-      )
+      api.assertions.assertEqual(instructions, [])
 
     api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
                                        'build_target')
@@ -100,17 +92,18 @@ def GenTests(api):
                           'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
+              '$chromeos/signing': {
+                  'local_signing': True,
+              },
           }),
+      api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.MustRun, 'sign artifacts'),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'json.output', ['"bucket": "release"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),
-      api.post_check(
-          post_process.LogContains,
-          'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'request', ['"use_split_paygen": true']),
@@ -141,7 +134,11 @@ def GenTests(api):
                           'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
-          }),
+              '$chromeos/signing': {
+                  'local_signing': True,
+              },
+          }), api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.MustRun, 'sign artifacts'),
       api.post_check(
           post_process.LogContains,
           'generate payloads.running paygen orchestrator.buildbucket.schedule',
@@ -152,10 +149,6 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'generate payloads.running paygen orchestrator.conductor: collect'),
-      api.post_check(
-          post_process.LogContains,
-          'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
       api.post_check(post_process.DoesNotRun,
                      'generate payloads.inspect failure'),
       api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
@@ -187,11 +180,12 @@ def GenTests(api):
                           'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
+              '$chromeos/signing': {
+                  'local_signing': True,
+              },
           }),
-      api.post_check(
-          post_process.LogContains,
-          'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
+      api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.MustRun, 'sign artifacts'),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'json.output', ['"bucket": "release"']),
@@ -223,11 +217,12 @@ def GenTests(api):
                           'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
+              '$chromeos/signing': {
+                  'local_signing': True,
+              },
           }),
-      api.post_check(
-          post_process.LogContains,
-          'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
+      api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.MustRun, 'sign artifacts'),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'json.output', ['"bucket": "release"']),
@@ -303,17 +298,18 @@ def GenTests(api):
                           'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
+              '$chromeos/signing': {
+                  'local_signing': True,
+              },
           }),
+      api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.MustRun, 'sign artifacts'),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'json.output', ['"bucket": "release"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),
-      api.post_check(
-          post_process.LogContains,
-          'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'request', ['"use_split_paygen": true']),
@@ -323,6 +319,39 @@ def GenTests(api):
                                      bucket='release').build,
       api.post_check(post_process.PropertyEquals, 'bcid', expected_bcid),
       api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'push-images-deprecated',
+      api.properties(
+          **{
+              '$chromeos/cros_version':
+                  CrosVersionProperties(remove_snapshot_from_version=True),
+              '$chromeos/cros_source': {
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
+                  }
+              },
+          }),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'json.output', ['"bucket": "release"']),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(post_process.StepTextContains, 'push images',
+                     ['push_and_sign_images is deprecated']),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'request', ['"use_split_paygen": true']),
+      api.post_check(post_process.DoesNotRun,
+                     'generate payloads.inspect failure'),
+      api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
+                                     bucket='release').build,
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',

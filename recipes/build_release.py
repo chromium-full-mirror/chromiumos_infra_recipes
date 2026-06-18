@@ -323,11 +323,6 @@ def DoRunSteps(api, config, properties):
           channel = api.cros_release_util.channel_to_short_string(channel_int)
           gs_path = f'gs://{release_bucket}/{channel}-channel/{build_target}/{version}'
           api.bot_cost.set_upload_size(gs_path)
-
-    # TODO: Implement this for chromeos-release dirs can use api.cros_release.channels
-      else:
-        gs_image_dir = api.checkpoint.artifact_link
-        instructions = api.checkpoint.signing_instructions_uris
     else:
       with api.step.nest('set up bucket metadata') as step:
         gs_image_dir = api.cros_release.get_image_dir(config,
@@ -367,36 +362,8 @@ def DoRunSteps(api, config, properties):
   try:
     with api.checkpoint.retry(RetryStep.COLLECT_SIGNING) as run_step:
       if (not api.signing.local_signing) and run_step:
-        # Signing does not work in staging, so we shouldn't wait for it in that case.
-        # We also can't sign anything if push_and_sign_images returned 0 instructions.
-        # Otherwise, wait for signing to complete.
-        if not api.cros_infra_config.is_staging and instructions:
-          with api.step.nest('get signed build metadata') as pres:
-            # Wait for signing to complete. Note - "complete" does not mean "passed",
-            # it means "signing returned a terminal state or timed out".
-            metadata = api.signing.wait_for_signing(instructions)
-            # Get the signed build metadata now that it is complete.
-            signed_build_metadata_list = api.signing.get_signed_build_metadata(
-                metadata)
-            # Publish any signed build metadata we have on the pubsub.
-            api.build_reporting.publish_signed_build_metadata(
-                signed_build_metadata_list)
-
-            # Now that we've published informational artifacts, we need to fail the
-            # build if the outcome was anything other than "passed".
-            api.signing.verify_signing_success(metadata, pres)
-
-          # If building mass deploy image, trigger that now, but don't wait for it
-          # to finish.
-          if properties.build_mass_deploy_image:
-            api.mass_deploy.run_mass_deploy_generation(metadata)
-
-        elif not instructions:
-          with api.step.nest('skipping signing') as pres:
-            pres.step_text = (
-                'no signing instructions generated'
-                if api.checkpoint.is_run_step(RetryStep.PUSH_IMAGES) else
-                'no signing instructions retrieved from original build')
+        with api.step.nest('skipping signing') as pres:
+          pres.step_text = 'no signing instructions generated'
 
     with api.checkpoint.retry(RetryStep.PAYGEN) as run_step:
       if run_step:
@@ -498,13 +465,14 @@ def GenTests(api):
                   'dryrun': False
               },
               '$chromeos/signing':
-                  MessageToDict(SigningProperties(timeout=5)),
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True)),
               '$chromeos/cros_release': {
                   'channels': [4, 3],
                   'release_bucket': 'chromeos-releases',
+                  'sign_types': [common_pb2.IMAGE_TYPE_BASE],
               }
           }),
-      api.signing.setup_mocks(),
       api.step_data(
           'publish DLCs to pubsub.Hash DLCs.Find DLCs.gsutil ls dlc',
           stdout=api.raw_io.output_text('''
@@ -531,6 +499,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                      'determine build and model metadata'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun,
+                     'sign artifacts.download release artifacts'),
+      api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
       api.post_check(
           post_process.MustRun,
           'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-1234.56.0'
@@ -563,120 +535,24 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       api.post_check(post_process.DoesNotRun, 'overriding release channels'),
       api.post_check(post_process.PropertyEquals, 'upload_size', [
           {
+              'gb':
+                  1337.0,
               'gs_path':
                   'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101',
-              'gb':
-                  1337.0,
           },
           {
+              'gb':
+                  1337.0,
               'gs_path':
-                  'gs://chromeos-releases/canary-channel/kukui/1234.56.0',
-              'gb':
-                  1337.0,
+                  'gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/',
           },
           {
-              'gs_path': 'gs://chromeos-releases/dev-channel/kukui/1234.56.0',
-              'gb': 1337.0,
+              'gb':
+                  1337.0,
+              'gs_path':
+                  'gs://chromeos-throw-away-bucket/dev-channel/kukui/1234.56.0/',
           },
       ]),
-      build_target='kukui',
-      builder='kukui-release-main',
-      bucket='release',
-  )
-
-  # Normal release build with local signing.
-  yield api.build_menu.test(
-      'release-build-local-signing',
-      api.properties(
-          **{
-              'latest_files_gs_bucket':
-                  'chromeos-image-archive',
-              'latest_files_gs_path':
-                  '{target}-release',
-              '$chromeos/build_menu': {
-                  'build_target': {
-                      'name': 'kukui',
-                  },
-                  'container_version_format':
-                      '{staging?}{build-target}-release.{cros-version}',
-              },
-              '$chromeos/checkpoint': {
-                  'force_retry_summary': True,
-              },
-              '$chromeos/cros_artifacts':
-                  CrosArtifactsProperties(
-                      gs_upload_path='{target}-release/{version}'),
-              '$chromeos/cros_release': {
-                  'sign_types': [common_pb2.IMAGE_TYPE_BASE],
-              },
-              '$chromeos/cros_source':
-                  MessageToDict(
-                      CrosSourceProperties(
-                          sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='buildspecs/91/13818.0.0.xml'))),
-              '$chromeos/debug_symbols': {
-                  'worker_count': 200,
-                  'retry_quota': 1000,
-                  'dryrun': False
-              },
-              '$chromeos/signing':
-                  MessageToDict(SigningProperties(local_signing=True))
-          }),
-      api.buildbucket.simulated_collect_output(
-          [successful_paygen_orch],
-          'generate payloads.running paygen orchestrator.collect'),
-      api.post_check(post_process.MustRun, 'sync to specified manifest'),
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun,
-                     'determine build and model metadata'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.MustRun,
-                     'sign artifacts.download release artifacts'),
-      api.post_check(
-          post_process.MustRun,
-          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-1234.56.0'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-main'
-      ),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload build report to GS.gsutil write build_report.json to GS',
-          [
-              'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json'
-          ],
-      ),
-      api.post_process(post_process.PropertyEquals, 'critical', '1'),
-      api.post_process(
-          post_process.PropertyEquals, 'artifact_link',
-          'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101'),
-      api.post_check(post_process.DoesNotRun, 'push images'),
-      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
-      api.post_check(
-          post_process.PropertyEquals, 'retry_summary', {
-              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): 'SUCCESS',
-              RetryStep.Name(RetryStep.PUSH_IMAGES): 'SUCCESS',
-              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): 'SUCCESS',
-              RetryStep.Name(RetryStep.EBUILD_TESTS): 'SUCCESS',
-              RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS',
-              RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
-          }),
-      api.post_check(
-          post_process.PropertyEquals,
-          'upload_size',
-          [
-              {
-                  'gs_path':
-                      'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101',
-                  'gb':
-                      1337.0,
-              },
-              # TODO(b/323200728): Update this to include the signing buckets when
-              # this test actually pushes.
-          ]),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
@@ -770,6 +646,37 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       bucket='release',
   )
 
+  yield api.build_menu.test(
+      'release-build-legacy-signing-deprecated',
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+              },
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/cros_release': {
+                  'channels': [4, 3],
+                  'release_bucket': 'chromeos-releases',
+              }
+          }),
+      api.post_check(post_process.StepTextContains, 'push images',
+                     ['push_and_sign_images is deprecated']),
+      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
   # Normal release build with VM board.
   yield api.build_menu.test(
       'release-build-vm',
@@ -804,8 +711,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                   'dryrun': False
               },
               '$chromeos/signing':
-                  MessageToDict(
-                      SigningProperties(timeout=5, local_signing=True))
+                  MessageToDict(SigningProperties(timeout=5))
           }),
       api.post_check(post_process.MustRun, 'import VM image'),
       build_target='betty-arc-r',
@@ -824,6 +730,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
       api.step_data(
           'check that test config exists.generate target test requirements.generate_test_config',
@@ -872,45 +781,6 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
   )
 
   yield api.build_menu.test(
-      'release-no-instructions',
-      api.properties(
-          **{
-              '$chromeos/cros_artifacts':
-                  CrosArtifactsProperties(
-                      gs_upload_path='{target}-release/{version}'),
-              '$chromeos/cros_source':
-                  MessageToDict(
-                      CrosSourceProperties(
-                          sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='buildspecs/91/13818.0.0.xml'))),
-              '$chromeos/debug_symbols': {
-                  'worker_count': 200,
-                  'retry_quota': 1000,
-                  'dryrun': False
-              },
-              '$chromeos/signing':
-                  MessageToDict(SigningProperties(timeout=5))
-          }),
-      api.cros_build_api.set_api_return(parent_step_name='push images',
-                                        endpoint='ImageService/PushImage',
-                                        data='{}', retcode=0),
-      api.post_check(post_process.MustRun, 'sync to specified manifest'),
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun,
-                     'determine build and model metadata'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
-      api.post_check(post_process.MustRun, 'skipping signing'),
-      api.post_check(post_process.DoesNotRun, 'generate payloads'),
-      api.post_check(post_process.MustRun, 'skipping payloads'),
-      build_target='kukui',
-      builder='kukui-release-main',
-      bucket='release',
-  )
-
-  yield api.build_menu.test(
       'release-build-staging',
       api.properties(
           **{
@@ -920,6 +790,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
       build_target='staging-eve',
       builder='staging-eve-release-main',
@@ -983,6 +856,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -1012,6 +888,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -1038,6 +917,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -1065,8 +947,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
-      api.signing.setup_mocks(),
       api.build_menu.set_build_api_return(
           'collect image size data.add data from images',
           'ObservabilityService/GetImageSizeData', retcode=1),
@@ -1101,8 +985,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
-      api.signing.setup_mocks(),
       api.cros_build_api.set_api_return(
           'run ebuild tests',
           endpoint='TestService/BuildTargetUnitTest',
@@ -1141,8 +1027,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True)),
           }),
-      api.signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -1174,8 +1062,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True)),
           }),
-      api.signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -1207,8 +1097,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True)),
           }),
-      api.signing.setup_mocks(),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),
@@ -1265,7 +1157,8 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                   'dryrun': False
               },
               '$chromeos/signing':
-                  MessageToDict(SigningProperties(timeout=5)),
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True)),
               '$chromeos/checkpoint': {
                   'retry': True,
                   'original_build_bbid': '8922054662172514001',
@@ -1280,10 +1173,6 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       ),
       api.buildbucket.simulated_get(
           original_build, step_name='RUNNING IN RETRY MODE.get original build'),
-      api.signing.setup_mocks(),
-      api.buildbucket.simulated_collect_output(
-          [successful_paygen_orch],
-          'generate payloads.running paygen orchestrator.collect'),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun,
                      '(RETRY-MODE) not retrying STAGE_ARTIFACTS'),
@@ -1306,32 +1195,6 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
               RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS',
               RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
           }),
-      build_target='kukui',
-      builder='kukui-release-main',
-      bucket='release',
-  )
-
-  # Release build with mass deploy.
-  yield api.build_menu.test(
-      'release-build-mass-deploy-legacy',
-      api.properties(
-          **{
-              '$chromeos/cros_source':
-                  MessageToDict(
-                      CrosSourceProperties(
-                          sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='buildspecs/91/13818.0.0.xml'))),
-              '$chromeos/signing':
-                  MessageToDict(SigningProperties(timeout=5)),
-              'build_mass_deploy_image':
-                  True,
-          }),
-      api.signing.setup_mocks(channel='stable'),
-      # This needs some work. signing needs to be mocked differently.
-      api.post_check(post_process.MustRun, 'get signed build metadata'),
-      api.post_check(post_process.MustRun, 'generate mass deploy builds'),
-      api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
@@ -1379,8 +1242,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True)),
           }),
-      api.signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'overriding release channels'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
@@ -1398,9 +1263,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
               '$chromeos/cros_release':
-                  MessageToDict(CrosReleaseProperties(paygen_mpa=True))
+                  MessageToDict(CrosReleaseProperties(paygen_mpa=True)),
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(local_signing=True))
           }),
-      api.signing.setup_mocks(),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'request', ['"builder": "paygen-orchestrator-mpa"']),
@@ -1420,8 +1286,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
-      api.signing.setup_mocks(),
       api.build_menu.set_build_api_return(
           'try publishing centralized suites to BigQuery.publish centralized suites',
           'ArtifactsService/FetchCentralizedSuites', retcode=1),
