@@ -804,9 +804,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                   'dryrun': False
               },
               '$chromeos/signing':
-                  MessageToDict(SigningProperties(timeout=5))
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
-      api.signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'import VM image'),
       build_target='betty-arc-r',
       builder='betty-arc-r-release-main',
@@ -862,9 +862,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                   'dryrun': False
               },
               '$chromeos/signing':
-                  MessageToDict(SigningProperties(timeout=5))
+                  MessageToDict(
+                      SigningProperties(timeout=5, local_signing=True))
           }),
-      api.signing.setup_mocks(),
       api.post_process(post_process.PropertyEquals, 'critical', '0'),
       build_target='eve',
       builder='eve-kernelnext-release-main',
