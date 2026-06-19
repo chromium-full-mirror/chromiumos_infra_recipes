@@ -41,7 +41,7 @@ class GoLuciBinAPI(recipe_api.RecipeApi):
       stepName += ' (async)'
 
     with self.m.context():
-      self.m.step.sub_build(stepName, cmd, build)
+      return self.m.step.sub_build(stepName, cmd, build)
 
   def ensure_package(self, package: str, cipdLabel: str):
     fullname = self._package_fullname(package, cipdLabel)

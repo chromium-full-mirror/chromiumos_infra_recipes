@@ -7,12 +7,15 @@
 from typing import Generator
 
 from PB.recipes.chromeos import cipd_uprev
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 from google.protobuf import json_format
+from google.protobuf import struct_pb2
 
 DEPS = [
     'recipe_engine/cipd',
@@ -122,6 +125,7 @@ def uprev_package(api: RecipeApi, instruction: cipd_uprev.Instruction,
 
 
 def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
+  container_changes = {}
   try:
     release_tag_time = api.time.utcnow().isoformat()
     with api.deferrals.raise_exceptions_at_end():
@@ -148,13 +152,22 @@ def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
         if properties.rollback_to:
           args.append('-from-tag')
           args.append(properties.rollback_to)
-        api.golucibin.execute_luciexe(
+        step_result = api.golucibin.execute_luciexe(
             luci_instruction.package_name, properties.rollback_to or
             luci_instruction.ref, args)
+        if step_result and step_result.step and step_result.step.sub_build and step_result.step.sub_build.output:
+          sub_props = step_result.step.sub_build.output.properties
+          if "$container_uprev" in sub_props:
+            sub_props_dict = json_format.MessageToDict(sub_props)
+            container_changes.update(sub_props_dict["$container_uprev"].get(
+                "changes", {}))
   finally:
     api.easy.set_properties_step(
         'set output properties',
         response=json_format.MessageToDict(properties.response))
+    if container_changes:
+      api.easy.set_properties_step('set container changes',
+                                   container_changes=container_changes)
 
 
 
@@ -476,4 +489,52 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'fw_provisioning_release_version:ctp_2026-06-09T00:00:23.531562'
           ],
       ),
+  )
+
+  mock_build = build_pb2.Build(status=common_pb2.SUCCESS)
+  props = struct_pb2.Struct()
+  props.update({
+      "$container_uprev": {
+          "changes": {
+              "cros-fw-provision": {
+                  "container_name": "cros-fw-provision",
+                  "old_digest": "sha256:oldfw",
+                  "new_digest": "sha256:newfw",
+              }
+          }
+      }
+  })
+  mock_build.output.properties.CopyFrom(props)
+
+  yield api.test(
+      'firmware-uprev-staging-with-container-changes',
+      api.properties(
+          cipd_uprev.Properties(
+              config=cipd_uprev.Config(
+                  instructions=[
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+                          ref='staging', version='latest'),
+                  ],
+                  luci_instructions=[
+                      cipd_uprev.LuciExeInstruction(
+                          package_name='container_uprev', ref='fw_staging',
+                          args=[
+                              'build',
+                              '-target',
+                              'firmware-filter,cros-fw-provision',
+                          ]),
+                  ],
+                  release_version_tag='fw_provisioning_release_version',
+              ))),
+      api.step_data('container_uprev sub-build',
+                    api.step.sub_build(mock_build)),
+      api.post_check(
+          post_process.PropertyEquals, 'container_changes', {
+              "cros-fw-provision": {
+                  "container_name": "cros-fw-provision",
+                  "old_digest": "sha256:oldfw",
+                  "new_digest": "sha256:newfw",
+              }
+          }),
   )
