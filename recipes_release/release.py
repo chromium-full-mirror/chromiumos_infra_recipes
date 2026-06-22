@@ -238,7 +238,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
   """Interpret command-line args."""
   parser = argparse.ArgumentParser(
       'Release recipes by moving the "prod" ref forward.')
-  parser.add_argument('-d', '--dry-run', action='store_true',
+  parser.add_argument('-n', '--dry-run', action='store_true',
                       help="Dry run: Don't actually change any cipd refs.")
   parser.add_argument(
       '-y', '--yes', action='store_true',
