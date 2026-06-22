@@ -12,7 +12,7 @@ import cipd
 import common
 import test_util
 
-CIPD_DESCRIBE_STDOUT = '''Package:       infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes
+CIPD_DESCRIBE_STDOUT = f'''Package:       {cipd.PACKAGE_NAME}
   Instance ID:   jSHBVU-ZzC8Pbi2hlc0r89wukZBQ9EYZKK7TX1zmboIC
   Registered by: user:infra-internal-recipe-bundler@chops-service-accounts.iam.gserviceaccount.com
   Registered at: 2022-09-23 13:11:22.569365 -0600 MDT
@@ -22,10 +22,10 @@ CIPD_DESCRIBE_STDOUT = '''Package:       infra/recipe_bundles/chromium.googlesou
   Tags:
     git_revision:1114d30c71229c5cd470df15f863e9ddcfff6fb5'''
 
-CIPD_RESOLVE_STDOUT = '''Packages:
-  infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes:jSHBVU-ZzC8Pbi2hlc0r89wukZBQ9EYZKK7TX1zmboIC'''
+CIPD_RESOLVE_STDOUT = f'''Packages:
+  {cipd.PACKAGE_NAME}:jSHBVU-ZzC8Pbi2hlc0r89wukZBQ9EYZKK7TX1zmboIC'''
 
-EXPECTED_RECIPE_BUNDLE = 'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes'
+EXPECTED_RECIPE_BUNDLE = cipd.PACKAGE_NAME
 
 subprocess_stdout = test_util.subprocess_stdout
 SUBPROCESS_KWARGS = test_util.SUBPROCESS_KWARGS

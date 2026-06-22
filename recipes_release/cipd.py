@@ -13,6 +13,9 @@ from typing import Tuple
 import common
 
 
+PACKAGE_NAME = "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes"
+
+
 def _cipd_ref_to_instance_id(ref: common.CipdRef) -> common.CipdInstance:
   """Find the instanceid associated with a recipes CIPD ref.
 

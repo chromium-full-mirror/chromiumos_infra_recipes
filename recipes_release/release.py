@@ -277,7 +277,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       '-i', '--instanceid', type=common.CipdInstance,
       help='Release up to the commit specified by the instanceid. '
       'Instanceids are found at:\n'
-      'https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/\n'
+      f'go/cipd/{cipd.PACKAGE_NAME}\n'
       'Click into an instance to see the commit attached to it.\n'
       "If the instance starts with a '-', you'll need to pass it in with"
       '`-i=$instance` instead of `-i $instance`.')
@@ -352,9 +352,7 @@ def git_remote_update():
 def print_cipd_versions_url():
   """Tell the user where to get info about CIPD versions."""
   print('CIPD versions (instances and refs) can be found here:')
-  print(
-      'https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/'
-  )
+  print(f'https://chrome-infra-packages.appspot.com/p/{cipd.PACKAGE_NAME}')
   print()
 
 
