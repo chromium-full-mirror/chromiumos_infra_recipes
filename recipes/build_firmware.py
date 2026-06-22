@@ -165,12 +165,35 @@ def RunSteps(api, properties):
       firmware_targets = [
           FirmwareTarget(name=bt.name) for bt in properties.build_targets
       ]
-      response = service.BuildAllFirmware(
-          BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                  code_coverage=properties.code_coverage,
-                                  firmware_targets=firmware_targets,
-                                  avb_enabled=properties.avb_enabled),
-          name='build firmware')
+      build = api.buildbucket.build
+
+      def _upload_artifacts(ignore_failure: bool = False):
+        try:
+          return api.build_menu.upload_artifacts(
+              config=config, report_to_spike=api.cros_infra_config.config
+              .artifacts.attestation_eligible, use_file_paths=True,
+              build_targets=firmware_targets)
+        except StepFailure as e:
+          if ignore_failure:
+            # Log upload failure but preserve the build/test exception.
+            step_result = api.step('Upload artifacts failed (ignored)',
+                                   cmd=None)
+            step_result.presentation.status = api.step.WARNING
+            step_result.presentation.step_text = "Upload failed on top of build/test failure"
+            return None, None
+          raise e
+
+      try:
+        response = service.BuildAllFirmware(
+            BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
+                                    code_coverage=properties.code_coverage,
+                                    firmware_targets=firmware_targets,
+                                    avb_enabled=properties.avb_enabled),
+            name='build firmware')
+      except StepFailure as e:
+        _upload_artifacts(ignore_failure=True)
+        raise e
+
       binary_sizes = {}
       if response.metrics and response.metrics.value:
         for fw_metric in response.metrics.value:
@@ -195,7 +218,6 @@ def RunSteps(api, properties):
       api.easy.set_properties_step(got_revision=snapshot_sha,
                                    step_name='output got_revision')
 
-      build = api.buildbucket.build
       try:
         service.TestAllFirmware(
             TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
@@ -203,16 +225,14 @@ def RunSteps(api, properties):
                                    firmware_targets=firmware_targets,
                                    avb_enabled=properties.avb_enabled),
             name='test firmware')
-      except StepFailure as ex:
+      except StepFailure as e:
+        _upload_artifacts(ignore_failure=True)
         UploadTestResults(api, location, build.builder.builder)
-        raise ex
+        raise e
 
-      uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
-          config=config, report_to_spike=api.cros_infra_config.config.artifacts
-          .attestation_eligible, use_file_paths=True,
-          build_targets=firmware_targets)
+      uploaded_artifacts, artifact_dir = _upload_artifacts()
       published = collections.defaultdict(list)
-      if uploaded_artifacts.published:
+      if uploaded_artifacts and uploaded_artifacts.published:
         published.update(uploaded_artifacts.published)
 
       # Read metadata jsonpb
@@ -1204,4 +1224,19 @@ def GenTests(api):
           'set_suite_scheduling': True,
       },
       status='INFRA_FAILURE',
+  )
+
+  yield test(
+      'build-and-upload-fail',
+      api.step_data('build firmware.call build API script', retcode=1),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          retcode=1),
+      api.post_check(post_process.MustRun, 'build firmware'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'Upload artifacts failed (ignored)'),
+      api.post_check(post_process.DoesNotRun, 'publish artifacts by board'),
+      api.post_check(post_process.DoesNotRun, 'schedule legacy signing build'),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
+      status='FAILURE',
   )
