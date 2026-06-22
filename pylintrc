@@ -164,7 +164,6 @@ generated-members=REQUEST,acl_users,aq_parent,AndRaise,AndReturn,InAnyOrder,Mult
 bad-functions=
     apply,
     exit,
-    input,
     quit,
 
 # Regular expression which should only match correct module names
