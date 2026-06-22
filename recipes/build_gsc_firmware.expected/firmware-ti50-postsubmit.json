@@ -5745,7 +5745,7 @@
       "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"filename\": \"nt-ti50.tar.bz2\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"filename\": \"dt-ti50.tar.bz2\",@@@",
       "@@@STEP_LOG_LINE@request@  \"dockerImage\": \"us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:\",@@@",
       "@@@STEP_LOG_LINE@request@  \"tmpPath\": \"[CLEANUP]/signing_tmp__tmp_2\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -5762,7 +5762,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"project\": \"chromeos\",\n  \"location\": \"us\",\n  \"keyring\": \"ring\",\n  \"key\": \"pao-key\",\n  \"version\": 1,\n  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_2\",\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signing-dir_tmp_2\",\n      \"location\": 2\n    }\n  },\n  \"filename\": \"nt-ti50.tar.bz2\",\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:\",\n  \"tmpPath\": \"[CLEANUP]/signing_tmp__tmp_2\"\n}",
+      "{\n  \"project\": \"chromeos\",\n  \"location\": \"us\",\n  \"keyring\": \"ring\",\n  \"key\": \"pao-key\",\n  \"version\": 1,\n  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_2\",\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signing-dir_tmp_2\",\n      \"location\": 2\n    }\n  },\n  \"filename\": \"dt-ti50.tar.bz2\",\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:\",\n  \"tmpPath\": \"[CLEANUP]/signing_tmp__tmp_2\"\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5937,7 +5937,7 @@
       "----",
       "cp",
       "-n",
-      "[CLEANUP]/signing-dir_tmp_2/nt-ti50.tar.bz2",
+      "[CLEANUP]/signing-dir_tmp_2/dt-ti50.tar.bz2",
       "gs://chromeos-throw-away-bucket/ti50/nt-signed/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5981,6 +5981,407 @@
       }
     },
     "name": "signing PAOs in artifact.docker prune (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "auth",
+      "configure-docker",
+      "us-docker.pkg.dev"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.docker auth (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "container",
+      "prune",
+      "--force"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.docker prune (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "pull",
+      "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.docker pull (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "signing PAOs in artifact.copying local artifacts to prepare for signing (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/artifacts_tmp_1",
+      "--recursive"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.copying local artifacts to prepare for signing (2).list artifacts to stage for signing",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/artifacts_tmp_1/chromeos-firmwareupdate@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/artifacts_tmp_1/chromeos-firmwareupdate",
+      "[CLEANUP]/signing-dir_tmp_3"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.copying local artifacts to prepare for signing (2).stage artifact for signing",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"project\": \"chromeos\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"location\": \"us\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"keyring\": \"ring\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"key\": \"pao-key\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"version\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_3\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/signing-dir_tmp_3\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"filename\": \"nt-ti50.tar.bz2\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dockerImage\": \"us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"tmpPath\": \"[CLEANUP]/signing_tmp__tmp_3\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"project\": \"chromeos\",\n  \"location\": \"us\",\n  \"keyring\": \"ring\",\n  \"key\": \"pao-key\",\n  \"version\": 1,\n  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_3\",\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signing-dir_tmp_3\",\n      \"location\": 2\n    }\n  },\n  \"filename\": \"nt-ti50.tar.bz2\",\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:\",\n  \"tmpPath\": \"[CLEANUP]/signing_tmp__tmp_3\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos (2).write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos (2).read chromite version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos (2).git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SigningService/SignTi50Paos"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos (2).call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos (2).read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos (2).call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "signing PAOs in artifact.upload signed artifact to chromeos-throw-away-bucket bucket (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throw-away-bucket/ti50/nt-signed/R99-1234.56.0-101/@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-n",
+      "[CLEANUP]/signing-dir_tmp_3/nt-ti50.tar.bz2",
+      "gs://chromeos-throw-away-bucket/ti50/nt-signed/R99-1234.56.0-101/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.upload signed artifact to chromeos-throw-away-bucket bucket (2).gsutil cp",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "container",
+      "prune",
+      "--force"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "signing PAOs in artifact.docker prune (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -6160,7 +6561,7 @@
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
       "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:23Z\",@@@",
-      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:54.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:57.500Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -6185,7 +6586,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjAqLhIsCgxTVEVQX09WRVJBTEwSHAgBEGQaFgoGCMOAxP0EEgwI4oDE/QQQgMq17gE6bQgDEl0KW2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQtZmlybXdhcmUvUjk5LTEyMzQuNTYuMC9kdC10aTUwLnRhci5iejIaCGRlYWRiZWVmKG9AAQ==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjAqLhIsCgxTVEVQX09WRVJBTEwSHAgBEGQaFgoGCMOAxP0EEgwI5YDE/QQQgMq17gE6bQgDEl0KW2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQtZmlybXdhcmUvUjk5LTEyMzQuNTYuMC9kdC10aTUwLnRhci5iejIaCGRlYWRiZWVmKG9AAQ==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -6212,7 +6613,7 @@
       }
     },
     "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjAqLhIsCgxTVEVQX09WRVJBTEwSHAgBEGQaFgoGCMOAxP0EEgwI4oDE/QQQgMq17gE6bQgDEl0KW2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQtZmlybXdhcmUvUjk5LTEyMzQuNTYuMC9kdC10aTUwLnRhci5iejIaCGRlYWRiZWVmKG9AAQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjAqLhIsCgxTVEVQX09WRVJBTEwSHAgBEGQaFgoGCMOAxP0EEgwI5YDE/QQQgMq17gE6bQgDEl0KW2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQtZmlybXdhcmUvUjk5LTEyMzQuNTYuMC9kdC10aTUwLnRhci5iejIaCGRlYWRiZWVmKG9AAQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6385,7 +6786,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -6464,9 +6865,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -6501,7 +6902,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -6708,7 +7109,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0036@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0038@@@"
     ]
   },
   {
