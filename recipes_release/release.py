@@ -253,7 +253,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
   parser.add_argument(
       '--bundle', choices=['infra', 'release'], default='infra',
       help='Bundles available for a prod push. `release` is release builders,'
-      '`infra` is everything else (not including CTP). Default is `infra`.')
+      '`infra` is everything else (not including CTP). (default: %(default)s)')
   parser.add_argument(
       '--show-all', action='store_true',
       help='Show all pending changes, including trivial recipe rolls.')
