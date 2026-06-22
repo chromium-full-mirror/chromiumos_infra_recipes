@@ -100,7 +100,7 @@ class RecipeRelease:
     # Prepare to update refs.
     pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod, git_target)
     report_pending_changes(pending_changes, options.show_instances,
-                           show_all=options.show_all)
+                           show_all=options.show_all, verbose=options.verbose)
 
     quit_early_if_no_pending_changes(pending_changes)
 
@@ -132,7 +132,7 @@ class RecipeRelease:
       pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod,
                                                 git_target)
       report_pending_changes(pending_changes, options.show_instances,
-                             show_all=options.show_all)
+                             show_all=options.show_all, verbose=options.verbose)
 
     quit_early_if_no_pending_changes(pending_changes)
 
@@ -357,7 +357,8 @@ def print_cipd_versions_url():
 
 
 def report_pending_changes(pending_changes: List[git.Commit],
-                           show_instances: bool, show_all: bool):
+                           show_instances: bool, show_all: bool,
+                           verbose: bool = False):
   """Pretty-print info about all the pending changes."""
   logger.info('=== Displaying pending changes ===')
   print('Here are the changes from the provided (or default main) environment:')
@@ -367,7 +368,9 @@ def report_pending_changes(pending_changes: List[git.Commit],
   for pending_change in pending_changes:
     if pending_change.trivial and not show_all:
       continue
-    change_strs.append(pending_change.color_strs(show_instances=show_instances))
+    change_strs.append(
+        pending_change.color_strs(show_instances=show_instances,
+                                  verbose=verbose))
 
   print(tabulate.tabulate(change_strs, headers=[], tablefmt='plain'))
 

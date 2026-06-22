@@ -53,7 +53,8 @@ class Commit:
     """Find the recipe bundle instance that contains up to this commit."""
     return _get_cipd_instance(self)
 
-  def color_strs(self, show_instances: bool) -> List[str]:
+  def color_strs(self, show_instances: bool,
+                 verbose: bool = False) -> List[str]:
     """Return colorified strings for each field of the Commit.
 
     Intended for use with the tabulate library, which takes a list of lists and
@@ -65,12 +66,14 @@ class Commit:
 
     Args:
       show_instances: If true, include the CIPD instance.
+      verbose: Whether to report the full hash.
 
     Returns:
       A list of strings for use with tabulate.
     """
+    commitid = self.hash if verbose else self.short_hash
     strs = [
-        f'{common.BOLDBLUE}{self.short_hash}', self.human_readable_commit_date,
+        f'{common.BOLDBLUE}{commitid}', self.human_readable_commit_date,
         f'{common.BOLDGREEN}[{self.username}] ', f'{common.RESET}{self.message}'
     ]
     if show_instances:
