@@ -300,6 +300,7 @@ class SkylabApi(recipe_api.RecipeApi):
       req.params.software_attributes.build_target.name = uht.hw_test.skylab_board
       suite_to_create = req.test_plan.suite.add()
       suite_to_create.name = uht.hw_test.suite
+      suite_to_create.test_args = uht.hw_test.test_args
       self._set_license_labels(req, uht.hw_test.licenses)
 
       tags = self._get_ctp_tags(uht.hw_test, image_path)
