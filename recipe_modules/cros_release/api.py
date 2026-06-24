@@ -61,45 +61,76 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
   def check_stateful_throttling(self):
     """Queries Buildbucket to see if a successful build occurred in the last 20h."""
-    builder_id = self.m.buildbucket.build.builder
-    predicate = builds_service_pb2.BuildPredicate(
-        builder=builder_id,
-        status=common_pb2.SUCCESS,
-    )
-    # Fetch the most recent successful builds - up to 10 to find non-throttled.
-    builds = self.m.buildbucket.search(predicate, limit=10,
-                                       step_name='check stateful throttling')
-    threshold = self.throttling_threshold_percent or 50
-    for build in builds:
-      # Check if created in last 20 hours.
-      if build.create_time.seconds <= self.m.time.time() - 20 * 3600:
-        # Builds are ordered by create_time desc.
-        break
-      if self._is_valid_successful_build(build, threshold):
-        return True
-    return False
+    with self.m.step.nest('check stateful throttling') as presentation:
+      builder_id = self.m.buildbucket.build.builder
+      predicate = builds_service_pb2.BuildPredicate(
+          builder=builder_id,
+          status=common_pb2.SUCCESS,
+      )
+      # Fetch the most recent successful builds - up to 10 to find non-throttled.
+      builds = self.m.buildbucket.search(predicate, limit=10,
+                                         step_name='search builds')
+      threshold = self.throttling_threshold_percent or 80
+      decision_log = [
+          f'Throttling threshold: {threshold}%',
+          'Searching for valid builds in the last 20 hours...',
+      ]
+      throttling_build = None
 
-  def _is_valid_successful_build(self, build, threshold_percent):
+      for build in builds:
+        age_hours = (self.m.time.time() - build.create_time.seconds) / 3600.0
+        build_desc = f'Build id: {build.id}, age: {age_hours:.1f}h)'
+
+        if age_hours >= 20:
+          # Builds are ordered by create_time desc.
+          decision_log.append(
+              f'- {build_desc}: Too old (>20h). Stopping search.')
+          break
+
+        is_valid, reason = self._is_valid_successful_build_with_reason(
+            build, threshold)
+        if is_valid:
+          decision_log.append(f'- {build_desc}: Valid build found ({reason}).')
+          throttling_build = build
+          break
+        decision_log.append(f'- {build_desc}: Ignored ({reason}).')
+
+      if not builds:
+        decision_log.append('No historical successful builds found.')
+      elif not throttling_build:
+        decision_log.append('No valid recent builds found to allow throttling.')
+      else:
+        decision_log.append(
+            f'Decision: THROTTLE due to build {throttling_build.id}.')
+
+      presentation.logs['throttling decision'] = decision_log
+
+      if throttling_build:
+        presentation.step_text = f'Throttled: Daily build satisfied by build go/bbid/{throttling_build.id}'
+        return True, throttling_build
+
+      presentation.step_text = 'No valid recent build found. Throttling not allowed.'
+      return False, None
+
+  def _is_valid_successful_build_with_reason(self, build, threshold_percent):
     """Checks if a build is a valid successful build for throttling.
 
-    It must have run child builds and met the success threshold.
+    It must have the aggregateBuildMetric in greenness property and meet the threshold.
     """
     properties = build.output.properties
-    if 'child_build_info' not in properties:
-      return False
+    if 'greenness' not in properties or 'aggregateBuildMetric' not in properties[
+        'greenness']:
+      return False, 'missing greenness property'
 
-    child_build_info = properties['child_build_info']
-    if not child_build_info:
-      return False
+    try:
+      buildGreenness = int(properties['greenness']['aggregateBuildMetric'])
+    except (ValueError, TypeError) as e:
+      return False, f'invalid aggregateBuildMetric value: {e}'
 
-    total_children = len(child_build_info)
+    if buildGreenness >= threshold_percent:
+      return True, f'buildGreenness {buildGreenness}% >= threshold {threshold_percent}%'
+    return False, f'buildGreenness {buildGreenness}% < threshold {threshold_percent}%'
 
-    successful_children = sum(
-        1 for child in child_build_info
-        if 'status' in child and child['status'] == 'SUCCESS')
-
-    success_rate = (successful_children / total_children) * 100
-    return success_rate >= threshold_percent
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)

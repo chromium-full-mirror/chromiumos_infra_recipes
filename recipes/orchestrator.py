@@ -53,10 +53,12 @@ def RunSteps(api: RecipeApi,
   with api.orch_menu.setup_orchestrator() as config:
     if config:
       if api.orch_menu.is_release_orchestrator and not api.build_menu.is_staging and not properties.skip_throttling:
-        if api.cros_release.check_stateful_throttling():
+        throttled, build = api.cros_release.check_stateful_throttling()
+        if throttled:
           return result_pb2.RawResult(
               status=common_pb2.SUCCESS,
-              summary_markdown="Throttled: Daily build satisfied.")
+              summary_markdown=f"Throttled: Daily build satisfied by build go/bbid/{build.id}"
+          )
       DoRunSteps(api)
 
     is_release = api.orch_menu.is_release_orchestrator
@@ -162,7 +164,7 @@ def GenTests(api: RecipeTestApi):
       with_manifest_refs=True,
   )
 
-  def get_success_orch(create_time=None):
+  def get_success_orch(create_time=None, greenness=100):
     output = build_pb2.Build.Output()
     child_build_ids = [str(8922054662172514001 + x) for x in range(3)]
     properties = {
@@ -170,6 +172,9 @@ def GenTests(api: RecipeTestApi):
         'child_build_info': [{
             'status': 'SUCCESS'
         }],
+        'greenness': {
+            'aggregateBuildMetric': str(greenness)
+        }
     }
     output.properties.update(properties)
     build_kwargs = {
@@ -236,7 +241,7 @@ def GenTests(api: RecipeTestApi):
       api.time.seed(1600000000),
       api.buildbucket.simulated_search_results(
           [get_success_orch(create_time={'seconds': 1600000000 - 10 * 3600})],
-          step_name='check stateful throttling'),
+          step_name='check stateful throttling.search builds'),
       api.post_check(post_process.DoesNotRun, 'run builds'),
       api.post_process(post_process.DropExpectation),
       builder='release-main-orchestrator',
@@ -253,7 +258,7 @@ def GenTests(api: RecipeTestApi):
       api.time.seed(1600000000),
       api.buildbucket.simulated_search_results(
           [get_success_orch(create_time={'seconds': 1600000000 - 30 * 3600})],
-          step_name='check stateful throttling'),
+          step_name='check stateful throttling.search builds'),
       api.post_check(post_process.MustRun, 'run builds'),
       api.post_process(post_process.DropExpectation),
       builder='release-main-orchestrator',

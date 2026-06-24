@@ -4827,6 +4827,17 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "check stateful throttling",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No valid recent build found. Throttling not allowed.@@@",
+      "@@@STEP_LOG_LINE@throttling decision@Throttling threshold: 80%@@@",
+      "@@@STEP_LOG_LINE@throttling decision@Searching for valid builds in the last 20 hours...@@@",
+      "@@@STEP_LOG_LINE@throttling decision@No historical successful builds found.@@@",
+      "@@@STEP_LOG_END@throttling decision@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "batch",
@@ -4846,9 +4857,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "check stateful throttling",
+    "name": "check stateful throttling.search builds",
     "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}, \"pageSize\": 10, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"release-main-orchestrator\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -13523,7 +13535,10 @@
       "@@@STEP_LOG_LINE@json.output@              \"8922054662172514001\",@@@",
       "@@@STEP_LOG_LINE@json.output@              \"8922054662172514002\",@@@",
       "@@@STEP_LOG_LINE@json.output@              \"8922054662172514003\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            ]@@@",
+      "@@@STEP_LOG_LINE@json.output@            ],@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"greenness\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"aggregateBuildMetric\": \"100\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
