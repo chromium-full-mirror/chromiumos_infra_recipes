@@ -72,7 +72,7 @@ PROPERTIES = BuildGscFirmwareProperties
 SKIP_LEGACY_SIGNING_RE = re.compile(
     r'^(host_emulation|he|opentitan|nt|nuvotitan_cw310)-')
 INCLUDE_SIGNING_RE = re.compile(r'nt-(ti50|system_test_auto)')
-GENERATE_PAOS_RE = re.compile(r'(nt|dt)-(perso|ti50)|cr50')
+GENERATE_PAOS_RE = re.compile(r'nt-(perso|ti50)|cr50')
 
 
 def CreateContainers(api, config):
@@ -573,25 +573,20 @@ def GenTests(api):
                       tarball_info=FirmwareArtifactInfo.TarballInfo(
                           board=['betty'], publish_to_goldeneye=True,
                           type='GSC')),
-              ]))),
-      api.post_check(
-          post_process.LogContains,
-          'signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos',
-          'request', ['"filename": "dt-ti50.tar.bz2"']),
-      builder='firmware-ti50-postsubmit', input_properties={
-          'firmware_location': common_pb2.PLATFORM_TI50,
-          'chromiumos_sdk_pin_file': sdk_pin_path,
-          'set_suite_scheduling': True,
-          'signing_allowed_builder_names': [
-              'staging-firmware-ti50-postsubmit',
-              'firmware-ti50-postsubmit',
-          ],
-          'pao_signing_config': {
-              "project": "chromeos",
-              "keyring": "ring",
-              "key": "pao-key"
-          },
-      })
+              ]))), builder='firmware-ti50-postsubmit', input_properties={
+                  'firmware_location': common_pb2.PLATFORM_TI50,
+                  'chromiumos_sdk_pin_file': sdk_pin_path,
+                  'set_suite_scheduling': True,
+                  'signing_allowed_builder_names': [
+                      'staging-firmware-ti50-postsubmit',
+                      'firmware-ti50-postsubmit',
+                  ],
+                  'pao_signing_config': {
+                      "project": "chromeos",
+                      "keyring": "ring",
+                      "key": "pao-key"
+                  },
+              })
 
   yield test(
       'upload-fail',
