@@ -26,6 +26,8 @@ DEPS = [
     "build_menu",
     "cros_build_api",
     "easy",
+    "git",
+    "src_state",
 ]
 
 
@@ -33,10 +35,20 @@ PROPERTIES = CopybotProperties
 
 
 def RunSteps(api: RecipeApi, properties: CopybotProperties):
-  with (
-      api.build_menu.configure_builder(missing_ok=True),
-      api.build_menu.setup_workspace(),
-  ):
+  # Create placeholder .repo to resolve chromite constants.SOURCE_ROOT
+  api.file.ensure_directory(
+      "create placeholder .repo",
+      api.src_state.workspace_path / ".repo",
+  )
+
+  # Clone copybot repo to infra/copybot
+  copybot_dir = api.src_state.workspace_path / "infra" / "copybot"
+  api.git.clone(
+      "https://chromium.googlesource.com/chromiumos/infra/copybot",
+      target_path=copybot_dir,
+  )
+
+  with api.build_menu.configure_builder(missing_ok=True):
     return run_copybot(api, properties)
 
 
@@ -51,6 +63,9 @@ def run_copybot(api: RecipeApi, properties: CopybotProperties):
 
     properties.request.build_id = str(api.buildbucket.build.id)
     properties.request.build_url = api.buildbucket.build_url()
+    if properties.request.git_dir:
+      properties.request.git_dir = str(
+          api.path.cache_dir.joinpath(properties.request.git_dir))
     response = api.cros_build_api.CopybotService.RunCopybot(
         properties.request,
         retcode_fn=set_retcode,
@@ -69,6 +84,15 @@ def run_copybot(api: RecipeApi, properties: CopybotProperties):
 def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
       "success",
+      api.post_check(
+          post_process.StepSuccess,
+          "Run Copybot.call chromite.api.CopybotService/RunCopybot",
+      ),
+  )
+
+  yield api.build_menu.test(
+      "success_with_git_dir",
+      api.properties(request={'git_dir': 'some_git_dir'}),
       api.post_check(
           post_process.StepSuccess,
           "Run Copybot.call chromite.api.CopybotService/RunCopybot",
