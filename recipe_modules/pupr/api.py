@@ -327,8 +327,11 @@ class PuprApi(recipe_api.RecipeApi):
             retry_cl, True, False,
             'Found running cl: {}'.format(retry_cl.display_url))
 
-    if no_existing_cls_policy == FULL_RUN:
-      if open_cls:
+    if open_cls:
+      if no_existing_cls_policy == FULL_RUN:
         return with_retry(open_cls[0], False, False)
+      if no_existing_cls_policy in [DRY_RUN, DRY_RUN_NOT_APPROVED]:
+        if not is_passed_cl(open_cls[0], dry_run=True):
+          return with_retry(open_cls[0], True, False)
 
     return no_retry()

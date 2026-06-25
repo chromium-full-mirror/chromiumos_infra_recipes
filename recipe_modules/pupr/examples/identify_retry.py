@@ -639,12 +639,12 @@ def RunSteps(api):
   api.assertions.assertEqual(retry_cl_is_passed, False)
   api.assertions.assertEqual(retry_cl_is_running, False)
 
-  # Should not fallback if no_existing_cls_policy is DRY_RUN
+  # Should fallback to CQ+1 if no_existing_cls_policy is DRY_RUN
   cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
       RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls)
-  api.assertions.assertEqual(cl, None)
-  api.assertions.assertEqual(cq_label, 0)
-  api.assertions.assertEqual(message, 'No open CL was found to retry.')
+  api.assertions.assertEqual(cl.change_id, 100)
+  api.assertions.assertEqual(cq_label, 1)
+  api.assertions.assertEqual(message, 'Found cl: https:///c/100')
   api.assertions.assertEqual(retry_cl_is_passed, False)
   api.assertions.assertEqual(retry_cl_is_running, False)
 
