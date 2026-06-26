@@ -53,7 +53,7 @@ def RunSteps(api):
 
   # Test that we return the correct amount of skylab tasks and that the batching
   # resulted in the correct number of cros_test_platform builds.
-  unit_hw_tests = [_create_unit_hw_test('target', i) for i in range(200)]
+  unit_hw_tests = [_create_unit_hw_test('target', i) for i in range(101)]
   skylab_tasks = api.skylab.schedule_suites(
       unit_hw_tests, timeout=duration_pb2.Duration(seconds=3600),
       container_metadata=api.metadata.test_api.mock_metadata(target='target'),

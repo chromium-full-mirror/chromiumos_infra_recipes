@@ -896,11 +896,15 @@ def GenTests(api: RecipeTestApi):
       status='FAILURE',
   )
 
-  req_cnt = 50
+  req_cnt = 10
+  # Deep copy and mutate to make the title very long, so we need fewer requests
+  # to trigger the summary truncation logic.
+  long_req = copy.deepcopy(
+      api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0])
+  long_req.tgt_dlc_image.dlc_id = 'a' * 500
   test_data = api.properties(
       PaygenProperties(requests=[{
-          'generation_request':
-              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+          'generation_request': long_req
       }] * req_cnt))
   for i in range(1, req_cnt + 1):
     test_data += generate_payload_response(api, is_success=False, retcode=3,
