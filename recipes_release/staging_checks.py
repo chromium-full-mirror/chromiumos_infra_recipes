@@ -213,7 +213,7 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
                    [image_builder_exemption, r120_pushimage_exemption],
                    num_builds=2),
     StagingReCheck('chromeos', 'staging',
-                   r'staging-nissa-release-R(?P<milestone>\d+)-\d+\.B',
+                   r'staging-atlas-release-R(?P<milestone>\d+)-\d+\.B',
                    [image_builder_exemption, r120_pushimage_exemption],
                    num_builds=2),
     StagingReCheck('chromeos', 'staging', r'staging-paygen-mpa',
@@ -228,7 +228,7 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
                    num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-betty-release-main',
                    num_builds=2),
-    StagingReCheck('chromeos', 'staging', r'staging-nissa-release-main',
+    StagingReCheck('chromeos', 'staging', r'staging-atlas-release-main',
                    num_builds=2),
     # TODO: b/278066948 - When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
