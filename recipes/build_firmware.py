@@ -153,6 +153,7 @@ def RunSteps(api, properties):
             dry_run=is_staging, gs_location=properties.buildspec_gs_path)
       chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
       api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
+      api.cros_sdk.run('set ccache limit', ['ccache', '-M', '50G'])
 
       service = api.cros_build_api.FirmwareService
       chroot = api.cros_sdk.chroot

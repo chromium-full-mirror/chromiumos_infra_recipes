@@ -3556,6 +3556,33 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--chroot",
+      "[CACHE]/cros_chroot/chroot",
+      "--out-dir",
+      "[CACHE]/cros_chroot/out",
+      "--",
+      "ccache",
+      "-M",
+      "50G"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set ccache limit"
+  },
+  {
     "cmd": [],
     "name": "build firmware",
     "~followup_annotations": [
