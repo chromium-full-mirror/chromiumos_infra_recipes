@@ -247,7 +247,8 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
   elif IsVersionOnReleaseBranches(api, chrome_version):
     # On release branch, we do Chrome (non-atomic) uprev to the branch on CrOS
     # repo.
-    puprs.append('chrome')
+    milestone = chrome_version.split('.')[0]
+    puprs.append(f'R{milestone}-chrome')
     summary_markdown = 'On release branches'
   else:
     summary_markdown = 'No uprev on non-release branch release (daily canary)'
@@ -421,7 +422,7 @@ def GenTests(api: RecipeTestApi):
       trigger(chrome_version='97.0.1290.1'),
       api.post_process(post_process.LogContains,
                        'trigger puprs.buildbucket.schedule', 'request', [
-                           '"builder": "chrome-pupr-generator"',
+                           '"builder": "R97-chrome-pupr-generator"',
                        ]),
       api.post_process(post_process.StatusSuccess),
   )

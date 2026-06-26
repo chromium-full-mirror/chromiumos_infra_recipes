@@ -101,7 +101,7 @@
       }
     },
     "name": "trigger puprs.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"chrome-pupr-generator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/97.0.1290.1\"}, \"properties\": {\"triggers\": [{\"gitiles\": {\"ref\": \"refs/tags/97.0.1290.1\", \"repo\": \"https://chromium.googlesource.com/chromium/src\", \"revision\": \"8302b1a80de0995f146605740417cdf78e381157\"}}]}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"R97-chrome-pupr-generator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/97.0.1290.1\"}, \"properties\": {\"triggers\": [{\"gitiles\": {\"ref\": \"refs/tags/97.0.1290.1\", \"repo\": \"https://chromium.googlesource.com/chromium/src\", \"revision\": \"8302b1a80de0995f146605740417cdf78e381157\"}}]}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -110,7 +110,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"pupr\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chrome-pupr-generator\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"R97-chrome-pupr-generator\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
@@ -125,7 +125,7 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"pupr\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"chrome-pupr-generator\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"R97-chrome-pupr-generator\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\",@@@",
