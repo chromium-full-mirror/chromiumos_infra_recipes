@@ -367,6 +367,8 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
   # TODO(b/279016710): This function could be generalized and allow overriding
   # of child build data.
+  _CHILD_BUILDS_CACHE = {}
+
   def orch_child_builds(
       self, orchestrator_name: str, child_builder_suffix: str
   ) -> typing.Tuple[typing.List[Build], typing.List[Build]]:
@@ -383,57 +385,68 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         * List of Builds which have COLLECT or NO_COLLECT handling
         * List of Builds which have COLLECT_AFTER_HW_TEST handing
     """
+    key = (orchestrator_name, child_builder_suffix)
+    if key not in self._CHILD_BUILDS_CACHE:
 
-    def _child_build_msg(build_target_name, **kwargs):
-      """Return the Build message for a child build."""
-      kwargs.setdefault('status', 'SUCCESS')
-      # Mark the pointless build with the appropriate output properties.
-      if build_target_name == 'arm-generic-pointless':
-        output_properties = kwargs.pop('output_properties') or {}
-        output_properties['relevant_build'] = False
-        kwargs['output_properties'] = output_properties
-      return self.m.test_util.test_child_build(build_target_name,
-                                               **kwargs).message
+      def _child_build_msg(build_target_name, **kwargs):
+        """Return the Build message for a child build."""
+        kwargs.setdefault('status', 'SUCCESS')
+        # Mark the pointless build with the appropriate output properties.
+        if build_target_name == 'arm-generic-pointless':
+          output_properties = kwargs.pop('output_properties') or {}
+          output_properties['relevant_build'] = False
+          kwargs['output_properties'] = output_properties
+        return self.m.test_util.test_child_build(build_target_name,
+                                                 **kwargs).message
 
-    orch_config = None
-    for config in self.m.cros_infra_config.builder_configs_test_data.builder_configs:
-      if config.id.name == orchestrator_name:
-        orch_config = config
-        break
-    if not orch_config:
-      return [], []  # pragma: no cover
-
-    start_build_id = 8922054662172514000
-    collect_builds = []
-    collect_after_builds = []
-
-    # TODO(b/279016710): Group NO_COLLECT builds with COLLECT for now. We will
-    # need to update the orch_menu.test() function with a new option that adds
-    # test_data for scheduling the NO_COLLECT builds but not collecting them.
-    for c in orch_config.orchestrator.child_specs:
-      critical = 'YES'
+      orch_config = None
       for config in self.m.cros_infra_config.builder_configs_test_data.builder_configs:
-        if config.id.name == c.name:
-          critical = 'YES' if config.general.critical.value else 'NO'
+        if config.id.name == orchestrator_name:
+          orch_config = config
           break
-      target = c.name.split(child_builder_suffix)[0]
-      if c.collect_handling == BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST:
-        collect_after_builds.append(
-            _child_build_msg(target,
-                             cq=orchestrator_name.endswith('cq-orchestrator'),
-                             builder_name=c.name, build_id=start_build_id,
-                             critical=critical,
-                             output_properties={'build_cost': 10.0}))
-      else:
-        collect_builds.append(
-            _child_build_msg(target,
-                             cq=orchestrator_name.endswith('cq-orchestrator'),
-                             builder_name=c.name, build_id=start_build_id,
-                             critical=critical,
-                             output_properties={'build_cost': 10.0}))
-      start_build_id += 1
+      if not orch_config:
+        return [], []  # pragma: no cover
 
-    return collect_builds, collect_after_builds
+      start_build_id = 8922054662172514000
+      collect_builds = []
+      collect_after_builds = []
+
+      # TODO(b/279016710): Group NO_COLLECT builds with COLLECT for now. We will
+      # need to update the orch_menu.test() function with a new option that adds
+      # test_data for scheduling the NO_COLLECT builds but not collecting them.
+      for c in orch_config.orchestrator.child_specs:
+        critical = 'YES'
+        for config in self.m.cros_infra_config.builder_configs_test_data.builder_configs:
+          if config.id.name == c.name:
+            critical = 'YES' if config.general.critical.value else 'NO'
+            break
+        target = c.name.split(child_builder_suffix)[0]
+        if c.collect_handling == BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST:
+          collect_after_builds.append(
+              _child_build_msg(target,
+                               cq=orchestrator_name.endswith('cq-orchestrator'),
+                               builder_name=c.name, build_id=start_build_id,
+                               critical=critical,
+                               output_properties={'build_cost': 10.0}))
+        else:
+          collect_builds.append(
+              _child_build_msg(target,
+                               cq=orchestrator_name.endswith('cq-orchestrator'),
+                               builder_name=c.name, build_id=start_build_id,
+                               critical=critical,
+                               output_properties={'build_cost': 10.0}))
+        start_build_id += 1
+
+      self._CHILD_BUILDS_CACHE[key] = (
+          [b.SerializeToString() for b in collect_builds],
+          [b.SerializeToString() for b in collect_after_builds],
+      )
+
+    cached_collect, cached_after = self._CHILD_BUILDS_CACHE[key]
+    return (
+        [Build.FromString(b) for b in cached_collect],
+        [Build.FromString(b) for b in cached_after],
+    )
 
   def build_poller_step_data(
       self, builds: typing.List[Build],
