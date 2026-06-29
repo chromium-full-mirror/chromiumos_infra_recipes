@@ -5431,82 +5431,57 @@
     "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Autosubmit\": 1, \"Presubmit-Ready\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/platform/vendor/google/firmware/desktop/ec-prebuilts/+/1@@@"
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "/platform/vendor/google/firmware/desktop/ec-prebuilts",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@/platform/vendor/google/firmware/desktop/ec-prebuilts|src//platform/vendor/google/firmware/desktop/ec-prebuilts|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/vendor/google/firmware/desktop/ec-prebuilts",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.git rebase",
+    "cmd": [],
+    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.ensure auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/vendor/google/firmware/desktop/ec-prebuilts",
+    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_3",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5520,7 +5495,39 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.git push",
+    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Autosubmit\": 1, \"Presubmit-Ready\": 1}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

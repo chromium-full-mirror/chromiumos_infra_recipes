@@ -234,10 +234,10 @@ def UploadEcTokenPrebuilts(
         api.gerrit.abandon_change(change)
       else:
         labels = {
-            Label.BOT_COMMIT: 1,
-            Label.COMMIT_QUEUE: 2,
+            Label.PRESUBMIT_READY: 1,
+            Label.AUTOSUBMIT: 1,
         }
-        api.gerrit.set_change_labels(change, labels)
+        api.gerrit.set_change_labels_remote(change, labels)
 
         presentation.links["CL"] = api.gerrit.parse_gerrit_change_url(change)
       return "Updated ec-token prebuilts"
