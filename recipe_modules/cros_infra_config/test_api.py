@@ -22,6 +22,12 @@ from recipe_engine import recipe_test_api
 class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the infra_config module."""
 
+  # Cache serialized config bytes across test cases within a worker process.
+  # test_builder_configs.json is a large static file; repeatedly parsing and
+  # serializing it for every simulated download_binproto() call consumes
+  # significant CPU time (~285s of core time across 3000+ tests).
+  _CONFIG_BYTES_CACHE = {}
+
   def _read_config(self, filename: str,
                    msg: message.Message) -> recipe_test_api.StepTestData:
     """Read the content of a json file in this directory.
@@ -34,13 +40,16 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
       A StepTestData containing a JSON-like string with a single key 'value',
       whose value is the contents of the file, stripped.
     """
-    with open(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
-        encoding='utf-8') as f:
-      data = f.read().strip()
-    msg = json_format.Parse(data, msg)
+    if filename not in self._CONFIG_BYTES_CACHE:
+      with open(
+          os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
+          encoding='utf-8') as f:
+        data = f.read().strip()
+      msg = json_format.Parse(data, msg)
+      self._CONFIG_BYTES_CACHE[filename] = msg.SerializeToString()
+
     return self.m.depot_gitiles.make_encoded_file_from_bytes(
-        msg.SerializeToString())
+        self._CONFIG_BYTES_CACHE[filename])
 
   def _read_txt(self, filename: str) -> recipe_test_api.StepTestData:
     """Read the content of a txt file in this directory.
@@ -60,12 +69,17 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
   @property
   def builder_configs_test_data(self) -> BuilderConfigs:
     """BuilderConfigs message containing the standard test builders."""
-    with open(
-        os.path.join(
-            os.path.abspath(os.path.dirname(__file__)),
-            'test_builder_configs.json'), encoding='utf-8') as f:
-      data = f.read().strip()
-    return json_format.Parse(data, BuilderConfigs())
+    filename = 'test_builder_configs.json'
+    # This block may be pre-populated by _read_config during step simulation.
+    if filename not in self._CONFIG_BYTES_CACHE:  # pragma: no cover
+      with open(
+          os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
+          encoding='utf-8') as f:
+        data = f.read().strip()
+      msg = json_format.Parse(data, BuilderConfigs())
+      self._CONFIG_BYTES_CACHE[filename] = msg.SerializeToString()
+
+    return BuilderConfigs.FromString(self._CONFIG_BYTES_CACHE[filename])
 
   def builder_configs_step_test_data(self) -> recipe_test_api.StepTestData:
     """A function for step_test_data to generate BuilderConfigs."""
