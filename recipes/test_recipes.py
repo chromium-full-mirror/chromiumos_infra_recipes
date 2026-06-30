@@ -190,7 +190,7 @@ def _get_last_successful_build(api: RecipeApi, builder: str) -> build_pb2.Build:
     A Build proto.
 
   Raises:
-    A StepFailure if no build is found.
+    An InfraFailure if no build is found.
   """
   # Note that buildbucket.search returns results ordered newest-to-oldest.
   successful_builds = api.buildbucket.search(
@@ -203,7 +203,7 @@ def _get_last_successful_build(api: RecipeApi, builder: str) -> build_pb2.Build:
       url_title_fn=api.naming.get_build_title)
 
   if not successful_builds:
-    raise StepFailure(
+    raise api.step.InfraFailure(
         'No successful builds found for builder {}'.format(builder))
 
   return successful_builds[0]
@@ -226,7 +226,8 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
   Returns:
     verifiers dict, mutated to include led and launch results.
   """
-  with api.step.nest('analyze and launch builders') as launch_pres:
+  with api.step.nest('analyze and launch builders') as launch_pres, api.context(
+      infra_steps=True):
     with api.step.nest('get affected files') as affected_files_pres:
       # Changes should be cherry picked at this point. The relevant diffs should
       # be between the original checkout and HEAD.
@@ -844,7 +845,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.cv(run_mode=api.cv.FULL_RUN),
       get_non_skipped_builders_test_data(),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
-      status='FAILURE',
+      status='INFRA_FAILURE',
   )
 
   yield api.test(

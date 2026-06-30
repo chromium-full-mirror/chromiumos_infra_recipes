@@ -843,6 +843,7 @@
       "1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -896,6 +897,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -931,6 +933,7 @@
       "buildset:patch/gerrit/host/123/1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -989,6 +992,7 @@
       "dry_run=true"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1046,6 +1050,7 @@
       "edit-recipe-bundle"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1124,6 +1129,7 @@
       "20"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1204,6 +1210,7 @@
       "false"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1283,6 +1290,7 @@
       "-bound-to-parent"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1398,6 +1406,7 @@
       "2"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1451,6 +1460,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1562,6 +1572,7 @@
       "4"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1605,6 +1616,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1640,6 +1652,7 @@
       "buildset:patch/gerrit/host/123/1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1688,6 +1701,7 @@
       "dry_run=true"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1737,6 +1751,7 @@
       "bot_size=large"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1794,6 +1809,7 @@
       "edit-recipe-bundle"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1872,6 +1888,7 @@
       "20"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -1952,6 +1969,7 @@
       "false"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2031,6 +2049,7 @@
       "-bound-to-parent"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2145,6 +2164,7 @@
       "3"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2200,6 +2220,7 @@
       "buildset:patch/gerrit/host/123/1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2258,6 +2279,7 @@
       "dry_run=true"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2317,6 +2339,7 @@
       "bot_size=large"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2374,6 +2397,7 @@
       "edit-recipe-bundle"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2452,6 +2476,7 @@
       "20"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2532,6 +2557,7 @@
       "false"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2611,6 +2637,7 @@
       "-bound-to-parent"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2725,6 +2752,7 @@
       "5"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2780,6 +2808,7 @@
       "buildset:patch/gerrit/host/123/1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2838,6 +2867,7 @@
       "dry_run=true"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2897,6 +2927,7 @@
       "skip_paygen=true"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -2955,6 +2986,7 @@
       "edit-recipe-bundle"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -3034,6 +3066,7 @@
       "20"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -3115,6 +3148,7 @@
       "false"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"
@@ -3195,6 +3229,7 @@
       "-bound-to-parent"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:infra"

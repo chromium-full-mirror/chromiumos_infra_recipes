@@ -711,7 +711,7 @@
     "cmd": [],
     "name": "analyze and launch builders",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -756,7 +756,7 @@
     "name": "analyze and launch builders.analyze and launch staging-Annealing",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -818,7 +818,6 @@
   },
   {
     "failure": {
-      "failure": {},
       "humanReason": "No successful builds found for builder staging-Annealing"
     },
     "name": "$result"
