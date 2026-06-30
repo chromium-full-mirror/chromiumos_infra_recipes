@@ -129,6 +129,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self._is_factory_orchestrator = False
     self._is_public_orchestrator = False
     self._relevant_child_builder_names = []
+    self._throttled_build = None
 
     self._builder_to_collect_value = defaultdict(
         lambda: BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
@@ -173,6 +174,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
   @property
   def is_public_orchestrator(self):
     return self._is_public_orchestrator
+
+  @property
+  def throttled_build(self):
+    return self._throttled_build
 
   @property
   def is_snapshot_orchestrator(self):
@@ -242,7 +247,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       yield
 
   @contextlib.contextmanager
-  def setup_orchestrator(self):
+  def setup_orchestrator(self, skip_throttling=False):
     """Initial setup steps for the orchestrator.
 
     This context manager returns with all of the contexts that the orchestrator
@@ -263,6 +268,16 @@ class OrchMenuApi(recipe_api.RecipeApi):
             self.m.buildbucket.gitiles_commit,
             self.m.buildbucket.build.input.gerrit_changes)
 
+        # Check for release throttling before we perform checkout or sync.
+        is_release = config and config.id.type == BuilderConfig.Id.RELEASE
+        is_staging = self.m.cros_infra_config.is_staging
+        if is_release and not is_staging and not skip_throttling:
+          throttled, build = self.m.cros_release.check_stateful_throttling()
+          if throttled:
+            self._throttled_build = build
+            yield config
+            return
+
         presentation.links['manifest snapshot revision'] = (
             self.m.gitiles.file_url(self.gitiles_commit, 'snapshot.xml'))
 
@@ -271,8 +286,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
             is_staging=self.m.cros_infra_config.is_staging,
             checkout_internal=not use_external, checkout_external=use_external)
         self._external_gitiles_commit = external_commit
-
-        is_staging = self.m.cros_infra_config.is_staging
 
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:

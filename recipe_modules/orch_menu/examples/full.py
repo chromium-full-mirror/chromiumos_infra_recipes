@@ -49,6 +49,8 @@ def RunSteps(api, properties):
   build = api.buildbucket.build
   with api.orch_menu.setup_orchestrator() as config:
     api.assertions.assertEqual(config, api.orch_menu.config)
+    if api.orch_menu.throttled_build:
+      return None
     if not config:
       api.assertions.assertTrue(properties.expect_missing_config)
       return None
@@ -567,6 +569,35 @@ def GenTests(api):
   )
 
   yield api.orch_menu.test(
+      'release-orchestrator-throttled',
+      api.empty_test_data(),
+      api.properties(
+          FullProperties(
+              is_release_orchestrator=True,
+              use_extra_props=True,
+          ),
+      ),
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(
+              id=123, status=common_pb2.SUCCESS, create_time={
+                  'seconds': 1600000000 - 10 * 3600
+              }, output=build_pb2.Build.Output(
+                  properties={'greenness': {
+                      'aggregateBuildMetric': 100
+                  }}))
+      ], step_name='set up orchestrator.check stateful throttling.search builds'
+                                              ),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.check stateful throttling'),
+      api.post_check(post_process.DoesNotRun,
+                     'set up orchestrator.sync manifest branches'),
+      api.post_check(post_process.DoesNotRun, 'run builds'),
+      api.post_process(post_process.DropExpectation),
+      builder='release-main-orchestrator',
+      bot_size='medium',
+  )
+
+  yield api.orch_menu.test(
       'public-orchestrator',
       data.ctp_normal,
       api.properties(
@@ -686,7 +717,7 @@ def GenTests(api):
       history_builds=data.history_builds, collect_after_builds=collect_after,
       with_history=True, git_footers=[])
 
-  one_non_crit_fail_summary = ('1 non-critical build failed')
+  one_non_crit_fail_summary = '1 non-critical build failed'
   collect, collect_after = api.orch_menu.orch_child_builds(
       'cq-orchestrator', '-cq')
   # Joins an inflight orchestrator run.
