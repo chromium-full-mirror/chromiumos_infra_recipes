@@ -580,8 +580,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       A TestData object.
     """
     return api.buildbucket.simulated_collect_output([
-        api.buildbucket.ci_build_message(build_id=1, status='FAILURE'),
-        api.buildbucket.ci_build_message(build_id=2, status='SUCCESS'),
+        api.buildbucket.ci_build_message(
+            build_id=1, builder='staging-Annealing', status='FAILURE'),
+        api.buildbucket.ci_build_message(
+            build_id=2, builder='staging-release-triggerer', status='SUCCESS'),
     ], 'collect results.buildbucket.collect')
 
   def try_build(project: str, bucket: str, builder: str) -> TestData:
@@ -672,7 +674,30 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                recipes=['no_size_recipe']),
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
-      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]))
+      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-Annealing.led launch'
+      ),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-no-size.led launch'
+      ),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-release-triggerer.led launch'
+      ),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-release-main-octopus.led launch'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-chromite-snapshot.led launch'
+      ),
+      api.post_process(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield api.test(
       'two-changes',
@@ -702,7 +727,22 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
-      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]))
+      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-Annealing.led launch'
+      ),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-release-triggerer.led launch'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-chromite-snapshot.led launch'
+      ),
+      api.post_process(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield api.test(
       'two-changes-mixed-repos',
@@ -732,7 +772,22 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
-      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]))
+      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-Annealing.led launch'
+      ),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-release-triggerer.led launch'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-chromite-snapshot.led launch'
+      ),
+      api.post_process(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield api.test(
       'skipped-builder',
@@ -761,7 +816,24 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                        'release_triggerer', 2),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
-      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]))
+      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]),
+      api.post_process(post_process.LogContains, 'get non-skipped builders',
+                       'Skipped builders', ['staging-Annealing']),
+      api.post_process(
+          post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-Annealing.led launch'
+      ),
+      api.post_process(
+          post_process.MustRun,
+          'analyze and launch builders.analyze and launch staging-release-triggerer.led launch'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-chromite-snapshot.led launch'
+      ),
+      api.post_process(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield api.test(
       'one-verifier-failure',
@@ -788,6 +860,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                recipes=['annealing']),
       # swarming TaskResults contain a failed task.
       collect_results_failed_test_data(),
+      api.post_process(post_process.HasLink, 'analyze results',
+                       '[FAILED] staging-Annealing'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -815,6 +890,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           api.buildbucket.ci_build_message(build_id=1, status='FAILURE'),
           api.buildbucket.ci_build_message(build_id=2, status='SUCCESS')
       ], 'collect results.buildbucket.get_multi'),
+      api.post_process(post_process.MustRun, 'collect results'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -837,6 +914,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # The skipped builder isn't part of the specified builders.
       get_non_skipped_builders_test_data(skipped_builders=['other-builder']),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
+      api.post_process(post_process.DoesNotRun, 'checkout recipes repo'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -845,12 +924,17 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.cv(run_mode=api.cv.FULL_RUN),
       get_non_skipped_builders_test_data(),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
+      api.post_process(post_process.MustRun, 'checkout recipes repo'),
+      api.post_process(post_process.DoesNotRun, 'collect results'),
+      api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
   )
 
   yield api.test(
       'no_gerrit_changes',
       api.cv(run_mode=api.cv.FULL_RUN),
+      api.post_process(post_process.DoesNotRun, 'get non-skipped builders'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -862,6 +946,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'production-builder',
               'critical': True
           }])),
+      api.post_process(post_process.DoesNotRun, 'get non-skipped builders'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -870,6 +956,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       api.cv(run_mode=api.cv.FULL_RUN),
       api.step_data('run ./recipes.py tests', retcode=1),
+      api.post_process(post_process.MustRun, 'run ./recipes.py tests'),
+      api.post_process(post_process.DoesNotRun, 'analyze and launch builders'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

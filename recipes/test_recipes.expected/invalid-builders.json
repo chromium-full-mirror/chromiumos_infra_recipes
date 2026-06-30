@@ -1,9 +1,0 @@
-[
-  {
-    "failure": {
-      "failure": {},
-      "humanReason": "only staging builders can be used (builder production-builder not valid)"
-    },
-    "name": "$result"
-  }
-]

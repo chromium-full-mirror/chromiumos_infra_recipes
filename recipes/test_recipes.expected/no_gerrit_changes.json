@@ -1,9 +1,0 @@
-[
-  {
-    "failure": {
-      "failure": {},
-      "humanReason": "gerrit_changes required as input."
-    },
-    "name": "$result"
-  }
-]
