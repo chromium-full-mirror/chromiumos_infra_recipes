@@ -26,10 +26,31 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def make_properties(greenness=None):
+  def make_properties(success_ratio=None):
     properties = struct_pb2.Struct()
-    if greenness is not None:
-      properties.update({'greenness': {'aggregateBuildMetric': str(greenness)}})
+    if success_ratio is not None:
+      total = 10
+      success_count = int(total * success_ratio / 100.0)
+      child_info = []
+      for i in range(total):
+        status = 'SUCCESS' if i < success_count else 'FAILURE'
+        child_info.append({
+            'builder': {
+                'builder': f'builder-release-{i}',
+                'bucket': 'release'
+            },
+            'status': status,
+        })
+
+      # Add testplatform builds that failed to test filtering
+      child_info.append({
+          'builder': {
+              'builder': 'builder-testplatform',
+              'bucket': 'testplatform'
+          },
+          'status': 'FAILURE',
+      })
+      properties.update({'child_build_info': child_info})
     return properties
 
   yield api.test(
@@ -40,7 +61,7 @@ def GenTests(api):
               id=123, status=common_pb2.SUCCESS, create_time={
                   'seconds': 1600000000 - 10 * 3600
               }, output=build_pb2.Build.Output(
-                  properties=make_properties(greenness=90)))
+                  properties=make_properties(success_ratio=90)))
       ], step_name='check stateful throttling.search builds'),
       api.post_check(post_process.MustRun, 'throttled_True_by_123'),
       api.post_process(post_process.DropExpectation),
@@ -54,7 +75,7 @@ def GenTests(api):
               id=123, status=common_pb2.SUCCESS, create_time={
                   'seconds': 1600000000 - 10 * 3600
               }, output=build_pb2.Build.Output(
-                  properties=make_properties(greenness=70)))
+                  properties=make_properties(success_ratio=70)))
       ], step_name='check stateful throttling.search builds'),
       api.post_check(post_process.MustRun, 'throttled_False_by_None'),
       api.post_process(post_process.DropExpectation),
@@ -81,7 +102,7 @@ def GenTests(api):
               id=123, status=common_pb2.SUCCESS, create_time={
                   'seconds': 1600000000 - 30 * 3600
               }, output=build_pb2.Build.Output(
-                  properties=make_properties(greenness=100)))
+                  properties=make_properties(success_ratio=100)))
       ], step_name='check stateful throttling.search builds'),
       api.post_check(post_process.MustRun, 'throttled_False_by_None'),
       api.post_process(post_process.DropExpectation),
@@ -99,7 +120,7 @@ def GenTests(api):
               id=123, status=common_pb2.SUCCESS, create_time={
                   'seconds': 1600000000 - 15 * 3600
               }, output=build_pb2.Build.Output(
-                  properties=make_properties(greenness=100)))
+                  properties=make_properties(success_ratio=100)))
       ], step_name='check stateful throttling.search builds'),
       api.post_check(post_process.MustRun, 'throttled_True_by_123'),
       api.post_process(post_process.DropExpectation),
@@ -117,7 +138,7 @@ def GenTests(api):
               id=123, status=common_pb2.SUCCESS, create_time={
                   'seconds': 1600000000 - 10 * 3600
               }, output=build_pb2.Build.Output(
-                  properties=make_properties(greenness=85)))
+                  properties=make_properties(success_ratio=80)))
       ], step_name='check stateful throttling.search builds'),
       api.post_check(post_process.MustRun, 'throttled_False_by_None'),
       api.post_process(post_process.DropExpectation),
@@ -135,7 +156,7 @@ def GenTests(api):
               id=123, status=common_pb2.SUCCESS, create_time={
                   'seconds': 1600000000 - 10 * 3600
               }, output=build_pb2.Build.Output(
-                  properties=make_properties(greenness=95)))
+                  properties=make_properties(success_ratio=100)))
       ], step_name='check stateful throttling.search builds'),
       api.post_check(post_process.MustRun, 'throttled_True_by_123'),
       api.post_process(post_process.DropExpectation),
@@ -151,17 +172,22 @@ def GenTests(api):
   )
 
   yield api.test(
-      'not-throttled-invalid-metric',
+      'not-throttled-all-children-testplatform',
       api.time.seed(1600000000),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(
               id=123, status=common_pb2.SUCCESS, create_time={
                   'seconds': 1600000000 - 10 * 3600
-              }, output=build_pb2.Build.Output(properties={
-                  'greenness': {
-                      'aggregateBuildMetric': 'not-a-number'
-                  }
-              }))
+              }, output=build_pb2.Build.Output(
+                  properties={
+                      'child_build_info': [{
+                          'builder': {
+                              'builder': 'builder-testplatform',
+                              'bucket': 'testplatform'
+                          },
+                          'status': 'SUCCESS',
+                      }]
+                  }))
       ], step_name='check stateful throttling.search builds'),
       api.post_check(post_process.MustRun, 'throttled_False_by_None'),
       api.post_process(post_process.DropExpectation),

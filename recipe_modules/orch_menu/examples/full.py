@@ -582,9 +582,15 @@ def GenTests(api):
               id=123, status=common_pb2.SUCCESS, create_time={
                   'seconds': 1600000000 - 10 * 3600
               }, output=build_pb2.Build.Output(
-                  properties={'greenness': {
-                      'aggregateBuildMetric': 100
-                  }}))
+                  properties={
+                      'child_build_info': [{
+                          'builder': {
+                              'builder': 'eve-release-main',
+                              'bucket': 'release'
+                          },
+                          'status': 'SUCCESS',
+                      }]
+                  }))
       ], step_name='set up orchestrator.check stateful throttling.search builds'
                                               ),
       api.post_check(post_process.MustRun,

@@ -115,21 +115,36 @@ class CrosReleaseApi(recipe_api.RecipeApi):
   def _is_valid_successful_build_with_reason(self, build, threshold_percent):
     """Checks if a build is a valid successful build for throttling.
 
-    It must have the aggregateBuildMetric in greenness property and meet the threshold.
+    Inspects child_build_info, excluding any builds in the 'testplatform' bucket,
+    and checks if the success rate meets or exceeds threshold_percent.
     """
-    properties = build.output.properties
-    if 'greenness' not in properties or 'aggregateBuildMetric' not in properties[
-        'greenness']:
-      return False, 'missing greenness property'
+    output_dict = json_format.MessageToDict(build.output.properties)
+    child_build_info = output_dict.get('child_build_info', [])
+    if not child_build_info:
+      return False, 'missing child_build_info property'
 
-    try:
-      buildGreenness = int(properties['greenness']['aggregateBuildMetric'])
-    except (ValueError, TypeError) as e:
-      return False, f'invalid aggregateBuildMetric value: {e}'
+    # Filter out testplatform builds
+    release_child_builds = [
+        cb for cb in child_build_info
+        if cb.get('builder', {}).get('bucket') != 'testplatform'
+    ]
 
-    if buildGreenness >= threshold_percent:
-      return True, f'buildGreenness {buildGreenness}% >= threshold {threshold_percent}%'
-    return False, f'buildGreenness {buildGreenness}% < threshold {threshold_percent}%'
+    if not release_child_builds:
+      return False, 'no relevant child builds'
+
+    successful_count = sum(
+        1 for cb in release_child_builds if cb.get('status') == 'SUCCESS')
+
+    success_rate = (successful_count / len(release_child_builds)) * 100.0
+    if success_rate >= threshold_percent:
+      return (
+          True,
+          f'child build success rate {success_rate:.1f}% ({successful_count}/{len(release_child_builds)}) >= threshold {threshold_percent}%',
+      )
+    return (
+        False,
+        f'child build success rate {success_rate:.1f}% ({successful_count}/{len(release_child_builds)}) < threshold {threshold_percent}%',
+    )
 
 
   def __init__(self, properties, **kwargs):
