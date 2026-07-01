@@ -558,6 +558,31 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -906,6 +931,31 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1303,6 +1353,31 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/GetBinhostConfPath.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -1629,6 +1704,32 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -2381,6 +2482,32 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic (2).call chromite.api.BinhostService/SetBinhost.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -3128,6 +3255,32 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic (3).call chromite.api.BinhostService/SetBinhost.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -3870,6 +4023,32 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic (4).call chromite.api.BinhostService/SetBinhost.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

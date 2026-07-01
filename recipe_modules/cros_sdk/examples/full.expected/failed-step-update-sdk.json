@@ -103,6 +103,19 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "name": "init sdk.call chromite.api.SdkService/Create.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -585,6 +598,19 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "name": "update sdk.call chromite.api.SdkService/Update.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -766,6 +792,19 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "name": "update sdk.UpdateSDK failure.removing sysroot.call chromite.api.SdkService/Clean.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -884,6 +923,19 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "name": "update sdk.UpdateSDK failure.delete sdk.call chromite.api.SdkService/Delete.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1037,6 +1089,19 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -1155,6 +1220,19 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

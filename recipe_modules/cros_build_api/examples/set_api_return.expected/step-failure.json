@@ -56,6 +56,19 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "name": "test step.call chromite.api.VersionService/Get.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",

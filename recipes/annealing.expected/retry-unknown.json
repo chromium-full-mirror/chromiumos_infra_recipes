@@ -2301,6 +2301,20 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
@@ -2504,6 +2518,20 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "uprev packages.revbump chrome.revbump chrome.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

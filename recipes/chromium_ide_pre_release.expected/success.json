@@ -2756,6 +2756,23 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "env": {
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
+    },
+    "infra_step": true,
+    "name": "clean up SDK chroot.ensure no rogue SDK.call chromite.api.SdkService/Delete.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",

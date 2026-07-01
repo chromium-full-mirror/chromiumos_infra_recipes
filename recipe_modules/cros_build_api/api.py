@@ -339,8 +339,13 @@ class CrosBuildApiApi(RecipeApi):
       commit = self.m.file.read_text(
           'read chromite version',
           self.repo_resource('infra', 'config', 'chromite-HEAD.version'))
-      with self.m.context(cwd=self.m.src_state.workspace_path /
-                          chromite_location):
+      chromite_dir = self.m.src_state.workspace_path / chromite_location
+      if not self.m.path.exists(chromite_dir):
+        self.m.git.clone(
+            'https://chromium.googlesource.com/chromiumos/chromite',
+            target_path=chromite_dir,
+        )
+      with self.m.context(cwd=chromite_dir):
         try:
           self.m.git.checkout(
               commit.strip(),
