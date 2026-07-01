@@ -9,6 +9,7 @@ import argparse
 import logging
 import os
 import pathlib
+import shutil
 import subprocess
 import sys
 import typing
@@ -341,6 +342,16 @@ def setup():
   """Prepare for main logic."""
   git_remote_update()
   print_cipd_versions_url()
+
+  # If depot_tools is after /usr/bin on gLinux systems, `led` will be wrong.
+  if shutil.which("led") == "/usr/bin/led":
+    # Search for depot_tools by looking for `cros`.
+    try:
+      depot_tools = os.path.dirname(shutil.which("cros"))
+      os.environ["PATH"] = f"{depot_tools}:{os.environ['PATH']}"
+    except TypeError:
+      # Couldn't find `cros` apparently.
+      pass
 
 
 def git_remote_update():
