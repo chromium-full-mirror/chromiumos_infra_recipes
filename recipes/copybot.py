@@ -35,20 +35,13 @@ PROPERTIES = CopybotProperties
 
 
 def RunSteps(api: RecipeApi, properties: CopybotProperties):
-  # Create placeholder .repo to resolve chromite constants.SOURCE_ROOT
-  api.file.ensure_directory(
-      "create placeholder .repo",
-      api.src_state.workspace_path / ".repo",
-  )
-
-  # Clone copybot repo to infra/copybot
-  copybot_dir = api.src_state.workspace_path / "infra" / "copybot"
-  api.git.clone(
-      "https://chromium.googlesource.com/chromiumos/infra/copybot",
-      target_path=copybot_dir,
-  )
-
   with api.build_menu.configure_builder(missing_ok=True):
+    # Clone copybot repo to infra/copybot
+    copybot_dir = api.src_state.workspace_path / "infra" / "copybot"
+    api.git.clone(
+        "https://chromium.googlesource.com/copybot",
+        target_path=copybot_dir,
+    )
     return run_copybot(api, properties)
 
 
