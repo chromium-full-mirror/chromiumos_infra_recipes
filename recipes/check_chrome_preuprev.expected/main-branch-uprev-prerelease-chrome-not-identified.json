@@ -416,7 +416,7 @@
       }
     },
     "name": "Find chrome-uprev-orchestrator.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,infra.resultdb.invocation,status,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"chrome-uprev-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromium/src/+/40230e6cf598d11deb34d4a5e4656a72152d395e\"}]}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,infra.resultdb.invocation,output.properties,status,summaryMarkdown\"}, \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"chrome-uprev-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromium/src/+/40230e6cf598d11deb34d4a5e4656a72152d395e\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -436,6 +436,7 @@
       "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-1231231919-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"output\": {},@@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"SCHEDULED\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
@@ -449,8 +450,9 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"id,infra.resultdb.invocation,status,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"id,infra.resultdb.invocation,output.properties,status,summaryMarkdown\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1,@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"infra\",@@@",
@@ -469,7 +471,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22infra%22%2C+%22builder%22%3A+%22chrome-uprev-orchestrator%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22buildset%22%2C+%22value%22%3A+%22commit%2Fgitiles%2Fchromium.googlesource.com%2Fchromium%2Fsrc%2F%2B%2F40230e6cf598d11deb34d4a5e4656a72152d395e%22%7D%5D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22id%2Cinfra.resultdb.invocation%2Cstatus%2CsummaryMarkdown%22%7D%7D@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22infra%22%2C+%22builder%22%3A+%22chrome-uprev-orchestrator%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22buildset%22%2C+%22value%22%3A+%22commit%2Fgitiles%2Fchromium.googlesource.com%2Fchromium%2Fsrc%2F%2B%2F40230e6cf598d11deb34d4a5e4656a72152d395e%22%7D%5D%7D%2C+%22pageSize%22%3A+1%2C+%22mask%22%3A+%7B%22fields%22%3A+%22id%2Cinfra.resultdb.invocation%2Coutput.properties%2Cstatus%2CsummaryMarkdown%22%7D%7D@@@",
       "@@@STEP_LINK@1231231919@https://cr-buildbucket.appspot.com/build/1231231919@@@"
     ]
   },
@@ -573,7 +575,7 @@
       }
     },
     "name": "Wait chrome-uprev-orchestrator.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"1231231919\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"id,infra.resultdb.invocation,output.properties,status,summaryMarkdown\", \"id\": \"1231231919\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -591,6 +593,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-1231231919-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"output\": {},@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"All pre-uprev tests passed.\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -602,7 +605,7 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"id,infra.resultdb.invocation,output.properties,status,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"1231231919\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
@@ -637,7 +640,7 @@
       }
     },
     "name": "Checking preuprev builder details.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}, \"predicate\": {\"builder\": {\"bucket\": \"ci\", \"project\": \"chrome\"}, \"childOf\": \"1231231919\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,infra.resultdb.invocation,output.properties,status,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"ci\", \"project\": \"chrome\"}, \"childOf\": \"1231231919\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -651,12 +654,13 @@
       "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-jacuzzi-chrome-preuprev\",@@@",
       "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"1231231919\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"8000\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-1231231919-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-8000-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"output\": {},@@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"chromeos-jacuzzi-chrome-preuprev result SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@          },@@@",
@@ -666,12 +670,13 @@
       "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-betty-chrome-preuprev\",@@@",
       "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"1231231919\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"8001\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-1231231919-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-8001-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"output\": {},@@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"chromeos-betty-chrome-preuprev result SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
@@ -686,7 +691,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,infra.resultdb.invocation,output.properties,status,summaryMarkdown\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -700,8 +705,9 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22ci%22%7D%2C+%22childOf%22%3A+%221231231919%22%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2CcreatedBy%2Ccritical%2CendTime%2Cid%2Cinfra%2Cinput%2Cnumber%2Coutput%2CstartTime%2Cstatus%2CupdateTime%22%7D%7D@@@",
-      "@@@STEP_LINK@1231231919@https://cr-buildbucket.appspot.com/build/1231231919@@@"
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22ci%22%7D%2C+%22childOf%22%3A+%221231231919%22%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Cinfra.resultdb.invocation%2Coutput.properties%2Cstatus%2CsummaryMarkdown%22%7D%7D@@@",
+      "@@@STEP_LINK@8000@https://cr-buildbucket.appspot.com/build/8000@@@",
+      "@@@STEP_LINK@8001@https://cr-buildbucket.appspot.com/build/8001@@@"
     ]
   },
   {
@@ -709,7 +715,7 @@
     "name": "Checking preuprev builder details.chromeos-betty-chrome-preuprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@[go/bbid/1231231919](http://go/bbid/1231231919)\n\n@@@"
+      "@@@STEP_SUMMARY_TEXT@[go/bbid/8001](http://go/bbid/8001)\n\n@@@"
     ]
   },
   {
@@ -717,7 +723,7 @@
     "name": "Checking preuprev builder details.chromeos-jacuzzi-chrome-preuprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@[go/bbid/1231231919](http://go/bbid/1231231919)\n\n@@@"
+      "@@@STEP_SUMMARY_TEXT@[go/bbid/8000](http://go/bbid/8000)\n\n@@@"
     ]
   },
   {

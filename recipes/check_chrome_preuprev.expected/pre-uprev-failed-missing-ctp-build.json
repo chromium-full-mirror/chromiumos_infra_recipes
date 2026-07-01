@@ -512,7 +512,7 @@
     "cmd": [],
     "name": "Wait chrome-uprev-orchestrator",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@[Orchestrator](http://go/bbid/1231231919/overview)\n\nAll pre-uprev tests passed.@@@"
+      "@@@STEP_SUMMARY_TEXT@[Orchestrator](http://go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.@@@"
     ]
   },
   {
@@ -591,8 +591,8 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"output\": {},@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"All pre-uprev tests passed.\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Some pre-uprev builder failed.\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -614,7 +614,11 @@
   },
   {
     "cmd": [],
-    "name": "Checking preuprev builder details"
+    "name": "Checking preuprev builder details",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Retrying chrome-uprev-cq does NOT retry these tests\n\nCTP retries flaky tests and chrome-uprev-orchestrator retries INFRA_FAILURE once\n\nPlease wait for next uprev\n\n@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [
@@ -657,25 +661,15 @@
       "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-8000-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"output\": {},@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"chromeos-jacuzzi-chrome-preuprev result SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          },@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-betty-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"8001\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-8001-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"test_status\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"chrome_all_tast_tests LKGM\": \"Failure\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"output\": {},@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"chromeos-betty-chrome-preuprev result SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"FAILURE\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"chromeos-jacuzzi-chrome-preuprev result FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -703,16 +697,7 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chrome%22%2C+%22bucket%22%3A+%22ci%22%7D%2C+%22childOf%22%3A+%221231231919%22%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Cinfra.resultdb.invocation%2Coutput.properties%2Cstatus%2CsummaryMarkdown%22%7D%7D@@@",
-      "@@@STEP_LINK@8000@https://cr-buildbucket.appspot.com/build/8000@@@",
-      "@@@STEP_LINK@8001@https://cr-buildbucket.appspot.com/build/8001@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Checking preuprev builder details.chromeos-betty-chrome-preuprev",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@[go/bbid/8001](http://go/bbid/8001)\n\n@@@"
+      "@@@STEP_LINK@8000@https://cr-buildbucket.appspot.com/build/8000@@@"
     ]
   },
   {
@@ -720,11 +705,88 @@
     "name": "Checking preuprev builder details.chromeos-jacuzzi-chrome-preuprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@[go/bbid/8000](http://go/bbid/8000)\n\n@@@"
+      "@@@STEP_SUMMARY_TEXT@[go/bbid/8000](http://go/bbid/8000)\n\nchromeos-jacuzzi-chrome-preuprev result FAILURE@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
-    "name": "$result",
-    "summaryMarkdown": "Pre-uprev testing passed. \n\nDetails: \n\nAll pre-uprev tests passed.\n"
+    "cmd": [],
+    "name": "Check preuprev retriability",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@retriable=False@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Check preuprev retriability.chromeos-jacuzzi-chrome-preuprev",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@Missing CTP build for suite chrome_all_tast_tests LKGM@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/inv-9999",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Check preuprev retriability.chromeos-jacuzzi-chrome-preuprev.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,createTime,id,infra.resultdb.invocation,input.properties,status,summaryMarkdown\"}, \"pageSize\": 1000, \"predicate\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"childOf\": \"8000\"}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,createTime,id,infra.resultdb.invocation,input.properties,status,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"pageSize\": 1000,@@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"bucket\": \"testplatform\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"builder\": \"cros_test_platform\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          \"childOf\": \"8000\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%2C+%22bucket%22%3A+%22testplatform%22%2C+%22builder%22%3A+%22cros_test_platform%22%7D%2C+%22childOf%22%3A+%228000%22%7D%2C+%22pageSize%22%3A+1000%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2CcreateTime%2Cid%2Cinfra.resultdb.invocation%2Cinput.properties%2Cstatus%2CsummaryMarkdown%22%7D%7D@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "1 errors checking Chrome uprev criteria:\n\n\n\nPre-uprev testing not passed, details:\n\n[Orchestrator](http://go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.\n\nPlease check the test failures, fix the failures (land a fix or revert culprit on Chromium) and wait for next pre-uprev.\n\nTo disable a failed tests at this builder, disable at [chromium/src/chromeos/tast_control_disabled_tests.txt](https://source.chromium.org/chromium/chromium/src/+/main:chromeos/tast_control_disabled_tests.txt) instead.\n\nQuestions to this builder goes to g/chromeos-chrome-build, instead of CI oncall.\n\n"
+    },
+    "name": "$result"
   }
 ]

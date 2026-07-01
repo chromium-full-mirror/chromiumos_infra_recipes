@@ -7,7 +7,7 @@
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 import json
 import re
 import base64
@@ -20,6 +20,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -54,6 +55,10 @@ UPREV_CL_TOPICS = [
     'chromeos-base/lacros-ash-atomic',
     'chromeos-base/chromeos-chrome',
 ]
+RETRIABLE_TEST_SUITES = {
+    'chrome_all_tast_tests LKGM',
+}
+MAX_RETRIABLE_TESTS = 20
 INVOCATION_PREFIX = 'invocations/'
 
 NO_CL_FOUND_SUMMARY = 'No CL found.'
@@ -122,7 +127,27 @@ ORCHESTRATOR_BUILD_FIELDS_TO_RETRIEVE = [
     'id',
     'status',
     'summary_markdown',
+    'output.properties',
     'infra.resultdb.invocation',
+]
+
+PREUPREV_CHILD_BUILD_FIELDS_TO_RETRIEVE = [
+    'id',
+    'builder',
+    'status',
+    'summary_markdown',
+    'output.properties',
+    'infra.resultdb.invocation',
+]
+
+CTP_BUILD_FIELDS_TO_RETRIEVE = [
+    'id',
+    'builder',
+    'status',
+    'summary_markdown',
+    'input.properties',
+    'infra.resultdb.invocation',
+    'create_time',
 ]
 
 CHROME_BEST_REVISION_FIELDS_TO_RETRIEVE = [
@@ -132,7 +157,8 @@ CHROME_BEST_REVISION_FIELDS_TO_RETRIEVE = [
     'status',
 ]
 
-def BestChromeRevision(api: RecipeApi) -> Optional[int]:
+
+def BestChromeRevision(api: RecipeApi) -> int | None:
   now = int(api.time.time())
   end_time = timestamp_pb2.Timestamp(seconds=now)
   start_time = timestamp_pb2.Timestamp(seconds=now - 3600 * 8)
@@ -159,9 +185,21 @@ def BestChromeRevision(api: RecipeApi) -> Optional[int]:
   return best_revision
 
 
-def CheckPreUprevsFromOrchestrator(api: RecipeApi, chrome_commit: str):
+def CheckPreUprevsFromOrchestrator(
+    api: RecipeApi,
+    chrome_commit: str) -> tuple[build_pb2.Build | None, list[build_pb2.Build]]:
+  """Search for and collect chrome-uprev-orchestrator build and its child preuprev builds.
+
+  Args:
+    api: Recipe API object.
+    chrome_commit: The Chromium commit hash.
+
+  Returns:
+    A tuple of (orchestrator_build, child_preuprev_builds). Returns (None, [])
+    if no orchestrator build is found for the given commit.
+  """
   with api.step.nest('Find chrome-uprev-orchestrator') as step:
-    orchestrator = api.buildbucket.search(
+    orchestrator_builds = api.buildbucket.search(
         builds_service_pb2.BuildPredicate(
             builder={
                 'project': 'chromeos',
@@ -169,7 +207,12 @@ def CheckPreUprevsFromOrchestrator(api: RecipeApi, chrome_commit: str):
                 'builder': 'chrome-uprev-orchestrator',
             }, tags=api.buildbucket.tags(
                 buildset=f'commit/gitiles/chromium.googlesource.com/chromium/src/+/{chrome_commit}'
-            )), fields=ORCHESTRATOR_BUILD_FIELDS_TO_RETRIEVE)[0]
+            )), fields=ORCHESTRATOR_BUILD_FIELDS_TO_RETRIEVE, limit=1)
+    if not orchestrator_builds:  # pragma: no cover
+      step.status = api.step.FAILURE
+      step.step_summary_text = f'No chrome-uprev-orchestrator build found for commit {chrome_commit}'
+      return None, []
+    orchestrator = orchestrator_builds[0]
     api.resultdb.include_invocations([
         orchestrator.infra.resultdb.invocation.removeprefix(INVOCATION_PREFIX)
     ])
@@ -180,6 +223,7 @@ def CheckPreUprevsFromOrchestrator(api: RecipeApi, chrome_commit: str):
     step.step_summary_text = (
         f'[Orchestrator](http://go/bbid/{orchestrator.id}/overview)\n\n' +
         orchestrator.summary_markdown)
+  preuprevs = []
   try:  # Ensure any errors on this step does not block uprev.
     with api.step.nest('Checking preuprev builder details') as step:
       if orchestrator.status != common_pb2.SUCCESS:
@@ -192,7 +236,9 @@ def CheckPreUprevsFromOrchestrator(api: RecipeApi, chrome_commit: str):
               builder={
                   'project': 'chrome',
                   'bucket': 'ci',
-              }, child_of=orchestrator.id))
+              }, child_of=orchestrator.id),
+          fields=PREUPREV_CHILD_BUILD_FIELDS_TO_RETRIEVE,
+      )
       for preuprev in preuprevs[::-1]:
         with api.step.nest(preuprev.builder.builder) as build:
           if preuprev.status == common_pb2.FAILURE:
@@ -205,10 +251,309 @@ def CheckPreUprevsFromOrchestrator(api: RecipeApi, chrome_commit: str):
             build.step_summary_text += preuprev.summary_markdown
   except Exception as e:  # pragma: nocover # pylint: disable=broad-except
     with api.step.nest('Something failed checking preuprev details') as step:
-      step.status = common_pb2.EXCEPTION
+      step.status = api.step.EXCEPTION
       step.step_summary_text = str(e)
 
-  return orchestrator
+  return orchestrator, preuprevs
+
+
+def IsPreuprevRetriable(preuprev: build_pb2.Build) -> bool:
+  """Check whether a preuprev build failure is retriable.
+
+  Only builds with FAILURE status are considered for retry. Builds with
+  INFRA_FAILURE or CANCELED status are not retriable because ResultDB test
+  results are incomplete or unreliable for infra failures and canceled runs.
+  """
+  if preuprev.status != common_pb2.FAILURE:
+    return False
+
+  output_dict = json_format.MessageToDict(
+      preuprev.output,
+      struct_pb2.Struct) if preuprev.HasField('output') else {}
+  test_status = output_dict.get('properties', {}).get('test_status', {})
+  if not test_status:
+    return False
+
+  # 1. All non-retriable test suites must pass
+  if any(v != 'Success'
+         for k, v in test_status.items()
+         if k not in RETRIABLE_TEST_SUITES):
+    return False
+
+  # 2. At least one retriable test suite must have failed
+  has_retriable_failure = any(v == 'Failure'
+                              for k, v in test_status.items()
+                              if k in RETRIABLE_TEST_SUITES)
+  return has_retriable_failure
+
+
+def GetBuildCreateTime(ctp: build_pb2.Build) -> tuple[int, int]:
+  """Extract creation time tuple (seconds, nanos) for build ordering."""
+  if ctp.HasField('create_time'):
+    return (ctp.create_time.seconds, ctp.create_time.nanos)
+  return (0, 0)  # pragma: no cover
+
+
+def ExtractCtpTestSuite(ctp: build_pb2.Build) -> str | None:
+  """Extract exact test suite name from CTP build resultdb_settings input property."""
+  if not ctp.HasField('input') or not ctp.input.HasField(
+      'properties'):  # pragma: no cover
+    return None
+
+  props_dict = json_format.MessageToDict(ctp.input.properties,
+                                         struct_pb2.Struct)
+  ctpv2 = props_dict.get('ctpv2_request', {})
+  requests = ctpv2.get('requests', [])
+  for req in requests:
+    suite_req = req.get('suiteRequest', {})
+    test_suite = suite_req.get('testSuite', {})
+    args = test_suite.get('executionMetadata', {}).get('args', [])
+    for arg in args:
+      if arg.get('flag') == 'resultdb_settings':
+        val = arg.get('value')
+        if val:
+          try:
+            decoded = base64.b64decode(val).decode('utf-8')
+            settings = json.loads(decoded)
+            suite = settings.get('base_variant', {}).get('test_suite')
+            if suite:
+              return suite
+          except Exception:  # pragma: nocover # pylint: disable=broad-exception-caught
+            pass
+  return None  # pragma: no cover
+
+
+def CheckPreuprevsRetriable(
+    api: RecipeApi,
+    orchestrator: build_pb2.Build,
+    preuprevs: list[build_pb2.Build],
+) -> tuple[bool, dict[str, dict[str, build_pb2.Build]]]:
+  """Determine if failed preuprev builders can be retried via targeted CTP test retries.
+
+  Args:
+    api: Recipe API object.
+    orchestrator: The failed orchestrator Buildbucket build object.
+    preuprevs: List of child preuprev Buildbucket build objects.
+
+  Returns:
+    A tuple of (retriable, failed_ctp_builds):
+      - retriable (bool): True if all failing preuprev builders are retriable
+        and have valid latest CTP builds to retry.
+      - failed_ctp_builds (dict): Nested dictionary mapping
+        builder_name -> {suite_name: latest_ctp_build} for failed suites.
+  """
+  with api.step.nest('Check preuprev retriability') as step:
+    if orchestrator.status != common_pb2.FAILURE or not preuprevs:  # pragma: no cover
+      return False, {}
+
+    all_retriable = True
+    has_any_preuprev_failure = False
+    failed_ctp_builds = {}
+    for preuprev in preuprevs[::-1]:
+      with api.step.nest(preuprev.builder.builder) as preuprev_step:
+        if preuprev.status == common_pb2.SUCCESS:
+          preuprev_step.step_summary_text = 'SUCCESS'
+          continue
+
+        has_any_preuprev_failure = True
+        if not IsPreuprevRetriable(preuprev):
+          preuprev_step.status = api.step.FAILURE
+          preuprev_step.step_summary_text = 'Not retriable'
+          all_retriable = False
+          continue
+
+        ctp_builds = api.buildbucket.search(
+            builds_service_pb2.BuildPredicate(
+                builder={
+                    'project': 'chromeos',
+                    'bucket': 'testplatform',
+                    'builder': 'cros_test_platform',
+                },
+                child_of=preuprev.id,
+            ),
+            fields=CTP_BUILD_FIELDS_TO_RETRIEVE,
+            limit=1000,
+        )
+        output_dict = json_format.MessageToDict(
+            preuprev.output,
+            struct_pb2.Struct) if preuprev.HasField('output') else {}
+        test_status = output_dict.get('properties', {}).get('test_status', {})
+        failed_suites = [k for k, v in test_status.items() if v == 'Failure']
+        builder_ctps = {}
+        for suite_name in failed_suites:
+          suite_ctp_builds = [
+              ctp for ctp in ctp_builds
+              if ExtractCtpTestSuite(ctp) == suite_name
+          ]
+          if not suite_ctp_builds:
+            preuprev_step.status = api.step.FAILURE
+            preuprev_step.step_summary_text = (
+                f'Missing CTP build for suite {suite_name}')
+            all_retriable = False
+            break
+
+          latest_ctp = max(suite_ctp_builds, key=GetBuildCreateTime)
+          if latest_ctp.status not in (common_pb2.SUCCESS,
+                                       common_pb2.FAILURE):  # pragma: no cover
+            preuprev_step.status = api.step.FAILURE
+            preuprev_step.step_summary_text = (
+                f'CTP build for suite {suite_name} has status '
+                f'{common_pb2.Status.Name(latest_ctp.status)}')
+            all_retriable = False
+            break
+
+          builder_ctps[suite_name] = latest_ctp
+
+        if builder_ctps and all_retriable:
+          failed_ctp_builds[preuprev.builder.builder] = builder_ctps
+
+    retriable = all_retriable and has_any_preuprev_failure and len(
+        failed_ctp_builds) > 0
+    step.step_summary_text = f'retriable={retriable}'
+    return retriable, failed_ctp_builds if retriable else {}
+
+
+# Type alias for (test_id, ((variant_key, variant_value), ...))
+TestVariantKey = tuple[str, tuple[tuple[str, str], ...]]
+
+
+def _GetFailingTestVariantKeys(
+    all_test_results: list[test_result_pb2.TestResult],
+) -> set[TestVariantKey]:
+  """Extract test variant keys (test_id, variant_def) that failed with no expected pass.
+
+  Variant isolation ensures that a test passing on one board/model variant
+  does not mask a failure of the same test on a different board/model variant.
+  """
+  unexpected_keys = set()
+  expected_keys = set()
+  for tr in all_test_results:
+    variant_def = tuple(sorted(getattr(tr.variant, 'def').items()))
+    key = (tr.test_id, variant_def)
+    if tr.expected:
+      expected_keys.add(key)
+    else:
+      unexpected_keys.add(key)
+  return unexpected_keys - expected_keys
+
+
+def GetFailedTastTestNames(api: RecipeApi, ctp: build_pb2.Build) -> list[str]:
+  """Retrieve failed Tast test names for a CTP build from ResultDB."""
+  if not (ctp.infra and ctp.infra.HasField('resultdb') and
+          ctp.infra.resultdb.invocation):  # pragma: no cover
+    return []
+
+  inv_id = ctp.infra.resultdb.invocation.removeprefix('invocations/')
+
+  res = api.resultdb.query(
+      [inv_id],
+      variants_with_unexpected_results=True,
+      limit=0,
+  )
+
+  all_test_results = [
+      tr for inv_data in res.values() for tr in inv_data.test_results
+  ]
+  failing_keys = _GetFailingTestVariantKeys(all_test_results)
+  failing_test_ids = {test_id for test_id, _var in failing_keys}
+
+  failed_names = []
+  for test_id in failing_test_ids:
+    test_name = test_id.split('/')[-1] if '/' in test_id else test_id
+    if test_name and test_name not in failed_names:
+      failed_names.append(test_name)
+  return failed_names
+
+
+def RetryFailedPreuprevTests(
+    api: RecipeApi,
+    failed_ctp_builds: dict[str, dict[str, build_pb2.Build]]) -> bool:
+  """Schedule targeted CTP retries for failed Tast tests and verify results.
+
+  Args:
+    api: Recipe API object.
+    failed_ctp_builds: Dict mapping builder_name -> {suite_name: ctp_build}.
+
+  Returns:
+    True if all retried CTP builds complete successfully and ResultDB shows
+    no remaining failing test cases; False otherwise.
+  """
+  with api.step.nest('Retrying failed CTP tests') as retry_step:
+    # 1. Prepare targeted CTP schedule requests for each failed suite.
+    requests = []
+    for _builder_name, suite_map in failed_ctp_builds.items():
+      for _suite_name, ctp in suite_map.items():
+        props = json_format.MessageToDict(
+            ctp.input.properties,
+            struct_pb2.Struct) if ctp.input.HasField('properties') else {}
+
+        failed_test_names = GetFailedTastTestNames(api, ctp)
+        if len(failed_test_names) > MAX_RETRIABLE_TESTS:
+          retry_step.status = api.step.FAILURE
+          retry_step.step_summary_text = (
+              f'Too many failed tests for {ctp.builder.builder} '
+              f'({len(failed_test_names)} > {MAX_RETRIABLE_TESTS}); skipping retry.'
+          )
+          return False
+
+        if failed_test_names and 'ctpv2_request' in props:
+          requests_list = props.get('ctpv2_request', {}).get('requests', [])
+          for req in requests_list:
+            suite_req = req.get('suiteRequest', {})
+            test_suite = suite_req.get('testSuite', {})
+            if 'testCaseTagCriteria' in test_suite or 'name' in test_suite:
+              tag_criteria = test_suite.setdefault('testCaseTagCriteria', {})
+              tag_criteria['testNames'] = failed_test_names
+              tag_criteria.pop('tags', None)
+              tag_criteria.pop('tagExcludes', None)
+              tag_criteria.pop('testNameExcludes', None)
+
+        req = api.buildbucket.schedule_request(
+            builder=ctp.builder.builder,
+            project=ctp.builder.project,
+            bucket=ctp.builder.bucket,
+            properties=props,
+        )
+        requests.append(req)
+
+    # 2. Schedule retry builds.
+    retried_builds = api.buildbucket.schedule(requests)
+
+    # 3. Collect and verify retry build statuses.
+    collected_retries = api.buildbucket.collect_builds(
+        [b.id for b in retried_builds],
+        fields=ORCHESTRATOR_BUILD_FIELDS_TO_RETRIEVE,
+        timeout=WAIT_ORCHESTRATOR_TIMEOUT_SEC,
+    )
+    all_passed = all(
+        b.status == common_pb2.SUCCESS for b in collected_retries.values())
+    if not all_passed:
+      retry_step.status = api.step.FAILURE
+      retry_step.step_summary_text = 'Some retried CTP tests failed.'
+      return False
+
+    # 4. Perform final verification querying ResultDB for remaining failing test variants.
+    inv_id = api.resultdb.current_invocation.removeprefix('invocations/')
+
+    res = api.resultdb.query(
+        [inv_id],
+        variants_with_unexpected_results=True,
+        limit=0,
+        step_name='verify_no_failing_test_results',
+    )
+    all_test_results = [
+        tr for inv_data in res.values() for tr in inv_data.test_results
+    ]
+    failing_keys = _GetFailingTestVariantKeys(all_test_results)
+
+    if failing_keys:
+      retry_step.status = api.step.FAILURE
+      retry_step.step_summary_text = (
+          'ResultDB still has unexpected failing test results after retry.')
+      return False
+
+    retry_step.step_summary_text = 'All retried CTP tests passed.'
+    return True
 
 
 def WaitChromeBestRevision(api: RecipeApi,
@@ -278,17 +623,24 @@ def RunSteps(api: RecipeApi):
       WaitChromeBestRevision, api,
       target_chrome_revision) if target_chrome_revision else None
 
-  orchestrator = check_chrome_preuprev_thread.result()
-  best_revision = wait_chrome_best_revision_thread.result(
-  ) if wait_chrome_best_revision_thread else None
+  orchestrator, preuprevs = check_chrome_preuprev_thread.result()
 
+  test_retries_passed = False
   if orchestrator.status != common_pb2.SUCCESS:
+    retriable, failed_ctp_builds = CheckPreuprevsRetriable(
+        api, orchestrator, preuprevs)
+    if retriable:
+      test_retries_passed = RetryFailedPreuprevTests(api, failed_ctp_builds)
+
+  if orchestrator.status != common_pb2.SUCCESS and not test_retries_passed:
     errors.append(
         FAILED_PRE_UPREVS_SUMMARY.format(
             f'[Orchestrator](http://go/bbid/{orchestrator.id}/overview)\n\n' +
             orchestrator.summary_markdown))
 
   if target_chrome_revision:
+    best_revision = wait_chrome_best_revision_thread.result(
+    ) if wait_chrome_best_revision_thread else None
     if best_revision is None:
       error_do_no_chump = True
       errors.append(CHROME_CI_NOT_IDENTIFIED.format(target_chrome_revision))
@@ -338,14 +690,19 @@ def GenTests(api: RecipeTestApi):
   PATCHSET = 7
 
   def orchestrator(api: RecipeTestApi, status, summary: str,
-                   preuprevs: List[Tuple[str, common_pb2.Status]]):
+                   preuprevs: List[Tuple[str,
+                                         common_pb2.Status]], test_status=None):
 
-    def _build(status, summary, builder):
+    def _build(status, summary, builder, build_id=1231231919,
+               build_test_status=None):
+      output = build_pb2.Build.Output()
+      if build_test_status is not None:
+        output.properties['test_status'] = build_test_status
       return build_pb2.Build(
-          builder=builder, id=1231231919, status=status,
-          summary_markdown=summary, infra=build_pb2.BuildInfra(
+          builder=builder, id=build_id, status=status, summary_markdown=summary,
+          output=output, infra=build_pb2.BuildInfra(
               resultdb=build_pb2.BuildInfra.ResultDB(
-                  invocation='invocations/build-1231231919-rdb')))
+                  invocation=f'invocations/build-{build_id}-rdb')))
 
     orchestrator_builder_id = builder_common_pb2.BuilderID(
         project='chromeos', bucket='infra', builder='chrome-uprev-orchestrator')
@@ -355,13 +712,19 @@ def GenTests(api: RecipeTestApi):
     ) + api.buildbucket.simulated_collect_output(
         [_build(status, summary, orchestrator_builder_id)],
         step_name='Wait chrome-uprev-orchestrator.buildbucket.collect'
-    ) + api.buildbucket.simulated_search_results([
-        _build(
-            status, f'{name} result {common_pb2.Status.Name(status)}',
-            builder_common_pb2.BuilderID(project='chrome', bucket='ci',
-                                         builder=name))
-        for name, status in preuprevs[::-1]
-    ], step_name='Checking preuprev builder details.buildbucket.search')
+    ) + api.buildbucket.simulated_search_results(
+        [
+            _build(
+                preuprev_status,
+                f'{name} result {common_pb2.Status.Name(preuprev_status)}',
+                # 8000 + idx is an arbitrary base offset to assign unique dummy build IDs to simulated child preuprev builds.
+                builder_common_pb2.BuilderID(project='chrome', bucket='ci',
+                                             builder=name),
+                build_id=8000 + idx,
+                build_test_status=test_status)
+            for idx, (name, preuprev_status) in enumerate(preuprevs[::-1])
+        ],
+        step_name='Checking preuprev builder details.buildbucket.search')
 
   def chrome_best_revision(api, positions):
 
@@ -609,6 +972,264 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.DoesNotRun,
                      'Wait chrome-best-revision-continuous'),
+      cq=True,
+      status='FAILURE',
+  )
+
+  def make_ctp_build(build_id, status, suite_name='chrome_all_tast_tests LKGM'):
+    settings_json = json.dumps({'base_variant': {'test_suite': suite_name}})
+    encoded_settings = base64.b64encode(
+        settings_json.encode('utf-8')).decode('utf-8')
+    props = struct_pb2.Struct()
+    props['ctpv2_request'] = {
+        'requests': [{
+            'suiteRequest': {
+                'testSuite': {
+                    'name': suite_name,
+                    'testCaseTagCriteria': {
+                        'tags': ['group:mainline']
+                    },
+                    'executionMetadata': {
+                        'args': [{
+                            'flag': 'resultdb_settings',
+                            'value': encoded_settings,
+                        }]
+                    }
+                }
+            }
+        }]
+    }
+    out_props = struct_pb2.Struct()
+    out_props['compressed_json_responses'] = 'dummy'
+    b = build_pb2.Build(
+        id=build_id,
+        builder=builder_common_pb2.BuilderID(project='chromeos',
+                                             bucket='testplatform',
+                                             builder='cros_test_platform'),
+        status=status,
+        input=build_pb2.Build.Input(properties=props),
+        output=build_pb2.Build.Output(properties=out_props),
+        infra=build_pb2.BuildInfra(
+            resultdb=build_pb2.BuildInfra.ResultDB(
+                invocation=f'invocations/build-{build_id}-rdb')),
+    )
+    b.create_time.seconds = 100
+    return b
+
+  ctp_failed = make_ctp_build(999111, common_pb2.FAILURE)
+  ctp_scheduled = make_ctp_build(999222, common_pb2.SCHEDULED)
+  ctp_passed = make_ctp_build(999222, common_pb2.SUCCESS)
+  ctp_failed_retry = make_ctp_build(999222, common_pb2.FAILURE)
+
+  yield api.test(
+      'pre-uprev-failed-ctp-retried-success',
+      try_build_with_cl('130.0.6699.0'),
+      orchestrator(api, common_pb2.FAILURE, 'Some pre-uprev builder failed.',
+                   [('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)],
+                   test_status={'chrome_all_tast_tests LKGM': 'Failure'}),
+      api.buildbucket.simulated_search_results([
+          ctp_failed
+      ], step_name='Check preuprev retriability.chromeos-jacuzzi-chrome-preuprev.buildbucket.search'
+                                              ),
+      api.resultdb.query(
+          {
+              'build-999111-rdb':
+                  api.resultdb.Invocation(test_results=[
+                      test_result_pb2.TestResult(
+                          test_id='ninja://chromeos:chrome_all_tast_tests/tast.apps.Sharesheet',
+                          expected=False,
+                      ),
+                      test_result_pb2.TestResult(
+                          test_id='ninja://chromeos:chrome_all_tast_tests/tast.apps.OtherPass',
+                          expected=True,
+                      ),
+                  ])
+          },
+          step_name='Retrying failed CTP tests.rdb query',
+      ),
+      api.buildbucket.simulated_schedule_output(
+          builds_service_pb2.BatchResponse(responses=[{
+              'schedule_build': ctp_scheduled
+          }]), step_name='Retrying failed CTP tests.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          [ctp_passed],
+          step_name='Retrying failed CTP tests.buildbucket.collect'),
+      api.resultdb.query(
+          {'123456': api.resultdb.Invocation(test_results=[])},
+          step_name='Retrying failed CTP tests.verify_no_failing_test_results',
+      ),
+      api.post_check(post_process.MustRun, 'Retrying failed CTP tests'),
+      cq=True,
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'pre-uprev-failed-ctp-retried-ctp-red',
+      try_build_with_cl('130.0.6699.0'),
+      orchestrator(api, common_pb2.FAILURE, 'Some pre-uprev builder failed.',
+                   [('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)],
+                   test_status={'chrome_all_tast_tests LKGM': 'Failure'}),
+      api.buildbucket.simulated_search_results([
+          ctp_failed
+      ], step_name='Check preuprev retriability.chromeos-jacuzzi-chrome-preuprev.buildbucket.search'
+                                              ),
+      api.resultdb.query(
+          {
+              'build-999111-rdb':
+                  api.resultdb.Invocation(test_results=[
+                      test_result_pb2.TestResult(
+                          test_id='ninja://chromeos:chrome_all_tast_tests/tast.apps.Sharesheet',
+                          expected=False,
+                      )
+                  ])
+          },
+          step_name='Retrying failed CTP tests.rdb query',
+      ),
+      api.buildbucket.simulated_schedule_output(
+          builds_service_pb2.BatchResponse(responses=[{
+              'schedule_build': ctp_scheduled
+          }]), step_name='Retrying failed CTP tests.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          [ctp_failed_retry],
+          step_name='Retrying failed CTP tests.buildbucket.collect'),
+      api.post_check(post_process.MustRun, 'Retrying failed CTP tests'),
+      cq=True,
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'pre-uprev-failed-ctp-retried-rdb-still-has-failing-tests',
+      try_build_with_cl('130.0.6699.0'),
+      orchestrator(api, common_pb2.FAILURE, 'Some pre-uprev builder failed.',
+                   [('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)],
+                   test_status={'chrome_all_tast_tests LKGM': 'Failure'}),
+      api.buildbucket.simulated_search_results([
+          ctp_failed
+      ], step_name='Check preuprev retriability.chromeos-jacuzzi-chrome-preuprev.buildbucket.search'
+                                              ),
+      api.resultdb.query(
+          {
+              'build-999111-rdb':
+                  api.resultdb.Invocation(test_results=[
+                      test_result_pb2.TestResult(
+                          test_id='ninja://chromeos:chrome_all_tast_tests/tast.apps.Sharesheet',
+                          expected=False,
+                      )
+                  ])
+          },
+          step_name='Retrying failed CTP tests.rdb query',
+      ),
+      api.buildbucket.simulated_schedule_output(
+          builds_service_pb2.BatchResponse(responses=[{
+              'schedule_build': ctp_scheduled
+          }]), step_name='Retrying failed CTP tests.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          [ctp_passed],
+          step_name='Retrying failed CTP tests.buildbucket.collect'),
+      api.resultdb.query(
+          {
+              '123456':
+                  api.resultdb.Invocation(test_results=[
+                      test_result_pb2.TestResult(
+                          test_id='ninja://chromeos:chrome_all_tast_tests/tast.apps.Sharesheet',
+                          expected=False,
+                      )
+                  ])
+          },
+          step_name='Retrying failed CTP tests.verify_no_failing_test_results',
+      ),
+      api.post_check(post_process.MustRun, 'Retrying failed CTP tests'),
+      cq=True,
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'pre-uprev-failed-non-test-failure',
+      try_build_with_cl('130.0.6699.0'),
+      orchestrator(api, common_pb2.FAILURE, 'Compile failed.',
+                   [('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)],
+                   test_status={'base_unittests LKGM': 'Failure'}),
+      api.post_check(post_process.DoesNotRun, 'Retrying failed CTP tests'),
+      cq=True,
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'pre-uprev-failed-test-failure-even-ctp-green',
+      try_build_with_cl('130.0.6699.0'),
+      orchestrator(api, common_pb2.FAILURE, 'Post-CTP step failed.',
+                   [('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)],
+                   test_status={'chrome_all_tast_tests LKGM': 'Failure'}),
+      api.buildbucket.simulated_search_results([
+          ctp_passed
+      ], step_name='Check preuprev retriability.chromeos-jacuzzi-chrome-preuprev.buildbucket.search'
+                                              ),
+      api.resultdb.query(
+          {
+              'build-999222-rdb':
+                  api.resultdb.Invocation(test_results=[
+                      test_result_pb2.TestResult(
+                          test_id='ninja://chromeos:chrome_all_tast_tests/tast.apps.Sharesheet',
+                          expected=False,
+                      )
+                  ])
+          },
+          step_name='Retrying failed CTP tests.rdb query',
+      ),
+      api.buildbucket.simulated_schedule_output(
+          builds_service_pb2.BatchResponse(responses=[{
+              'schedule_build': ctp_scheduled
+          }]), step_name='Retrying failed CTP tests.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          [ctp_passed],
+          step_name='Retrying failed CTP tests.buildbucket.collect'),
+      api.resultdb.query(
+          {'123456': api.resultdb.Invocation(test_results=[])},
+          step_name='Retrying failed CTP tests.verify_no_failing_test_results',
+      ),
+      api.post_check(post_process.MustRun, 'Retrying failed CTP tests'),
+      cq=True,
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'pre-uprev-failed-missing-ctp-build',
+      try_build_with_cl('130.0.6699.0'),
+      orchestrator(api, common_pb2.FAILURE, 'Some pre-uprev builder failed.',
+                   [('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)],
+                   test_status={'chrome_all_tast_tests LKGM': 'Failure'}),
+      api.buildbucket.simulated_search_results(
+          [],
+          step_name='Check preuprev retriability.chromeos-jacuzzi-chrome-preuprev.buildbucket.search'
+      ),
+      api.post_check(post_process.DoesNotRun, 'Retrying failed CTP tests'),
+      cq=True,
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'pre-uprev-failed-too-many-failed-tests',
+      try_build_with_cl('130.0.6699.0'),
+      orchestrator(api, common_pb2.FAILURE, 'Some pre-uprev builder failed.',
+                   [('chromeos-jacuzzi-chrome-preuprev', common_pb2.FAILURE)],
+                   test_status={'chrome_all_tast_tests LKGM': 'Failure'}),
+      api.buildbucket.simulated_search_results([
+          ctp_failed
+      ], step_name='Check preuprev retriability.chromeos-jacuzzi-chrome-preuprev.buildbucket.search'
+                                              ),
+      api.resultdb.query(
+          {
+              'build-999111-rdb':
+                  api.resultdb.Invocation(test_results=[
+                      test_result_pb2.TestResult(
+                          test_id=f'ninja://chromeos:chrome_all_tast_tests/tast.test.{i}',
+                          expected=False,
+                      ) for i in range(25)
+                  ])
+          },
+          step_name='Retrying failed CTP tests.rdb query',
+      ),
+      api.post_check(post_process.MustRun, 'Retrying failed CTP tests'),
       cq=True,
       status='FAILURE',
   )
