@@ -5,4 +5,4 @@ set noparent
 include chromiumos/owners:v1:/infra/OWNERS.tse
 
 # These are generated files checked by presubmit.
-per-file .../*.expected/*.json=*
+per-file *.expected/*.json=*
