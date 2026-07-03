@@ -5,9 +5,16 @@
   },
   {
     "cmd": [],
-    "name": "find last 7-day LKGM CLs.query https://chromium-review.googlesource.com",
+    "name": "find last 7-day LKGM CLs.situation 1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find last 7-day LKGM CLs.situation 1.query https://chromium-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@found 1 matching CLs@@@"
     ]
   },
@@ -25,7 +32,9 @@
       "-p",
       "-age=7d",
       "-p",
-      "hashtag=chrome-lkgm",
+      "hashtag=condA",
+      "-p",
+      "topic=condB",
       "-o",
       "MESSAGES",
       "-o",
@@ -38,9 +47,9 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
-    "name": "find last 7-day LKGM CLs.query https://chromium-review.googlesource.com.gerrit changes",
+    "name": "find last 7-day LKGM CLs.situation 1.query https://chromium-review.googlesource.com.gerrit changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"_number\": 6052367,@@@",
@@ -105,6 +114,57 @@
       "@@@STEP_LOG_LINE@json.output@    \"submitted\": \"2024-11-27 03:27:44.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find last 7-day LKGM CLs.situation 2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find last 7-day LKGM CLs.situation 2.query https://chromium-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 0 matching CLs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "repo=chromium/src",
+      "-p",
+      "-age=7d",
+      "-p",
+      "hashtag=condC",
+      "-p",
+      "topic=condD",
+      "-o",
+      "MESSAGES",
+      "-o",
+      "CURRENT_REVISION",
+      "-o",
+      "CURRENT_COMMIT",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "find last 7-day LKGM CLs.situation 2.query https://chromium-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[]@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },

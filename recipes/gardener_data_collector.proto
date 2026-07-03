@@ -51,8 +51,26 @@ message GardenerDataResult {
   repeated FailingTest failing_ci_tests = 3;
 }
 
+message GerritQueryCondition {
+  message Term {
+    string key = 1;
+    string value = 2;
+  }
+
+  // A situation is a set of terms that are ANDed together.
+  message Situation { repeated Term terms = 1; }
+
+  // A list of situations that are ORed together.
+  repeated Situation situations = 1;
+
+  // Optional age parameter in days (e.g. 7, 14, 30). Defaults to 7 if 0.
+  int32 age_days = 2;
+}
+
 message GardenerDataCollectorProperties {
   reserved 3; // was disable_failing_ci_tests
   bool disable_chrome_uprev_commits = 1;
   bool disable_lkgm_uprev_commits = 2;
+  GerritQueryCondition lkgm_query_condition = 4;
+  GerritQueryCondition chrome_uprev_query_condition = 5;
 }

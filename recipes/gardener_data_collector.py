@@ -7,7 +7,7 @@
 For a gardener dashboard with up-to-date chrome uprev and LKGM commits status.
 """
 
-from typing import List, Dict
+from typing import Callable
 
 import re
 import base64
@@ -15,7 +15,8 @@ from google.protobuf import json_format
 from google.protobuf.message import Message
 
 from PB.recipes.chromeos.gardener_data_collector import (
-    GardenerDataResult, GardenerDataCollectorProperties)
+    GardenerDataResult, GardenerDataCollectorProperties, GerritQueryCondition)
+
 from RECIPE_MODULES.chromeos.gerrit.api import ChangeInfo
 
 from recipe_engine import recipe_api
@@ -40,13 +41,15 @@ PROPERTIES = GardenerDataCollectorProperties
 
 GITILES_HOST = 'chromium.googlesource.com'
 GERRIT_HOST = 'https://chromium-review.googlesource.com'
-# Request only changes from last 7 days.
-AGE_QUERY_PARAM = ('-age', '7d')
-CHROME_UPREV_QUERY_PARAMS_BASE = [('repo',
-                                   'chromiumos/overlays/chromiumos-overlay'),
-                                  ('branch', 'main'), AGE_QUERY_PARAM]
-LKGM_QUERY_PARAMS = [('repo', 'chromium/src'), ('hashtag', 'chrome-lkgm'),
-                     AGE_QUERY_PARAM]
+DEFAULT_QUERY_AGE_DAYS = 7
+
+CHROME_UPREV_REPO_PARAM = ('repo', 'chromiumos/overlays/chromiumos-overlay')
+CHROME_UPREV_BRANCH_PARAM = ('branch', 'main')
+LKGM_REPO_PARAM = ('repo', 'chromium/src')
+
+DEFAULT_LKGM_QUERY_PARAM_KEY = 'hashtag'
+DEFAULT_LKGM_QUERY_PARAM_VALUE = 'chrome-lkgm'
+
 # Request messages (comments) to determine number of CQ tries.
 COMMON_QUERY_O_PARAMS = ['MESSAGES', 'CURRENT_REVISION']
 # Request also the modified files in the current revision for parsing the
@@ -87,7 +90,14 @@ BUILD_FIELDS_TO_RETRIEVE = [
 ]
 
 
-def parse_change_info(change_info: ChangeInfo) -> GardenerDataResult.Commit:
+def ResolveAgeDays(condition: GerritQueryCondition | None) -> int:
+  """Resolves the age in days from condition.age_days if > 0, defaulting to DEFAULT_QUERY_AGE_DAYS."""
+  if condition and condition.age_days > 0:
+    return condition.age_days
+  return DEFAULT_QUERY_AGE_DAYS
+
+
+def ParseChangeInfo(change_info: ChangeInfo) -> GardenerDataResult.Commit:
   return GardenerDataResult.Commit(
       number=change_info['_number'], created=change_info['created'],
       submitted=change_info.get('submitted'), branch=change_info['branch'],
@@ -99,8 +109,8 @@ def parse_change_info(change_info: ChangeInfo) -> GardenerDataResult.Commit:
       ]), revert_of=change_info.get('revert_of'))
 
 
-def get_chrome_commit_from_ebuild(api: recipe_api.RecipeApi, revision: str,
-                                  path: str) -> str:
+def GetChromeCommitFromEbuild(api: recipe_api.RecipeApi, revision: str,
+                              path: str) -> str:
   ebuild = api.gitiles.get_file(
       GITILES_HOST, 'chromiumos/overlays/chromiumos-overlay', path,
       ref=revision, retries=10, public=False,
@@ -111,10 +121,10 @@ def get_chrome_commit_from_ebuild(api: recipe_api.RecipeApi, revision: str,
   return None  # pragma: nocover
 
 
-def parse_chrome_uprev_change_info(
+def ParseChromeUprevChangeInfo(
     api: recipe_api.RecipeApi,
     change_info: ChangeInfo) -> GardenerDataResult.Commit:
-  result = parse_change_info(change_info)
+  result = ParseChangeInfo(change_info)
   # Only the current revision should exist.
   for revision_hash, revision in change_info['revisions'].items():
     # Find Chrome uprev version range by parsing the ebuild files.
@@ -153,13 +163,13 @@ def parse_chrome_uprev_change_info(
         # bug here.
         if old_version is None or file_old_version > old_version:
           old_version = file_old_version
-          old_chrome_commit = get_chrome_commit_from_ebuild(
+          old_chrome_commit = GetChromeCommitFromEbuild(
               api, revision['commit']['parents'][0]['commit'], old_path)
       if new_version_match:
         new_version = new_version_match.group(
             'position') or new_version_match.group('version')
-        new_chrome_commit = get_chrome_commit_from_ebuild(
-            api, revision_hash, new_filename)
+        new_chrome_commit = GetChromeCommitFromEbuild(api, revision_hash,
+                                                      new_filename)
     if old_version and new_version:
       result.old_version = old_version
       result.new_version = new_version
@@ -172,10 +182,9 @@ def parse_chrome_uprev_change_info(
   return result  # pragma: nocover
 
 
-def parse_lkgm_change_info(
-    api: recipe_api.RecipeApi,
-    change_info: ChangeInfo) -> GardenerDataResult.Commit:
-  result = parse_change_info(change_info)
+def ParseLkgmChangeInfo(api: recipe_api.RecipeApi,
+                        change_info: ChangeInfo) -> GardenerDataResult.Commit:
+  result = ParseChangeInfo(change_info)
   # Only the current revision should exist.
   for revision, revision_info in change_info['revisions'].items():
     new_version = api.gitiles.get_file(
@@ -199,52 +208,138 @@ def parse_lkgm_change_info(
   return result  # pragma: nocover
 
 
+def QueryAndCollectCommits(
+    api: recipe_api.RecipeApi,
+    condition: GerritQueryCondition | None,
+    base_query_params: list[tuple[str, str]],
+    default_queries: list[tuple[str | None, list[tuple[str, str]]]],
+    o_params: list[str],
+    top_step_name: str | None,
+    default_key: str,
+    parse_fn: Callable[[recipe_api.RecipeApi, ChangeInfo],
+                       GardenerDataResult.Commit],
+) -> list[GardenerDataResult.Commit]:
+  """Queries Gerrit changes and parses commits from results using unified condition logic."""
+  if condition and condition.situations:
+    queries = []
+    for i, s in enumerate(condition.situations):
+      terms = [(t.key or default_key, t.value) for t in s.terms]
+      step_name = f'situation {i + 1}' if len(
+          condition.situations) > 1 else None
+      queries.append((step_name, terms))
+  else:
+    queries = default_queries
+
+  results = []
+  seen_change_numbers = set()
+
+  def ExecuteAndParse():
+    for step_name, terms in queries:
+      query_params = base_query_params + terms
+      if step_name:
+        with api.step.nest(step_name):
+          change_infos = api.gerrit.query_change_infos(GERRIT_HOST,
+                                                       query_params,
+                                                       o_params=o_params)
+      else:
+        change_infos = api.gerrit.query_change_infos(GERRIT_HOST, query_params,
+                                                     o_params=o_params)
+
+      for change in change_infos:
+        num = change.get('_number')
+        if num not in seen_change_numbers:
+          seen_change_numbers.add(num)
+          results.append(change)
+
+    return [parse_fn(api, x) for x in results]
+
+  if top_step_name:
+    with api.step.nest(top_step_name):
+      return ExecuteAndParse()
+  return ExecuteAndParse()
+
+
 def CollectChromeUprevCommit(
-    api: recipe_api.RecipeApi) -> List[GardenerDataResult.Commit]:
-  with api.step.nest(
-      'find last 7-day Chrome uprev (chromeos-base/chromeos-chrome) CLs'):
-    results = api.gerrit.query_change_infos(
-        GERRIT_HOST, CHROME_UPREV_QUERY_PARAMS_BASE +
-        [('topic', 'chromeos-base/chromeos-chrome')],
-        o_params=CHROME_UPREV_QUERY_O_PARAMS)
-  with api.step.nest(
-      'find last 7-day Chrome uprev (chromeos-base/lacros-ash-atomic) CLs'):
-    results.extend(
-        api.gerrit.query_change_infos(
-            GERRIT_HOST, CHROME_UPREV_QUERY_PARAMS_BASE +
-            [('topic', 'chromeos-base/lacros-ash-atomic')],
-            o_params=CHROME_UPREV_QUERY_O_PARAMS))
-  with api.step.nest('find last 7-day Chrome main uprev (chrome-main) CLs'):
-    results.extend(
-        api.gerrit.query_change_infos(
-            GERRIT_HOST,
-            CHROME_UPREV_QUERY_PARAMS_BASE + [('topic', 'chrome-main')],
-            o_params=CHROME_UPREV_QUERY_O_PARAMS))
-  return [parse_chrome_uprev_change_info(api, x) for x in results]
+    api: recipe_api.RecipeApi, properties: GardenerDataCollectorProperties
+) -> list[GardenerDataResult.Commit]:
+  condition = properties.chrome_uprev_query_condition if properties.HasField(
+      'chrome_uprev_query_condition') else None
+  age_days = ResolveAgeDays(condition)
+
+  default_queries = [
+      (
+          f'find last {age_days}-day Chrome uprev (chromeos-base/chromeos-chrome) CLs',
+          [('topic', 'chromeos-base/chromeos-chrome')],
+      ),
+      (
+          f'find last {age_days}-day Chrome uprev (chromeos-base/lacros-ash-atomic) CLs',
+          [('topic', 'chromeos-base/lacros-ash-atomic')],
+      ),
+      (
+          f'find last {age_days}-day Chrome main uprev (chrome-main) CLs',
+          [('topic', 'chrome-main')],
+      ),
+  ]
+  top_step_name = f'find last {age_days}-day Chrome uprev CLs' if condition else None
+
+  base_query_params = [
+      CHROME_UPREV_REPO_PARAM,
+      CHROME_UPREV_BRANCH_PARAM,
+      ('-age', f'{age_days}d'),
+  ]
+  return QueryAndCollectCommits(
+      api,
+      condition,
+      base_query_params,
+      default_queries,
+      CHROME_UPREV_QUERY_O_PARAMS,
+      top_step_name,
+      default_key='topic',
+      parse_fn=ParseChromeUprevChangeInfo,
+  )
 
 
 def CollectLkgmUprevCommit(
-    api: recipe_api.RecipeApi) -> List[GardenerDataResult.Commit]:
-  with api.step.nest('find last 7-day LKGM CLs'):
-    results = api.gerrit.query_change_infos(GERRIT_HOST, LKGM_QUERY_PARAMS,
-                                            o_params=LKGM_QUERY_O_PARAMS)
-    return [parse_lkgm_change_info(api, x) for x in results]
+    api: recipe_api.RecipeApi, properties: GardenerDataCollectorProperties
+) -> list[GardenerDataResult.Commit]:
+  condition = properties.lkgm_query_condition if properties.HasField(
+      'lkgm_query_condition') else None
+  default_queries = [(None, [(DEFAULT_LKGM_QUERY_PARAM_KEY,
+                              DEFAULT_LKGM_QUERY_PARAM_VALUE)])]
+  age_days = ResolveAgeDays(condition)
+  top_step_name = f'find last {age_days}-day LKGM CLs'
+  base_query_params = [
+      LKGM_REPO_PARAM,
+      ('-age', f'{age_days}d'),
+  ]
+
+  return QueryAndCollectCommits(
+      api,
+      condition,
+      base_query_params,
+      default_queries,
+      LKGM_QUERY_O_PARAMS,
+      top_step_name=top_step_name,
+      default_key=DEFAULT_LKGM_QUERY_PARAM_KEY,
+      parse_fn=ParseLkgmChangeInfo,
+  )
 
 
-def ToListDict(v: List[Message]) -> List[Dict]:
-  return list(
-      map(
-          lambda m: json_format.MessageToDict(
-              m, preserving_proto_field_name=True), v))
+def ToListDict(v: list[Message]) -> list[dict]:
+  return [
+      json_format.MessageToDict(m, preserving_proto_field_name=True) for m in v
+  ]
+
 
 
 def RunSteps(api: recipe_api.RecipeApi,
              properties: GardenerDataCollectorProperties):
   chrome_uprev_commits = CollectChromeUprevCommit(
-      api) if not properties.disable_chrome_uprev_commits else []
+      api, properties) if not properties.disable_chrome_uprev_commits else []
 
   lkgm_commits = CollectLkgmUprevCommit(
-      api) if not properties.disable_lkgm_uprev_commits else []
+      api, properties) if not properties.disable_lkgm_uprev_commits else []
+
 
   api.easy.set_properties_step(
       'set output properties',
@@ -589,6 +684,32 @@ def GenTests(api: recipe_api.RecipeApi):
       api.gerrit.set_query_changes_response(
           'find last 7-day Chrome main uprev (chrome-main) CLs', [],
           'https://chromium-review.googlesource.com'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day Chrome uprev (chromeos-base/chromeos-chrome) CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
+              'branch=main', '-p', '-age=7d', '-p',
+              'topic=chromeos-base/chromeos-chrome'
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day Chrome uprev (chromeos-base/lacros-ash-atomic) CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
+              'branch=main', '-p', '-age=7d', '-p',
+              'topic=chromeos-base/lacros-ash-atomic'
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day Chrome main uprev (chrome-main) CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
+              'branch=main', '-p', '-age=7d', '-p', 'topic=chrome-main'
+          ],
+      ),
       api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', [{
           'branch': 'main',
           'cq_tries': '1',
@@ -635,6 +756,32 @@ def GenTests(api: recipe_api.RecipeApi):
       api.gerrit.set_query_changes_response(
           'find last 7-day Chrome main uprev (chrome-main) CLs', [],
           'https://chromium-review.googlesource.com'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day Chrome uprev (chromeos-base/chromeos-chrome) CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
+              'branch=main', '-p', '-age=7d', '-p',
+              'topic=chromeos-base/chromeos-chrome'
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day Chrome uprev (chromeos-base/lacros-ash-atomic) CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
+              'branch=main', '-p', '-age=7d', '-p',
+              'topic=chromeos-base/lacros-ash-atomic'
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day Chrome main uprev (chrome-main) CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
+              'branch=main', '-p', '-age=7d', '-p', 'topic=chrome-main'
+          ],
+      ),
       api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', [{
           'branch': 'main',
           'cq_tries': '1',
@@ -655,6 +802,14 @@ def GenTests(api: recipe_api.RecipeApi):
       api.gerrit.set_query_changes_response(
           'find last 7-day LKGM CLs', [lkgm_gerrit_change_info_good],
           'https://chromium-review.googlesource.com'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day LKGM CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromium/src', '-p', '-age=7d', '-p',
+              'hashtag=chrome-lkgm'
+          ],
+      ),
       api.post_process(post_process.PropertyEquals, 'lkgm_commits', [{
           'branch': 'main',
           'cq_tries': '1',
@@ -666,5 +821,144 @@ def GenTests(api: recipe_api.RecipeApi):
           'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
           'submitted': '2024-11-27 03:27:44.000000000',
       }]),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'lkgm-uprevs-structured-query-condition',
+      api.properties(
+          GardenerDataCollectorProperties(
+              disable_chrome_uprev_commits=True,
+              lkgm_query_condition=GerritQueryCondition(
+                  situations=[
+                      GerritQueryCondition.Situation(
+                          terms=[
+                              GerritQueryCondition.Term(key='hashtag',
+                                                        value='condA'),
+                              GerritQueryCondition.Term(key='topic',
+                                                        value='condB'),
+                          ],
+                      ),
+                      GerritQueryCondition.Situation(
+                          terms=[
+                              GerritQueryCondition.Term(key='hashtag',
+                                                        value='condC'),
+                              GerritQueryCondition.Term(key='topic',
+                                                        value='condD'),
+                          ],
+                      ),
+                  ],
+              ),
+          )),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day LKGM CLs.situation 1',
+          [lkgm_gerrit_change_info_good],
+          'https://chromium-review.googlesource.com'),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day LKGM CLs.situation 2', [],
+          'https://chromium-review.googlesource.com'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day LKGM CLs.situation 1.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromium/src', '-p', '-age=7d', '-p', 'hashtag=condA',
+              '-p', 'topic=condB'
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day LKGM CLs.situation 2.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromium/src', '-p', '-age=7d', '-p', 'hashtag=condC',
+              '-p', 'topic=condD'
+          ],
+      ),
+      api.post_process(post_process.PropertyEquals, 'lkgm_commits', [{
+          'branch': 'main',
+          'cq_tries': '1',
+          'created': '2024-11-27 00:20:00.000000000',
+          'new_version': '1065034',
+          'number': '6052367',
+          'old_version': '1065024',
+          'status': 'MERGED',
+          'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
+          'submitted': '2024-11-27 03:27:44.000000000',
+      }]),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'chrome-uprevs-structured-query-condition',
+      api.properties(
+          GardenerDataCollectorProperties(
+              disable_lkgm_uprev_commits=True,
+              chrome_uprev_query_condition=GerritQueryCondition(
+                  situations=[
+                      GerritQueryCondition.Situation(
+                          terms=[
+                              GerritQueryCondition.Term(
+                                  key='topic', value='custom-chrome-uprev'),
+                          ],
+                      ),
+                  ],
+              ),
+          )),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day Chrome uprev CLs', [
+              chrome_uprev_gerrit_change_info_good,
+          ], 'https://chromium-review.googlesource.com'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
+              'branch=main', '-p', '-age=7d', '-p', 'topic=custom-chrome-uprev'
+          ],
+      ),
+      api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', [{
+          'branch': 'main',
+          'cq_tries': '1',
+          'created': '2024-11-27 04:13:33.000000000',
+          'new_version': '133.0.6862.0@deadbeef',
+          'number': '6047779',
+          'old_version': '133.0.6861.0@deadbeef',
+          'status': 'NEW',
+          'subject': 'chromeos-chrome: Automatic uprev to 133.0.6862.0.',
+      }]),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'custom-query-age',
+      api.properties(
+          GardenerDataCollectorProperties(
+              lkgm_query_condition=GerritQueryCondition(age_days=14),
+              chrome_uprev_query_condition=GerritQueryCondition(
+                  age_days=30,
+                  situations=[
+                      GerritQueryCondition.Situation(
+                          terms=[
+                              GerritQueryCondition.Term(value='custom-chrome'),
+                          ],
+                      ),
+                  ],
+              ),
+          )),
+      api.gerrit.set_query_changes_response(
+          'find last 30-day Chrome uprev CLs', [],
+          'https://chromium-review.googlesource.com'),
+      api.gerrit.set_query_changes_response(
+          'find last 14-day LKGM CLs', [],
+          'https://chromium-review.googlesource.com'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 30-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          ['-p', '-age=30d'],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 14-day LKGM CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          ['-p', '-age=14d'],
+      ),
       status='SUCCESS',
   )
