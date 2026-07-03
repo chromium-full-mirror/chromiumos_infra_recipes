@@ -1806,32 +1806,6 @@
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "chromium/src",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 2.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 2.set labels on CL 2",
     "~followup_annotations": [
@@ -1857,7 +1831,6 @@
       "-json-output",
       "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 2.set labels on CL 2.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -1874,7 +1847,6 @@
       "Authorization: Bearer TEST_TOKEN",
       "[CLEANUP]/service_account_auth_token_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 2.set labels on CL 2.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
@@ -1895,7 +1867,6 @@
       "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2}}",
       "https://chromium-review.googlesource.com/changes/2/revisions/current/review"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 2.set labels on CL 2.curl https://chromium-review.googlesource.com/changes/2/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"

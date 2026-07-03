@@ -462,11 +462,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       if self.m.cros_infra_config.is_staging:
         labels.pop(Label.BOT_COMMIT, None)
       gerrit_change = patch_set.to_gerrit_change_proto()
-      with self.m.context(cwd=self.workspace_path):
-        project = self.m.repo.project_info(gerrit_change.project)
-        repo_path = self.m.path.join(self.workspace_path, project.path)
-        with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
-          self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
+      self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
 
   def apply_retry_policy(self, open_changes: List[GerritChange],
                          most_recent_uprev: Optional[PatchSet],
