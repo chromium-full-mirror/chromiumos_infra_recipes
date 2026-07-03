@@ -340,6 +340,10 @@ class CrosBuildApiApi(RecipeApi):
           'read chromite version',
           self.repo_resource('infra', 'config', 'chromite-HEAD.version'))
       chromite_dir = self.m.src_state.workspace_path / chromite_location
+      if self.m.path.exists(
+          chromite_dir) and not self.m.path.isdir(chromite_dir):
+        self.m.file.remove('remove non-directory chromite-HEAD', chromite_dir)
+
       if not self.m.path.exists(chromite_dir):
         self.m.git.clone(
             'https://chromium.googlesource.com/chromiumos/chromite',

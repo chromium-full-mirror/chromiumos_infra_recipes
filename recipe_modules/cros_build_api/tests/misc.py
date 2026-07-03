@@ -38,6 +38,7 @@ from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import CrosBuildAp
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'cros_build_api',
 ]
@@ -296,4 +297,10 @@ def GenTests(api):
                                          publish_emerge_stats_to_bq=True,
                                          publish_emerge_stats_to_prop=True),
           }),
+  )
+
+  yield api.test(
+      'chromite-head-is-file',
+      api.path.exists(api.path.cleanup_dir /
+                      'chromiumos_workspace/infra/chromite-HEAD'),
   )
