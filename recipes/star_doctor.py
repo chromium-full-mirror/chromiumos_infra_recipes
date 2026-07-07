@@ -256,6 +256,7 @@ def RunSteps(api: RecipeApi, properties: StarDoctorProperties) -> None:
       _fetch_and_write_chromiumos_schedule(api)
       _fetch_and_write_keyset_config(api)
       _update_release_time(api)
+      _fetch_and_write_chromium_milestones(api)
       with api.deferrals.defer_exceptions():
         _regenerate_configs(api)
 
@@ -382,6 +383,17 @@ def _update_release_time(api: RecipeApi) -> None:
     tl_cfg['time'] = api.time.utcnow().strftime('%FT%TZ')
     api.file.write_text('write release channel timeline configuration',
                         tl_cfg_fpath, json.dumps(tl_cfg, indent=2))
+
+
+def _fetch_and_write_chromium_milestones(api: RecipeApi) -> None:
+  """Read chromium milestones from chromiumdash, and write it to infra/config."""
+  with api.step.nest('fetch and write chromium milestones'):
+    milestones = api.cros_schedule.fetch_chromiumdash_milestones(
+        only_branched=True)
+    milestone_fname = api.path.join(INFRA_CONFIG.checkout_path,
+                                    'release/chrome/milestones.json')
+    api.file.write_text('write milestones json', milestone_fname,
+                        json.dumps(milestones, sort_keys=True, indent=2))
 
 
 def _regenerate_configs(api: RecipeApi) -> None:

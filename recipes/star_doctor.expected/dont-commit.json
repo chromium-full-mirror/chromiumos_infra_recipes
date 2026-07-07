@@ -2325,6 +2325,71 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "generate binary config.fetch and write chromium milestones",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate binary config.fetch and write chromium milestones.fetch chromiumdash milestones",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromiumdash.appspot.com/fetch_milestones?only_branched=true"
+    ],
+    "name": "generate binary config.fetch and write chromium milestones.fetch chromiumdash milestones.curl fetch_milestones",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[\n  {\n    \"angle_branch\": \"5615\",\n    \"bling_ldap\": \"govind\",\n    \"bling_owner\": \"Krishna Govind\",\n    \"chromium_branch\": \"5615\",\n    \"chromium_main_branch_hash\": \"9c6408ef696e83a9936b82bbead3d41c93c82ee4\",\n    \"chromium_main_branch_position\": 1109224,\n    \"clank_ldap\": \"govind\",\n    \"clank_owner\": \"Krishna Govind\",\n    \"cros_ldap\": \"obenedict\",\n    \"cros_owner\": \"Benedict Oleforo\",\n    \"dawn_branch\": \"5615\",\n    \"desktop_ldap\": \"srinivassista\",\n    \"desktop_owner\": \"Srinivas Sista\",\n    \"devtools_branch\": \"5615\",\n    \"milestone\": 112,\n    \"pdfium_branch\": \"5615\",\n    \"skia_branch\": \"m112\",\n    \"v8_branch\": \"11.2-lkgr\",\n    \"webrtc_branch\": \"5615\"\n  }\n]",
+      "[CLEANUP]/tmp_tmp_1/release/chrome/milestones.json"
+    ],
+    "infra_step": true,
+    "name": "generate binary config.fetch and write chromium milestones.write milestones json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@milestones.json@[@@@",
+      "@@@STEP_LOG_LINE@milestones.json@  {@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"angle_branch\": \"5615\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"bling_ldap\": \"govind\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"bling_owner\": \"Krishna Govind\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"chromium_branch\": \"5615\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"chromium_main_branch_hash\": \"9c6408ef696e83a9936b82bbead3d41c93c82ee4\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"chromium_main_branch_position\": 1109224,@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"clank_ldap\": \"govind\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"clank_owner\": \"Krishna Govind\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"cros_ldap\": \"obenedict\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"cros_owner\": \"Benedict Oleforo\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"dawn_branch\": \"5615\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"desktop_ldap\": \"srinivassista\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"desktop_owner\": \"Srinivas Sista\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"devtools_branch\": \"5615\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"milestone\": 112,@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"pdfium_branch\": \"5615\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"skia_branch\": \"m112\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"v8_branch\": \"11.2-lkgr\",@@@",
+      "@@@STEP_LOG_LINE@milestones.json@    \"webrtc_branch\": \"5615\"@@@",
+      "@@@STEP_LOG_LINE@milestones.json@  }@@@",
+      "@@@STEP_LOG_LINE@milestones.json@]@@@",
+      "@@@STEP_LOG_END@milestones.json@@@"
+    ]
+  },
+  {
     "cmd": [
       "./regenerate_configs.py",
       "-b",

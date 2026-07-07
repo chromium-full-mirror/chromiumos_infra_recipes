@@ -14,6 +14,34 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "fetch chromiumdash milestones"
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromiumdash.appspot.com/fetch_milestones?only_branched=true"
+    ],
+    "name": "fetch chromiumdash milestones.curl fetch_milestones",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "fetch chromiumdash milestones (2)"
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromiumdash.appspot.com/fetch_milestones"
+    ],
+    "name": "fetch chromiumdash milestones (2).curl fetch_milestones",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

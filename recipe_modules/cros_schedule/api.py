@@ -154,3 +154,29 @@ class CrosScheduleApi(recipe_api.RecipeApi):
         raise self.m.step.StepFailure(
             'fetch milestone response json format bad') from e
       return mstone.get('chromium_branch', None)
+
+  def fetch_chromiumdash_milestones(self, only_branched=False):
+    """Return the milestones from chromiumdash as a list of dicts.
+
+    Args:
+      only_branched (bool): If True, only fetch branched milestones.
+
+    Returns:
+      (list[dict]): Parsed JSON list representing the results of the query.
+    """
+    query_url = 'https://chromiumdash.appspot.com/fetch_milestones'
+    if only_branched:
+      query_url += '?only_branched=true'
+
+    with self.m.step.nest('fetch chromiumdash milestones'):
+      returned_data = self.m.easy.stdout_step(
+          'curl fetch_milestones', ['curl', query_url],
+          test_stdout=CHROME_BRANCH_TEST_DATA)
+
+      if isinstance(returned_data, bytes):
+        returned_data = returned_data.decode()
+
+      try:
+        return json.loads(returned_data)
+      except ValueError as e:
+        raise StepFailure('fetch milestones response was not json') from e

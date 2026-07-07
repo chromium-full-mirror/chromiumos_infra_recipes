@@ -25,6 +25,8 @@ def RunSteps(api, properties):
   if properties.start_mstone:
     kwargs['start_mstone'] = properties.start_mstone
   api.cros_schedule.fetch_chromiumdash_schedule(**kwargs)
+  api.cros_schedule.fetch_chromiumdash_milestones(only_branched=True)
+  api.cros_schedule.fetch_chromiumdash_milestones(only_branched=False)
 
 
 def GenTests(api):
@@ -69,5 +71,13 @@ def GenTests(api):
       api.properties(start_mstone=88, fetch_n=2),
       override_fetch(
           api.cros_schedule.test_chromiumdash_fetch_response(fetch_n=1)),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'milestones-not-json',
+      api.time.seed(1613694623.0),
+      api.step_data('fetch chromiumdash milestones.curl fetch_milestones',
+                    api.raw_io.stream_output(b'not json')),
       status='FAILURE',
   )

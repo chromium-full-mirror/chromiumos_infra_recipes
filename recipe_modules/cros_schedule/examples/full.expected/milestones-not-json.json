@@ -29,7 +29,10 @@
   },
   {
     "cmd": [],
-    "name": "fetch chromiumdash milestones"
+    "name": "fetch chromiumdash milestones",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [
@@ -42,20 +45,10 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "fetch chromiumdash milestones (2)"
-  },
-  {
-    "cmd": [
-      "curl",
-      "https://chromiumdash.appspot.com/fetch_milestones"
-    ],
-    "name": "fetch chromiumdash milestones (2).curl fetch_milestones",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
+    "failure": {
+      "failure": {},
+      "humanReason": "fetch milestones response was not json"
+    },
     "name": "$result"
   }
 ]
