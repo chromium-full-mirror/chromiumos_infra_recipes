@@ -177,7 +177,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
         image_builder_exemption,
         build_firmware_exemption,
         test_firmware_exemption,
-    ]),
+    ], num_builds=2),
     StagingReCheck('chromeos', 'staging', 'staging-firmware-zephyr-postsubmit',
                    [
                        image_builder_exemption,
