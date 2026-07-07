@@ -62,6 +62,7 @@ def run_copybot(api: RecipeApi, properties: CopybotProperties):
     response = api.cros_build_api.CopybotService.RunCopybot(
         properties.request,
         retcode_fn=set_retcode,
+        skip_endpoint_retrieval=True,
     )
     presentation.properties["copybot_response"] = response
     if retcode != 0:
