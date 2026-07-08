@@ -35,7 +35,7 @@ PROPERTIES = CopybotProperties
 
 
 def RunSteps(api: RecipeApi, properties: CopybotProperties):
-  with api.build_menu.configure_builder(missing_ok=True):
+  with api.build_menu.configure_builder(missing_ok=True, disable_sdk=True):
     # Clone copybot repo to infra/copybot
     copybot_dir = api.src_state.workspace_path / "infra" / "copybot"
     api.git.clone(
