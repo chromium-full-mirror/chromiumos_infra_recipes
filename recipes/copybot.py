@@ -42,6 +42,11 @@ def RunSteps(api: RecipeApi, properties: CopybotProperties):
         "https://chromium.googlesource.com/copybot",
         target_path=copybot_dir,
     )
+    infra_dir = api.src_state.workspace_path / "infra"
+    api.step(
+        "create copybot path compatibility symlink",
+        ["ln", "-sfn", ".", infra_dir / "infra"],
+    )
     return run_copybot(api, properties)
 
 
