@@ -2906,8 +2906,8 @@
     "cmd": [],
     "name": "Run Qualbot",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@qualbot_response@{\"failureReason\": \"FAILURE_SCHEDULE_PUSH_ERROR\"}@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@9999:@fake@@@",
+      "@@@SET_BUILD_PROPERTY@qualbot_response@{\"launchedTests\": [{\"testEffortId\": \"9999\", \"testUrl\": \"fake\"}]}@@@"
     ]
   },
   {
@@ -3013,11 +3013,11 @@
       "INFO",
       "--json-out",
       "[CLEANUP]/qualbot_output_tmp_1/qualbot.json",
-      "",
+      "pipeline",
       "--add-message",
       "Cr-Build-Id: 8945511751514863184\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184",
       "--bot",
-      "--upload"
+      "--dry-run"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -3049,10 +3049,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",
-      "@@@STEP_LOG_LINE@step.sub_build@  \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@  \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@step.sub_build@}@@@",
-      "@@@STEP_LOG_END@step.sub_build@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LOG_END@step.sub_build@@@"
     ]
   },
   {
@@ -3089,7 +3088,12 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@qualbot.json@{@@@",
-      "@@@STEP_LOG_LINE@qualbot.json@  \"failure_reason\": \"FAILURE_SCHEDULE_PUSH_ERROR\"@@@",
+      "@@@STEP_LOG_LINE@qualbot.json@  \"launched_tests\": [@@@",
+      "@@@STEP_LOG_LINE@qualbot.json@    {@@@",
+      "@@@STEP_LOG_LINE@qualbot.json@      \"test_effort_id\": \"9999\",@@@",
+      "@@@STEP_LOG_LINE@qualbot.json@      \"test_url\": \"fake\"@@@",
+      "@@@STEP_LOG_LINE@qualbot.json@    }@@@",
+      "@@@STEP_LOG_LINE@qualbot.json@  ]@@@",
       "@@@STEP_LOG_LINE@qualbot.json@}@@@",
       "@@@STEP_LOG_END@qualbot.json@@@"
     ]
@@ -3222,7 +3226,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"amd64-generic\"\n    ],\n    \"bot-config\": \"amd64-generic-snapshot\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"amd64-generic-snapshot\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"fail\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false\n}",
+      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"amd64-generic\"\n    ],\n    \"bot-config\": \"amd64-generic-snapshot\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"amd64-generic-snapshot\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false\n}",
       "[CLEANUP]/metadata_tmp_1/metadata.json"
     ],
     "env_prefixes": {
@@ -3283,7 +3287,7 @@
       "@@@STEP_LOG_LINE@metadata.json@    ],@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"status\": {@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"current-time\": null,@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"status\": \"fail\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"status\": \"pass\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
@@ -3330,13 +3334,6 @@
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set sdk_state",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
     ]
   },
   {
@@ -3779,10 +3776,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "Run Qualbot Failed (return code 2)"
-    },
     "name": "$result"
   }
 ]

@@ -2906,21 +2906,15 @@
     "cmd": [],
     "name": "Run Qualbot",
     "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@qualbot_response@{}@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Run Qualbot.call chromite.api.QualbotService/RunQualbot",
+    "name": "Run Qualbot.install infra/tools/run_annotations",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2930,9 +2924,10 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildId\": \"8945511751514863184\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/cipd_tool/infra/tools/run_annotations/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_prefixes": {
@@ -2953,9 +2948,111 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run Qualbot.call chromite.api.QualbotService/RunQualbot.write input file",
+    "name": "Run Qualbot.install infra/tools/run_annotations.ensure package directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd_tool/infra/tools/run_annotations/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8",
+      "-ensure-file",
+      "infra/tools/run_annotations/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Run Qualbot.install infra/tools/run_annotations.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/run_annotations/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd_tool/infra/tools/run_annotations/5e1e2bcac305958b27077ca136f35f0abae7cf38c9af678f7d220ed0cb51d4f8/run_annotations",
+      "--output",
+      "[CLEANUP]/tmp_tmp_2/sub_build.pb",
+      "--",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/vpython3",
+      "[CLEANUP]/chromiumos_workspace/infra/fw_qual_automation/auto_qual_main.py",
+      "--log-level",
+      "INFO",
+      "--json-out",
+      "[CLEANUP]/qualbot_output_tmp_1/qualbot.json",
+      "",
+      "--add-message",
+      "Cr-Build-Id: 8945511751514863184\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184",
+      "--bot",
+      "--upload"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_3",
+      "TEMP": "[CLEANUP]/tmp_tmp_3",
+      "TEMPDIR": "[CLEANUP]/tmp_tmp_3",
+      "TMP": "[CLEANUP]/tmp_tmp_3",
+      "TMPDIR": "[CLEANUP]/tmp_tmp_3"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Run Qualbot.call auto_qual_main",
+    "stdin": "2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@{@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@  \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@}@@@",
+      "@@@STEP_LOG_END@step.sub_build@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -2966,7 +3063,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
+      "[CLEANUP]/qualbot_output_tmp_1/qualbot.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2988,111 +3085,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Run Qualbot.call chromite.api.QualbotService/RunQualbot.read chromite version",
+    "name": "Run Qualbot.read qualbot output",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@chromite-HEAD.version@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "https://chromium.googlesource.com/chromiumos/chromite",
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_prefixes": {
-      "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Run Qualbot.call chromite.api.QualbotService/RunQualbot.git clone",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
-    "env_prefixes": {
-      "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Run Qualbot.call chromite.api.QualbotService/RunQualbot.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.QualbotService/RunQualbot"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_prefixes": {
-      "PATH": [
-        "[START_DIR]/cipd_tool/infra/3pp/tools/protoc/bcc8637870636d0c87b30e9dcf7e11858ff2b565925b82c1e1e8d4bf18fbebe0/bin"
-      ]
-    },
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Run Qualbot.call chromite.api.QualbotService/RunQualbot.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -3223,7 +3219,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"amd64-generic\"\n    ],\n    \"bot-config\": \"amd64-generic-snapshot\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"amd64-generic-snapshot\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"fail\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:27\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false\n}",
+      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"amd64-generic\"\n    ],\n    \"bot-config\": \"amd64-generic-snapshot\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"amd64-generic-snapshot\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"fail\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false\n}",
       "[CLEANUP]/metadata_tmp_1/metadata.json"
     ],
     "env_prefixes": {
@@ -3288,7 +3284,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:27\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:24\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null,@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
@@ -3376,7 +3372,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "env_prefixes": {
       "PATH": [
@@ -3500,9 +3496,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Delete"
@@ -3542,7 +3538,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_prefixes": {
@@ -3713,7 +3709,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.001@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0007@@@"
     ]
   },
   {
@@ -3782,7 +3778,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Step('Run Qualbot.call chromite.api.QualbotService/RunQualbot.call build API script') (retcode: 1)"
+      "humanReason": "Run Qualbot Failed (return code 1)"
     },
     "name": "$result"
   }
