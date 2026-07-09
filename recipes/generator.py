@@ -348,6 +348,7 @@ class GeneratorRun:
         self._modified_projects = self.create_local_uprev()
         if self._modified_projects is None:
           return self.make_summary('no modified projects')
+        self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
 
       open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
           self._projects_by_remote, self.topic)
@@ -404,6 +405,41 @@ class GeneratorRun:
       return self.m.pupr_local_uprev.uprev_version_files(
           self.target_version_file_versions, self.topic)
     raise recipe_api.InfraFailure('Not sure how to uprev.')  # pragma: nocover
+
+  def _reapply_pupr_tracking_for_non_repo_projects(
+      self, policy_info: PolicyInfo) -> None:
+    """Re-apply git branch tracking information for the 'pupr' branch.
+
+    pupr_local_uprev checks out a new branch named 'pupr' for local commits,
+    which drops the tracking information that was set up during checkout_branch.
+    This restores the tracking config so that `git cl upload` targets the correct
+    upstream branch (e.g. branch-heads/7827 instead of main) for non-repo projects.
+    """
+    if not (self.is_version_file_uprevver and self.properties.version_files and
+            policy_info.branch):
+      return
+
+    processed_non_repo_dirs = set()
+    with self.m.context(cwd=self.m.cros_source.workspace_path):
+      for v in self.properties.version_files:
+        if not self.m.repo.project_exists(str(self.m.path.start_dir / v)):
+          v_dir = self.m.path.dirname(self.m.path.start_dir / v)
+          with self.m.context(cwd=v_dir):
+            git_root = self.m.step(
+                f'get git root for {v}',
+                ['git', 'rev-parse', '--show-toplevel'],
+                stdout=self.m.raw_io.output_text(), step_test_data=lambda: self.
+                m.raw_io.test_api.stream_output_text(
+                    str(self.m.path.start_dir / 'chrome' / 'src')
+                )).stdout.strip()
+            if git_root not in processed_non_repo_dirs:
+              self.m.step(f'set upstream remote for pupr in {v}',
+                          ['git', 'config', 'branch.pupr.remote', 'origin'])
+              self.m.step(f'set upstream merge for pupr in {v}', [
+                  'git', 'config', 'branch.pupr.merge',
+                  policy_info.reference.ref
+              ])
+              processed_non_repo_dirs.add(git_root)
 
   def _validate_properties(self) -> None:
     """Ensure the input properties look OK.
@@ -571,13 +607,29 @@ class GeneratorRun:
       - reference: The reference that matched, or None.
     """
     manifest = self.m.src_state.internal_manifest
+    repo_url = None
+    if self.is_version_file_uprevver:
+      with self.m.context(cwd=self.m.cros_source.workspace_path):
+        for v in self.properties.version_files:
+          if not self.m.repo.project_exists(str(self.m.path.start_dir / v)):
+            v_dir = self.m.path.dirname(self.m.path.start_dir / v)
+            with self.m.context(cwd=v_dir):
+              repo_url = self.m.step(
+                  f'get remote url for {v}',
+                  ['git', 'config', '--get', 'remote.origin.url'],
+                  stdout=self.m.raw_io.output_text(), step_test_data=lambda:
+                  self.m.raw_io.test_api.stream_output_text(
+                      'https://chromium.googlesource.com/chromium/src.git'
+                  )).stdout.strip()
+            break
+
     with self.m.context(cwd=manifest.path):
       for policy in self.properties.branch_policies:
         if re.match(policy.pattern, tag):
           query = re.sub(policy.pattern, policy.repl, tag)
           if not query:
             return PolicyInfo(policy)
-          refs = self.m.git.ls_remote([query])
+          refs = self.m.git.ls_remote([query], repo_url=repo_url)
           if len(refs) == 1:
             ref = refs[0]
             return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
@@ -597,8 +649,49 @@ class GeneratorRun:
         assert policy_info.reference is not None
         pres.step_text = 'using {} {}'.format(policy_info.branch,
                                               policy_info.reference.hash)
-        self.m.cros_source.checkout_branch(
-            self.m.src_state.internal_manifest.url, policy_info.branch)
+        needs_cros_checkout = True
+        if self.is_version_file_uprevver and self.properties.version_files:
+          needs_cros_checkout = False
+          processed_non_repo_dirs = set()
+          with self.m.context(cwd=self.m.cros_source.workspace_path):
+            for v in self.properties.version_files:
+              if self.m.repo.project_exists(str(self.m.path.start_dir / v)):
+                needs_cros_checkout = True  # pragma: nocover
+              else:
+                v_dir = self.m.path.dirname(self.m.path.start_dir / v)
+                with self.m.context(cwd=v_dir):
+                  git_root = self.m.step(
+                      f'get git root for {v}',
+                      ['git', 'rev-parse', '--show-toplevel'],
+                      stdout=self.m.raw_io.output_text(), step_test_data=lambda:
+                      self.m.raw_io.test_api.stream_output_text(
+                          str(self.m.path.start_dir / 'chrome' / 'src')
+                      )).stdout.strip()
+                  if git_root not in processed_non_repo_dirs:
+                    target_ref = policy_info.reference.ref.replace(
+                        'refs/heads/', 'refs/remotes/origin/')
+                    target_ref = target_ref.replace(
+                        'refs/branch-heads/', 'refs/remotes/branch-heads/')
+                    self.m.git.fetch(
+                        remote='origin',
+                        refs=[f'{policy_info.reference.ref}:{target_ref}'])
+                    self.m.git.checkout(commit='FETCH_HEAD',
+                                        branch=policy_info.branch)
+                    self.m.step(
+                        f'set upstream remote for {policy_info.branch}', [
+                            'git', 'config',
+                            f'branch.{policy_info.branch}.remote', 'origin'
+                        ])
+                    self.m.step(f'set upstream merge for {policy_info.branch}',
+                                [
+                                    'git', 'config',
+                                    f'branch.{policy_info.branch}.merge',
+                                    policy_info.reference.ref
+                                ])
+                    processed_non_repo_dirs.add(git_root)
+        if needs_cros_checkout:
+          self.m.cros_source.checkout_branch(
+              self.m.src_state.internal_manifest.url, policy_info.branch)
       elif self._is_sdk_uprevver:
         # b/372434018: The source tree here should be identical to the SDK
         # builder's, unless policy overrides that. The SDK builder's uprevs
@@ -1163,6 +1256,70 @@ def GenTests(
       status='FAILURE',
   )
 
+  yield api.test(
+      'version-file-uprev-branch-policy',
+      api.properties(triggers=[trigger_prop]),
+      _props(
+          uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
+          version_files=['chrome/src/chromeos/CHROMEOS_LKGM'],
+          branch_policies=[_policy(
+              pattern='.*',
+              repl='branch-heads/7871',
+          )],
+      ),
+      api.step_data(
+          'select policy.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info',
+          api.raw_io.stream_output_text(
+              'project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found',
+              stream='stderr'),
+          retcode=1,
+      ),
+      api.step_data(
+          'select policy.git ls-remote',
+          stdout=api.raw_io.output_text(
+              '7df59670d5e95a464e3f9cecd242586f7d4860ee\trefs/branch-heads/7871\n'
+          ),
+      ),
+      api.step_data(
+          'checkout branch.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info',
+          api.raw_io.stream_output_text(
+              'project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found',
+              stream='stderr'),
+          retcode=1,
+      ),
+      api.step_data(
+          'try uprev chrome/src/chromeos/CHROMEOS_LKGM.uprev version file'
+          '.read output file',
+          api.file.read_raw(
+              content='{"responses": [{"version": "16626.0.0-1076201", "modified_files": ["[START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM"]}]}'
+          )),
+      api.step_data(
+          'check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info',
+          api.raw_io.stream_output_text(
+              'project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found',
+              stream='stderr'),
+          retcode=1,
+      ),
+      api.git.diff_check(True),
+      api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
+      api.post_check(
+          post_process.MustRun,
+          'checkout branch.git checkout',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'set upstream remote for pupr in chrome/src/chromeos/CHROMEOS_LKGM',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'set upstream merge for pupr in chrome/src/chromeos/CHROMEOS_LKGM',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'generate CLs.create gerrit change for [START_DIR]/chrome/src.git_cl upload',
+      ),
+  )
+
   yield _with_infos(
       'multiple-packages',
       api.properties(triggers=[trigger_prop]),
@@ -1717,7 +1874,18 @@ def GenTests(
           api.file.read_raw(
               content='{"responses": [{"version": "16626.0.0-1076201", "modified_files": ["[START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM"]}]}'
           )),
+      api.step_data(
+          'select policy.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info',
+          api.raw_io.stream_output_text(
+              'project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found',
+              stream='stderr'),
+          retcode=1,
+      ),
       api.git.diff_check(True),
+      api.post_check(
+          post_process.MustRun,
+          'generate CLs.create gerrit change for [START_DIR]/chrome/src.git_cl upload',
+      ),
   )
 
   yield api.test(
