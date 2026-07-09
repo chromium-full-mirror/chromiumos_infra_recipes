@@ -25,6 +25,8 @@
       "-p",
       "-age=7d",
       "-p",
+      "-is=wip",
+      "-p",
       "hashtag=chrome-lkgm",
       "-o",
       "MESSAGES",

@@ -159,6 +159,67 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "mark CL 123 ready for review"
+  },
+  {
+    "cmd": [],
+    "name": "mark CL 123 ready for review.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "mark CL 123 ready for review.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "mark CL 123 ready for review.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{}",
+      "https://chromium-review.googlesource.com/changes/123/ready"
+    ],
+    "name": "mark CL 123 ready for review.curl https://chromium-review.googlesource.com/changes/123/ready",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

@@ -337,6 +337,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
                 topic=topic,
                 project_path=None if is_repo else cwd,
                 non_repo_checkout=not is_repo,
+                upload_options=['wip'] if limit_exceeded else None,
             ))
       self.m.easy.set_properties_step(
           generated_cls=[MessageToDict(change) for change in changes])
@@ -556,6 +557,10 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
               f'{policy.max_concurrent_cq_runs} reached, currently running: {running_count})'
           )
           return
+
+      if patch_set_to_retry.work_in_progress:
+        self.m.gerrit.set_change_ready_for_review_remote(
+            patch_set_to_retry.to_gerrit_change_proto())
 
       self.retry_cl(patch_set_to_retry, cq_label)
 

@@ -42,6 +42,7 @@ def RunSteps(api):
                                                        labels)
   api.assertions.assertEqual(applied_labels,
                              '{"labels": {"Code-Review": 2, "Verified": 1}}')
+  api.gerrit.set_change_ready_for_review_remote(gerrit_change_remote)
 
 
 def GenTests(api):

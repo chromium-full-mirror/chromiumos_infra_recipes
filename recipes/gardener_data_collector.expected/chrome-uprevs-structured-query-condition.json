@@ -27,6 +27,8 @@
       "-p",
       "-age=7d",
       "-p",
+      "-is=wip",
+      "-p",
       "topic=custom-chrome-uprev",
       "-o",
       "MESSAGES",

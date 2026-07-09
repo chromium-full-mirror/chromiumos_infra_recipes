@@ -763,6 +763,17 @@ class GerritApi(RecipeApi):
           f'https://{gerrit_change.host}/changes/{gerrit_change.change}/revisions/current/review',
           {'comments': comment_map}, test_output_data='{}')
 
+  def set_change_ready_for_review_remote(self, gerrit_change: GerritChange):
+    """Mark a change as ready for review.
+
+    Args:
+      gerrit_change: The change to mark as ready for review.
+    """
+    with self.m.step.nest(f'mark CL {gerrit_change.change} ready for review'):
+      self._do_post(
+          f'https://{gerrit_change.host}/changes/{gerrit_change.change}/ready',
+          {}, test_output_data='{}')
+
   def _get_auth_token(self) -> Path:
     """Get a token from luci-auth with gerritcodereview scope.
 
