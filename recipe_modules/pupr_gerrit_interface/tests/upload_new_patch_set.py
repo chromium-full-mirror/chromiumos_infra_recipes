@@ -12,16 +12,22 @@ from recipe_engine import recipe_test_api
 
 
 DEPS = [
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'pupr_gerrit_interface',
 ]
 
 
 def RunSteps(api: recipe_api.RecipeApi):
+  if api.properties.get('mock_chrome_exists'):
+    api.path.mock_add_paths(api.path.start_dir / 'chrome' / 'src')
+
   patch_set = PatchSet({
       'host': 'http://foo.com',
       'info': {
           '_number': 1234,
-          'project': 'a project?',
+          'project': api.properties.get('project', 'a-project'),
       },
       'patch_set_revision': 'f000' * 10,
       'revision_info': {
@@ -34,6 +40,15 @@ def RunSteps(api: recipe_api.RecipeApi):
 def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
       'basic',
+      api.properties(project='a-project'),
+      api.post_check(post_process.StepSuccess,
+                     'upload patch set for Change-Id 1234.git_cl upload'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'chrome-fallback',
+      api.properties(project='chromium/src', mock_chrome_exists=True),
       api.post_check(post_process.StepSuccess,
                      'upload patch set for Change-Id 1234.git_cl upload'),
       api.post_process(post_process.DropExpectation),

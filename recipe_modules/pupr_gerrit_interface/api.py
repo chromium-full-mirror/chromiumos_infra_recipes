@@ -440,8 +440,13 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     step_name = f'upload patch set for Change-Id {gerrit_patch_set.change_id}'
     with self.m.step.nest(step_name), self.m.context(cwd=self.workspace_path):
       gerrit_change = gerrit_patch_set.to_gerrit_change_proto()
-      project = self.m.repo.project_info(gerrit_change.project)
-      repo_path = self.m.path.join(self.workspace_path, project.path)
+      if (gerrit_change.project in ('chromium/src', 'chrome/src') and
+          self.m.path.exists(self.m.path.start_dir / 'chrome' / 'src')):
+        repo_path = self.m.path.start_dir / 'chrome' / 'src'
+      else:
+        project = self.m.repo.project_info(gerrit_change.project)
+        repo_path = self.m.path.join(self.workspace_path, project.path)
+
       with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
         self.m.git_cl.upload(send_mail=True, title=title,
                              description=description)
