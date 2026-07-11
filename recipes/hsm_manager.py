@@ -9,6 +9,8 @@ from PB.recipes.chromeos.hsm_manager import HSMManagerProperties
 from PB.go.chromium.org.luci.buildbucket.proto import (
     builder_common as builder_common_pb2,)
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -27,6 +29,7 @@ DEPS = [
     "easy",
     "gerrit",
     "git",
+    "keyset_utils",
     "signing",
     "src_state",
 ]
@@ -85,14 +88,20 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
     )
 
     is_staging = api.build_menu.is_staging
-    create_keys_hsm_request = properties.create_keys_hsm_request
-    # These fields shouldn't be set by the user, but in any case
-    # set them here (potentially overwriting existing values).
-    create_keys_hsm_request.docker_image = api.signing.signing_docker_image
-    create_keys_hsm_request.release_keys_checkout = str(release_keys_path)
-    # Default to dry run in staging.
-    if not create_keys_hsm_request.HasField("dry_run"):
-      create_keys_hsm_request.dry_run = is_staging
+    create_keys_hsm_request, error_msg = api.keyset_utils.create_hsm_request(
+        properties.create_keys_hsm_request,
+        release_keys_path,
+        api.signing.signing_docker_image,
+        is_staging,
+        build_target=properties.build_target,
+        is_mp=properties.is_mp if properties.HasField("is_mp") else None,
+    )
+    if error_msg:
+      return result_pb2.RawResult(
+          status=common_pb2.FAILURE,
+          summary_markdown=f"Keyset Validation Failed\n\n{error_msg}",
+      )
+
     api.cros_build_api.SigningService.CreateKeysHsm(create_keys_hsm_request)
 
     # TODO(b/505067933): Notify quorum members that there is a new quorum operation.
@@ -137,6 +146,10 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
 
       if is_staging:
         api.gerrit.abandon_change(change)
+    return result_pb2.RawResult(
+        status=common_pb2.SUCCESS,
+        summary_markdown=f"Keyset created: {create_keys_hsm_request.keyset_name}",
+    )
 
 
 def GenTests(api: RecipeTestApi):
@@ -198,6 +211,39 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.SummaryMarkdown,
                      "`create_keys_hsm_request` is a required property."),
+      api.post_process(post_process.DropExpectation),
+      status="FAILURE",
+  )
+
+  yield api.test(
+      "hsm-create-keys-calc-next",
+      api.properties(
+          HSMManagerProperties(create_keys_hsm_request=CreateKeysHsmRequest(),
+                               build_target="atlas", is_mp=True, bug=12345)),
+      api.step_data(
+          "create HSM keys.calc next keyset version.list existing keysets",
+          api.file.listdir(["AtlasMPKeys-v2"]),
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create HSM keys.call chromite.api.SigningService/CreateKeysHsm"),
+      api.post_check(post_process.LogEquals, 'create HSM keys.requested keyset',
+                     'keyset_name', 'AtlasMPKeys-v3'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "hsm-create-keyset-exists-failure",
+      api.properties(
+          HSMManagerProperties(
+              create_keys_hsm_request=CreateKeysHsmRequest(
+                  keyset_name="AtlasMPKeys-v2"), bug=12345)),
+      api.path.exists(api.src_state.workspace_path /
+                      "src/platform/signing/keys/keyset/public/AtlasMPKeys-v2"),
+      api.post_check(
+          post_process.SummaryMarkdownRE,
+          r".*Keyset `AtlasMPKeys-v2` already exists.*",
+      ),
       api.post_process(post_process.DropExpectation),
       status="FAILURE",
   )

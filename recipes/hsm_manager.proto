@@ -13,4 +13,8 @@ message HSMManagerProperties {
 
   // Buganizer ID to be associated with the HSM key creation request.
   int64 bug = 2;
+
+  // Optional keyset info when create_keys_hsm_request.keyset_name is unset.
+  string build_target = 3;
+  optional bool is_mp = 4;
 }
