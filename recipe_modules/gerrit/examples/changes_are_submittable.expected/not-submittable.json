@@ -3,9 +3,14 @@
     "cmd": [],
     "name": "check for merge conflicts",
     "~followup_annotations": [
-      "@@@STEP_TEXT@confirmed no merge conflicts@@@",
+      "@@@STEP_TEXT@unable to cherry-pick changes@@@",
       "@@@STEP_LOG_LINE@req@dict_items([('gerrit_changes', [{'host': 'chromium-review.googlesource.com', 'change_number': 91827, 'patch_set': 1}]), ('temp_dir', Path([CLEANUP], 'submittable_check')), ('reference_repos', {'chromeos/chromite': 'src/chromeos/chromite'})])@@@",
-      "@@@STEP_LOG_END@req@@@"
+      "@@@STEP_LOG_END@req@@@",
+      "@@@STEP_LOG_LINE@cherry-pick-failures@some cherry pick error line 1@@@",
+      "@@@STEP_LOG_LINE@cherry-pick-failures@line2@@@",
+      "@@@STEP_LOG_END@cherry-pick-failures@@@",
+      "@@@SET_BUILD_PROPERTY@merge_conflict@true@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -152,7 +157,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"errors\": []@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"errors\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"some cherry pick error line 1\\nline2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]

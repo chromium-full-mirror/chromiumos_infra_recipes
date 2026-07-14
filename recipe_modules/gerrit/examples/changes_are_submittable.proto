@@ -1,0 +1,16 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.gerrit.examples.changes_are_submittable;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message ChangesAreSubmittableProperties {
+  buildbucket.v2.GerritChange change = 1;
+  string chrome_root = 2;
+  string chromeos_root = 3;
+  bool expected = 4;
+}

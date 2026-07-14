@@ -4,35 +4,8 @@
     "name": "check for merge conflicts",
     "~followup_annotations": [
       "@@@STEP_TEXT@confirmed no merge conflicts@@@",
-      "@@@STEP_LOG_LINE@req@dict_items([('gerrit_changes', [{'host': 'chromium-review.googlesource.com', 'change_number': 91827, 'patch_set': 1}]), ('temp_dir', Path([CLEANUP], 'submittable_check')), ('reference_repos', {'chromeos/chromite': 'src/chromeos/chromite'})])@@@",
+      "@@@STEP_LOG_LINE@req@dict_items([('gerrit_changes', [{'host': 'chromium-review.googlesource.com', 'change_number': 91829, 'patch_set': 1}]), ('temp_dir', Path([CLEANUP], 'submittable_check'))])@@@",
       "@@@STEP_LOG_END@req@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "--ignore-missing",
-      "chromeos/chromite",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CACHE]/chromeos_root",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "check for merge conflicts.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromeos/chromite|src/chromeos/chromite|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -148,7 +121,7 @@
     ],
     "infra_step": true,
     "name": "check for merge conflicts.git-test-submit",
-    "stdin": "{\"gerrit_changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"reference_repos\": {\"chromeos/chromite\": \"src/chromeos/chromite\"}, \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
+    "stdin": "{\"gerrit_changes\": [{\"change_number\": 91829, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

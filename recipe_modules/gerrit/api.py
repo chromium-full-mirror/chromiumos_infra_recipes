@@ -589,27 +589,58 @@ class GerritApi(RecipeApi):
         host = host[len(prefix):]
     return 'https://' + host
 
-  def changes_submittable(
-      self, gerrit_changes: List[GerritChange],
-      test_output_data: Union[Callable, Dict, List, None] = None) -> bool:
+  def changes_submittable(self, gerrit_changes: List[GerritChange],
+                          test_output_data: Union[Callable, Dict, List,
+                                                  None] = None,
+                          chrome_root: Path | None = None,
+                          chromeos_root: Path | None = None) -> bool:
     """Check whether the given changes can be merged onto their Git branches.
 
     Args:
       gerrit_changes: The changes to check.
       test_output_data: Mock response for the git-test-submit support tool.
+      chrome_root: Path to the chrome root, to be used as a reference repo.
+      chromeos_root: Path to the chromeos root, to be used for finding project
+        infos. If None, skips finding project infos.
     """
     with self.m.step.nest('check for merge conflicts') as presentation:
+      projects = list({gc.project for gc in gerrit_changes if gc.project})
+      cros_projects = [
+          p for p in projects if p not in ('chrome/src', 'chromium/src')
+      ]
+      if cros_projects and chromeos_root:
+        with self.m.context(cwd=chromeos_root):
+          project_infos = {
+              p.name: p.path for p in self.m.repo.project_infos(
+                  projects=cros_projects, ignore_missing=True)
+          }
+      else:
+        project_infos = {}
+
       changes = []
       for gc in gerrit_changes:
-        changes.append({
+        change = {
             'host': gc.host,
             'change_number': int(gc.change),
             'patch_set': int(gc.patchset),
-        })
+        }
+        changes.append(change)
+
       req = {
           'gerrit_changes': changes,
           'temp_dir': self.m.path.cleanup_dir / 'submittable_check',
       }
+
+      reference_repos = {}
+      for project in projects:
+        if project in project_infos:
+          reference_repos[project] = project_infos[project]
+        elif (chrome_root and project in ('chrome/src', 'chromium/src') and
+              self.m.path.exists(chrome_root / 'src')):
+          reference_repos[project] = chrome_root / 'src'
+
+      if reference_repos:
+        req['reference_repos'] = reference_repos
       presentation.logs['req'] = str(req.items())
       if test_output_data is None:
         test_output_data = self.test_api.test_changes_are_submittable

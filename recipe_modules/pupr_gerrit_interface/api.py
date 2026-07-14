@@ -599,7 +599,11 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           gerrit_mergeable = self.m.gerrit.get_change_mergeable(
               patch_set_to_retry.change_id, patch_set_to_retry.host)
         with self.m.step.nest('test cq-orchestrator mergeable') as cqstep:
-          cq_mergable = self.m.gerrit.changes_submittable(changes_to_retry)
+          chrome_root = self.m.path.start_dir / 'chrome'
+          chromeos_root = self.m.cros_source.workspace_path
+          cq_mergable = self.m.gerrit.changes_submittable(
+              changes_to_retry, chrome_root=chrome_root,
+              chromeos_root=chromeos_root)
           # gerrit.changes_submittable generates non-critical StepFailure.
           # Set cqstep.status to SUCCESS to avoid parent being StepFailure
           cqstep.status = 'SUCCESS'
