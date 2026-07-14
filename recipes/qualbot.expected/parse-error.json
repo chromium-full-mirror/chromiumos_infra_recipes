@@ -3003,7 +3003,7 @@
       "--output",
       "[CLEANUP]/tmp_tmp_2/sub_build.pb",
       "--",
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/vpython3",
+      "vpython3",
       "[CLEANUP]/chromiumos_workspace/infra/fw_qual_automation/auto_qual_main.py",
       "--log-level",
       "INFO",

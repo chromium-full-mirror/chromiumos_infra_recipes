@@ -66,7 +66,7 @@ def run_qualbot(api: RecipeApi, properties: QualbotProperties):
     cmd = [
         run_annotations_luciexe,
         "--",
-        api.src_state.workspace_path.joinpath("chromite", "bin", "vpython3"),
+        "vpython3",
         script_path,
         "--log-level",
         "INFO",
