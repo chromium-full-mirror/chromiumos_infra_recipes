@@ -182,6 +182,19 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """Return the gitiles commit used for ResultDB as created by this module, or None."""
     return self._resultdb_gitiles_commit
 
+  @property
+  def buildspec_snapshot_gitiles_commit(self) -> common_pb2.GitilesCommit:
+    """Return the Buildbucket GitilesCommit for the buildspec snapshot, or None."""
+    if not self._resultdb_gitiles_commit:
+      return None
+    rdb = self._resultdb_gitiles_commit
+    return common_pb2.GitilesCommit(
+        host=rdb.host,
+        project=rdb.project,
+        ref=rdb.ref,
+        id=rdb.commit_hash,
+    )
+
   def set_resultdb_gitiles_commit(
       self,
       repo_url: str,

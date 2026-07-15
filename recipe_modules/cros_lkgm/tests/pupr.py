@@ -9,9 +9,10 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
-    'cros_tags',
     'cros_lkgm',
+    'cros_tags',
     'greenness',
+    'src_state',
     'test_util',
 ]
 
@@ -35,15 +36,18 @@ def RunSteps(api):
 
   api.greenness.update_build_info(builds)
 
+  gitiles_commit = api.src_state.gitiles_commit
+
   if api.properties.get('mock_greenness_failure'):
     orig_prop = type(api.greenness).builder_greenness_dict
     try:
       type(api.greenness).builder_greenness_dict = property(lambda self: 1 / 0)
-      api.cros_lkgm.do_lkgm_via_pupr()
+      api.cros_lkgm.do_lkgm_via_pupr(gitiles_commit)
     finally:
       type(api.greenness).builder_greenness_dict = orig_prop
   else:
-    api.cros_lkgm.do_lkgm_via_pupr()
+    api.cros_lkgm.do_lkgm_via_pupr(gitiles_commit)
+
 
 
 def GenTests(api):

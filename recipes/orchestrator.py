@@ -120,7 +120,12 @@ def DoRunSteps(api: RecipeApi):
       extra_child_props=extra_child_props,
   )
   testable_builds = builds_status.testable_builds
-  api.cros_lkgm.do_lkgm_via_pupr()
+
+  if api.cros_release.buildspec_snapshot_gitiles_commit:
+    api.cros_lkgm.do_lkgm_via_pupr(
+        api.cros_release.buildspec_snapshot_gitiles_commit)
+
+
 
   # Run any HW tests.
   if not api.orch_menu.is_public_orchestrator:
@@ -421,6 +426,36 @@ def GenTests(api: RecipeTestApi):
           post_process.LogContains,
           'run builds.schedule new builds.kukui-release-R111-12345.B',
           'request', ['$chromeos/metadata', 'sources_gitiles_commit_override']),
+      builder='release-R111-12345.B-orchestrator',
+  )
+
+  yield api.orch_menu.test(
+      'release-branch-pupr-triggered',
+      api.properties(
+          **{
+              '$chromeos/cros_lkgm': {
+                  'enable_pupr': True,
+                  'pupr_builder_name': 'cros_lkgm-pupr',
+                  'builder_threshold_percentage': 0,
+              },
+              '$chromeos/cros_release': {
+                  'commit_buildspec_as_snapshot': True,
+              },
+          }),
+      api.post_check(post_process.MustRun,
+                     'do lkgm via pupr.trigger cros_lkgm-pupr'),
+      api.post_check(
+          post_process.LogContains,
+          'do lkgm via pupr.trigger cros_lkgm-pupr',
+          'input',
+          [
+              '"triggers": [',
+              '"gitiles": {',
+              '"ref": "refs/heads/release-R111-12345.B-snapshot"',
+              '"repo": "https://chrome-internal.googlesource.com/chromeos/manifest-internal"',
+              '"revision": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"',
+          ],
+      ),
       builder='release-R111-12345.B-orchestrator',
   )
 

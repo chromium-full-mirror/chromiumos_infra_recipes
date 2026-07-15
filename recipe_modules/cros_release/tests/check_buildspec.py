@@ -9,15 +9,29 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_release',
 ]
 
 
-
 def RunSteps(api):
+  api.assertions.assertIsNone(
+      api.cros_release.buildspec_snapshot_gitiles_commit)
+  api.cros_release.set_resultdb_gitiles_commit(
+      'https://chrome-internal.googlesource.com/chromeos/manifest-internal',
+      'chrome-internal.googlesource.com',
+      'chromeos/manifest-internal',
+      'release-R108-15183.B-snapshot',
+      100,
+  )
+  api.assertions.assertEqual(
+      api.cros_release.buildspec_snapshot_gitiles_commit.host,
+      'chrome-internal.googlesource.com')
   api.cros_release.check_buildspec(fatal=api.properties['fatal'])
+
+
 
 
 def GenTests(api):

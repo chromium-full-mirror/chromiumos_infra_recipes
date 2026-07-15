@@ -83,7 +83,9 @@ def DoRunSteps(api: RecipeApi):
   )
 
   testable_builds = builds_status.testable_builds
-  api.cros_lkgm.do_lkgm_via_pupr()
+  api.cros_lkgm.do_lkgm_via_pupr(api.src_state.gitiles_commit)
+
+
   # Run any HW tests.
   api.snapshot_orch_menu.plan_and_run_tests(testable_builds=testable_builds)
 
@@ -150,6 +152,39 @@ def GenTests(api: RecipeTestApi):
                                     collect_builds=green_build_results,
                                     with_manifest_refs=True,
                                     builder='snapshot-orchestrator')
+
+  pupr_props = api.properties(
+      **{
+          '$chromeos/greenness': {
+              'publish_property': True
+          },
+          '$chromeos/cros_lkgm': {
+              'enable_lkgm': True,
+              'enable_pupr': True,
+              'pupr_builder_name': 'cros_lkgm-pupr',
+              'builder_threshold_percentage': 0,
+              'full_run': True
+          }
+      })
+
+  yield api.snapshot_orch_menu.test(
+      'pupr-triggered', data.ctp_normal, pupr_props,
+      api.cros_snapshot.simulated_snapshot_identifier(111111),
+      api.post_check(post_process.MustRun,
+                     'do lkgm via pupr.trigger cros_lkgm-pupr'),
+      api.post_check(
+          post_process.LogContains,
+          'do lkgm via pupr.trigger cros_lkgm-pupr',
+          'input',
+          [
+              '"triggers": [',
+              '"gitiles": {',
+              '"ref": "refs/heads/snapshot"',
+              '"repo": "https://chrome-internal.googlesource.com/chromeos/manifest-internal"',
+              '"revision": "snapshot-HEAD-SHA"',
+          ],
+      ), collect_builds=green_build_results, with_manifest_refs=True,
+      builder='snapshot-orchestrator')
 
   yield api.snapshot_orch_menu.test(
       'lkgm-uprev-generated', data.ctp_normal, lfg_props,

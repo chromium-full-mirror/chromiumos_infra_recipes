@@ -10,6 +10,7 @@ from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
@@ -280,11 +281,14 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
     return result
 
-  def do_lkgm_via_pupr(self):
+  def do_lkgm_via_pupr(self, gitiles_commit: GitilesCommit):
     """Triggers cros_lkgm.pupr if conditions are met.
 
     Checks if enable_pupr is True, and if builder aggregated greenness
     is >= builder_threshold_percentage.
+
+    Args:
+      gitiles_commit: GitilesCommit to trigger from.
     """
     if not self._enable_pupr:
       return
@@ -313,14 +317,14 @@ class CrosLkgmApi(recipe_api.RecipeApi):
                 aggregated_greenness, self._builder_threshold_percentage))
 
         if aggregated_greenness >= self._builder_threshold_percentage:
-          self._trigger_pupr()
+          self._trigger_pupr(gitiles_commit)
         else:
           presentation.step_text += ' (below threshold, skipping PUpr)'
       except Exception as e:  # pylint: disable=broad-exception-caught
         presentation.status = self.m.step.FAILURE
         presentation.step_text = f'failed: {e}'
 
-  def _trigger_pupr(self):
+  def _trigger_pupr(self, gitiles_commit: GitilesCommit):
     is_staging = self.m.cros_infra_config.is_staging
 
     project = 'chromeos'
@@ -328,23 +332,25 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     if is_staging and not job.startswith('staging-'):
       job = f'staging-{job}'
 
-    gitiles_commit = self.m.src_state.gitiles_commit
     repo = self.m.gitiles.repo_url(gitiles_commit)
+    ref = gitiles_commit.ref
+    revision = gitiles_commit.id
+
     properties = {
         'triggers': [{
             'gitiles': {
                 'repo': repo,
-                'ref': gitiles_commit.ref,
-                'revision': gitiles_commit.id,
+                'ref': ref,
+                'revision': revision,
             }
         }]
     }
-    trigger = self.m.scheduler.BuildbucketTrigger(
+    buildbucket_trigger = self.m.scheduler.BuildbucketTrigger(
         properties=properties,
         inherit_tags=False,
     )
     self.m.scheduler.emit_trigger(
-        trigger,
+        buildbucket_trigger,
         project=project,
         jobs=[job],
         step_name=f'trigger {job}',
