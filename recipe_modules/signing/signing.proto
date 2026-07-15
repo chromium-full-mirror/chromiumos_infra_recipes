@@ -50,4 +50,11 @@ message SigningProperties {
 
   // Sets BCID enforcement properties used when signing artifacts.
   BcidEnforcement bcid_enforcement = 7;
+
+  // Timeout for waiting for BAPI signing to complete (in seconds).
+  int32 bapi_timeout_sec = 8;
+
+  // Number of retries for BAPI signing operations when failures or timeouts
+  // occur.
+  optional int32 bapi_retries = 9;
 }

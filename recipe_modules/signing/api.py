@@ -83,6 +83,9 @@ class SigningApi(recipe_api.RecipeApi):
     self._gs_upload_bucket = properties.gs_upload_bucket or 'chromeos-throw-away-bucket'
     self._paygen_keyset = None
     self._use_dev_keys = properties.use_dev_keys
+    self._bapi_timeout_sec: int = properties.bapi_timeout_sec or 3 * 60 * 60
+    self._bapi_retries: int = (
+        properties.bapi_retries if properties.HasField('bapi_retries') else 2)
 
     self._bcid_policy = properties.bcid_enforcement.bcid_policy or 'chromeosimage://'
     self._signed_prov_generation_fatal = properties.bcid_enforcement.signed_provenance_generation_fatal or False
@@ -782,7 +785,6 @@ class SigningApi(recipe_api.RecipeApi):
     yield
     docker_prune()
 
-  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def signing_operation(
       self,
       config: BuildTargetSigningConfigs,
@@ -798,53 +800,63 @@ class SigningApi(recipe_api.RecipeApi):
       if not archive_dir:
         archive_dir = self.m.path.mkdtemp('signing-dir')
 
-      # Stage local artifacts for signing, if specified.
-      if local_artifact_dir:
-        with self.m.step.nest('copying local artifacts to prepare for signing'):
-          artifacts = self.m.file.listdir('list artifacts to stage for signing',
-                                          local_artifact_dir, recursive=True,
-                                          test_data=['chromeos-firmwareupdate'])
-          for artifact in artifacts:
-            self.m.file.copy('stage artifact for signing', artifact,
-                             archive_dir)
+      @self.m.time.exponential_retry(retries=self._bapi_retries,
+                                     delay=datetime.timedelta(seconds=30))
+      def _run():
+        # Stage local artifacts for signing, if specified.
+        if local_artifact_dir:
+          with self.m.step.nest(
+              'copying local artifacts to prepare for signing'):
+            artifacts = self.m.file.listdir(
+                'list artifacts to stage for signing', local_artifact_dir,
+                recursive=True, test_data=['chromeos-firmwareupdate'])
+            for artifact in artifacts:
+              self.m.file.copy('stage artifact for signing', artifact,
+                               archive_dir)
 
-      docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
+        docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
 
-      with self.m.time.timeout(datetime.timedelta(hours=3)):
-        with self.m.step.nest('call BAPI') as presentation:
-          request = SignImageRequest(
-              signing_configs=config, archive_dir=str(archive_dir),
-              result_path=common_pb2.ResultPath(
-                  path=common_pb2.Path(
-                      path=self.m.path.abspath(archive_dir),
-                      location=common_pb2.Path.Location.OUTSIDE,
-                  )), tmp_path=self.m.path.abspath(docker_tmp_dir),
-              docker_image=self.signing_docker_image)
-          response = self.m.cros_build_api.ImageService.SignImage(
-              request, skip_endpoint_retrieval=True)
-          self.add_kms_logs_as_step_logs(archive_dir)
-          # Turn the step red if any failures are present.
-          for archive in response.signed_artifacts.archive_artifacts:
-            if archive.signing_status != PASSED:
-              presentation.status = self.m.step.FAILURE
+        with self.m.time.timeout(
+            datetime.timedelta(seconds=self._bapi_timeout_sec)):
+          with self.m.step.nest('call BAPI') as presentation:
+            request = SignImageRequest(
+                signing_configs=config, archive_dir=str(archive_dir),
+                result_path=common_pb2.ResultPath(
+                    path=common_pb2.Path(
+                        path=self.m.path.abspath(archive_dir),
+                        location=common_pb2.Path.Location.OUTSIDE,
+                    )), tmp_path=self.m.path.abspath(docker_tmp_dir),
+                docker_image=self.signing_docker_image)
+            response = self.m.cros_build_api.ImageService.SignImage(
+                request, skip_endpoint_retrieval=True)
+            self.add_kms_logs_as_step_logs(archive_dir)
+            # Turn the step red if any failures are present.
+            for archive in response.signed_artifacts.archive_artifacts:
+              if archive.signing_status != PASSED:
+                presentation.status = self.m.step.FAILURE
 
-      # Match signed image to its SBOM based on input_archive_name.
-      release_sbom = {}
-      if attestation_eligible:
-        with self.m.step.nest('match signed artifacts to SBOM') as presentation:
-          for release_artifact in response.signed_artifacts.archive_artifacts:
-            input_artifact_name = release_artifact.input_archive_name
-            if sbom := artifact_sbom.get(input_artifact_name, None):
-              for signed in release_artifact.signed_artifacts:
-                release_sbom.update({signed.signed_artifact_name: sbom})
-          presentation.step_summary_text = '\n'.join(
-              f"- {artifact_name}: {sbom.gs_url} ({sbom.digest})"
-              for artifact_name, sbom in release_sbom.items())
+        # Match signed image to its SBOM based on input_archive_name.
+        release_sbom = {}
+        if attestation_eligible:
+          with self.m.step.nest(
+              'match signed artifacts to SBOM') as presentation:
+            for release_artifact in response.signed_artifacts.archive_artifacts:
+              input_artifact_name = release_artifact.input_archive_name
+              if sbom := artifact_sbom.get(input_artifact_name, None):
+                for signed in release_artifact.signed_artifacts:
+                  release_sbom.update({signed.signed_artifact_name: sbom})
+            presentation.step_summary_text = '\n'.join(
+                f"- {artifact_name}: {sbom.gs_url} ({sbom.digest})"
+                for artifact_name, sbom in release_sbom.items())
 
-      self.upload_signed_artifacts(response, attestation_eligible,
-                                   failed_unsigned_verifications, release_sbom)
+        self.upload_signed_artifacts(response, attestation_eligible,
+                                     failed_unsigned_verifications,
+                                     release_sbom)
 
-    return response
+        return response
+
+      return _run()
+
 
   def sign_ti50_paos(
       self,
