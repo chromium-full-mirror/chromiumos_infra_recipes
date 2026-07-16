@@ -1298,49 +1298,6 @@
   },
   {
     "cmd": [],
-    "name": "select policy.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "info",
-      "[START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "select policy.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "config",
-      "--get",
-      "remote.origin.url"
-    ],
-    "cwd": "[START_DIR]/chrome/src/chromeos",
-    "name": "select policy.get remote url for chrome/src/chromeos/CHROMEOS_LKGM",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "select policy.set chosen_policy_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
