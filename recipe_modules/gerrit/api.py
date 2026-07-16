@@ -774,6 +774,20 @@ class GerritApi(RecipeApi):
           f'https://{gerrit_change.host}/changes/{gerrit_change.change}/ready',
           {}, test_output_data='{}')
 
+  def add_change_hashtags_remote(self, gerrit_change: GerritChange,
+                                 hashtags: List[str]):
+    """Add hashtags to gerrit_change.
+
+    Args:
+      gerrit_change: The change to add hashtags to.
+      hashtags: The hashtags to add.
+    """
+    with self.m.step.nest(f'add hashtags on CL {gerrit_change.change}') as pres:
+      pres.logs['hashtags'] = self.m.json.dumps(hashtags)
+      self._do_post(
+          f'https://{gerrit_change.host}/changes/{gerrit_change.change}/hashtags',
+          {'add': hashtags}, test_output_data='{}')
+
   def _get_auth_token(self) -> Path:
     """Get a token from luci-auth with gerritcodereview scope.
 

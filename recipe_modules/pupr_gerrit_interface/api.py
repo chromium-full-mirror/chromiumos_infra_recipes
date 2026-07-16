@@ -17,6 +17,10 @@ from PB.recipes.chromeos.generator import CR_REJECT
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import DRY_RUN_NOT_APPROVED
 from PB.recipes.chromeos.generator import FULL_RUN
+from PB.recipes.chromeos.generator import MAX_CQ_RETRY_ACTION_ABANDON
+from PB.recipes.chromeos.generator import MAX_CQ_RETRY_ACTION_IGNORE
+from PB.recipes.chromeos.generator import MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE
+from PB.recipes.chromeos.generator import MaxCqRetryAction
 from PB.recipes.chromeos.generator import NO_RETRY
 from PB.recipes.chromeos.generator import OUTDATED_ABANDON
 from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
@@ -26,6 +30,7 @@ from PB.recipes.chromeos.generator import SUBMIT
 from PB.recipes.chromeos.generator import SendToCqPolicy
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_IGNORED
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 # HOSTS_REMOTES contains tuples (host, remote) representing our Gerrit
@@ -120,20 +125,27 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     return len(abandoned_cls) < len(open_changes)
 
   def handle_repeatedly_failing_changes(
-      self, open_changes: List[GerritChange], max_cq_retry: int,
-      should_count_dry_run: bool) -> List[GerritChange]:
-    """Abandon unpinned uprev CLs that have failed too many times and return the
-    remaining open CLs.
+      self,
+      open_changes: List[GerritChange],
+      max_cq_retry: int,
+      should_count_dry_run: bool,
+      max_cq_retry_action: MaxCqRetryAction = MAX_CQ_RETRY_ACTION_ABANDON,
+  ) -> List[GerritChange]:
+    """Abandon or set Verified-1 on unpinned uprev CLs that have failed too many
+    times and return the remaining open CLs.
 
     Args:
       open_changes: A list of currently open, relevant PUpr CLs.
       max_cq_retry: The maximum number of times an unpinned uprev CL is allowed
-        to fail full CQ before abandoning it. Negative number indicates no CL
-        should be abandoned no matter how many times it has failed.
+        to fail full CQ before abandoning or setting Verified-1. Negative
+        number indicates no CL should be abandoned/marked Verified-1 no matter
+        how many times it has failed.
       should_count_dry_run: Boolean flag to indicate whether dry run CQ+1
         should be counted.
+      max_cq_retry_action: The action to perform when a CL exceeds max_cq_retry.
+        Defaults to MAX_CQ_RETRY_ACTION_ABANDON.
     """
-    # Do not abandon any CL.
+    # Do not abandon or set Verified-1 on any CL.
     if max_cq_retry < 0:
       return open_changes
 
@@ -146,6 +158,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       open_patch_sets = self.m.gerrit.fetch_patch_sets(
           open_changes,
           include_messages=True,
+          include_detailed_labels=True,
       )
 
       failing_patchsets = []
@@ -162,13 +175,37 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       presentation.logs['max CQ retry'] = str(max_cq_retry)
 
     if failing_patchsets:
-      with self.m.step.nest('abandon unpinned CLs repeatedly failing CQ'):
-        for ps in failing_patchsets:
-          comment_message = (
-              'This CL is abandoned by PUpr since it has failed CQ > {} times.'
-          ).format(max_cq_retry)
-          self.m.gerrit.abandon_change(ps.to_gerrit_change_proto(),
-                                       message=comment_message)
+      if max_cq_retry_action == MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE:
+        with self.m.step.nest(
+            'set Verified-1 on unpinned CLs repeatedly failing CQ'):
+          for ps in failing_patchsets:
+            if not self.m.pupr.is_verified_minus_one_cl(ps):
+              comment_message = (
+                  'This CL is set to Verified-1 by PUpr since it has failed CQ > {} times.'
+              ).format(max_cq_retry)
+              self.m.gerrit.add_change_comment_remote(
+                  ps.to_gerrit_change_proto(), comment_message)
+              self.m.gerrit.set_change_labels_remote(
+                  ps.to_gerrit_change_proto(), {Label.VERIFIED: -1})
+      elif max_cq_retry_action == MAX_CQ_RETRY_ACTION_IGNORE:
+        with self.m.step.nest('ignore unpinned CLs repeatedly failing CQ'):
+          for ps in failing_patchsets:
+            if not self.m.pupr.is_cl_ignored(ps):
+              comment_message = (
+                  'This CL is ignored by PUpr since it has failed CQ > {} times.'
+              ).format(max_cq_retry)
+              self.m.gerrit.add_change_comment_remote(
+                  ps.to_gerrit_change_proto(), comment_message)
+              self.m.gerrit.add_change_hashtags_remote(
+                  ps.to_gerrit_change_proto(), [HASHTAG_IGNORED])
+      else:
+        with self.m.step.nest('abandon unpinned CLs repeatedly failing CQ'):
+          for ps in failing_patchsets:
+            comment_message = (
+                'This CL is abandoned by PUpr since it has failed CQ > {} times.'
+            ).format(max_cq_retry)
+            self.m.gerrit.abandon_change(ps.to_gerrit_change_proto(),
+                                         message=comment_message)
 
     return remaining_open_cls
 

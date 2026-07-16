@@ -11,6 +11,8 @@ from PB.chromiumos.common import GerritChange
 from PB.chromiumos.common import PackageInfo
 from PB.recipe_modules.chromeos.pupr_gerrit_interface.tests.tests import \
   HandleRepeatedlyFailingChangesProperties
+from PB.recipes.chromeos.generator import MAX_CQ_RETRY_ACTION_IGNORE
+from PB.recipes.chromeos.generator import MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE
 from RECIPE_MODULES.chromeos.gerrit.api import JSONObject
 from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
 from recipe_engine import post_process
@@ -57,6 +59,7 @@ def RunSteps(api: recipe_api.RecipeApi,
       properties.open_changes,
       max_cq_retry=properties.max_cq_retry,
       should_count_dry_run=properties.should_count_dry_run,
+      max_cq_retry_action=properties.max_cq_retry_action,
   )
   api.assertions.assertEqual(
       properties.expected_remaining_changes_number,
@@ -195,4 +198,70 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'get CLs repeatedly failing CQ'),
       api.post_check(post_process.DoesNotRun,
                      'abandon unpinned CLs repeatedly failing CQ'),
+  )
+
+  yield api.test(
+      'set Verified-1 on unpinned CLs failed too many times',
+      api.properties(
+          HandleRepeatedlyFailingChangesProperties(
+              open_changes=_create_gerrit_changes(4),
+              max_cq_retry=1,
+              expected_remaining_changes_number=[1234, 1236, 1237],
+              should_count_dry_run=False,
+              max_cq_retry_action=MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE,
+          )),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get CLs repeatedly failing CQ',
+          _create_gerrit_changes(4),
+          _create_gerrit_fetch_changes_response(
+              [1234, 1235, 1236, 1237],
+              [(1, False, False), (3, False, False), (0, False, False),
+               (5, True, False)],
+          ),
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'set Verified-1 on unpinned CLs repeatedly failing CQ',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'set Verified-1 on unpinned CLs repeatedly failing CQ.add comment on CL 1235',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'set Verified-1 on unpinned CLs repeatedly failing CQ.set labels on CL 1235',
+      ),
+  )
+
+  yield api.test(
+      'ignore unpinned CLs failed too many times',
+      api.properties(
+          HandleRepeatedlyFailingChangesProperties(
+              open_changes=_create_gerrit_changes(4),
+              max_cq_retry=1,
+              expected_remaining_changes_number=[1234, 1236, 1237],
+              should_count_dry_run=False,
+              max_cq_retry_action=MAX_CQ_RETRY_ACTION_IGNORE,
+          )),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get CLs repeatedly failing CQ',
+          _create_gerrit_changes(4),
+          _create_gerrit_fetch_changes_response(
+              [1234, 1235, 1236, 1237],
+              [(1, False, False), (3, False, False), (0, False, False),
+               (5, True, False)],
+          ),
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'ignore unpinned CLs repeatedly failing CQ',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'ignore unpinned CLs repeatedly failing CQ.add comment on CL 1235',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'ignore unpinned CLs repeatedly failing CQ.add hashtags on CL 1235',
+      ),
   )

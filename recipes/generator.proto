@@ -95,6 +95,21 @@ enum CrPolicy {
   CR_REJECT = 1;
 }
 
+// Describes the action to take when a CL exceeds max_cq_retry.
+enum MaxCqRetryAction {
+  // Action was not specified. Defaults to MAX_CQ_RETRY_ACTION_ABANDON.
+  MAX_CQ_RETRY_ACTION_UNSPECIFIED = 0;
+
+  // Abandon the CL.
+  MAX_CQ_RETRY_ACTION_ABANDON = 1;
+
+  // Set Verified-1 label on the CL instead of abandoning it.
+  MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE = 2;
+
+  // Leave a comment on the CL without abandoning or setting Verified-1.
+  MAX_CQ_RETRY_ACTION_IGNORE = 3;
+}
+
 // Ref to use for scheduled retries.
 // Pupr runs more often than necessary to look for failed CLs to retry.
 // This ref points to the repository containing retry-able CLs, i.e.
@@ -188,6 +203,10 @@ message BranchPolicy {
   // topic/projects meets or exceeds this limit, we should set CQ to 0 (not
   // start CQ) on new or retried CLs.
   int32 max_concurrent_cq_runs = 12;
+
+  // Action to take when a CL exceeds max_cq_retry. Defaults to
+  // MAX_CQ_RETRY_ACTION_ABANDON.
+  MaxCqRetryAction max_cq_retry_action = 13;
 }
 
 // Holds information needed for packages who need to fetch a file from the

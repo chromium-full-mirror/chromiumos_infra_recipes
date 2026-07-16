@@ -45,4 +45,5 @@ message HandleRepeatedlyFailingChangesProperties {
   int32 max_cq_retry = 2;
   repeated int32 expected_remaining_changes_number = 3;
   bool should_count_dry_run = 4;
+  recipes.chromeos.generator.MaxCqRetryAction max_cq_retry_action = 5;
 }

@@ -48,6 +48,8 @@ PASSED_DRY_RUN_RE = re.compile(
 HASHTAG_FREEZE_RETRIES = 'pupr-freeze-retries'
 # Magic hashtag to give a specific PUpr CL priority.
 HASHTAG_PINNED_RETRY = 'pupr-retry-pinned'
+# Magic hashtag to mark a CL as ignored by PUpr.
+HASHTAG_IGNORED = 'pupr-ignored'
 
 
 class RunState(Enum):
@@ -172,6 +174,22 @@ class PuprApi(recipe_api.RecipeApi):
     return any(HASHTAG_FREEZE_RETRIES in c.hashtags for c in changes)
 
   @staticmethod
+  def is_verified_minus_one_cl(c) -> bool:
+    """Return whether the CL (PatchSet) has Verified-1 label."""
+    if c.labels is not None:
+      label_info = c.labels.get('Verified', {})
+      if label_info.get('value') == -1:
+        return True
+      if any(x.get('value') == -1 for x in label_info.get('all', [])):
+        return True  # pragma: nocover
+    return False
+
+  @staticmethod
+  def is_cl_ignored(c) -> bool:
+    """Return whether the CL (PatchSet) has an ignore hashtag from PUpr."""
+    return HASHTAG_IGNORED in c.hashtags
+
+  @staticmethod
   def is_cl_pinned(cl) -> bool:
     """Return if the CL (PatchSet) is pinned."""
     return HASHTAG_PINNED_RETRY in cl.hashtags
@@ -242,6 +260,10 @@ class PuprApi(recipe_api.RecipeApi):
     if retry_policy not in [RETRY_LATEST_OR_LATEST_PINNED, RETRY_LATEST_PINNED]:
       return (None, 0, 'Not set to retry.', False, False)
 
+    open_cls = [
+        cl for cl in open_cls if self.is_cl_pinned(cl) or
+        (not self.is_verified_minus_one_cl(cl) and not self.is_cl_ignored(cl))
+    ]
     open_cls = sorted_cls(open_cls)
 
     # Helper functions to generate return value for retry.

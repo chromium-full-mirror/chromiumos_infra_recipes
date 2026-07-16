@@ -43,6 +43,7 @@ def RunSteps(api):
   api.assertions.assertEqual(applied_labels,
                              '{"labels": {"Code-Review": 2, "Verified": 1}}')
   api.gerrit.set_change_ready_for_review_remote(gerrit_change_remote)
+  api.gerrit.add_change_hashtags_remote(gerrit_change_remote, ['pupr-ignored'])
 
 
 def GenTests(api):
