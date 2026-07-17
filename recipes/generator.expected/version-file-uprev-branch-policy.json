@@ -252,10 +252,11 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@found 1 good triggers@@@",
       "@@@STEP_LOG_LINE@list of triggers@{@@@",
+      "@@@STEP_LOG_LINE@list of triggers@  \"id\": \"123\",@@@",
       "@@@STEP_LOG_LINE@list of triggers@  \"gitiles\": {@@@",
-      "@@@STEP_LOG_LINE@list of triggers@    \"repo\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@list of triggers@    \"ref\": \"refs/heads/snapshot\",@@@",
-      "@@@STEP_LOG_LINE@list of triggers@    \"revision\": \"50a00e4166dc7fca08f026792b8d53f751d536b7\"@@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"repo\": \"https://chromium.googlesource.com/chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"ref\": \"refs/tags/79.0.3945.20\",@@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
       "@@@STEP_LOG_LINE@list of triggers@  }@@@",
       "@@@STEP_LOG_LINE@list of triggers@}@@@",
       "@@@STEP_LOG_END@list of triggers@@@"
@@ -1340,25 +1341,136 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "https://chromium.googlesource.com/chromium/src.git",
+      "branch-heads/7871branch-heads/7871"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "select policy.git ls-remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "select policy.set chosen_policy_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"\", \"policy\": {\"existingClsPolicy\": \"DO_NOTHING\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}, \"reference\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"7871\", \"policy\": {\"existingClsPolicy\": \"DO_NOTHING\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"repl\": \"branch-heads/7871\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}, \"reference\": [\"7df59670d5e95a464e3f9cecd242586f7d4860ee\", \"refs/branch-heads/7871\"]}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"repl\": \"branch-heads/7871\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "checkout branch",
     "~followup_annotations": [
-      "@@@STEP_TEXT@using default branch@@@"
+      "@@@STEP_TEXT@using 7871 7df59670d5e95a464e3f9cecd242586f7d4860ee@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout branch.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[START_DIR]/chrome/src/chromeos",
+    "name": "checkout branch.get git root for chrome/src/chromeos/CHROMEOS_LKGM",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "origin",
+      "refs/branch-heads/7871:refs/remotes/branch-heads/7871"
+    ],
+    "cwd": "[START_DIR]/chrome/src/chromeos",
+    "infra_step": true,
+    "name": "checkout branch.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "-b",
+      "7871",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chrome/src/chromeos",
+    "infra_step": true,
+    "name": "checkout branch.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "branch.7871.remote",
+      "origin"
+    ],
+    "cwd": "[START_DIR]/chrome/src/chromeos",
+    "name": "checkout branch.set upstream remote for 7871",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "branch.7871.merge",
+      "refs/branch-heads/7871"
+    ],
+    "cwd": "[START_DIR]/chrome/src/chromeos",
+    "name": "checkout branch.set upstream merge for 7871",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1371,9 +1483,9 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_LINE@request@file_path: \"chrome/src/chromeos/CHROMEOS_LKGM\"@@@",
       "@@@STEP_LOG_LINE@request@versions {@@@",
-      "@@@STEP_LOG_LINE@request@  repository: \"/chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@request@  ref: \"refs/heads/snapshot\"@@@",
-      "@@@STEP_LOG_LINE@request@  revision: \"50a00e4166dc7fca08f026792b8d53f751d536b7\"@@@",
+      "@@@STEP_LOG_LINE@request@  repository: \"/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@request@  ref: \"refs/tags/79.0.3945.20\"@@@",
+      "@@@STEP_LOG_LINE@request@  revision: \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@uprev versions@16626.0.0-1076201@@@",
@@ -1393,9 +1505,9 @@
       "@@@STEP_LOG_LINE@request@  \"filePath\": \"chrome/src/chromeos/CHROMEOS_LKGM\",@@@",
       "@@@STEP_LOG_LINE@request@  \"versions\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"repository\": \"/chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"ref\": \"refs/heads/snapshot\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"revision\": \"50a00e4166dc7fca08f026792b8d53f751d536b7\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"repository\": \"/chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"ref\": \"refs/tags/79.0.3945.20\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -1421,7 +1533,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"filePath\": \"chrome/src/chromeos/CHROMEOS_LKGM\",\n  \"versions\": [\n    {\n      \"repository\": \"/chromeos/manifest-internal\",\n      \"ref\": \"refs/heads/snapshot\",\n      \"revision\": \"50a00e4166dc7fca08f026792b8d53f751d536b7\"\n    }\n  ]\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"filePath\": \"chrome/src/chromeos/CHROMEOS_LKGM\",\n  \"versions\": [\n    {\n      \"repository\": \"/chromium/src\",\n      \"ref\": \"refs/tags/79.0.3945.20\",\n      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -1614,7 +1726,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "chromeos/CHROMEOS_LKGM: Automatic uprev to 16626.0.0-1076201.\n\nGenerated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=CQ\n\nPupr-Upstream-Versions: [{\"ref\": \"refs/heads/snapshot\", \"repository\": \"/chromeos/manifest-internal\", \"revision\": \"50a00e4166dc7fca08f026792b8d53f751d536b7\"}]\nCq-Cl-Tag: pupr:chromeos-lkgm\n",
+      "chromeos/CHROMEOS_LKGM: Automatic uprev to 16626.0.0-1076201.\n\nGenerated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=CQ\n\nPupr-Upstream-Versions: [{\"ref\": \"refs/tags/79.0.3945.20\", \"repository\": \"/chromium/src\", \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"}]\nCq-Cl-Tag: pupr:chromeos-lkgm\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chrome/src",
@@ -1629,7 +1741,7 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=None@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=CQ@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Pupr-Upstream-Versions: [{\"ref\": \"refs/heads/snapshot\", \"repository\": \"/chromeos/manifest-internal\", \"revision\": \"50a00e4166dc7fca08f026792b8d53f751d536b7\"}]@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Pupr-Upstream-Versions: [{\"ref\": \"refs/tags/79.0.3945.20\", \"repository\": \"/chromium/src\", \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"}]@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: pupr:chromeos-lkgm@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
@@ -1661,6 +1773,62 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[START_DIR]/chrome/src/chromeos",
+    "name": "get git root for chrome/src/chromeos/CHROMEOS_LKGM"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "branch.pupr.remote",
+      "origin"
+    ],
+    "cwd": "[START_DIR]/chrome/src/chromeos",
+    "name": "set upstream remote for pupr in chrome/src/chromeos/CHROMEOS_LKGM"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "branch.pupr.merge",
+      "refs/branch-heads/7871"
+    ],
+    "cwd": "[START_DIR]/chrome/src/chromeos",
+    "name": "set upstream merge for pupr in chrome/src/chromeos/CHROMEOS_LKGM"
   },
   {
     "cmd": [],
