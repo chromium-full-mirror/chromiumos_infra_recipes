@@ -35,6 +35,11 @@ def RunSteps(api):
   api.assertions.assertEqual(change.project, 'baz')
   api.assertions.assertEqual(change.change, 789)
 
+  change = api.gerrit.create_change('wip_project', upload_options=['wip'])
+  api.assertions.assertEqual(change.host, 'host-review.googlesource.com')
+  api.assertions.assertEqual(change.project, 'wip_project')
+  api.assertions.assertEqual(change.change, 999)
+
   # Try creating a change for a project that does not exist in the checkout
   # (see test data) and ALSO does not have a project_path specified. This should
   # fail.
@@ -62,6 +67,10 @@ def GenTests(api):
       ),
       api.git_cl.issues('create gerrit change for baz',
                         {'refs/heads/remotebranch': '123'}),
+      api.gerrit.simulated_create_change(
+          'create gerrit change for wip_project',
+          'https://host-review.googlesource.com/c/wip_project/+/999'),
+      api.path.exists(api.src_state.workspace_path),
       api.step_data(
           'create gerrit change for foo.check if project foo exists.repo info',
           stderr=api.raw_io.output_text('project foo not found')),

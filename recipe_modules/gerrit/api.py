@@ -632,7 +632,8 @@ class GerritApi(RecipeApi):
                     hashtags: Optional[List[str]] = None,
                     project_path: Path = None, use_local_diff: bool = False,
                     non_repo_checkout: bool = False,
-                    upload_options: Optional[List[str]] = None) -> GerritChange:
+                    upload_options: Optional[List[str]] = None,
+                    send_mail: bool = True) -> GerritChange:
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
@@ -654,6 +655,8 @@ class GerritApi(RecipeApi):
         `project_path` is not within a repo checkout (and thus the method
         will skip `repo` calls used to gather optional information).
       upload_options: Additional options for git cl upload.
+      send_mail: If True, set --send-mail on git cl upload. Defaults to True,
+        but overridden to False if upload_options includes 'wip'.
 
     Returns:
       The newly created change.
@@ -693,8 +696,11 @@ class GerritApi(RecipeApi):
             remote_branch = '{}/{}'.format(self.m.git.remote(), branch)
             self.m.git.create_branch(branch, remote_branch)
 
+        if upload_options and 'wip' in upload_options:
+          send_mail = False
+
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
-                             hashtags=hashtags, send_mail=True,
+                             hashtags=hashtags, send_mail=send_mail,
                              target_branch=ref, use_local_diff=use_local_diff,
                              upload_options=upload_options, add_output_log=True)
         issue = None
