@@ -4,11 +4,16 @@
 
 """Test the PUpr triggering logic in cros_lkgm module."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'cros_lkgm',
     'cros_tags',
     'greenness',
@@ -19,13 +24,22 @@ DEPS = [
 
 def RunSteps(api):
   # 1. Create child builds.
-  builds = [
-      api.test_util.test_api.test_child_build(
-          builder='eve-snapshot', build_target_name='eve', critical='YES',
-          status='SUCCESS', tags=api.cros_tags.tags(**{
-              'relevance': 'relevant',
-          })).message,
-  ]
+  if api.properties.get('custom_builds'):
+    builds = [
+        api.test_util.test_api.test_child_build(
+            builder=b['builder'], build_target_name='target', critical='YES',
+            status=b.get('status', 'SUCCESS'), tags=api.cros_tags.tags(**{
+                'relevance': b.get('relevance', 'relevant'),
+            })).message for b in api.properties['custom_builds']
+    ]
+  else:
+    builds = [
+        api.test_util.test_api.test_child_build(
+            builder='eve-snapshot', build_target_name='eve', critical='YES',
+            status='SUCCESS', tags=api.cros_tags.tags(**{
+                'relevance': 'relevant',
+            })).message,
+    ]
 
   if api.properties.get('test_failed_builds'):
     for build in builds:
@@ -54,7 +68,9 @@ def GenTests(api):
   # Helper to generate test cases.
   def build_test(name, enable_pupr, test_failed_builds, expected_pupr_triggered,
                  builder='release-main-orchestrator', no_builds=False,
-                 custom_pupr_builder_name='cros_lkgm.pupr', extra_checks=None):
+                 custom_pupr_builder_name='cros_lkgm.pupr',
+                 required_green_builders=None, custom_builds=None,
+                 extra_checks=None):
     # Prepare properties.
     lkgm_props = {
         'enable_lkgm': True,
@@ -63,6 +79,8 @@ def GenTests(api):
     }
     if custom_pupr_builder_name:
       lkgm_props['pupr_builder_name'] = custom_pupr_builder_name
+    if required_green_builders is not None:
+      lkgm_props['required_green_builders'] = required_green_builders
 
     props = {
         '$chromeos/greenness': {
@@ -73,6 +91,8 @@ def GenTests(api):
         'no_builds': no_builds,
         'some_arbitrary_input_prop': 'hello-world',
     }
+    if custom_builds:
+      props['custom_builds'] = custom_builds
 
     if custom_pupr_builder_name:
       job_base_name = custom_pupr_builder_name
@@ -139,6 +159,73 @@ def GenTests(api):
                              '"project": "chromeos"',
                              '"job": "custom-pupr-job"',
                          ]),
+      ])
+
+  yield build_test(
+      'pupr-required-builders-all-green', enable_pupr=True,
+      test_failed_builds=False, expected_pupr_triggered=True,
+      required_green_builders=['eve-snapshot'], custom_builds=[{
+          'builder': 'eve-snapshot',
+          'status': 'SUCCESS',
+          'relevance': 'relevant'
+      }])
+
+  yield build_test(
+      'pupr-required-builders-not-green', enable_pupr=True,
+      test_failed_builds=False, expected_pupr_triggered=False,
+      required_green_builders=['eve-snapshot', 'kevin-snapshot'],
+      custom_builds=[
+          {
+              'builder': 'eve-snapshot',
+              'status': 'SUCCESS',
+              'relevance': 'relevant'
+          },
+          {
+              'builder': 'kevin-snapshot',
+              'status': 'FAILURE',
+              'relevance': 'relevant'
+          },
+      ], extra_checks=[
+          api.post_check(post_process.StepTextContains, 'do lkgm via pupr',
+                         ["required builders not green: ['kevin-snapshot']"])
+      ])
+
+  last_snapshot_output = build_pb2.Build.Output()
+  last_snapshot_output.properties['greenness'] = {
+      'builderGreenness': [{
+          'buildMetric': '100',
+          'metric': '100',
+          'builder': 'eve-snapshot',
+      }]
+  }
+  last_snapshot_build = build_pb2.Build(
+      id=123, status=common_pb2.SUCCESS, output=last_snapshot_output,
+      input=build_pb2.Build.Input(
+          gitiles_commit=common_pb2.GitilesCommit(id='ababab')))
+
+  yield build_test(
+      'pupr-required-builders-none-relevant', enable_pupr=True,
+      test_failed_builds=False, expected_pupr_triggered=False,
+      required_green_builders=['eve-snapshot'], custom_builds=[{
+          'builder': 'eve-snapshot',
+          'status': 'SUCCESS',
+          'relevance': 'not relevant',
+      }], extra_checks=[
+          api.buildbucket.simulated_search_results(
+              builds=[last_snapshot_build],
+              step_name='getting last snapshot greenness.buildbucket.search'),
+          api.step_data('getting last snapshot greenness.last snapshot.git log',
+                        api.raw_io.stream_output_text('ababab\n')),
+          api.post_check(post_process.StepTextContains, 'do lkgm via pupr',
+                         ['no required builder is relevant']),
+      ])
+
+  yield build_test(
+      'pupr-required-builders-missing', enable_pupr=True,
+      test_failed_builds=False, expected_pupr_triggered=False,
+      required_green_builders=['missing-snapshot'], extra_checks=[
+          api.post_check(post_process.StepTextContains, 'do lkgm via pupr',
+                         ["required builders not green: ['missing-snapshot']"])
       ])
 
   yield build_test(

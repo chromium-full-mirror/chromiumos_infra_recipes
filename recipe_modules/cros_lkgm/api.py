@@ -49,6 +49,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     self._pupr_builder_name = properties.pupr_builder_name
     self._full_run = properties.full_run
     self._builder_threshold_percentage = properties.builder_threshold_percentage
+    self._required_green_builders = properties.required_green_builders
     self._public_build = None
     self._public_build_results = None
     super().__init__(*args, **kwargs)
@@ -284,8 +285,9 @@ class CrosLkgmApi(recipe_api.RecipeApi):
   def do_lkgm_via_pupr(self, gitiles_commit: GitilesCommit):
     """Triggers cros_lkgm.pupr if conditions are met.
 
-    Checks if enable_pupr is True, and if builder aggregated greenness
-    is >= builder_threshold_percentage.
+    Checks if enable_pupr is True, if builder aggregated greenness
+    is >= builder_threshold_percentage, and if configured required builders
+    are all green with at least one being relevant.
 
     Args:
       gitiles_commit: GitilesCommit to trigger from.
@@ -316,10 +318,28 @@ class CrosLkgmApi(recipe_api.RecipeApi):
             'aggregated greenness: {:.2f}%, threshold: {:d}%'.format(
                 aggregated_greenness, self._builder_threshold_percentage))
 
-        if aggregated_greenness >= self._builder_threshold_percentage:
-          self._trigger_pupr(gitiles_commit)
-        else:
+        if aggregated_greenness < self._builder_threshold_percentage:
           presentation.step_text += ' (below threshold, skipping PUpr)'
+        elif self._required_green_builders:
+          not_green_builders = [
+              b for b in self._required_green_builders
+              if b not in self.m.greenness.builder_greenness_dict or
+              self.m.greenness.builder_greenness_dict[b].build_score != 100
+          ]
+          has_relevant = any(self.m.greenness.builder_greenness_dict[b].relevant
+                             for b in self._required_green_builders
+                             if b in self.m.greenness.builder_greenness_dict)
+          if not_green_builders:
+            presentation.step_text += (
+                f' (required builders not green: {not_green_builders}, skipping PUpr)'
+            )
+          elif not has_relevant:
+            presentation.step_text += (
+                ' (no required builder is relevant, skipping PUpr)')
+          else:
+            self._trigger_pupr(gitiles_commit)
+        else:
+          self._trigger_pupr(gitiles_commit)
       except Exception as e:  # pylint: disable=broad-exception-caught
         presentation.status = self.m.step.FAILURE
         presentation.step_text = f'failed: {e}'

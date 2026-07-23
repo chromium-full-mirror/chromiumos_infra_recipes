@@ -26,4 +26,8 @@ message CrosLkgmProperties {
 
   // The name of the PUpr builder to trigger.
   string pupr_builder_name = 6;
+
+  // Particular list of builders that must all be green (and at least one of
+  // them relevant) for LKGM uprev to trigger.
+  repeated string required_green_builders = 7;
 }
