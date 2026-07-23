@@ -133,6 +133,72 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(post_process.DropExpectation),
   )
 
+  yield api.test(
+      'additional-commit-info',
+      api.step_data(
+          'try uprev chrome/src/chromeos/CHROMEOS_LKGM.uprev version file'
+          '.read output file',
+          api.file.read_raw(
+              content=json.dumps({
+                  'responses': [{
+                      'version': '16626.0.0-1076201',
+                      'modified_files':
+                          ['[START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM'],
+                      'additional_commit_info': 'Extra details about LKGM uprev'
+                  }]
+              }))),
+      api.git.diff_check(True),
+      api.step_data(
+          'commit uprev.commit in chrome.git remote',
+          api.raw_io.stream_output_text(
+              'https://chromium.googlesource.com/a/chromium/src.git')),
+      api.post_check(post_process.MustRun, 'commit uprev'),
+      api.post_check(
+          post_process.StepCommandRE,
+          'commit uprev.commit in chrome.write commit message',
+          [
+              '.*', '.*', '.*', '.*', '.*', '.*',
+              r'(?s).*\n\nExtra details about LKGM uprev\n.*', '.*'
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'repo-file-additional-commit-info',
+      api.step_data(
+          'try uprev chrome/src/chromeos/CHROMEOS_LKGM.uprev version file'
+          '.read output file',
+          api.file.read_raw(
+              content=json.dumps({
+                  'responses': [{
+                      'version':
+                          '16626.0.0-1076201',
+                      'modified_files': [
+                          '[START_DIR]/chromiumos_workspace/src/overlay/modified_file'
+                      ],
+                      'additional_commit_info':
+                          'Extra details about repo file uprev'
+                  }]
+              }))),
+      api.repo.project_infos_step_data('commit uprev', data=[
+          {
+              'project': 'src/overlay'
+          },
+      ], iteration=1),
+      api.git.diff_check(True),
+      api.post_check(post_process.MustRun, 'commit uprev'),
+      api.post_check(
+          post_process.StepCommandRE,
+          'commit uprev.commit in overlay.write commit message',
+          [
+              '.*', '.*', '.*', '.*', '.*', '.*',
+              r'(?s).*\n\nExtra details about repo file uprev\n.*', '.*'
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
   # No changes detected
   yield api.test(
       'no-uprev-change',

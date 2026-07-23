@@ -561,6 +561,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
             self.m.git.delete_local_branch('pupr')
           self.m.git.checkout(branch='pupr')
 
+      # TODO(b/493779542): Unify the two commit paths below (repo_files_by_project and chrome_files).
       # For each repository, make the commit.
       modified_projects = []
       for project, paths in sorted(repo_files_by_project.items()):
@@ -577,11 +578,17 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
                 repository=v.repository, ref=v.ref, revision=v.revision)
             for v in versions
         ]
+        additional_msg = '\n'.join(
+            sorted(
+                set(r.additional_commit_info
+                    for r in uprev_file_responses
+                    if r.additional_commit_info)))
         commit_message = self._create_commit_message(
             prefix,
             uprevved_versions,
             topic,
             target_refs=target_refs,
+            additional_msg=additional_msg,
             change_id=change_id,
         )
         with self.m.step.nest(f'commit in {name}'), self.m.context(cwd=root):
@@ -604,11 +611,17 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
             for p in chrome_files
         ]
         prefix = ', '.join(rel_paths)
+        additional_msg = '\n'.join(
+            sorted(
+                set(r.additional_commit_info
+                    for r in uprev_file_responses
+                    if r.additional_commit_info)))
         commit_message = self._create_commit_message(
             prefix,
             uprevved_versions,
             topic,
             target_refs=target_refs,
+            additional_msg=additional_msg,
             change_id=change_id,
         )
         with self.m.step.nest('commit in chrome'), self.m.context(
