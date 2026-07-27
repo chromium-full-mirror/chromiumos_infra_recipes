@@ -12195,6 +12195,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "Version: 1234.56.0-111111\n\nOverall Greenness Score: 100, Build Only Greenness Score: 100"
+    "summaryMarkdown": "Version: 1234.56.0-111111\n\nOverall Greenness Score: 100, Build Only Greenness Score: 100\n\nLKGM skipped: PUpr is not enabled"
   }
 ]

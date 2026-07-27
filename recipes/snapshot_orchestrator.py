@@ -59,6 +59,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
     summary_markdown = f'Version: {version_str}'
     if api.greenness.greenness_markdown:
       summary_markdown += f'\n\n{api.greenness.greenness_markdown}'
+    if api.cros_lkgm.lkgm_skipped_reason:
+      summary_markdown += f'\n\nLKGM skipped: {api.cros_lkgm.lkgm_skipped_reason}'
     if raw_result.summary_markdown:
       summary_markdown += '\n\n'
       summary_markdown += raw_result.summary_markdown
@@ -215,6 +217,32 @@ def GenTests(api: RecipeTestApi):
       *schedule_builds_test_data, with_manifest_refs=True,
       collect_builds=crit_failure_build_results, status='FAILURE',
       builder='snapshot-orchestrator')
+
+  pupr_skipped_props = api.properties(
+      **{
+          '$chromeos/greenness': {
+              'publish_property': True
+          },
+          '$chromeos/cros_lkgm': {
+              'enable_lkgm': True,
+              'enable_pupr': True,
+              'pupr_builder_name': 'cros_lkgm-pupr',
+              'builder_threshold_percentage': 100,
+              'full_run': True
+          }
+      })
+
+  yield api.snapshot_orch_menu.test(
+      'pupr-skipped-below-threshold', data.ctp_normal, pupr_skipped_props,
+      api.cros_snapshot.simulated_snapshot_identifier(111111),
+      *schedule_builds_test_data,
+      api.post_check(post_process.DoesNotRun,
+                     'do lkgm via pupr.trigger cros_lkgm-pupr'),
+      api.post_check(
+          post_process.SummaryMarkdownRE,
+          r'LKGM skipped: aggregated greenness: \d+\.\d+%, threshold: 100% \(below threshold\)'
+      ), with_manifest_refs=True, collect_builds=crit_failure_build_results,
+      status='FAILURE', builder='snapshot-orchestrator')
 
   collect, collect_after = api.orch_menu.orch_child_builds(
       'snapshot-orchestrator', '-snapshot')

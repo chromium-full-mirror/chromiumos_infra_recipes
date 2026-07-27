@@ -52,7 +52,40 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     self._required_green_builders = properties.required_green_builders
     self._public_build = None
     self._public_build_results = None
+    self._lkgm_skipped_reason = None
     super().__init__(*args, **kwargs)
+
+  @property
+  def lkgm_skipped_reason(self) -> str | None:
+    """Return why LKGM was skipped, if applicable."""
+    return self._lkgm_skipped_reason
+
+  @staticmethod
+  def _format_builder_names(names: List[str]) -> str:
+    """Formats a list of builder names concisely, e.g. prefix-{board1,board2}-suffix."""
+    if not names:  # pragma: no cover
+      return ''
+    unique_names = list(dict.fromkeys(names))
+    if len(unique_names) == 1:
+      return unique_names[0]
+
+    # Find longest common prefix.
+    prefix = unique_names[0]
+    for name in unique_names[1:]:
+      while not name.startswith(prefix):
+        prefix = prefix[:-1]
+
+    # Find longest common suffix among remainders.
+    suffix = unique_names[0][len(prefix):]
+    for name in unique_names[1:]:
+      name_remaining = name[len(prefix):]
+      while not name_remaining.endswith(suffix):
+        suffix = suffix[1:]
+
+    middles = [
+        name[len(prefix):len(name) - len(suffix)] for name in unique_names
+    ]
+    return f'{prefix}{{{",".join(middles)}}}{suffix}'
 
   @property
   def has_public_build(self):
@@ -293,11 +326,13 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       gitiles_commit: GitilesCommit to trigger from.
     """
     if not self._enable_pupr:
+      self._lkgm_skipped_reason = 'PUpr is not enabled'
       return
 
     with self.m.step.nest('do lkgm via pupr') as presentation:
       if not self._pupr_builder_name:
         presentation.step_text = 'no PUpr builder name configured, skipping'
+        self._lkgm_skipped_reason = 'no PUpr builder name configured'
         return
 
       # Intentionally catch all exceptions to ensure we do not break snapshot
@@ -320,6 +355,9 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
         if aggregated_greenness < self._builder_threshold_percentage:
           presentation.step_text += ' (below threshold, skipping PUpr)'
+          self._lkgm_skipped_reason = (
+              f'aggregated greenness: {aggregated_greenness:.2f}%, threshold:'
+              f' {self._builder_threshold_percentage}% (below threshold)')
         elif self._required_green_builders:
           not_green_builders = [
               b for b in self._required_green_builders
@@ -330,19 +368,31 @@ class CrosLkgmApi(recipe_api.RecipeApi):
                              for b in self._required_green_builders
                              if b in self.m.greenness.builder_greenness_dict)
           if not_green_builders:
+            formatted_not_green = self._format_builder_names(not_green_builders)
             presentation.step_text += (
-                f' (required builders not green: {not_green_builders}, skipping PUpr)'
+                f' (required builders not green: {formatted_not_green}, skipping PUpr)'
             )
+            self._lkgm_skipped_reason = (
+                f'required builders not green: {formatted_not_green}')
           elif not has_relevant:
+            formatted_required = self._format_builder_names(
+                self._required_green_builders)
             presentation.step_text += (
-                ' (no required builder is relevant, skipping PUpr)')
+                f' (at least one required builder in {formatted_required} needs to be relevant, skipping PUpr)'
+            )
+            self._lkgm_skipped_reason = (
+                f'at least one required builder in {formatted_required} needs to be relevant'
+            )
           else:
+            self._lkgm_skipped_reason = None
             self._trigger_pupr(gitiles_commit)
         else:
+          self._lkgm_skipped_reason = None
           self._trigger_pupr(gitiles_commit)
       except Exception as e:  # pylint: disable=broad-exception-caught
         presentation.status = self.m.step.FAILURE
         presentation.step_text = f'failed: {e}'
+        self._lkgm_skipped_reason = f'failed: {e}'
 
   def _trigger_pupr(self, gitiles_commit: GitilesCommit):
     is_staging = self.m.cros_infra_config.is_staging
