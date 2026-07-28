@@ -231,6 +231,54 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           post_process.MustRun,
           'set Verified-1 on unpinned CLs repeatedly failing CQ.set labels on CL 1235',
       ),
+      api.post_check(
+          post_process.LogContains,
+          'set Verified-1 on unpinned CLs repeatedly failing CQ.set labels on CL 1235',
+          'labels', ['"Verified": -1', '"Bot-Commit": 0', '"Code-Review": 2']),
+      api.post_check(
+          post_process.MustRun,
+          'set Verified-1 on unpinned CLs repeatedly failing CQ.add hashtags on CL 1235',
+      ),
+  )
+
+  fetch_response_cr1 = _create_gerrit_fetch_changes_response(
+      [1234, 1235, 1236, 1237],
+      [(1, False, False), (3, False, False), (0, False, False),
+       (5, True, False)],
+  )
+  fetch_response_cr1[1235]['labels'] = {
+      'Code-Review': {
+          'values': {
+              '-1': 'No',
+              '0': 'No score',
+              '1': 'Approved'
+          }
+      }
+  }
+
+  yield api.test(
+      'set Verified-1 on unpinned CLs failed too many times cr1',
+      api.properties(
+          HandleRepeatedlyFailingChangesProperties(
+              open_changes=_create_gerrit_changes(4),
+              max_cq_retry=1,
+              expected_remaining_changes_number=[1234, 1236, 1237],
+              should_count_dry_run=False,
+              max_cq_retry_action=MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE,
+          )),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get CLs repeatedly failing CQ',
+          _create_gerrit_changes(4),
+          fetch_response_cr1,
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'set Verified-1 on unpinned CLs repeatedly failing CQ',
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'set Verified-1 on unpinned CLs repeatedly failing CQ.set labels on CL 1235',
+          'labels', ['"Verified": -1', '"Bot-Commit": 0', '"Code-Review": 1']),
   )
 
   yield api.test(

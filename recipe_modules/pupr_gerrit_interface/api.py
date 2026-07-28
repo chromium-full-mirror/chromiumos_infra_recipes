@@ -185,8 +185,16 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
               ).format(max_cq_retry)
               self.m.gerrit.add_change_comment_remote(
                   ps.to_gerrit_change_proto(), comment_message)
+              max_cr = self._get_max_code_review(ps)
               self.m.gerrit.set_change_labels_remote(
-                  ps.to_gerrit_change_proto(), {Label.VERIFIED: -1})
+                  ps.to_gerrit_change_proto(), {
+                      Label.VERIFIED: -1,
+                      Label.BOT_COMMIT: 0,
+                      Label.CODE_REVIEW: max_cr,
+                  })
+            if not self.m.pupr.is_cl_ignored(ps):
+              self.m.gerrit.add_change_hashtags_remote(
+                  ps.to_gerrit_change_proto(), [HASHTAG_IGNORED])
       elif max_cq_retry_action == MAX_CQ_RETRY_ACTION_IGNORE:
         with self.m.step.nest('ignore unpinned CLs repeatedly failing CQ'):
           for ps in failing_patchsets:
@@ -488,6 +496,25 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
         self.m.git_cl.upload(send_mail=True, title=title,
                              description=description)
+
+  def _get_max_code_review(self, change_or_patchset) -> int:
+    """Get the maximum allowed positive Code-Review label value (+2 or +1)."""
+    change_info = getattr(change_or_patchset, '_change_info',
+                          change_or_patchset)
+
+    if isinstance(change_info, dict):
+      cr_label = (change_info.get('labels') or {}).get('Code-Review') or {}
+      if isinstance(cr_label, dict):
+        values = cr_label.get('values') or {}
+        pos_values = [
+            int(k)
+            for k in values.keys()
+            if k.lstrip('-+ ').isdigit() and int(k) > 0
+        ]
+        if pos_values:
+          return max(pos_values)
+
+    return 2
 
   def retry_cl(self, patch_set: PatchSet, cq_label: int):
     """Retry sending the CL through CQ by setting its Gerrit labels."""

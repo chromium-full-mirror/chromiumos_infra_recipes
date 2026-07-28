@@ -190,7 +190,15 @@
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"labels\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"Code-Review\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"values\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"-1\": \"No\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"0\": \"No score\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"1\": \"Approved\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"date\": 1234,@@@",
@@ -434,7 +442,7 @@
     "name": "set Verified-1 on unpinned CLs repeatedly failing CQ.set labels on CL 1235",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 0, \"Code-Review\": 2, \"Verified\": -1}@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 0, \"Code-Review\": 1, \"Verified\": -1}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/1235@@@"
     ]
@@ -488,7 +496,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"labels\": {\"Bot-Commit\": 0, \"Code-Review\": 2, \"Verified\": -1}}",
+      "{\"labels\": {\"Bot-Commit\": 0, \"Code-Review\": 1, \"Verified\": -1}}",
       "https://chromium-review.googlesource.com/changes/1235/revisions/current/review"
     ],
     "name": "set Verified-1 on unpinned CLs repeatedly failing CQ.set labels on CL 1235.curl https://chromium-review.googlesource.com/changes/1235/revisions/current/review",
