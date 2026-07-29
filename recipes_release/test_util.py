@@ -9,7 +9,7 @@ import subprocess
 
 SUBPROCESS_KWARGS = {
     'encoding': 'utf-8',
-    'capture_output': True,
+    'stdout': subprocess.PIPE,
     'check': True,
 }
 

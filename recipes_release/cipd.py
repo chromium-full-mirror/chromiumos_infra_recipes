@@ -24,7 +24,7 @@ def _cipd_ref_to_instance_id(ref: common.CipdRef) -> common.CipdInstance:
   infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes:jSHBVU-ZzC8Pbi2hlc0r89wukZBQ9EYZKK7TX1zmboIC
   """
   p = subprocess.run(['cipd', 'resolve', '-version', ref, common.RECIPE_BUNDLE],
-                     capture_output=True, encoding='utf-8', check=True)
+                     stdout=subprocess.PIPE, encoding='utf-8', check=True)
   stdout = [line.strip() for line in p.stdout.split('\n') if line]
   instance_id = stdout[-1].split(':')[-1]
   assert len(instance_id.split()) == 1, instance_id
@@ -46,7 +46,7 @@ def cipd_version_to_githash(version: common.CipdVersion) -> common.GitHash:
     git_revision:1114d30c71229c5cd470df15f863e9ddcfff6fb5
   """
   cmd = ['cipd', 'describe', '-version', version, common.RECIPE_BUNDLE]
-  p = subprocess.run(cmd, encoding='utf-8', capture_output=True, check=True)
+  p = subprocess.run(cmd, stdout=subprocess.PIPE, encoding='utf-8', check=True)
   lines = p.stdout.split('\n')
   git_rev_lines = [line for line in lines if 'git_revision' in line]
   assert len(git_rev_lines) >= 1, lines
