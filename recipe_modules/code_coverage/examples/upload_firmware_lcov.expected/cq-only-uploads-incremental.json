@@ -8447,7 +8447,9 @@
       "--format",
       "LCOV",
       "--coverage_file",
-      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file"
+      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
+      "--timeout",
+      "2m"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "luci_context": {

@@ -626,6 +626,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             coverage_type,
             '--coverage_file',
             str(path),
+            '--timeout',
+            '2m',
         ],
         stdout=self.m.raw_io.output(add_output_log=True),
         stderr=self.m.raw_io.output(add_output_log=True),
