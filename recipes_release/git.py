@@ -128,7 +128,7 @@ def _get_cipd_instance(commit: Commit) -> str:
 def _is_older_than(maybe_older_hash: str, commit_hash: str) -> bool:
   """Determines if one commit is older (i.e. is an ancestor) of the other."""
   cmd = ['git', 'merge-base', '--is-ancestor', maybe_older_hash, commit_hash]
-  p = subprocess.run(cmd, capture_output=True, text=True)  #pylint: disable=subprocess-run-check
+  p = subprocess.run(cmd, capture_output=True, text=True, check=False)
   if p.returncode == 0:
     return True
   if p.returncode == 1:
