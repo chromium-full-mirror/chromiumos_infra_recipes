@@ -116,7 +116,7 @@ def _get_cipd_instance(commit: Commit) -> str:
   """Find the recipe bundle instance that contains up to this commit."""
   tag = f'git_revision:{commit.hash}'
   cmd = ['cipd', 'search', common.RECIPE_BUNDLE, '-tag', tag]
-  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+  p = subprocess.run(cmd, capture_output=True, encoding='utf-8', check=True)
 
   for line in [line.strip() for line in p.stdout.split('\n')]:
     if line.startswith(common.RECIPE_BUNDLE):
@@ -128,7 +128,7 @@ def _get_cipd_instance(commit: Commit) -> str:
 def _is_older_than(maybe_older_hash: str, commit_hash: str) -> bool:
   """Determines if one commit is older (i.e. is an ancestor) of the other."""
   cmd = ['git', 'merge-base', '--is-ancestor', maybe_older_hash, commit_hash]
-  p = subprocess.run(cmd, capture_output=True, text=True, check=False)
+  p = subprocess.run(cmd, capture_output=True, encoding='utf-8', check=False)
   if p.returncode == 0:
     return True
   if p.returncode == 1:
@@ -155,8 +155,8 @@ def get_pending_changes(recipes_dir: str, from_hash: common.GitHash,
       'git', 'log', '--graph', f'--pretty=format:{fmt}',
       f'{from_hash}..{to_hash}'
   ]
-  p = subprocess.run(cmd, capture_output=True, text=True, cwd=recipes_dir,
-                     check=True)
+  p = subprocess.run(cmd, capture_output=True, encoding='utf-8',
+                     cwd=recipes_dir, check=True)
   lines = [line.strip().lstrip('* ') for line in p.stdout.split('\n')]
   changes = []
   for line in lines:

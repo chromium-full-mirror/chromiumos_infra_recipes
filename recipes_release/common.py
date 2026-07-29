@@ -52,5 +52,6 @@ def get_timestamp(fmt: str = ''):
   cmd = ['date']
   if fmt:
     cmd.append(f'+{fmt}')
-  p = subprocess.run(cmd, capture_output=True, text=True, env=env, check=True)
+  p = subprocess.run(cmd, capture_output=True, encoding='utf-8', env=env,
+                     check=True)
   return p.stdout.strip()

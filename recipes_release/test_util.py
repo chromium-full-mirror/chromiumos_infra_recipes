@@ -8,7 +8,7 @@
 import subprocess
 
 SUBPROCESS_KWARGS = {
-    'text': True,
+    'encoding': 'utf-8',
     'capture_output': True,
     'check': True,
 }

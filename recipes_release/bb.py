@@ -42,7 +42,7 @@ def _get_affected_recipes(changes: Tuple[git.Commit],
   cmd = [
       'git', 'diff', '--name-only', newest_change.hash, f'{oldest_change.hash}~'
   ]
-  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+  p = subprocess.run(cmd, capture_output=True, encoding='utf-8', check=True)
   affected_files = p.stdout.strip().split()
 
   with tempfile.NamedTemporaryFile(mode='w') as input_file, \
@@ -79,7 +79,7 @@ def get_affected_recipes(changes: List[git.Commit],
 def get_builder_recipe(builder: str):
   """Get the recipe used by the given builder."""
   cmd = ['led', 'get-builder', builder]
-  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+  p = subprocess.run(cmd, capture_output=True, encoding='utf-8', check=True)
   builder_data = json.loads(p.stdout)
   return builder_data['buildbucket']['bbagent_args']['build']['input'][
       'properties']['recipe']
@@ -125,7 +125,7 @@ def return_builders_for_regex(project: str, bucket: str,
   """Return the list of builders matching a certain regex."""
   r = re.compile(regex)
   cmd = ('bb', 'builders', '/'.join((project, bucket)))
-  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+  p = subprocess.run(cmd, capture_output=True, encoding='utf-8', check=True)
 
   ret = []
   for line in p.stdout.split('\n'):
@@ -143,7 +143,7 @@ def return_builders_for_regex(project: str, bucket: str,
 
 def _bb_ls(*args) -> List[Dict]:
   cmd = ['bb', 'ls', '-json'] + list(args)
-  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+  p = subprocess.run(cmd, capture_output=True, encoding='utf-8', check=True)
   builds = []
   for line in p.stdout.split('\n'):
     if not line:
