@@ -8,6 +8,7 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 from typing import List, Optional, Tuple
+import datetime
 import json
 import re
 import base64
@@ -35,6 +36,7 @@ DEPS = [
     'recipe_engine/scheduler',
     'recipe_engine/step',
     'recipe_engine/raw_io',
+    'recipe_engine/url',
     'easy',
     'gerrit',
     'test_util',
@@ -158,10 +160,110 @@ CHROME_BEST_REVISION_FIELDS_TO_RETRIEVE = [
 ]
 
 
-def BestChromeRevision(api: RecipeApi) -> int | None:
+def ShouldCheckChromeBestRevision(api: RecipeApi,
+                                  milestone: int) -> tuple[bool, bool]:
+  """Check if we should run WaitChromeBestRevision and allow 12h failure bypass.
+
+  Returns:
+    (should_check, allow_12h_failure)
+    - diff_days > 3: (False, False) -> No check.
+        Rationale: On every ChromeOS branch, each uprev moves Chrome forward
+        along its corresponding Chrome branching tree. Even without this CL,
+        within-milestone build number consistency is not strictly enforced
+        since Chrome may turn green during a subsequent uprev CQ retry attempt
+        when the target build number has already bumped. We only force-fail
+        when the milestone has bumped regardless of best revision status,
+        ensuring a larger Portage version number corresponds to newer Chrome
+        commits on the Chrome tree at cross-milestone timing so real
+        dev/beta/stable release uprevs do not downgrade commits.
+    - 1 < diff_days <= 3: (True, True) -> Check, allow 12h failure bypass.
+        Rationale: Chrome automated milestone branch cut only looks at good
+        revisions from the past 8 hours. If all continuous builds in the past
+        12 hours are red, automatic milestone bump will fail, requiring human
+        release managers to manually bump the milestone after fixing things. A
+        manual milestone bump will occur at a newer commit, so real
+        dev/beta/stable releases will not be downgraded even if we allow
+        submission when nothing is green in the past 12 hours.
+    - diff_days <= 1: (True, False) -> Check, strictly ensure
+        best_revision >= target.
+        Rationale: Within 1 day before branch cut, on branch day, or past branch
+        cut (e.g. yesterday, diff_days <= 1), cross-milestone branch cut is
+        imminent or completed. We strictly enforce best_revision >= target to
+        guarantee a larger Portage version number always points to newer Chrome
+        commits.
+  """
+  try:
+    url = f'https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone={milestone}'
+    now_ts = int(api.time.time())
+    res = api.url.get_json(
+        url,
+        step_name='fetch Chrome milestone schedule',
+    )
+    output = res.output or {}
+    branch_date_str = None
+    if isinstance(output, dict):
+      mstones = output.get('mstones', [])
+      if isinstance(mstones, list):
+        for item in mstones:
+          if isinstance(item, dict) and item.get('mstone') == milestone:
+            branch_date_str = item.get('branch_point') or item.get(
+                'branch_date')
+            break
+      if not branch_date_str:
+        branch_date_str = output.get('branch_point') or output.get(
+            'branch_date')
+
+    if not branch_date_str:
+      # If schedule cannot be determined, fall back safely to strict check.
+      return True, False
+
+    branch_dt = datetime.datetime.fromisoformat(
+        branch_date_str.replace('Z', '+00:00'))
+    if branch_dt.tzinfo is None:
+      branch_dt = branch_dt.replace(tzinfo=datetime.timezone.utc)
+    branch_ts = branch_dt.timestamp()
+
+    diff_days = (branch_ts - now_ts) / 86400.0
+
+    # Rule 1: > 3 days before branch date -> No check.
+    # On every ChromeOS branch, each uprev moves Chrome forward along its
+    # corresponding Chrome branching tree. Even without this CL,
+    # within-milestone build number consistency is not strictly enforced since
+    # Chrome may turn green during a subsequent uprev CQ retry attempt when
+    # the target build number has already bumped. We only ensure a larger
+    # Portage version number corresponds to newer Chrome commits on the Chrome
+    # tree at cross-milestone timing, so real dev/beta/stable release uprevs do
+    # not downgrade commits.
+    if diff_days > 3:
+      return False, False
+
+    # Rule 2: > 1 day before branch date (1 < diff_days <= 3) -> Check, allow
+    # 12h failure bypass.
+    # Chrome automated milestone branch cut only looks at good revisions from
+    # the past 8 hours. If all continuous builds in the past 12 hours are red,
+    # automatic milestone bump will fail. Human release managers must manually
+    # bump the milestone after fixing things, which means the real branch bump
+    # will occur at a newer commit. Thus real dev/beta/stable releases will not
+    # be downgraded even if we allow submission when nothing is green in past
+    # 12h.
+    if diff_days > 1:
+      return True, True
+
+    # Rule 3: <= 1 day before branch date -> Check, strictly ensure
+    # best_revision >= target.
+    # Within 1 day before branch cut, on branch day, or past branch cut (e.g.
+    # yesterday, diff_days <= 1), milestone branch cut is imminent or
+    # completed. We strictly enforce best_revision >= target to guarantee a
+    # larger Portage version number always points to newer Chrome commits.
+    return True, False
+  except Exception:  # pragma: no cover # pylint: disable=broad-exception-caught
+    return True, False
+
+
+def BestChromeRevision(api: RecipeApi, lookback_hours: int) -> int | None:
   now = int(api.time.time())
   end_time = timestamp_pb2.Timestamp(seconds=now)
-  start_time = timestamp_pb2.Timestamp(seconds=now - 3600 * 8)
+  start_time = timestamp_pb2.Timestamp(seconds=now - 3600 * lookback_hours)
   builds = api.buildbucket.search(
       builds_service_pb2.BuildPredicate(
           builder={
@@ -180,8 +282,9 @@ def BestChromeRevision(api: RecipeApi) -> int | None:
     revision = output.get('properties', {}).get('best_revision_info',
                                                 {}).get('commit_pos')
     if revision:
-      best_revision = max(best_revision,
-                          int(revision)) if best_revision else int(revision)
+      rev_int = int(revision)
+      if best_revision is None or rev_int > best_revision:
+        best_revision = rev_int
   return best_revision
 
 
@@ -556,17 +659,33 @@ def RetryFailedPreuprevTests(
     return True
 
 
-def WaitChromeBestRevision(api: RecipeApi,
-                           target_chrome_revision: int) -> Optional[int]:
+def WaitChromeBestRevision(api: RecipeApi, target_chrome_revision: int,
+                           allow_12h_failure: bool = False) -> Optional[int]:
   with api.step.nest('Wait chrome-best-revision-continuous') as step:
     got_best_revision = None
+
     for i in range(FETCH_BEST_CHROME_REVISION_TIMES):
-      got_best_revision = BestChromeRevision(api)
+      got_best_revision = BestChromeRevision(api, lookback_hours=12)
       if got_best_revision and got_best_revision >= target_chrome_revision:
         step.step_summary_text = f'Best revision reached {got_best_revision}'
         return got_best_revision
       if i < FETCH_BEST_CHROME_REVISION_TIMES - 1:
         api.time.sleep(FETCH_BEST_CHROME_REVISION_INTERVAL)
+
+    # If no green build is found across the 12-hour lookback window
+    # (got_best_revision is None) and allow_12h_failure is True
+    # (1 < diff_days <= 3 days before branch cut):
+    # Chrome's automated milestone branch cut process only inspects the past
+    # 8 hours for green builds. If all continuous builds in the past 12 hours
+    # are red/failing, automated branch cut will fail, requiring human release
+    # managers to manually fix issues and perform a manual milestone bump.
+    # Therefore, it is safe to allow submission of ChromeOS pre-uprevs during
+    # continuous >12h failure.
+    if got_best_revision is None and allow_12h_failure:
+      step.step_summary_text = (
+          'Skipped check: Chrome CI continuous failure > 12h near branch cut window'
+      )
+      return target_chrome_revision
 
     if got_best_revision:
       step.step_summary_text = CHROME_CI_NOT_GOOD.format(
@@ -614,14 +733,17 @@ def RunSteps(api: RecipeApi):
                                                       UPREV_VERSION_LABEL)[0]
     decode_step.step_summary_text = pupr_version
     chrome_commit = json.loads(pupr_version)[0]['revision']
-
   errors = []
   error_do_no_chump = False
   check_chrome_preuprev_thread = api.futures.spawn_immediate(
       CheckPreUprevsFromOrchestrator, api, chrome_commit)
+  should_check_best_revision, allow_12h_failure = (
+      ShouldCheckChromeBestRevision(api, target_chrome_milestone)
+      if target_chrome_milestone else (False, False))
   wait_chrome_best_revision_thread = api.futures.spawn_immediate(
-      WaitChromeBestRevision, api,
-      target_chrome_revision) if target_chrome_revision else None
+      WaitChromeBestRevision, api, target_chrome_revision,
+      allow_12h_failure) if (target_chrome_revision and
+                             should_check_best_revision) else None
 
   orchestrator, preuprevs = check_chrome_preuprev_thread.result()
 
@@ -638,7 +760,26 @@ def RunSteps(api: RecipeApi):
             f'[Orchestrator](http://go/bbid/{orchestrator.id}/overview)\n\n' +
             orchestrator.summary_markdown))
 
-  if target_chrome_revision:
+  if target_chrome_milestone:
+    mock_version = '\n'.join(['MAJOR=130', 'MINOR=0', 'BUILD=6699', 'PATCH=0'])
+    mock_result = base64.b64encode(mock_version.encode())
+    tot_version = api.gitiles.get_file(
+        CHROMIUM_SRC_HOST,
+        CHROMIUM_SRC_PROJECT,
+        CHROMIUM_VERSION_FILE,
+        ref='refs/heads/main',
+        public=False,
+        step_name='Fetch ToT version',
+        test_output_data=mock_result,
+    ).decode()
+
+    assert tot_version.startswith('MAJOR=')
+    tot_milestone = int(tot_version.split('\n')[0].split('=')[1])
+    if tot_milestone != target_chrome_milestone:
+      error_do_no_chump = True
+      errors.append(CHROME_BRANCHED_DURING_UPREV)
+
+  if target_chrome_revision and should_check_best_revision:
     best_revision = wait_chrome_best_revision_thread.result(
     ) if wait_chrome_best_revision_thread else None
     if best_revision is None:
@@ -648,25 +789,6 @@ def RunSteps(api: RecipeApi):
       error_do_no_chump = True
       errors.append(
           CHROME_CI_NOT_GOOD.format(best_revision, target_chrome_revision))
-    else:
-      mock_version = '\n'.join(
-          ['MAJOR=130', 'MINOR=0', 'BUILD=6699', 'PATCH=0'])
-      mock_result = base64.b64encode(mock_version.encode())
-      tot_version = api.gitiles.get_file(
-          CHROMIUM_SRC_HOST,
-          CHROMIUM_SRC_PROJECT,
-          CHROMIUM_VERSION_FILE,
-          ref='refs/heads/main',
-          public=False,
-          step_name='Fetch ToT version',
-          test_output_data=mock_result,
-      ).decode()
-
-      assert tot_version.startswith('MAJOR=')
-      tot_milestone = int(tot_version.split('\n')[0].split('=')[1])
-      if tot_milestone != target_chrome_milestone:
-        error_do_no_chump = True
-        errors.append(CHROME_BRANCHED_DURING_UPREV)
 
   if errors:
     return RawResult(
@@ -830,6 +952,12 @@ def GenTests(api: RecipeTestApi):
       orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
                    [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
                     ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
+      api.url.json('fetch Chrome milestone schedule', {
+          'mstones': [{
+              'mstone': 130,
+              'branch_point': '2012-05-14T00:00:00',
+          }],
+      }),
       chrome_best_revision(api, [1100000, 1122332]),
       api.post_check(post_process.SummaryMarkdown, (
           'Pre-uprev testing passed. \n\nDetails: \n\nAll pre-uprev tests passed.\n'
@@ -847,6 +975,12 @@ def GenTests(api: RecipeTestApi):
       orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
                    [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
                     ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
+      api.url.json('fetch Chrome milestone schedule', {
+          'mstones': [{
+              'mstone': 130,
+              'branch_point': '2012-05-14T00:00:00',
+          }],
+      }),
       chrome_best_revision(api, [None] + [1100000] *
                            (FETCH_BEST_CHROME_REVISION_TIMES - 1)),
       api.post_check(post_process.SummaryMarkdown, (
@@ -864,7 +998,7 @@ def GenTests(api: RecipeTestApi):
           "g/chromeos-chrome-build, instead of CI oncall.\n\n")),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
-      api.post_check(post_process.DoesNotRun, 'Fetch ToT version'),
+      api.post_check(post_process.MustRun, 'Fetch ToT version'),
       cq=True,
       status='FAILURE',
   )
@@ -875,6 +1009,12 @@ def GenTests(api: RecipeTestApi):
       orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
                    [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
                     ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
+      api.url.json('fetch Chrome milestone schedule', {
+          'mstones': [{
+              'mstone': 130,
+              'branch_point': '2012-05-14T00:00:00',
+          }],
+      }),
       chrome_best_revision(api, [None] * FETCH_BEST_CHROME_REVISION_TIMES),
       api.post_check(post_process.SummaryMarkdown, (
           'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
@@ -890,9 +1030,61 @@ def GenTests(api: RecipeTestApi):
           "g/chromeos-chrome-build, instead of CI oncall.\n\n")),
       api.post_check(post_process.MustRun,
                      'Wait chrome-best-revision-continuous'),
-      api.post_check(post_process.DoesNotRun, 'Fetch ToT version'),
+      api.post_check(post_process.MustRun, 'Fetch ToT version'),
       cq=True,
       status='FAILURE',
+  )
+
+  yield api.test(
+      'schedule-fetch-failed',
+      try_build_with_cl('130.0.6699.0_pre1122332'),
+      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
+                   [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+                    ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
+      api.url.json('fetch Chrome milestone schedule', {}),
+      chrome_best_revision(api, [1100000, 1122332]),
+      api.post_check(post_process.MustRun,
+                     'Wait chrome-best-revision-continuous'),
+      cq=True,
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'outside-branch-cut-window',
+      try_build_with_cl('130.0.6699.0_pre1122332'),
+      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
+                   [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+                    ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
+      api.url.json('fetch Chrome milestone schedule', {
+          'mstones': [{
+              'mstone': 130,
+              'branch_point': '2026-09-01T00:00:00',
+          }],
+      }),
+      api.post_check(post_process.DoesNotRun,
+                     'Wait chrome-best-revision-continuous'),
+      cq=True,
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'branch-window-allow-12h-failure',
+      try_build_with_cl('130.0.6699.0_pre1122332'),
+      orchestrator(api, common_pb2.SUCCESS, 'All pre-uprev tests passed.',
+                   [('chromeos-betty-chrome-preuprev', common_pb2.SUCCESS),
+                    ('chromeos-jacuzzi-chrome-preuprev', common_pb2.SUCCESS)]),
+      api.url.json('fetch Chrome milestone schedule', {
+          'mstones': [{
+              'mstone': 130,
+              'branch_point': '2012-05-16T04:00:00',
+          }],
+      }),
+      chrome_best_revision(api, [None] * FETCH_BEST_CHROME_REVISION_TIMES),
+      api.post_check(post_process.MustRun,
+                     'Wait chrome-best-revision-continuous'),
+      api.post_check(post_process.MustRun, 'Fetch ToT version'),
+      cq=True,
+      status='SUCCESS',
   )
 
   yield api.test(
