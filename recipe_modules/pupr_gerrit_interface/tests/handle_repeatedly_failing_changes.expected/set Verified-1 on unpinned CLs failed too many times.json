@@ -368,7 +368,7 @@
     "name": "set Verified-1 on unpinned CLs repeatedly failing CQ.add comment on CL 1235",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@comment text@This CL is set to Verified-1 by PUpr since it has failed CQ > 1 times.@@@",
+      "@@@STEP_LOG_LINE@comment text@This CL is set to Verified-1 by PUpr since it has failed CQ > 1 times. If you believe the failure is due to other reason and the other reason is fixed, you can rebase the CL to clear Verified-1 and find someone to review this CL for submission.@@@",
       "@@@STEP_LOG_END@comment text@@@"
     ]
   },
@@ -421,7 +421,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"This CL is set to Verified-1 by PUpr since it has failed CQ > 1 times.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"This CL is set to Verified-1 by PUpr since it has failed CQ > 1 times. If you believe the failure is due to other reason and the other reason is fixed, you can rebase the CL to clear Verified-1 and find someone to review this CL for submission.\"}]}}",
       "https://chromium-review.googlesource.com/changes/1235/revisions/current/review"
     ],
     "name": "set Verified-1 on unpinned CLs repeatedly failing CQ.add comment on CL 1235.curl https://chromium-review.googlesource.com/changes/1235/revisions/current/review",
@@ -434,7 +434,7 @@
     "name": "set Verified-1 on unpinned CLs repeatedly failing CQ.set labels on CL 1235",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 0, \"Code-Review\": 2, \"Verified\": -1}@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 0, \"Verified\": -1}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/1235@@@"
     ]
@@ -488,7 +488,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"labels\": {\"Bot-Commit\": 0, \"Code-Review\": 2, \"Verified\": -1}}",
+      "{\"labels\": {\"Bot-Commit\": 0, \"Verified\": -1}}",
       "https://chromium-review.googlesource.com/changes/1235/revisions/current/review"
     ],
     "name": "set Verified-1 on unpinned CLs repeatedly failing CQ.set labels on CL 1235.curl https://chromium-review.googlesource.com/changes/1235/revisions/current/review",
