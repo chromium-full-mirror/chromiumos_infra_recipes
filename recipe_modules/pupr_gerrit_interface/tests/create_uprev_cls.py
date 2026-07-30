@@ -34,24 +34,15 @@ PROPERTIES = CreateUprevClsProperties
 
 
 def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
-  if properties.existing_cls:
-    branch_policy = BranchPolicy(
-        pattern='.*',
-        repl='',
-        reviewers=[Reviewer(email='a@example.com')],
-        existing_cls_policy=properties.send_to_cq_policy,
-        cr_policy=properties.cr_policy,
-        max_concurrent_cq_runs=properties.max_concurrent_cq_runs,
-    )
-  else:
-    branch_policy = BranchPolicy(
-        pattern='.*',
-        repl='',
-        reviewers=[Reviewer(email='a@example.com')],
-        no_existing_cls_policy=properties.send_to_cq_policy,
-        cr_policy=properties.cr_policy,
-        max_concurrent_cq_runs=properties.max_concurrent_cq_runs,
-    )
+  branch_policy = BranchPolicy(
+      pattern='.*',
+      repl='',
+      reviewers=[Reviewer(email='a@example.com')],
+      no_existing_cls_policy=properties.send_to_cq_policy,
+      existing_cls_policy=properties.send_to_cq_policy,
+      cr_policy=properties.cr_policy,
+      max_concurrent_cq_runs=properties.max_concurrent_cq_runs,
+  )
   if properties.projects == 0:
     projects = [
         ProjectInfo(name='chrome-project', path='[START_DIR]/chrome/src',
@@ -67,8 +58,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
     ]
 
   summary = api.pupr_gerrit_interface.create_uprev_cls(
-      projects, list(properties.open_changes), properties.existing_cls,
-      branch_policy, 'a topic')
+      projects, list(properties.open_changes), branch_policy, 'a topic')
   return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
 
 

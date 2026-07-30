@@ -105,7 +105,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
 
   def handle_outdated_changes(self, open_changes: List[GerritChange],
                               most_recent_uprev: PatchSet, policy: BranchPolicy,
-                              retry_only_run: bool) -> bool:
+                              retry_only_run: bool) -> List[GerritChange]:
     """Abandon already-open and outdated uprev CLs.
 
     Args:
@@ -116,13 +116,17 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
 
     Returns:
-      A bool stating whether any open CLs remain after abandoning.
+      List of open CLs that remain after abandoning.
     """
     outdated_cls = self._get_outdated_cls(open_changes, most_recent_uprev)
     abandoned_cls = self._abandon_outdated_cls(outdated_cls, most_recent_uprev,
                                                policy.outdated_cls_policy,
                                                retry_only_run)
-    return len(abandoned_cls) < len(open_changes)
+    abandoned_change_ids = {cl.change_id for cl in abandoned_cls}
+    return [
+        change for change in open_changes
+        if change.change not in abandoned_change_ids
+    ]
 
   def handle_repeatedly_failing_changes(
       self,
@@ -167,7 +171,11 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         retry_count = (
             self.m.pupr.num_dry_run_cq_failures(ps)
             if should_count_dry_run else self.m.pupr.num_full_cq_failures(ps))
-        if (self.m.pupr.is_cl_pinned(ps) or retry_count <= max_cq_retry):
+        is_ignored_or_v1 = (
+            self.m.pupr.is_cl_ignored(ps) or
+            self.m.pupr.is_verified_minus_one_cl(ps))
+        if not is_ignored_or_v1 and (self.m.pupr.is_cl_pinned(ps) or
+                                     retry_count <= max_cq_retry):
           remaining_open_cls.append(open_changes[i])
         else:
           failing_patchsets.append(ps)
@@ -331,14 +339,13 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     return abandoned_cls
 
   def create_uprev_cls(self, repo_projects: List[ProjectInfo],
-                       open_changes: List[GerritChange], existing_cls: bool,
-                       policy: BranchPolicy, topic: str) -> str:
+                       open_changes: List[GerritChange], policy: BranchPolicy,
+                       topic: str) -> str:
     """Create appropriate CLs for the uprevs.
 
     Args:
       repo_projects: The projects to create uprev CLs for.
       open_changes: Open uprev CLs.
-      existing_cls: Whether any open CLs remain after abandoning.
       policy: The branch policy set for the builder.
       topic: Gerrit topic name added to the Changes managed by this builder.
 
@@ -347,7 +354,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     """
     send_to_cq_policy = (
         policy.existing_cls_policy
-        if existing_cls else policy.no_existing_cls_policy)
+        if open_changes else policy.no_existing_cls_policy)
 
     limit_exceeded = False
     running_count = 0
