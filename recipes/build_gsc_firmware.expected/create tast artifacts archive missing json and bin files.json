@@ -5837,6 +5837,37 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CLEANUP]/tmp_tmp_3/tast/andreiboard-ti50"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create Ti50 Tast artifacts.Create tast subdirectory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "Create Ti50 Tast artifacts.Extract archive",
     "~followup_annotations": [
@@ -5849,13 +5880,13 @@
     "cmd": [
       "tar",
       "-x",
+      "--directory=[CLEANUP]/tmp_tmp_3/tast/andreiboard-ti50",
       "--exclude=*_key*",
       "--wildcards",
       "*opentitantool_*.json",
       "--wildcards",
       "*.bin",
       "--xform=s=^.*/\\([^/]*\\)$=\\1=",
-      "--one-top-level=[CLEANUP]/tmp_tmp_3/tast/andreiboard-ti50",
       "-f",
       "[CLEANUP]/tmp_tmp_3/download/ti50.tar.bz2"
     ],

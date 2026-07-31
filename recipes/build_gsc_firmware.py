@@ -371,14 +371,14 @@ def CreateTi50TastArtifacts(api, config):
         image = board
         board = 'andreiboard'
       tast_subdir = os.path.join(tast_dir, '-'.join((board, image)))
+      api.file.ensure_directory('Create tast subdirectory', tast_subdir)
       # Extract image binary and opentitantool config json files into tast_subdir
       with api.step.nest('Extract archive') as presentation:
         try:
           api.step('untar', [
-              'tar', '-x', '--exclude=*_key*', '--wildcards',
-              '*opentitantool_*.json', '--wildcards', '*.bin',
-              r'--xform=s=^.*/\([^/]*\)$=\1=', '--one-top-level=' + tast_subdir,
-              '-f', downloaded_file
+              'tar', '-x', '--directory=' + tast_subdir, '--exclude=*_key*',
+              '--wildcards', '*opentitantool_*.json', '--wildcards', '*.bin',
+              r'--xform=s=^.*/\([^/]*\)$=\1=', '-f', downloaded_file
           ])
           tast_dir_empty = False
         except api.step.StepFailure:
