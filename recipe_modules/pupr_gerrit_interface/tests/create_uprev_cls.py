@@ -43,6 +43,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
       existing_cls_policy=properties.send_to_cq_policy,
       cr_policy=properties.cr_policy,
       max_concurrent_cq_runs=properties.max_concurrent_cq_runs,
+      gerrit_flow_expressions=properties.gerrit_flow_expressions,
   )
 
   if properties.projects == 0:
@@ -292,4 +293,21 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.LogDoesNotContain,
                      'update CL labels.add comment on CL 123', 'comment text',
                      ['limit of 2 has been reached']),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'gerrit-flow',
+      api.properties(
+          CreateUprevClsProperties(
+              send_to_cq_policy=DRY_RUN, projects=1,
+              gerrit_flow_expressions='[{"condition": "-label:Commit-Queue", "action": {"name": "add-reviewer", "parameters": ["cros-ec-champion@google.com"]}}]'
+          )),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for project1',
+          'https://host-review.googlesource.com/c/project/+/123'),
+      api.path.exists(api.src_state.workspace_path),
+      api.post_check(
+          post_process.LogContains,
+          'add gerrit flows.add gerrit flow to CL 123.create flow on CL 123',
+          'expressions', ['"name": "add-reviewer"']),
       api.post_process(post_process.DropExpectation))

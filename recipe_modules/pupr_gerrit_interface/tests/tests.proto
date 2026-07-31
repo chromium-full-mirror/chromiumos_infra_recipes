@@ -27,6 +27,7 @@ message CreateUprevClsProperties {
   recipes.chromeos.generator.CrPolicy cr_policy = 4;
   int32 max_concurrent_cq_runs = 5;
   repeated buildbucket.v2.GerritChange open_changes = 6;
+  string gerrit_flow_expressions = 7;
 }
 
 message FindOpenUprevCLsProperties {

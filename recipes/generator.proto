@@ -207,6 +207,20 @@ message BranchPolicy {
   // Action to take when a CL exceeds max_cq_retry. Defaults to
   // MAX_CQ_RETRY_ACTION_ABANDON.
   MaxCqRetryAction max_cq_retry_action = 13;
+
+  // JSON string representing a list of stage expressions for a Gerrit Flow.
+  // See
+  // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#create-flow
+  // Example: gerrit_flow_expressions = """[
+  //     {
+  //         "condition": "-label:Commit-Queue",
+  //         "action": {
+  //             "name": "add-reviewer",
+  //             "parameters": ["cros-ec-champion@google.com"]
+  //         }
+  //     }
+  // ]"""
+  string gerrit_flow_expressions = 14;
 }
 
 // Holds information needed for packages who need to fetch a file from the

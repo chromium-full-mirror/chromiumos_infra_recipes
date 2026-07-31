@@ -1,0 +1,71 @@
+[
+  {
+    "cmd": [],
+    "name": "create flow on CL 123",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@expressions@[{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"-label:Commit-Queue\"}]@@@",
+      "@@@STEP_LOG_END@expressions@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/project/+/123@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create flow on CL 123.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "create flow on CL 123.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "create flow on CL 123.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"stage_expressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"-label:Commit-Queue\"}]}",
+      "https://chromium-review.googlesource.com/changes/123/flows"
+    ],
+    "name": "create flow on CL 123.curl https://chromium-review.googlesource.com/changes/123/flows",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

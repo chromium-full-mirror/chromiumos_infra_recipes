@@ -783,6 +783,25 @@ class GerritApi(RecipeApi):
           test_output_data=self.m.json.dumps({'labels': str_labels}),
       )
 
+  def create_flow(self, gerrit_change: GerritChange,
+                  flow_expressions: List[Dict[str, Any]]) -> str:
+    """Create a flow on the given Gerrit change.
+
+    Args:
+      gerrit_change: The change to create the flow on.
+      flow_expressions: A list of dicts representing the stage expressions.
+    """
+    with self.m.step.nest(f'create flow on CL {gerrit_change.change}') as pres:
+      pres.logs['expressions'] = self.m.json.dumps(flow_expressions)
+      pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
+      change_num = gerrit_change.change
+      payload = {'stage_expressions': flow_expressions}
+      return self._do_post(
+          f'https://{gerrit_change.host}/changes/{change_num}/flows',
+          payload,
+          test_output_data=self.m.json.dumps({'uuid': 'mock-uuid'}),
+      )
+
   def add_change_comment_remote(self, gerrit_change: GerritChange,
                                 comment: str):
     """Add comment to gerrit_change.
