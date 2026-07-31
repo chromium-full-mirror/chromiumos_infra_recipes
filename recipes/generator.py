@@ -255,9 +255,15 @@ class GeneratorRun:
 
     self._validate_properties()
     self._validate_triggers()
+    footer = self.properties.additional_commit_footer.strip()
+    if self.properties.non_wip_additional_commit_footer:
+      non_wip_footer = (
+          self.properties.non_wip_additional_commit_footer.strip())
+      footer = f'{footer}\n{non_wip_footer}' if footer else non_wip_footer
+
     self.m.pupr_local_uprev.set_generator_attributes(
         additional_commit_message=self.properties.additional_commit_message,
-        additional_commit_footer=self.properties.additional_commit_footer,
+        additional_commit_footer=footer,
         allow_partial_uprev=self.properties.allow_partial_uprev,
         build_targets=self.properties.build_targets,
         packages=self.properties.packages,
@@ -320,24 +326,60 @@ class GeneratorRun:
               self.policy.max_cq_retry_action))
 
       if not self.retry_only_run:
+        # A real uprev creation run creates local uprev commits on disk.
+        # Retry policy execution is skipped here because applying a local rebase
+        # on top of newly created local commits in the same task workspace
+        # would cause conflicts. Uprev creation and retry runs are mutually
+        # exclusive execution paths.
+        limit_exceeded, running_count = (
+            self.m.pupr_gerrit_interface.check_limit_exceeded(
+                open_changes, self.policy))
+        if limit_exceeded and self.properties.non_wip_additional_commit_footer:
+          for project in sorted(self._repo_projects):
+            cwd = self._get_project_cwd(project)
+            with self.m.context(cwd=cwd):
+              self.m.git.reset_hard('HEAD~1')
+          props = self.properties
+          self.m.pupr_local_uprev.set_generator_attributes(
+              additional_commit_message=props.additional_commit_message,
+              additional_commit_footer=props.additional_commit_footer,
+              allow_partial_uprev=props.allow_partial_uprev,
+              build_targets=props.build_targets,
+              packages=props.packages,
+          )
+          self._modified_projects = self.create_local_uprev()
+
         summary = self.m.pupr_gerrit_interface.create_uprev_cls(
             self._repo_projects,
             open_changes,
             self.policy,
             self.topic,
+            limit_exceeded=limit_exceeded,
+            running_count=running_count,
         )
-      else:
-        summary = self.make_summary('success')
 
-      self.m.pupr_gerrit_interface.apply_retry_policy(
-          open_changes,
-          most_recent_uprev,
-          self.policy,
-          self.topic,
-          self.retry_only_run,
-      )
+      else:
+        # Retry-only runs evaluate retry policies for existing open CLs.
+        summary = self.make_summary('success')
+        self.m.pupr_gerrit_interface.apply_retry_policy(
+            open_changes,
+            most_recent_uprev,
+            self.policy,
+            self.topic,
+            self.retry_only_run,
+        )
+
+
 
     return summary
+
+  def _get_project_cwd(self,
+                       project: repo_api.ProjectInfo) -> config_types.Path:
+    """Return absolute path for a repo project."""
+    try:
+      return self.m.path.abs_to_path(project.path)
+    except ValueError:  # pragma: no cover
+      return self.workspace_path / project.path  # pragma: no cover
 
   def create_local_uprev(self) -> Optional[List[repo_api.ProjectInfo]]:
     """Create and commit uprevs on the local filesystem.
@@ -1389,6 +1431,14 @@ def GenTests(
       },
   ]
 
+  retry_ref = generator_pb2.RetryRef(
+      remote='cros',
+      path='src/third_party/chromiumos-overlay',
+      name='chromiumos/overlays/chromiumos-overlay',
+      ref='refs/heads/main',
+  )
+
+  revision = '83a1812dddfc24f604d92bf61ad58efe9227a6fc'
   value_dict = {
       1: {
           'change_id': 1,
@@ -1419,6 +1469,11 @@ def GenTests(
           ],
           'revision_info': {
               'ref': 'refs/change/foo',
+              'commit': {
+                  'message':
+                      'a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{"ref": "refs/tags/79.0.3945.20", "repository": "/chromium/src", "revision": "'
+                      + revision + '"}]',
+              },
           },
       },
       2: {
@@ -1451,16 +1506,21 @@ def GenTests(
       api.post_process(post_process.DropExpectation),
   )
 
-  yield _with_infos(
+  yield api.test(
       'with-retry-policy',
-      _props(branch_policies=[
-          _policy(
-              retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
-              existing_cls_policy=generator_pb2.DRY_RUN,
-              no_existing_cls_policy=generator_pb2.DRY_RUN,
-          )
+      _props(
+          branch_policies=[
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
@@ -1469,26 +1529,26 @@ def GenTests(
       ),
   )
 
-  yield _with_infos(
+  yield api.test(
       'with-retry-policy-but-no-open-changes',
-      _props(branch_policies=[
-          _policy(
-              retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
-              existing_cls_policy=generator_pb2.DRY_RUN,
-              no_existing_cls_policy=generator_pb2.DRY_RUN,
-          )
+      _props(
+          branch_policies=[
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           [],
           'https://chromium-review.googlesource.com',
-      ),
-      api.gerrit.set_query_changes_response(
-          'find open uprev CLs.find CLs from chrome-internal host',
-          [],
-          'https://chrome-internal-review.googlesource.com',
       ),
       api.post_check(
           post_process.MustRun,
@@ -1498,20 +1558,24 @@ def GenTests(
           post_process.DoesNotRun,
           r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*',
       ),
-      api.post_check(post_process.MustRun, 'generate CLs'),
       api.post_process(post_process.DropExpectation),
   )
 
-  yield _with_infos(
+  yield api.test(
       'with-retry-policy-but-retries-frozen',
-      _props(branch_policies=[
-          _policy(
-              retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
-              existing_cls_policy=generator_pb2.DRY_RUN,
-              no_existing_cls_policy=generator_pb2.DRY_RUN,
-          )
+      _props(
+          branch_policies=[
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
@@ -1535,20 +1599,24 @@ def GenTests(
           post_process.DoesNotRunRE,
           r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*',
       ),
-      api.post_check(post_process.MustRun, 'generate CLs'),
       api.post_process(post_process.DropExpectation),
   )
 
-  yield _with_infos(
+  yield api.test(
       'with-retry-policy-but-no-retry-cl-identified',
-      _props(branch_policies=[
-          _policy(
-              retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
-              existing_cls_policy=generator_pb2.DRY_RUN,
-              no_existing_cls_policy=generator_pb2.DRY_RUN,
-          )
+      _props(
+          branch_policies=[
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.post_check(
           post_process.MustRun,
@@ -1558,15 +1626,7 @@ def GenTests(
           post_process.DoesNotRun,
           r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*',
       ),
-      api.post_check(post_process.MustRun, 'generate CLs'),
       api.post_process(post_process.DropExpectation),
-  )
-
-  retry_ref = generator_pb2.RetryRef(
-      remote='cros',
-      path='src/third_party/chromiumos-overlay',
-      name='chromiumos/overlays/chromiumos-overlay',
-      ref='refs/heads/main',
   )
 
   yield api.test(
@@ -1576,47 +1636,6 @@ def GenTests(
       api.git.diff_check(True),
       status='FAILURE',
   )
-
-  revision = '83a1812dddfc24f604d92bf61ad58efe9227a6fc'
-  value_dict = {
-      1: {
-          'change_id': 1,
-          'created': '2020-10-22 18:54:00.000000000',
-          'messages': [
-              {
-                  'message':
-                      'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-                  'date':
-                      '2020-10-26T18:54:00Z',
-              },
-              {
-                  'message': 'Patch Set 3:\n\nCV is trying the patch...',
-                  'date': '2020-10-24T18:54:00Z',
-                  'tag': 'autogenerated:cv:full-run:1000000001',
-              },
-              {
-                  'message':
-                      'Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-                  'date':
-                      '2020-10-25T18:54:00Z',
-                  'tag':
-                      'autogenerated:cv:full-run:1000000002',
-              },
-          ],
-          'revision_info': {
-              'ref': 'refs/change/foo',
-              'commit': {
-                  'message':
-                      'a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{"ref": "refs/tags/79.0.3945.20", "repository": "/chromium/src", "revision": "'
-                      + revision + '"}]',
-              },
-          },
-      },
-      2: {
-          'change_id': 2,
-          'created': '2020-10-23 18:54:00.000000000',
-      },
-  }
 
   yield api.test(
       'cron-trigger',
@@ -1651,6 +1670,87 @@ def GenTests(
       api.post_check(
           post_process.DoesNotRun,
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev.commit in overlay.write commit message',
+      ),
+  )
+
+  yield _with_infos(
+      'non-wip-additional-footer',
+      api.properties(triggers=[trigger_prop]),
+      _props(
+          packages=[
+              package_chrome,
+              common_pb2.PackageInfo(category='chromeos-base',
+                                     package_name='chromeos-lacros'),
+          ],
+          non_wip_additional_commit_footer='Test-Footer: foo',
+      ),
+      api.git.diff_check(True),
+  )
+
+  yield _with_infos(
+      'non-wip-additional-footer-throttled',
+      api.properties(triggers=[trigger_prop]),
+      _props(
+          packages=[
+              package_chrome,
+              common_pb2.PackageInfo(category='chromeos-base',
+                                     package_name='chromeos-lacros'),
+          ],
+          non_wip_additional_commit_footer='Test-Footer: foo',
+          branch_policies=[
+              _policy(
+                  max_concurrent_cq_runs=1,
+                  existing_cls_policy=generator_pb2.FULL_RUN,
+                  no_existing_cls_policy=generator_pb2.FULL_RUN,
+              )
+          ],
+      ),
+      api.git.diff_check(True),
+      api.git.diff_check(True),
+      api.git.diff_check(True),
+      api.git.diff_check(True),
+      api.cros_build_api.set_upreved_ebuilds(
+          ['src/overlay/foo.ebuild', 'src/private-overlay/bar.ebuild']),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'check concurrent CQ runs',
+          changes,
+          {
+              1: {
+                  'change_id':
+                      1,
+                  'created':
+                      '2020-10-22 18:54:00.000000000',
+                  'messages': [{
+                      'message': 'Patch Set 3:\n\nCV is trying the patch...',
+                      'date': '2020-10-27T18:54:00Z',
+                      'tag': 'autogenerated:cv:full-run:1000000001',
+                  },],
+              },
+          },
+      ),
+      api.repo.project_infos_step_data(
+          'commit uprev (2)',
+          data=[
+              {
+                  'project': 'overlay'
+              },
+          ],
+          iteration=1,
+      ),
+      api.repo.project_infos_step_data(
+          'commit uprev (2)',
+          data=[
+              {
+                  'project': 'private-overlay',
+                  'remote': 'cros-internal'
+              },
+          ],
+          iteration=2,
       ),
   )
 
@@ -1779,6 +1879,71 @@ def GenTests(
           },
       },
   }
+
+  value_dict_wip = dict(value_dict)
+  value_dict_wip[1] = dict(value_dict[1])
+  value_dict_wip[1]['work_in_progress'] = True
+  value_dict_wip[1]['revision_info'] = {
+      'ref': 'refs/change/foo',
+      'commit': {
+          'message':
+              'a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{"ref": "refs/tags/79.0.3945.20", "repository": "/chromium/src", "revision": "'
+              + revision + '"}]',
+      },
+  }
+
+  yield api.test(
+      'cron-trigger-rebase-wip',
+      _props(
+          branch_policies=[
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+          rebase_before_retry=True,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          changes,
+          value_dict_wip,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
+          changes,
+          value_dict_wip,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.test gerrit mergeable',
+          'chromium-review.googlesource.com',
+          1,
+          'current',
+          True,
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
+      api.repo.project_infos_step_data(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patch set for Change-Id 1',
+          data=[{
+              'project': 'chromium/src',
+              'path': 'src/chromium'
+          }],
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.mark CL 1 ready for review',
+      ),
+  )
 
   yield api.test(
       'cron-trigger-discard-before-passed-dry-run',

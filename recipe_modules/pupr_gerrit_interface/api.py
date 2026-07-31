@@ -4,7 +4,7 @@
 
 """Module for interfacing with Gerrit in PUpr (Parallel Uprevs)."""
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from google.protobuf.json_format import MessageToDict
 from recipe_engine import recipe_api
@@ -50,6 +50,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     """Initialize the module's attributes."""
     super().__init__(*args, **kwargs)
     self.rebase_before_retry = False
+
 
   @property
   def workspace_path(self) -> Path:
@@ -338,26 +339,14 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           abandoned_cls.append(outdated_cl)
     return abandoned_cls
 
-  def create_uprev_cls(self, repo_projects: List[ProjectInfo],
-                       open_changes: List[GerritChange], policy: BranchPolicy,
-                       topic: str) -> str:
-    """Create appropriate CLs for the uprevs.
+  def check_limit_exceeded(self, open_changes: List[GerritChange],
+                           policy: BranchPolicy) -> Tuple[bool, int]:
+    """Check if concurrent CQ limit is exceeded for open changes."""
 
-    Args:
-      repo_projects: The projects to create uprev CLs for.
-      open_changes: Open uprev CLs.
-      policy: The branch policy set for the builder.
-      topic: Gerrit topic name added to the Changes managed by this builder.
-
-    Returns:
-      Human-readable summary of the operation.
-    """
     send_to_cq_policy = (
         policy.existing_cls_policy
         if open_changes else policy.no_existing_cls_policy)
 
-    limit_exceeded = False
-    running_count = 0
     if (send_to_cq_policy in [DRY_RUN, DRY_RUN_NOT_APPROVED, FULL_RUN] and
         policy.max_concurrent_cq_runs > 0 and open_changes):
       with self.m.step.nest('check concurrent CQ runs') as presentation:
@@ -366,6 +355,35 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         limit_exceeded, running_count = self.m.pupr.check_concurrent_cq_limit(
             open_patch_sets, policy.max_concurrent_cq_runs)
         presentation.step_text = f'running: {running_count}, limit: {policy.max_concurrent_cq_runs}'
+        return limit_exceeded, running_count
+    return False, 0
+
+  def create_uprev_cls(
+      self,
+      repo_projects: List[ProjectInfo],
+      open_changes: List[GerritChange],
+      policy: BranchPolicy,
+      topic: str,
+      limit_exceeded: bool = False,
+      running_count: int = 0,
+  ) -> str:
+    """Generate and upload CLs for the uprev commit in each project.
+
+    Args:
+      repo_projects: The projects with uprev commits to upload.
+      open_changes: Open uprev CLs.
+      policy: The branch policy set for the builder.
+      topic: Gerrit topic name added to the Changes managed by this builder.
+      limit_exceeded: Whether concurrent CQ limit is exceeded.
+      running_count: Number of currently running CQ CLs.
+
+    Returns:
+      Human-readable summary of the operation.
+    """
+    send_to_cq_policy = (
+        policy.existing_cls_policy
+        if open_changes else policy.no_existing_cls_policy)
+
 
     with self.m.step.nest('generate CLs'):
       changes = []
@@ -560,6 +578,17 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
 
       if not patch_set_to_retry:
         return
+
+      if policy.max_concurrent_cq_runs > 0:
+        limit_exceeded, running_count = self.m.pupr.check_concurrent_cq_limit(
+            open_patch_sets, policy.max_concurrent_cq_runs)
+        if limit_exceeded:
+          presentation.step_text = (
+              f'{message} (Retry skipped: concurrent CQ run limit of '
+              f'{policy.max_concurrent_cq_runs} reached, currently running: {running_count})'
+          )
+          return
+
       if self.rebase_before_retry:
         changes_to_retry = [
             change for change in open_changes
@@ -574,7 +603,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           # gerrit.changes_submittable generates non-critical StepFailure.
           # Set cqstep.status to SUCCESS to avoid parent being StepFailure
           cqstep.status = 'SUCCESS'
-        if gerrit_mergeable and not cq_mergable:
+        if gerrit_mergeable and not cq_mergable and not patch_set_to_retry.work_in_progress:
           self.m.gerrit.rebase_change_remote(changes_to_retry[0])
           self.m.gerrit.add_change_comment_remote(
               changes_to_retry[0],
@@ -584,31 +613,28 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
                'show as an `add` instead of a `rename`.'))
           # A rebase resets the CQ+1/+2 status.
           running = False
-        elif not gerrit_mergeable:
+        elif not gerrit_mergeable or patch_set_to_retry.work_in_progress:
+          # For WIP CLs (or unmergeable CLs), force a local rebase instead of a
+          # remote Gerrit rebase. Local rebase regenerates the commit locally on
+          # disk, natively attaching all required footers (including non-WIP
+          # footers) before uploading a new patchset and marking it ready for
+          # review.
           self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
                                             patch_set_to_retry.change_id)
+
           title = 'rebased by {}'.format(self.m.buildbucket.build_url())
           self.upload_new_patch_set(patch_set_to_retry, title=title,
                                     description='+')
           self.m.gerrit.add_change_comment_remote(
               changes_to_retry[0], ('[Rebase] A rebased CL is uploaded. '
                                     'CQ will need to rerun everything.'))
+
           # A new patchset upload resets CQ+1/+2 status.
           running = False
 
       if running:
         # Already running for CQ. No need to retry.
         return
-
-      if policy.max_concurrent_cq_runs > 0:
-        limit_exceeded, running_count = self.m.pupr.check_concurrent_cq_limit(
-            open_patch_sets, policy.max_concurrent_cq_runs)
-        if limit_exceeded:
-          presentation.step_text = (
-              f'{message} (Retry skipped: concurrent CQ run limit of '
-              f'{policy.max_concurrent_cq_runs} reached, currently running: {running_count})'
-          )
-          return
 
       if patch_set_to_retry.work_in_progress:
         self.m.gerrit.set_change_ready_for_review_remote(

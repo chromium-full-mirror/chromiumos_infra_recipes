@@ -34,6 +34,7 @@ PROPERTIES = CreateUprevClsProperties
 
 
 def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
+
   branch_policy = BranchPolicy(
       pattern='.*',
       repl='',
@@ -43,6 +44,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
       cr_policy=properties.cr_policy,
       max_concurrent_cq_runs=properties.max_concurrent_cq_runs,
   )
+
   if properties.projects == 0:
     projects = [
         ProjectInfo(name='chrome-project', path='[START_DIR]/chrome/src',
@@ -57,8 +59,13 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
         for i in range(1, properties.projects + 1)
     ]
 
+  limit_exceeded, running_count = api.pupr_gerrit_interface.check_limit_exceeded(
+      list(properties.open_changes), branch_policy)
   summary = api.pupr_gerrit_interface.create_uprev_cls(
-      projects, list(properties.open_changes), branch_policy, 'a topic')
+      projects, list(properties.open_changes), branch_policy, 'a topic',
+      limit_exceeded=limit_exceeded, running_count=running_count)
+
+
   return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
 
 

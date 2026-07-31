@@ -289,4 +289,7 @@ message GeneratorProperties {
   // The version files to uprev.
   // Required if uprev_target_kind is VERSION_FILE.
   repeated string version_files = 24;
+
+  // Additional footer to be added in the commit description when CL is not WIP.
+  string non_wip_additional_commit_footer = 25;
 }

@@ -34,6 +34,7 @@ def RunSteps(api):
       api.git.fetch_ref('remote', 'refs/heads/branch'), commit_id)
   api.git.remote_update('sync branches')
   api.git.checkout('main', force=True)
+  api.git.reset_hard('HEAD~1')
   api.assertions.assertEqual(api.git.remote_head(remote), 'refs/heads/main')
   api.assertions.assertEqual(api.git.remote_head(remote, test_stdout=''), None)
   api.git.merge('branch', 'yeet')

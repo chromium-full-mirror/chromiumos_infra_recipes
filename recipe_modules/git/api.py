@@ -272,6 +272,14 @@ class GitApi(recipe_api.RecipeApi):
     """
     self._step(['remote', 'update'], name=step_name, timeout=timeout_sec)
 
+  def reset_hard(self, target='HEAD', **kwargs):
+    """Run 'git reset --hard'.
+
+    Args:
+      target (str): Target commit or ref to reset to.
+    """
+    return self._step(['reset', '--hard', target], **kwargs)
+
   def checkout(self, commit=None, force=False, branch=None, **kwargs):
     """Run 'git checkout'.
 
