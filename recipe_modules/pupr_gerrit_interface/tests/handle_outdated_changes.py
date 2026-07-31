@@ -112,7 +112,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       'basic',
       api.properties(outdated_cls_policy=OUTDATED_LEAVE_COMMENT, expected=True,
                      changes=1),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
           gerrit_changes, merged_value_dict),
       api.post_check(post_process.MustRun, 'outdated CLs'),
@@ -132,7 +132,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.set_query_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
           change_infos, 'https://chromium-review.googlesource.com'),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
           gerrit_changes, merged_value_dict),
       api.post_check(post_process.MustRun, 'outdated CLs'),
@@ -149,7 +149,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       'no-rebase',
       api.properties(outdated_cls_policy=OUTDATED_LEAVE_COMMENT, expected=True,
                      changes=1),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
           gerrit_changes, merged_value_dict),
       api.post_check(post_process.MustRun, 'outdated CLs'),

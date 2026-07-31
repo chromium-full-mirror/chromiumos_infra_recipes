@@ -68,6 +68,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       resp['info']['work_in_progress'] = False
     if 'patch_set' in values:
       resp['info']['patch_set'] = values['patch_set']
+    if 'owner' in values:
+      resp['info']['owner'] = values['owner']
     ref = values.get(
         'ref', 'refs/changes/%s/%d/%d' % (
             ('%02d' % request['change_number'])[-2:],
@@ -105,6 +107,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
                     },
                 })
         })
+    if 'uploader' in values:
+      resp['revision_info']['uploader'] = values['uploader']
     return resp
 
   def set_gerrit_fetch_changes_response(

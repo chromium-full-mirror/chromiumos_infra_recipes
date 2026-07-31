@@ -104,6 +104,16 @@ class PatchSet:
     return self._change_info['subject']
 
   @property
+  def uploader_email(self) -> str:
+    """Return the uploader email address for this PatchSet."""
+    return self._rev_info.get('uploader', {}).get('email', '')
+
+  @property
+  def owner_email(self) -> str:
+    """Return the owner email address for this PatchSet."""
+    return self._change_info.get('owner', {}).get('email', '')
+
+  @property
   def change_id(self) -> int:
     """Return the Patch Set's change number."""
     return self._change_info['_number']

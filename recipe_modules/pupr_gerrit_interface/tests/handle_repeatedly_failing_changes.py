@@ -161,7 +161,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                             cq_dry_run) in enumerate(cl_specs)
                     if is_pinned or retries <= max_cq_retry
                 ])),
-        api.gerrit.set_gerrit_fetch_changes_response(
+        api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
             'get CLs repeatedly failing CQ', gerrit_changes,
             gerrit_fetch_changes_response),
         api.post_check(post_process.LogEquals, 'get CLs repeatedly failing CQ',

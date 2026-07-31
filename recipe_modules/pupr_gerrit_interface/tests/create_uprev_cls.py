@@ -118,12 +118,23 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                           f'update CL labels.set labels on CL {cl_num}',
                           'labels', [f'"{label}"'])
 
+  def mock_bot_cls(*cl_nums: int):
+    ret = None
+    for i, n in enumerate(cl_nums, start=1):
+      step = api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
+          'update CL labels', [
+              common.GerritChange(host='host-review.googlesource.com', change=n,
+                                  project='project', patchset=1)
+          ], iteration=i)
+      ret = (ret + step) if ret else step
+    return ret
+
   yield api.test(
       'submit', api.properties(send_to_cq_policy=SUBMIT, projects=1),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123), api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
       check_label(123, 'Bot-Commit', 1), check_no_label(123, 'Commit-Queue'),
@@ -135,7 +146,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123), api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
       check_label(123, 'Bot-Commit', 1), check_label(123, 'Commit-Queue', 1),
@@ -149,7 +160,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123), api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
       check_no_label(123, 'Bot-Commit'), check_label(123, 'Commit-Queue', 1),
@@ -163,7 +174,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123), api.path.exists(api.src_state.workspace_path),
       check_label(123, 'Bot-Commit', 1), check_label(123, 'Commit-Queue', 1),
       check_label(123, 'Code-Review', -2),
       api.post_check(post_process.StepSuccess,
@@ -180,7 +191,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project2',
           'https://host-review.googlesource.com/c/project/+/456'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123, 456), api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
       check_label(123, 'Bot-Commit', 1), check_label(123, 'Commit-Queue', 2),
@@ -195,11 +206,27 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      api.path.exists(api.src_state.workspace_path), mock_bot_cls(123),
       api.post_check(post_process.DoesNotRun,
                      'update CL labels.set labels on CL 123'),
       api.post_check(post_process.DoesNotRun, 'update CL labels.submit CL'),
       api.post_check(post_process.MustRun, 'update CL labels.abandon CL 123'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'untrusted-uploader-strips-approvals',
+      api.properties(send_to_cq_policy=FULL_RUN, projects=1),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for project1',
+          'https://host-review.googlesource.com/c/project/+/123'),
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
+          'update CL labels', [
+              common.GerritChange(host='host-review.googlesource.com',
+                                  change=123, project='project', patchset=1)
+          ], uploader_email='human@google.com'),
+      api.path.exists(api.src_state.workspace_path),
+      api.post_check(post_process.DoesNotRun,
+                     'update CL labels.set labels on CL 123'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -211,7 +238,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project2',
           'https://chrome-internal-review.googlesource.com/c/project/+/456'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123, 456), api.path.exists(api.src_state.workspace_path),
       api.post_process(
           post_process.SummaryMarkdown,
           'created [chromium:123](https://crrev.com/c/123) '
@@ -223,7 +250,12 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for [START_DIR]/chrome/src',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
+          'update CL labels', [
+              common.GerritChange(host='host-review.googlesource.com',
+                                  change=123, project='[START_DIR]/chrome/src',
+                                  patchset=1)
+          ]), api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
       api.post_process(post_process.DropExpectation))
@@ -256,13 +288,13 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           CreateUprevClsProperties(send_to_cq_policy=DRY_RUN, projects=1,
                                    max_concurrent_cq_runs=1,
                                    open_changes=open_changes_list)),
-      api.gerrit.set_gerrit_fetch_changes_response('check concurrent CQ runs',
-                                                   open_changes_list,
-                                                   fetch_response_running),
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
+          'check concurrent CQ runs', open_changes_list,
+          fetch_response_running),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123), api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
       check_label(123, 'Commit-Queue', 0),
@@ -277,13 +309,13 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           CreateUprevClsProperties(send_to_cq_policy=DRY_RUN, projects=1,
                                    max_concurrent_cq_runs=2,
                                    open_changes=open_changes_list)),
-      api.gerrit.set_gerrit_fetch_changes_response('check concurrent CQ runs',
-                                                   open_changes_list,
-                                                   fetch_response_running),
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
+          'check concurrent CQ runs', open_changes_list,
+          fetch_response_running),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123), api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
       check_label(123, 'Commit-Queue', 1),

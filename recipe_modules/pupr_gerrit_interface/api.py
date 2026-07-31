@@ -102,7 +102,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
                                             [('topic', topic),
                                              ('project', project.name),
                                              ('branch', project.branch_name),
-                                             ('status', 'open')]))
+                                             ('status', 'open'),
+                                             ('owner', 'self')]))
     return open_changes
 
   def handle_outdated_changes(self, open_changes: List[GerritChange],
@@ -337,9 +338,21 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           abandoned_cls.append(outdated_cl)
     return abandoned_cls
 
+  def is_trusted_patchset_uploader(self, change: GerritChange) -> bool:
+    """Check via Gerrit API if the latest patchset was uploaded by owner.
+
+    To comply with go/pdeio-trusted-robot-policy, Bot-Commit+1 must only be
+    voted on patchsets uploaded by the trusted robot service account itself.
+    """
+    patchsets = self.m.gerrit.fetch_patch_sets([change])
+    latest_ps = sorted(patchsets, key=lambda ps: ps.patch_set, reverse=True)[0]
+    return bool(latest_ps.uploader_email and latest_ps.owner_email and
+                latest_ps.uploader_email == latest_ps.owner_email)
+
   def check_limit_exceeded(self, open_changes: List[GerritChange],
                            policy: BranchPolicy) -> Tuple[bool, int]:
     """Check if concurrent CQ limit is exceeded for open changes."""
+
 
     send_to_cq_policy = (
         policy.existing_cls_policy
@@ -493,6 +506,9 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           labels.pop(Label.BOT_COMMIT, None)
         if policy.cr_policy == CR_REJECT:
           labels[Label.CODE_REVIEW] = -2
+        if not self.is_trusted_patchset_uploader(change):
+          labels.pop(Label.BOT_COMMIT, None)
+          labels.pop(Label.COMMIT_QUEUE, None)
         if labels:
           self.m.gerrit.set_change_labels_remote(change, labels)
 
@@ -543,7 +559,11 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       if self.m.cros_infra_config.is_staging:
         labels.pop(Label.BOT_COMMIT, None)
       gerrit_change = patch_set.to_gerrit_change_proto()
-      self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
+      if not self.is_trusted_patchset_uploader(gerrit_change):
+        labels.pop(Label.BOT_COMMIT, None)
+        labels.pop(Label.COMMIT_QUEUE, None)
+      if labels:
+        self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
 
   def apply_retry_policy(self, open_changes: List[GerritChange],
                          most_recent_uprev: Optional[PatchSet],

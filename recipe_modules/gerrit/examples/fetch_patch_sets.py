@@ -131,6 +131,12 @@ def _get_values_dict(api):
               'https://example.com/project-path',
           'ref':
               'refs/something/02/2/3',
+          'owner': {
+              'email': 'owner@example.com'
+          },
+          'uploader': {
+              'email': 'uploader@example.com'
+          },
           'files': {
               'their/fake/file': {
                   'status': 'A',
@@ -417,6 +423,10 @@ def RunSteps(api):
     api.assertions.assertEqual(
         patch.is_latest_patch_set(),
         values['current_revision'] == values['patch_set_revision'])
+    api.assertions.assertEqual(patch.uploader_email,
+                               values.get('uploader', {}).get('email', ''))
+    api.assertions.assertEqual(patch.owner_email,
+                               values.get('owner', {}).get('email', ''))
     if patch.labels is not None:
       api.assertions.assertEqual(
           patch.has_label_vote('Code-Review', -2),

@@ -118,7 +118,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      no_existing_cls_policy=DRY_RUN_NOT_APPROVED,
                      retry_cl_policy=RETRY_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=1),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes,
           {
@@ -144,6 +144,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
       api.post_check(post_process.MustRun,
@@ -164,7 +166,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      no_existing_cls_policy=DRY_RUN_NOT_APPROVED,
                      retry_cl_policy=RETRY_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=1),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes,
           {
@@ -190,6 +192,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
       api.post_check(post_process.MustRun,
@@ -210,7 +214,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_PINNED.test gerrit mergeable',
           'chromium-review.googlesource.com', 1234, 'current', False),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes,
           {
@@ -236,7 +240,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED.rebase CL 1234.get CL 1234 description',
           gerrit_changes,
           {
@@ -275,6 +279,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_PINNED.upload patch set for Change-Id 1234'
@@ -299,7 +305,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           False,
           'apply retry policy RETRY_LATEST_PINNED.test cq-orchestrator mergeable'
       ),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes,
           {
@@ -330,6 +336,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_PINNED.rebase CL 1234.curl https://chromium-review.googlesource.com/changes/1234/rebase'
@@ -350,7 +358,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_PINNED.test gerrit mergeable',
           'chromium-review.googlesource.com', 1234, 'current', True),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes,
           {
@@ -381,6 +389,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234),
       api.post_check(post_process.DoesNotRunRE, r'.*\.rebase CL 1234.*'),
       api.post_check(post_process.DoesNotRunRE,
                      r'.*\.upload patch set for Change-Id 1234'),
@@ -400,7 +410,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.test gerrit mergeable',
           'chromium-review.googlesource.com', 1234, 'current', True),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
           gerrit_changes,
           {
@@ -443,7 +453,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.test gerrit mergeable',
           'chromium-review.googlesource.com', 1234, 'current', False),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
           gerrit_changes,
           {
@@ -465,7 +475,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1234.get CL 1234 description',
           gerrit_changes,
           {
@@ -503,6 +513,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', 1234),
       api.post_check(post_process.MustRunRE, r'.*\.rebase CL 1234.*'),
       api.post_check(
           post_process.MustRunRE,
@@ -523,7 +535,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_PINNED.test gerrit mergeable',
           'chromium-review.googlesource.com', 1234, 'current', False),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           [
               GerritChange(
@@ -557,7 +569,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED.rebase CL 1234.get CL 1234 description',
           gerrit_changes,
           {
@@ -595,6 +607,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_PINNED.upload patch set for Change-Id 1234'
@@ -623,7 +637,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_PINNED.test gerrit mergeable',
           'chromium-review.googlesource.com', 1234, 'current', False),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           [
               GerritChange(
@@ -657,7 +671,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED.rebase CL 1234.get CL 1234 description',
           gerrit_changes,
           {
@@ -696,6 +710,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                                change=1234)
           ], created_by='user:lamontjones@chromium.org', bucket='staging',
           builder='staging-my-cool-pupr-generator').build,
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_PINNED.upload patch set for Change-Id 1234'
@@ -724,7 +740,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=1),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes,
           {
@@ -769,7 +785,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      retry_cl_policy=RETRY_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=2,
                      max_concurrent_cq_runs=1),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes_2,
           {
@@ -890,7 +906,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      rebase_before_retry=True),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.git.diff_check(True),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes,
           {
@@ -924,7 +940,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
-      api.gerrit.set_gerrit_fetch_changes_response(
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED.rebase CL 1234.get CL 1234 description',
           gerrit_changes,
           {
@@ -952,6 +968,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               'path': 'src/chromium'
           }],
       ),
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_PINNED.upload patch set for Change-Id 1234',
@@ -1018,3 +1036,47 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'apply retry policy RETRY_LATEST_PINNED.retry CL 1234'),
       api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'untrusted-uploader-strips-approvals-on-retry',
+      api.properties(existing_cls_policy=SUBMIT,
+                     no_existing_cls_policy=FULL_RUN,
+                     retry_cl_policy=RETRY_LATEST_PINNED,
+                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=1),
+      api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_PINNED',
+          gerrit_changes,
+          {
+              1234: {
+                  'patch_set':
+                      5,
+                  'files': {
+                      'a/b/d/test.txt': {},
+                  },
+                  'branch':
+                      'main',
+                  'hashtags': ['pupr-retry-pinned'],
+                  'created':
+                      '2023-01-09 13:11:20.000000000',
+                  'messages': [{
+                      'date':
+                          1234,
+                      'tag':
+                          'autogenerated:cq:full-run:1234',
+                      'message':
+                          'Patch Set 1234:  This CL has failed the run. Reason:'
+                  }],
+              },
+          },
+      ),
+      api.pupr_gerrit_interface.set_retry_cl_response(
+          'apply retry policy RETRY_LATEST_PINNED', 1234,
+          uploader_email='human@google.com'),
+      api.post_check(post_process.StepSuccess,
+                     'apply retry policy RETRY_LATEST_PINNED'),
+      api.post_check(post_process.MustRun,
+                     'apply retry policy RETRY_LATEST_PINNED.retry CL 1234'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'apply retry policy RETRY_LATEST_PINNED.retry CL 1234.set labels on CL 1234'
+      ), api.post_process(post_process.DropExpectation))
