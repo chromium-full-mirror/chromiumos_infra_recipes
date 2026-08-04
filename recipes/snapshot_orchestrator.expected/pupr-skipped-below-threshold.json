@@ -12183,7 +12183,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Version: 1234.56.0-111111\n\nOverall Greenness Score: 50, Build Only Greenness Score: 50\n\nLKGM skipped: aggregated greenness: 0.00%, threshold: 100% (below threshold)\n\n1 out of 1 build failed\n\n- amd64-generic-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
+      "humanReason": "Version: 1234.56.0-111111\n\nOverall Greenness Score: 50, Build Only Greenness Score: 50\n\nLKGM to chromium/src skipped: aggregated greenness: 0.00%, threshold: 100% (below threshold)\n\n1 out of 1 build failed\n\n- amd64-generic-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
     },
     "name": "$result"
   }

@@ -12038,7 +12038,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Version: 1234.56.0\n\nOverall Greenness Score: 50, Build Only Greenness Score: 50\n\nLKGM skipped: PUpr is not enabled\n\n1 out of 1 build failed\n\n- amd64-generic-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
+      "humanReason": "Version: 1234.56.0\n\nOverall Greenness Score: 50, Build Only Greenness Score: 50\n\nLKGM to chromium/src skipped: PUpr is not enabled\n\n1 out of 1 build failed\n\n- amd64-generic-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
     },
     "name": "$result"
   }
