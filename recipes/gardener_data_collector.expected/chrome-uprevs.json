@@ -1,11 +1,11 @@
 [
   {
     "cmd": [],
-    "name": "find last 7-day Chrome uprev (chromeos-base/chromeos-chrome) CLs"
+    "name": "find last 7-day Chrome uprev CLs"
   },
   {
     "cmd": [],
-    "name": "find last 7-day Chrome uprev (chromeos-base/chromeos-chrome) CLs.query https://chromium-review.googlesource.com",
+    "name": "find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@found 2 matching CLs@@@"
@@ -44,7 +44,7 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
-    "name": "find last 7-day Chrome uprev (chromeos-base/chromeos-chrome) CLs.query https://chromium-review.googlesource.com.gerrit changes",
+    "name": "find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -172,112 +172,9 @@
   },
   {
     "cmd": [],
-    "name": "find last 7-day Chrome uprev (chromeos-base/lacros-ash-atomic) CLs"
-  },
-  {
-    "cmd": [],
-    "name": "find last 7-day Chrome uprev (chromeos-base/lacros-ash-atomic) CLs.query https://chromium-review.googlesource.com",
+    "name": "find last 7-day Chrome uprev CLs.fetch gitiles file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found 0 matching CLs@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "changes",
-      "--host",
-      "https://chromium-review.googlesource.com",
-      "--json_file",
-      "/path/to/tmp/json",
-      "-p",
-      "repo=chromiumos/overlays/chromiumos-overlay",
-      "-p",
-      "branch=main",
-      "-p",
-      "-age=7d",
-      "-p",
-      "-is=wip",
-      "-p",
-      "topic=chromeos-base/lacros-ash-atomic",
-      "-o",
-      "MESSAGES",
-      "-o",
-      "CURRENT_REVISION",
-      "-o",
-      "CURRENT_FILES",
-      "-o",
-      "CURRENT_COMMIT",
-      "--verbose"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "name": "find last 7-day Chrome uprev (chromeos-base/lacros-ash-atomic) CLs.query https://chromium-review.googlesource.com.gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@[]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "find last 7-day Chrome main uprev (chrome-main) CLs"
-  },
-  {
-    "cmd": [],
-    "name": "find last 7-day Chrome main uprev (chrome-main) CLs.query https://chromium-review.googlesource.com",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found 0 matching CLs@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "changes",
-      "--host",
-      "https://chromium-review.googlesource.com",
-      "--json_file",
-      "/path/to/tmp/json",
-      "-p",
-      "repo=chromiumos/overlays/chromiumos-overlay",
-      "-p",
-      "branch=main",
-      "-p",
-      "-age=7d",
-      "-p",
-      "-is=wip",
-      "-p",
-      "topic=chrome-main",
-      "-o",
-      "MESSAGES",
-      "-o",
-      "CURRENT_REVISION",
-      "-o",
-      "CURRENT_FILES",
-      "-o",
-      "CURRENT_COMMIT",
-      "--verbose"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "name": "find last 7-day Chrome main uprev (chrome-main) CLs.query https://chromium-review.googlesource.com.gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@[]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch gitiles file",
-    "~followup_annotations": [
       "@@@STEP_LOG_LINE@data@@@@",
       "@@@STEP_LOG_LINE@data@@@@",
       "@@@STEP_LOG_LINE@data@GIT_COMMIT=\"deadbeef\"@@@",
@@ -297,15 +194,16 @@
       "10",
       "https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT"
     ],
-    "name": "fetch gitiles file.curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT",
+    "name": "find last 7-day Chrome uprev CLs.fetch gitiles file.curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromium-source/chromium-source-133.0.6861.0_rc-r1.ebuild?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "fetch gitiles file (2)",
+    "name": "find last 7-day Chrome uprev CLs.fetch gitiles file (2)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@data@@@@",
       "@@@STEP_LOG_LINE@data@@@@",
       "@@@STEP_LOG_LINE@data@GIT_COMMIT=\"deadbeef\"@@@",
@@ -325,15 +223,16 @@
       "10",
       "https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT"
     ],
-    "name": "fetch gitiles file (2).curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT",
+    "name": "find last 7-day Chrome uprev CLs.fetch gitiles file (2).curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/c89a0ff2988dbd697d4375924dadec75832c79f3/chromeos-base/chromium-source/chromium-source-133.0.6862.0_rc-r1.ebuild?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "fetch gitiles file (3)",
+    "name": "find last 7-day Chrome uprev CLs.fetch gitiles file (3)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@data@@@@",
       "@@@STEP_LOG_LINE@data@@@@",
       "@@@STEP_LOG_LINE@data@GIT_COMMIT=\"deadbeef\"@@@",
@@ -353,15 +252,16 @@
       "10",
       "https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5589.0_rc-r1.ebuild?format=TEXT"
     ],
-    "name": "fetch gitiles file (3).curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5589.0_rc-r1.ebuild?format=TEXT",
+    "name": "find last 7-day Chrome uprev CLs.fetch gitiles file (3).curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/deadbeef/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5589.0_rc-r1.ebuild?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "fetch gitiles file (4)",
+    "name": "find last 7-day Chrome uprev CLs.fetch gitiles file (4)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@data@@@@",
       "@@@STEP_LOG_LINE@data@@@@",
       "@@@STEP_LOG_LINE@data@GIT_COMMIT=\"deadbeef\"@@@",
@@ -381,9 +281,9 @@
       "10",
       "https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/9bbb014843d74f7536a66139067fd082b1a73d19/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5584.0_rc-r1.ebuild?format=TEXT"
     ],
-    "name": "fetch gitiles file (4).curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/9bbb014843d74f7536a66139067fd082b1a73d19/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5584.0_rc-r1.ebuild?format=TEXT",
+    "name": "find last 7-day Chrome uprev CLs.fetch gitiles file (4).curl https://chromium.googlesource.com/a/chromiumos/overlays/chromiumos-overlay/+/9bbb014843d74f7536a66139067fd082b1a73d19/chromeos-base/chromeos-chrome/chromeos-chrome-112.0.5584.0_rc-r1.ebuild?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
