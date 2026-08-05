@@ -11590,52 +11590,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "HEAD",
-      "--position-num"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "read git footers (2)"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "HEAD",
-      "--position-num"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "read git footers (3)"
-  },
-  {
     "cmd": [],
     "name": "clean up orchestrator"
   },

@@ -11,8 +11,6 @@ consistent.
 from collections import namedtuple
 import typing
 
-from google.protobuf import timestamp_pb2
-
 from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
@@ -337,39 +335,3 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
       start_build_id += 1
 
     return collect_builds, collect_after_builds
-
-  def set_should_generate_lkgm_cl(self, value, step_name=None,
-                                  current_build_start_time=None):
-    """Set the mock return value of `should_generate_lkgm_cl` method.
-
-    You may need to set `current_build_start_time` to the start_time of the
-    current build if you set the custom start_time, because a test_api method
-    can't get the start_time of the current build.
-    """
-    step_name = ('' if step_name is None else f'{step_name}.'
-                ) + 'Check the previous LKGM CL generation.buildbucket.search'
-
-    if value:
-      return self.m.buildbucket.simulated_search_results([], step_name)
-
-    GREEN_SNAPSHOT_OUTPUT_PROPERTIES = Build.Output()
-    GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['lkgm'] = {
-        'uprev_cl_generated': True,
-        'uprev_dryrun': False,
-        'version': '12345.0.0-12345',
-    }
-
-    if current_build_start_time is None:
-      # Default start time is zero on the test environment.
-      current_build_start_time = 0
-
-    # Previous build started at 5 min before the current build.
-    task_start_time = current_build_start_time - 5 * 60 * 60
-
-    builds = [
-        Build(
-            start_time=timestamp_pb2.Timestamp(seconds=task_start_time),
-            output=GREEN_SNAPSHOT_OUTPUT_PROPERTIES,
-        ),
-    ]
-    return self.m.buildbucket.simulated_search_results(builds, step_name)

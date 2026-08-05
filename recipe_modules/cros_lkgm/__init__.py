@@ -10,17 +10,11 @@ from .api import CrosLkgmApi as API
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
-    'easy',
     'cros_infra_config',
     'cros_release',
-    'cros_schedule',
-    'cros_snapshot',
-    'cros_source',
-    'cros_version',
     'greenness',
     'recipe_engine/scheduler',
     'recipe_engine/properties',
-    'src_state',
     'gitiles',
 ]
 

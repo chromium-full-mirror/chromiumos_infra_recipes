@@ -36,6 +36,7 @@ def RunSteps(api):
   else:
     api.assertions.assertEqual(build.builder.builder,
                                'public-main-orchestrator')
+  api.cros_lkgm.collect_public_build()
 
 
 def GenTests(api):

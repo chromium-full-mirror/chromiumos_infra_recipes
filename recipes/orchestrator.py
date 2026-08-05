@@ -151,11 +151,6 @@ def DoRunSteps(api: RecipeApi):
       gs_path = 'LATEST-staging' if api.build_menu.is_staging else 'main-release'
       api.cros_artifacts.publish_latest_files('chromeos-image-archive', gs_path)
 
-    api.cros_lkgm.do_lkgm(
-        api.orch_menu.builds_status.completed_builds,
-        lkgm_version=api.cros_version.version.platform_version,
-        use_branch=not api.cros_source.is_tot)
-
   # Launch any specified follow on orchestrator.
   api.orch_menu.run_follow_on_orchestrator()
 
@@ -221,9 +216,6 @@ def GenTests(api: RecipeTestApi):
           step_name='collect public orchestrator.collect'),
       # On ToT, shouldn't be getting branch.
       api.post_check(post_process.DoesNotRun, 'get chrome branch'),
-      api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
-      api.post_check(post_process.StepCommandDoesNotContain,
-                     'call chrome_chromeos_lkgm', ['--branch']),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       api.post_check(post_process.MustRun, 'run tests'),
@@ -326,9 +318,6 @@ def GenTests(api: RecipeTestApi):
           step_name='collect public orchestrator.collect'),
       # On ToT, shouldn't be getting branch.
       api.post_check(post_process.DoesNotRun, 'get chrome branch'),
-      api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
-      api.post_check(post_process.StepCommandDoesNotContain,
-                     'call chrome_chromeos_lkgm', ['--branch']),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       builder='release-main-orchestrator',
@@ -434,6 +423,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$chromeos/cros_lkgm': {
+                  'enable_lkgm': True,
                   'enable_pupr': True,
                   'pupr_builder_name': 'cros_lkgm-pupr',
                   'builder_threshold_percentage': 0,

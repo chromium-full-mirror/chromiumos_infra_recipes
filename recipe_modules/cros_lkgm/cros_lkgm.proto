@@ -17,9 +17,7 @@ message CrosLkgmProperties {
   // to be considered an LKGM candidate. Should be a value in [0, 100].
   int32 builder_threshold_percentage = 3;
 
-  // Disable the legacy LKGM uprev approach (which synchronously runs the
-  // chrome_chromeos_lkgm script within this builder).
-  bool disable_legacy = 4;
+  reserved 4;
 
   // Enable triggering PUpr for LKGM uprev.
   bool enable_pupr = 5;

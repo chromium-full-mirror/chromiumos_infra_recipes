@@ -91,36 +91,6 @@ def DoRunSteps(api: RecipeApi):
   # Run any HW tests.
   api.snapshot_orch_menu.plan_and_run_tests(testable_builds=testable_builds)
 
-  with api.context(cwd=api.src_state.external_manifest.path):
-    external_manifest_position = api.git_footers.position_num('HEAD')
-    # The above method returns 1 on error.
-    external_manifest_position = (0 if external_manifest_position == 1 else
-                                  external_manifest_position)
-  with api.context(cwd=api.src_state.internal_manifest.path):
-    internal_manifest_position = api.git_footers.position_num('HEAD')
-    # The above method returns 1 on error.
-    internal_manifest_position = (0 if internal_manifest_position == 1 else
-                                  internal_manifest_position)
-
-  # Generate LKGM uprev CL if the condition meets.
-  if snapshot_identifier:
-    with api.step.nest('retrieving platform version') as presentation:
-      version_str = api.cros_version.version.platform_version
-      with api.step.nest('retrieving snapshot identifier') as presentation2:
-        snapshot_identifier = api.cros_snapshot.snapshot_identifier()
-        if snapshot_identifier:
-          presentation2.step_text = snapshot_identifier
-          version_str += f'-{snapshot_identifier}'
-
-    with api.step.nest('generate a LKGM uprev CL') as presentation:
-      if api.snapshot_orch_menu.should_generate_lkgm_cl(version_str):
-        api.cros_lkgm.do_lkgm(
-            builds_status.completed_builds, lkgm_version=version_str,
-            internal_manifest_position=internal_manifest_position,
-            external_manifest_position=external_manifest_position)
-      else:
-        presentation.step_text = 'Skipped generating a LKGM CL.'
-
 
 def GenTests(api: RecipeTestApi):
 
@@ -187,27 +157,6 @@ def GenTests(api: RecipeTestApi):
           ],
       ), collect_builds=green_build_results, with_manifest_refs=True,
       builder='snapshot-orchestrator')
-
-  yield api.snapshot_orch_menu.test(
-      'lkgm-uprev-generated', data.ctp_normal, lfg_props,
-      api.cros_snapshot.simulated_snapshot_identifier(111111),
-      api.snapshot_orch_menu.set_should_generate_lkgm_cl(
-          True, step_name='generate a LKGM uprev CL'),
-      api.post_check(post_process.MustRun,
-                     'generate a LKGM uprev CL.call chrome_chromeos_lkgm'),
-      collect_builds=green_build_results, with_manifest_refs=True,
-      builder='snapshot-orchestrator')
-
-  yield api.snapshot_orch_menu.test(
-      'lkgm-uprev-not-generated', data.ctp_normal, lfg_props,
-      api.cros_snapshot.simulated_snapshot_identifier(111111),
-      api.snapshot_orch_menu.set_should_generate_lkgm_cl(
-          False, step_name='generate a LKGM uprev CL'),
-      api.post_check(post_process.DoesNotRun,
-                     'generate a LKGM uprev CL.call chrome_chromeos_lkgm'),
-      collect_builds=green_build_results, with_manifest_refs=True,
-      builder='snapshot-orchestrator')
-
   crit_failure_build_results = collect + collect_after
   for b in crit_failure_build_results:
     if b.builder.builder == 'amd64-generic-snapshot':

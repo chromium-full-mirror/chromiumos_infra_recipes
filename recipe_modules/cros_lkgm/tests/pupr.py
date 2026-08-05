@@ -77,10 +77,11 @@ def GenTests(api):
                  custom_pupr_builder_name='cros_lkgm.pupr',
                  required_green_builders=None, custom_builds=None,
                  builder_threshold_percentage=50,
-                 expected_lkgm_skipped_reason=None, extra_checks=None):
+                 expected_lkgm_skipped_reason=None, extra_checks=None,
+                 enable_lkgm=True):
     # Prepare properties.
     lkgm_props = {
-        'enable_lkgm': True,
+        'enable_lkgm': enable_lkgm,
         'enable_pupr': enable_pupr,
         'builder_threshold_percentage': builder_threshold_percentage,
     }
@@ -143,6 +144,9 @@ def GenTests(api):
     )
 
   # Test cases:
+  yield build_test('lkgm-disabled', enable_pupr=True, enable_lkgm=False,
+                   test_failed_builds=False, expected_pupr_triggered=False,
+                   expected_lkgm_skipped_reason='LKGM is not enabled')
   yield build_test('pupr-disabled', enable_pupr=False, test_failed_builds=False,
                    expected_pupr_triggered=False,
                    expected_lkgm_skipped_reason='PUpr is not enabled')

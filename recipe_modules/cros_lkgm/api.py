@@ -8,33 +8,12 @@ from typing import List
 
 from google.protobuf.json_format import MessageToDict
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
-from RECIPE_MODULES.chromeos.cros_version.version import Version
-
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
-
-CHROMIUM_SRC_PROJECT = 'chromium/src'
-CHROMIUM_SRC_URL = 'https://chromium.googlesource.com/{}'.format(
-    CHROMIUM_SRC_PROJECT)
-LKGM_PATH = 'chromeos/CHROMEOS_LKGM'
-LKGM_CL_REVIEWERS = ['chrome-os-gardeners-reviews@google.com']
-CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
-LKGM_HASHTAG = 'chrome-lkgm'
-
-CHROMIUMOS_OVERLAY_PATH = 'src/third_party/chromiumos-overlay'
-
-CHROME_VERSION_REGEXP = r'chromeos-base/chromeos-chrome/chromeos-chrome-\d+\.\d+\.(?P<branch>\d+)\.\d+_.*\.ebuild'
-
-CHROME_EBUILD_TEST_DATA = '''
-chromeos-base/chromeos-chrome/chromeos-chrome-106.0.5204.0_rc-r1.ebuild
-chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild
-'''
 
 
 
@@ -44,7 +23,6 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     self._enable_lkgm = properties.enable_lkgm
-    self._disable_legacy = properties.disable_legacy
     self._enable_pupr = properties.enable_pupr
     self._pupr_builder_name = properties.pupr_builder_name
     self._full_run = properties.full_run
@@ -150,181 +128,19 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       self._public_build_results = self.m.buildbucket.collect_build(
           self._public_build.id, step_name='collect', timeout=60 * 60 * 13)
 
-  def _success_build_count(self, builds):
-    return sum(b.status == common_pb2.SUCCESS for b in builds)
-
-  def _success_percent(self, builds):
-    successful_builds = self._success_build_count(builds)
-    return successful_builds / float(len(builds)) * 100. if len(builds) else 0
-
-  def _build_result_text(self, builds):
-    successful_builds = self._success_build_count(builds)
-    total_builds = len(builds)
-    success_percent = self._success_percent(builds)
-    return '{:.2f}% ({:d} of {:d}) builds succeeded, threshold: {:d}%'.format(
-        success_percent, successful_builds, total_builds,
-        self._builder_threshold_percentage)
-
-  def do_lkgm(self, release_build_results: List[build_pb2.Build],
-              lkgm_version: str, use_branch: bool = False,
-              internal_manifest_position: int = 0,
-              external_manifest_position: int = 0):
-    """Performs the LGKM process if the build is an LKGM candidate.
-
-    This should only be called from a release orchestrator.
-
-    Args:
-      release_build_results (list(build_pb2.Build)): list of release build
-        results as returned by api.orch_menu.plan_and_run_children.
-      lkgm_version (str): ChromeOS version to uprev the LKGM to.
-      use_branch (bool): if set, upload the LKGM CL to the Chrome branch
-        (e.g. refs/branch-heads/5204) instead of ToT.
-      internal_manifest_position (int): If a positive number is set, pass the
-        number of internal manifest position to the script.
-      external_manifest_position (int): If a positive number is set, pass the
-        number of external manifest position to the script.
-    """
-    if not self._enable_lkgm:
-      return
-    if self._disable_legacy:
-      return
-    with self.m.step.nest('assess LKGM readiness') as presentation:
-      if not self._is_lkgm_candidate(release_build_results):
-        presentation.step_text = 'not an LKGM candidate'
-        return
-      presentation.step_text = 'LKGM candidate'
-
-    branch = None
-    if use_branch:
-      assert Version.from_string(
-          lkgm_version
-      ).snapshot is None, 'LKGM uprev should not be from snapshot on branch.'
-
-      milestone = self.m.cros_version.version.milestone
-      branch = self.m.cros_schedule.get_chrome_branch(milestone)
-      if branch is None:
-        step_text = (
-            f"A branch corresponding to M{milestone} doesn't exist on the " +
-            'chromium repo yet. This usually happens when the OS-side ' +
-            'branching is done earlier than the browser-side branching.')
-        self.m.step.empty("skipping uprev: chromium branch doesn't exist",
-                          step_text=step_text)
-        return
-
-    script_path = self.m.cros_source.workspace_path.joinpath(
-        'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
-    cmd = [
-        script_path,
-        '--lkgm',
-        lkgm_version,
-        '--buildbucket-id',
-        self.m.buildbucket.build.id,
-        # Showing debug messages to investigate b/383617613.
-        '--debug',
-    ]
-    if branch:
-      cmd.extend(['--branch', 'refs/branch-heads/{}'.format(branch)])
-    if not self._full_run:
-      cmd.append('--dryrun')
-    if internal_manifest_position > 0:
-      cmd.extend(['--internal-manifest-position', internal_manifest_position])
-    if external_manifest_position > 0:
-      cmd.extend(['--external-manifest-position', external_manifest_position])
-
-    try:
-      self.m.step('call chrome_chromeos_lkgm', cmd)
-    except StepFailure as e:
-      self.m.easy.set_properties_step(lkgm={'uprev_cl_generated': False})
-      raise e
-
-    self.m.easy.set_properties_step(
-        lkgm={
-            'uprev_cl_generated': True,
-            'uprev_dryrun': not self._full_run,
-            'version': lkgm_version,
-        })
-
-  def cleanup_cls(self):
-    """Performs the LGKM cleaning-up process.
-
-    This does only the cleaning-up process of LKGM CLs, in contrast that
-    `do_lkgm` does the actual uprev process as well.
-    """
-    with self.m.step.nest('clean up LKGM CLs') as presentation:
-      if not self._enable_lkgm:
-        presentation.step_text = 'LKGM is not enabled. Do nothing.'
-        return
-
-      script_path = self.m.cros_source.workspace_path.joinpath(
-          'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
-      cmd = [
-          script_path,
-          '--buildbucket-id',
-          self.m.buildbucket.build.id,
-      ]
-      if not self._full_run:
-        cmd.append('--dryrun')
-      self.m.step('call chrome_chromeos_lkgm', cmd)
-
-  def _is_lkgm_candidate(self, release_build_results):
-    """Determines if the build is an LKGM candidate based on child build results.
-
-    Args:
-      release_build_results (list(common_pb2.Build)): list of release builds.
-
-    Returns: (bool) LKGM candidate status.
-    """
-    result = True
-
-    with self.m.step.nest('assess release build results') as presentation:
-      if not release_build_results:
-        presentation.step_text = 'no release builds'
-        result = False
-      else:
-        success_percent = self._success_percent(release_build_results)
-        presentation.step_text = \
-            'release builds: ' + self._build_result_text(release_build_results)
-        if success_percent < self._builder_threshold_percentage:
-          result = False
-
-    if not self.has_public_build:
-      return result
-
-    with self.m.step.nest('assess public build results') as presentation:
-      output_props = self._public_build_results.output.properties
-      child_build_ids = output_props[
-          'child_builds'] if 'child_builds' in output_props else []
-      child_builds = self.m.buildbucket.get_multi(
-          [int(bbid) for bbid in child_build_ids],
-          step_name='get public builders').values() if child_build_ids else []
-
-      if self._public_build_results.status != common_pb2.SUCCESS and not child_builds:
-        # If the public orchestrator failed AND there are no child builds, we don't want
-        # to consider this version for LKGM.
-        presentation.step_text = 'public orchestrator failed and did not report any child builds'
-        result = False
-      elif not child_builds:
-        presentation.step_text = 'no public builds'
-        result = False
-      else:
-        success_percent = self._success_percent(child_builds)
-        presentation.step_text = \
-            'public builds: ' + self._build_result_text(child_builds)
-        if success_percent < self._builder_threshold_percentage:
-          result = False
-
-    return result
-
   def do_lkgm_via_pupr(self, gitiles_commit: GitilesCommit):
     """Triggers cros_lkgm.pupr if conditions are met.
 
-    Checks if enable_pupr is True, if builder aggregated greenness
+    Checks if enable_lkgm and enable_pupr are True, if builder aggregated greenness
     is >= builder_threshold_percentage, and if configured required builders
     are all green with at least one being relevant.
 
     Args:
       gitiles_commit: GitilesCommit to trigger from.
     """
+    if not self._enable_lkgm:
+      self._lkgm_skipped_reason = 'LKGM is not enabled'
+      return
     if not self._enable_pupr:
       self._lkgm_skipped_reason = 'PUpr is not enabled'
       return
