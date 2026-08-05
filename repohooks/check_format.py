@@ -60,8 +60,8 @@ def get_malformatted_files() -> List[Path]:
     in EXCLUDED_FILES.
   """
   stdout = subprocess.run([
-      'git', 'cl', 'format', '--dry-run', '--presubmit', '--python',
-      '--no-clang-format', '--diff'
+      'git', 'cl', 'format', '--presubmit', '--python', '--no-clang-format',
+      '--diff'
   ], capture_output=True, check=True).stdout.decode('utf-8')
   paths: Set[Path] = set()
   for line in stdout.split('\n'):
