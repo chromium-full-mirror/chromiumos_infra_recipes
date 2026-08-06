@@ -206,10 +206,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           endpoint = self._get_legacy_endpoint(artifact)
           response = artifacts.BundleResponse()
           if endpoint:
+            kwargs = {}
+            if artifact == BuilderConfig.Artifacts.TEST_UPDATE_PAYLOAD:
+              kwargs['zstd_compression_level'] = 3
             request = artifacts.BundleRequest(
                 chroot=chroot, sysroot=sysroot,
                 build_target=sysroot.build_target, output_dir=str(path),
-                result_path=self._result_path(path))
+                result_path=self._result_path(path), **kwargs)
             response = endpoint(request, infra_step=True)
 
           files_by_artifact[name] = [
