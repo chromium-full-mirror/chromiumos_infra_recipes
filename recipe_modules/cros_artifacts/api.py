@@ -62,8 +62,8 @@ _LEGACY_ENDPOINTS_BY_ARTIFACT = {
 }
 
 # The default number of concurrent artifact bundling calls to be made if not set
-# by input properties. The current default is to bundle artifacts one at a time.
-_DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS = 1
+# by input properties. The current default is to bundle up to 4 artifacts in parallel.
+_DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS = 4
 
 # The Artifact Types that will have provenance generated for them.
 _DEFAULT_ARTIFACT_TYPES_REQUIRING_PROVENANCE = [
