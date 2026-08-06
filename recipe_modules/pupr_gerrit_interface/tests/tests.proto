@@ -45,6 +45,6 @@ message HandleRepeatedlyFailingChangesProperties {
   repeated buildbucket.v2.GerritChange open_changes = 1;
   int32 max_cq_retry = 2;
   repeated int32 expected_remaining_changes_number = 3;
-  bool should_count_dry_run = 4;
+  reserved 4;
   recipes.chromeos.generator.MaxCqRetryAction max_cq_retry_action = 5;
 }

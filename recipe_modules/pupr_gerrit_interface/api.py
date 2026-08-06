@@ -134,7 +134,6 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       self,
       open_changes: List[GerritChange],
       max_cq_retry: int,
-      should_count_dry_run: bool,
       max_cq_retry_action: MaxCqRetryAction = MAX_CQ_RETRY_ACTION_ABANDON,
   ) -> List[GerritChange]:
     """Abandon or set Verified-1 on unpinned uprev CLs that have failed too many
@@ -143,11 +142,9 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     Args:
       open_changes: A list of currently open, relevant PUpr CLs.
       max_cq_retry: The maximum number of times an unpinned uprev CL is allowed
-        to fail full CQ before abandoning or setting Verified-1. Negative
+        to fail CQ before abandoning or setting Verified-1. Negative
         number indicates no CL should be abandoned/marked Verified-1 no matter
         how many times it has failed.
-      should_count_dry_run: Boolean flag to indicate whether dry run CQ+1
-        should be counted.
       max_cq_retry_action: The action to perform when a CL exceeds max_cq_retry.
         Defaults to MAX_CQ_RETRY_ACTION_ABANDON.
     """
@@ -170,14 +167,14 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       failing_patchsets = []
       remaining_open_cls = []
       for i, ps in enumerate(open_patch_sets):
-        retry_count = (
-            self.m.pupr.num_dry_run_cq_failures(ps)
-            if should_count_dry_run else self.m.pupr.num_full_cq_failures(ps))
+        failed_attempts_count = (
+            self.m.pupr.num_dry_run_cq_failures(ps) +
+            self.m.pupr.num_full_cq_failures(ps))
         is_ignored_or_v1 = (
             self.m.pupr.is_cl_ignored(ps) or
             self.m.pupr.is_verified_minus_one_cl(ps))
         if not is_ignored_or_v1 and (self.m.pupr.is_cl_pinned(ps) or
-                                     retry_count <= max_cq_retry):
+                                     failed_attempts_count <= max_cq_retry):
           remaining_open_cls.append(open_changes[i])
         else:
           failing_patchsets.append(ps)

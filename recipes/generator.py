@@ -321,9 +321,7 @@ class GeneratorRun:
       open_changes = (
           self.m.pupr_gerrit_interface.handle_repeatedly_failing_changes(
               open_changes, self.policy.max_cq_retry,
-              self.policy.no_existing_cls_policy
-              in [generator_pb2.DRY_RUN, generator_pb2.DRY_RUN_NOT_APPROVED],
-              self.policy.max_cq_retry_action))
+              max_cq_retry_action=self.policy.max_cq_retry_action))
 
       if not self.retry_only_run:
         # A real uprev creation run creates local uprev commits on disk.

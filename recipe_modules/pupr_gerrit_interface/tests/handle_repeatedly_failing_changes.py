@@ -58,7 +58,6 @@ def RunSteps(api: recipe_api.RecipeApi,
   remaining_changes = api.pupr_gerrit_interface.handle_repeatedly_failing_changes(
       properties.open_changes,
       max_cq_retry=properties.max_cq_retry,
-      should_count_dry_run=properties.should_count_dry_run,
       max_cq_retry_action=properties.max_cq_retry_action,
   )
   api.assertions.assertEqual(
@@ -120,14 +119,13 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                       cq_dry_run) in zip(change_numbers, cl_specs)
     }
 
-  def test(name: str, max_cq_retry: int, based_on_dry_run: bool,
-           cl_specs: List[Tuple[int, bool, bool]]):
+  def test(name: str, max_cq_retry: int, cl_specs: List[Tuple[int, bool,
+                                                              bool]]):
     """Helper method to generate a test.
 
     Args:
       name: name of test
       max_cq_retry: the allowed number of CQ failures
-      based_on_dry_run: use failed dry-run count as cq retry count
       cl_specs: tuple of int and bool to indicate the number of times each faked
         CL has failed CQ and whether or not it is pinned.
     """
@@ -162,7 +160,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                     for i, (retries, is_pinned,
                             cq_dry_run) in enumerate(cl_specs)
                     if is_pinned or retries <= max_cq_retry
-                ], should_count_dry_run=based_on_dry_run)),
+                ])),
         api.gerrit.set_gerrit_fetch_changes_response(
             'get CLs repeatedly failing CQ', gerrit_changes,
             gerrit_fetch_changes_response),
@@ -178,16 +176,16 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
         ],
     )
 
-  yield test('configured to never abandon', -1, False, [(3, False, False)])
+  yield test('configured to never abandon', -1, [(3, False, False)])
 
-  yield test('abandon unpinned CLs failed too many times', 1, False,
+  yield test('abandon unpinned CLs failed too many times', 1,
              [(1, False, False), (3, False, False), (0, False, False),
               (5, True, False)])
 
-  yield test('Count dry-run for DRY_RUN policy', 1, True, [(1, False, True),
-                                                           (3, False, True),
-                                                           (0, False, True),
-                                                           (5, True, True)])
+  yield test('Count dry-run for DRY_RUN policy', 1, [(1, False, True),
+                                                     (3, False, True),
+                                                     (0, False, True),
+                                                     (5, True, True)])
 
   yield api.test(
       'no open changes',
@@ -207,7 +205,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               open_changes=_create_gerrit_changes(4),
               max_cq_retry=1,
               expected_remaining_changes_number=[1234, 1236, 1237],
-              should_count_dry_run=False,
               max_cq_retry_action=MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE,
           )),
       api.gerrit.set_gerrit_fetch_changes_response(
@@ -248,7 +245,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               open_changes=_create_gerrit_changes(4),
               max_cq_retry=1,
               expected_remaining_changes_number=[1234, 1236, 1237],
-              should_count_dry_run=False,
               max_cq_retry_action=MAX_CQ_RETRY_ACTION_IGNORE,
           )),
       api.gerrit.set_gerrit_fetch_changes_response(
