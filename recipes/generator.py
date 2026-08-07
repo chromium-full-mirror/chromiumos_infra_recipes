@@ -38,8 +38,6 @@ from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 from RECIPE_MODULES.chromeos.git import api as git_api
 from RECIPE_MODULES.chromeos.pupr import api as pupr_api
-from RECIPE_MODULES.chromeos.pupr_gerrit_interface import (
-    api as pupr_gerrit_interface_api)
 from RECIPE_MODULES.chromeos.pupr_local_uprev import api as pupr_local_uprev_api
 from RECIPE_MODULES.chromeos.repo import api as repo_api
 
@@ -220,25 +218,9 @@ class GeneratorRun:
     raise recipe_api.InfraFailure(
         'Not sure how to generate topic')  # pragma: nocover
 
-  @functools.cached_property
-  def _projects_by_remote(self) -> pupr_gerrit_interface_api.ProjectsByRemote:
-    """Organize projects relevant to this run by remote."""
-    return self.m.pupr_gerrit_interface.sort_projects_by_remote(
-        self._repo_projects)
-
   @property
   def _repo_projects(self) -> List[repo_api.ProjectInfo]:
     """Return all repo projects with code that this PUpr uprevs."""
-    if self.retry_only_run:
-      return [
-          repo_api.ProjectInfo(
-              remote=self.properties.retry_ref.remote,
-              name=self.properties.retry_ref.name,
-              branch=self.properties.retry_ref.ref,
-              rrev=self.properties.retry_ref.ref,
-              path=self.properties.retry_ref.path,
-          )
-      ]
     assert self._modified_projects is not None
     return self._modified_projects
 
@@ -306,11 +288,16 @@ class GeneratorRun:
           return self.make_summary('no modified projects')
         self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
 
+      branch = (self.properties.retry_ref.ref[len('refs/heads/'):]
+                if self.properties.retry_ref.ref.startswith('refs/heads/') else
+                self.properties.retry_ref.ref) if self.retry_only_run else (
+                    policy_info.branch or 'main')
+
       open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
-          self._projects_by_remote, self.topic)
+          self.topic, branch=branch)
       most_recent_uprev = (
           self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
-              self._projects_by_remote, self.topic) if open_changes else None)
+              self.topic, branch=branch) if open_changes else None)
       open_changes = (
           self.m.pupr_gerrit_interface.handle_outdated_changes(
               open_changes,
@@ -1235,10 +1222,16 @@ def GenTests(
       api.properties(triggers=[trigger_prop]),
       _props(packages=[package_chrome], branch_policies=[branch_policy]),
       api.git.diff_check(True),
+      api.step_data(
+          'select policy.git ls-remote',
+          api.raw_io.stream_output_text(
+              'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\trefs/heads/release-R79-12345.B\n'
+          ),
+      ),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(
           post_process.MustRun,
-          'checkout branch.checkout branch release-R79-*.B',
+          'checkout branch.checkout branch release-R79-12345.B',
       ),
   )
 
@@ -1247,10 +1240,22 @@ def GenTests(
       api.properties(triggers=[trigger_prop] * 2),
       _props(packages=[package_chrome], branch_policies=[branch_policy]),
       api.git.diff_check(True),
+      api.step_data(
+          'select policy.git ls-remote',
+          api.raw_io.stream_output_text(
+              'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\trefs/heads/release-R79-12345.B\n'
+          ),
+      ),
+      api.step_data(
+          'select policy.git ls-remote (2)',
+          api.raw_io.stream_output_text(
+              'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\trefs/heads/release-R79-12345.B\n'
+          ),
+      ),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(
           post_process.MustRun,
-          'checkout branch.checkout branch release-R79-*.B',
+          'checkout branch.checkout branch release-R79-12345.B',
       ),
   )
 
@@ -1993,21 +1998,10 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
-      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict),
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
           changes,
           value_dict,
-      ),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
-          changes,
-          value_dict,
-      ),
-      api.gerrit.set_query_changes_response(
-          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
-          gerrit_changes_json,
-          'https://chromium-review.googlesource.com',
       ),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
@@ -2020,11 +2014,46 @@ def GenTests(
       ),
   )
 
+  merged_value_dict = {
+      1: {
+          'change_id': 1,
+          'status': 'MERGED',
+          'submitted': '2020-10-25 18:54:00.000000000',
+          'created': '2020-10-22 18:54:00.000000000',
+      },
+      2: {
+          'change_id': 2,
+          'status': 'MERGED',
+          'submitted': '2020-10-25 18:54:00.000000000',
+          'created': '2020-10-23 18:54:00.000000000',
+      },
+  }
+
   yield api.test(
       'no-merged-changes-warning',
       _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
+          changes,
+          merged_value_dict,
+      ),
       api.post_check(
           post_process.StepWarning,
           'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)',

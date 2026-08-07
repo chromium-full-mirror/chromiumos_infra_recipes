@@ -1694,13 +1694,13 @@
       "-p",
       "topic=chromeos-lkgm",
       "-p",
-      "project=",
-      "-p",
-      "branch=main",
-      "-p",
       "status=open",
       "-p",
+      "footer=Cq-Cl-Tag=pupr:chromeos-lkgm",
+      "-p",
       "owner=self",
+      "-p",
+      "branch=main",
       "--verbose"
     ],
     "env": {
@@ -1743,10 +1743,68 @@
   },
   {
     "cmd": [],
-    "name": "examine outdated CLs",
+    "name": "find open uprev CLs.find CLs from chrome-internal host.query https://chrome-internal-review.googlesource.com",
     "~followup_annotations": [
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=chromeos-lkgm",
+      "-p",
+      "status=open",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:chromeos-lkgm",
+      "-p",
+      "owner=self",
+      "-p",
+      "branch=main",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "find open uprev CLs.find CLs from chrome-internal host.query https://chrome-internal-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examine outdated CLs"
   },
   {
     "cmd": [],
@@ -1754,9 +1812,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@merged CLs@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_END@merged CLs@@@",
-      "@@@STEP_LOG_LINE@most recent merged cl@chromium:91827@@@",
-      "@@@STEP_LOG_END@most recent merged cl@@@"
+      "@@@STEP_LOG_END@merged CLs@@@"
     ]
   },
   {
@@ -1780,13 +1836,13 @@
       "-p",
       "topic=chromeos-lkgm",
       "-p",
-      "project=",
-      "-p",
-      "branch=main",
-      "-p",
       "status=merged",
       "-p",
       "-age=30d",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:chromeos-lkgm",
+      "-p",
+      "branch=main",
       "--verbose"
     ],
     "env": {
@@ -1890,8 +1946,69 @@
     "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no merged CLs found@@@",
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_LOG_LINE@merged CLs@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LOG_END@merged CLs@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).query https://chrome-internal-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=chromeos-lkgm",
+      "-p",
+      "status=merged",
+      "-p",
+      "-age=30d",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:chromeos-lkgm",
+      "-p",
+      "branch=main",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).query https://chrome-internal-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -1899,15 +2016,16 @@
       "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"change_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chrome-internal-review.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 91827,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
@@ -1938,7 +2056,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/27/91827/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chrome-internal.googlesource.com/chromium/src\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -1954,15 +2072,8 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chrome-internal-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "outdated CLs",
-    "~followup_annotations": [
-      "@@@STEP_LOG_END@outdated CLs@@@"
     ]
   },
   {
@@ -2059,8 +2170,9 @@
     "name": "update CL labels.add comment on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@comment text@Found 1 open CL(s) for Gerrit topic chromeos-lkgm:@@@",
+      "@@@STEP_LOG_LINE@comment text@Found 2 open CL(s) for Gerrit topic chromeos-lkgm:@@@",
       "@@@STEP_LOG_LINE@comment text@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).@@@",
       "@@@STEP_LOG_END@comment text@@@"
@@ -2115,7 +2227,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Found 1 open CL(s) for Gerrit topic chromeos-lkgm:\\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\\nSend-to-cq policy for this case is DO_NOTHING.\\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Found 2 open CL(s) for Gerrit topic chromeos-lkgm:\\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\\nSend-to-cq policy for this case is DO_NOTHING.\\nTherefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).\"}]}}",
       "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
     ],
     "name": "update CL labels.add comment on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",

@@ -46,15 +46,13 @@ PUPR_TOPIC = 'my-topic'
 def RunSteps(api: recipe_api.RecipeApi, properties: FindOpenUprevCLsProperties):
   """Run the test logic."""
   # Arrange
-  projects_by_remote = api.pupr_gerrit_interface.sort_projects_by_remote(
-      [CHROMIUM_PROJECT, INTERNAL_PROJECT])
   expected_gerrit_changes: List[GerritChange] = []
   for serialized in properties.expected_gerrit_changes:
     expected_gerrit_changes.append(serialized)
 
   # Act
   open_changes = api.pupr_gerrit_interface.find_open_uprev_cls(
-      projects_by_remote, PUPR_TOPIC)
+      PUPR_TOPIC, branch='main')
 
   # Assert
   api.assertions.maxDiff = None

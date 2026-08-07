@@ -1316,7 +1316,7 @@
     "name": "select policy.set chosen_policy_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"release-R79-*.B\", \"policy\": {\"existingClsPolicy\": \"DRY_RUN\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}, \"reference\": [\"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"release-R79-*.B\"]}@@@"
+      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"release-R79-12345.B\", \"policy\": {\"existingClsPolicy\": \"DRY_RUN\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}, \"reference\": [\"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"refs/heads/release-R79-12345.B\"]}@@@"
     ]
   },
   {
@@ -1330,22 +1330,22 @@
     "cmd": [],
     "name": "checkout branch",
     "~followup_annotations": [
-      "@@@STEP_TEXT@using release-R79-*.B deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@"
+      "@@@STEP_TEXT@using release-R79-12345.B deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "checkout branch.checkout branch release-R79-*.B",
+    "name": "checkout branch.checkout branch release-R79-12345.B",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "checkout branch.checkout branch release-R79-*.B.set manifest_branch",
+    "name": "checkout branch.checkout branch release-R79-12345.B.set manifest_branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R79-*.B\"@@@"
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R79-12345.B\"@@@"
     ]
   },
   {
@@ -1355,7 +1355,7 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "release-R79-*.B",
+      "release-R79-12345.B",
       "--groups",
       "all",
       "--repo-rev=stable",
@@ -1371,7 +1371,7 @@
       ]
     },
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.repo init",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1379,7 +1379,7 @@
   },
   {
     "cmd": [],
-    "name": "checkout branch.checkout branch release-R79-*.B.repo binary update",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo binary update",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1399,7 +1399,7 @@
       ]
     },
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.repo binary update.repo version",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo binary update.repo version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1412,7 +1412,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/.repo/repo",
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.repo binary update.git checkout",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo binary update.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1432,7 +1432,7 @@
       ]
     },
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.repo binary update.repo selfupdate",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo binary update.repo selfupdate",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1452,7 +1452,7 @@
       ]
     },
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.repo binary update.repo version (2)",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo binary update.repo version (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1482,7 +1482,7 @@
       ]
     },
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.repo sync",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo sync",
     "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1490,7 +1490,7 @@
   },
   {
     "cmd": [],
-    "name": "checkout branch.checkout branch release-R79-*.B.repo stats",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1517,7 +1517,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.repo stats.event-log",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1533,7 +1533,7 @@
   },
   {
     "cmd": [],
-    "name": "checkout branch.checkout branch release-R79-*.B.repo stats.set repo_retries",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo stats.set repo_retries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 10}@@@"
@@ -1541,7 +1541,7 @@
   },
   {
     "cmd": [],
-    "name": "checkout branch.checkout branch release-R79-*.B.repo stats.set slowest_repos",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo stats.set slowest_repos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"3\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"4\": {\"name\": \".repo/manifests\", \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.6845953464508057, \"try\": 1}}@@@"
@@ -1549,7 +1549,7 @@
   },
   {
     "cmd": [],
-    "name": "checkout branch.checkout branch release-R79-*.B.repo info",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
@@ -1562,14 +1562,14 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "checkout branch.checkout branch release-R79-*.B.repo info.repo info",
+    "name": "checkout branch.checkout branch release-R79-12345.B.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "checkout branch.checkout branch release-R79-*.B.ensure manifest is pinned",
+    "name": "checkout branch.checkout branch release-R79-12345.B.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
@@ -1594,7 +1594,7 @@
       ]
     },
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.ensure manifest is pinned.repo forall",
+    "name": "checkout branch.checkout branch release-R79-12345.B.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
@@ -1619,7 +1619,7 @@
       ]
     },
     "infra_step": true,
-    "name": "checkout branch.checkout branch release-R79-*.B.ensure manifest is pinned.repo manifest",
+    "name": "checkout branch.checkout branch release-R79-12345.B.ensure manifest is pinned.repo manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
@@ -2062,13 +2062,13 @@
       "-p",
       "topic=chromeos-base/chromeos-chrome",
       "-p",
-      "project=overlay",
-      "-p",
-      "branch=main",
-      "-p",
       "status=open",
       "-p",
+      "footer=Cq-Cl-Tag=pupr:chromeos-base/chromeos-chrome",
+      "-p",
       "owner=self",
+      "-p",
+      "branch=release-R79-12345.B",
       "--verbose"
     ],
     "env": {
@@ -2130,13 +2130,13 @@
       "-p",
       "topic=chromeos-base/chromeos-chrome",
       "-p",
-      "project=private-overlay",
-      "-p",
-      "branch=main",
-      "-p",
       "status=open",
       "-p",
+      "footer=Cq-Cl-Tag=pupr:chromeos-base/chromeos-chrome",
+      "-p",
       "owner=self",
+      "-p",
+      "branch=release-R79-12345.B",
       "--verbose"
     ],
     "env": {
@@ -2180,9 +2180,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@merged CLs@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_END@merged CLs@@@",
-      "@@@STEP_LOG_LINE@most recent merged cl@chromium:91827@@@",
-      "@@@STEP_LOG_END@most recent merged cl@@@"
+      "@@@STEP_LOG_END@merged CLs@@@"
     ]
   },
   {
@@ -2206,13 +2204,13 @@
       "-p",
       "topic=chromeos-base/chromeos-chrome",
       "-p",
-      "project=overlay",
-      "-p",
-      "branch=main",
-      "-p",
       "status=merged",
       "-p",
       "-age=30d",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:chromeos-base/chromeos-chrome",
+      "-p",
+      "branch=release-R79-12345.B",
       "--verbose"
     ],
     "env": {
@@ -2317,9 +2315,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@merged CLs@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_END@merged CLs@@@",
-      "@@@STEP_LOG_LINE@most recent merged cl@chrome-internal:91827@@@",
-      "@@@STEP_LOG_END@most recent merged cl@@@"
+      "@@@STEP_LOG_END@merged CLs@@@"
     ]
   },
   {
@@ -2343,13 +2339,13 @@
       "-p",
       "topic=chromeos-base/chromeos-chrome",
       "-p",
-      "project=private-overlay",
-      "-p",
-      "branch=main",
-      "-p",
       "status=merged",
       "-p",
       "-age=30d",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:chromeos-base/chromeos-chrome",
+      "-p",
+      "branch=release-R79-12345.B",
       "--verbose"
     ],
     "env": {
@@ -2446,123 +2442,6 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chrome-internal-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/gerrit-fetch-changes"
-    ],
-    "infra_step": true,
-    "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 91827, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
-    "timeout": 2160,
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
-      "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/27/91827/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/27/91827/0\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chrome-internal-review.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
-      "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/27/91827/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chrome-internal.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/27/91827/0\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}, {\"host\": \"chrome-internal-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "outdated CLs",
-    "~followup_annotations": [
-      "@@@STEP_LOG_END@outdated CLs@@@"
     ]
   },
   {
@@ -3655,7 +3534,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"release-R79-*.B\", \"call\": \"checkout_branch\"}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"release-R79-12345.B\", \"call\": \"checkout_branch\"}@@@"
     ]
   },
   {

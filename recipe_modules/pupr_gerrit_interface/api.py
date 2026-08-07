@@ -70,40 +70,30 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     """
     self.rebase_before_retry = rebase_before_retry
 
-  def sort_projects_by_remote(self,
-                              projects: List[ProjectInfo]) -> ProjectsByRemote:
-    """Return a dict which sorts the given projects by their remote."""
-    projects_by_remote: ProjectsByRemote = {}
-    for project in projects:
-      remote = project.remote
-      if remote not in projects_by_remote:
-        projects_by_remote[remote] = []
-      projects_by_remote[remote].append(project)
-    return projects_by_remote
-
-  def find_open_uprev_cls(self, projects_by_remote: ProjectsByRemote,
-                          topic: str) -> List[GerritChange]:
-    """Return any open uprev CLs matching the right projects and topic.
+  def find_open_uprev_cls(self, topic: str,
+                          branch: str = 'main') -> List[GerritChange]:
+    """Return any open uprev CLs matching the right topic and branch.
 
     Args:
-      projects_by_remote: A mapping from Git remotes to repo projects on that
-        remote that are relevant to this PUpr.
       topic: A string to match against CLs' Gerrit topic, which is used to
         identify relevant PUpr CLs.
+      branch: A string to match against CLs' target branch.
     """
     open_changes: List[GerritChange] = []
     with self.m.step.nest('find open uprev CLs'):
-      for host, remote in HOSTS_REMOTES:
+      for host, _ in HOSTS_REMOTES:
         with self.m.step.nest('find CLs from {} host'.format(host)):
-          host_url = 'https://{}-review.googlesource.com'.format(host)
-          for project in projects_by_remote.get(remote, []):
-            open_changes.extend(
-                self.m.gerrit.query_changes(host_url,
-                                            [('topic', topic),
-                                             ('project', project.name),
-                                             ('branch', project.branch_name),
-                                             ('status', 'open'),
-                                             ('owner', 'self')]))
+          host_url = f'https://{host}-review.googlesource.com'
+          query_params = [
+              ('topic', topic),
+              ('status', 'open'),
+              ('footer', f'Cq-Cl-Tag=pupr:{topic}'),
+              ('owner', 'self'),
+          ]
+          if branch:
+            query_params.append(('branch', branch))
+          open_changes.extend(
+              self.m.gerrit.query_changes(host_url, query_params))
     return open_changes
 
   def handle_outdated_changes(self, open_changes: List[GerritChange],
@@ -225,30 +215,30 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
 
     return remaining_open_cls
 
-  def find_most_recently_merged_uprev(self,
-                                      projects_by_remote: ProjectsByRemote,
-                                      topic: str) -> PatchSet:
+  def find_most_recently_merged_uprev(
+      self, topic: str, branch: str = 'main') -> Optional[PatchSet]:
     """Return the most recently merged relevant uprev.
 
     Args:
-      projects_by_remote: A mapping from Git remotes to repo projects on that
-        remote that are relevant to this PUpr.
+      topic: A string to match against CLs' Gerrit topic, which is used to
+        identify relevant PUpr CLs.
+      branch: A string to match against CLs' target branch.
     """
-    most_recent_uprev: Optional[PatchSet] = None
+    all_merged_change_infos: List[PatchSet] = []
     with self.m.step.nest('examine outdated CLs'):
-      for host, remote in HOSTS_REMOTES:
+      for host, _ in HOSTS_REMOTES:
         with self.m.step.nest('merged CLs from {} host (within 30 days)'.format(
             host)) as presentation:
           host_url = 'https://{}-review.googlesource.com'.format(host)
-          merged_changes = []
-          for project in projects_by_remote.get(remote, []):
-            merged_changes.extend(
-                self.m.gerrit.query_changes(host_url,
-                                            [('topic', topic),
-                                             ('project', project.name),
-                                             ('branch', project.branch_name),
-                                             ('status', 'merged'),
-                                             ('-age', '30d')]))
+          query_params = [
+              ('topic', topic),
+              ('status', 'merged'),
+              ('-age', '30d'),
+              ('footer', f'Cq-Cl-Tag=pupr:{topic}'),
+          ]
+          if branch:
+            query_params.append(('branch', branch))
+          merged_changes = self.m.gerrit.query_changes(host_url, query_params)
           if merged_changes:
             presentation.logs['merged CLs'] = [
                 self.m.gerrit.parse_gerrit_change_url(cl)
@@ -257,15 +247,18 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
             # Must fetch to get submitted times from the "PatchSets", which are
             # really instances of ChangeInfo.
             merged_change_infos = self.m.gerrit.fetch_patch_sets(merged_changes)
-            merged_change_infos.sort(key=lambda ci: ci.submitted, reverse=True)
-            if merged_change_infos:
-              most_recent_uprev = merged_change_infos[0]
-              presentation.logs[
-                  'most recent merged cl'] = most_recent_uprev.display_id
+            all_merged_change_infos.extend(merged_change_infos)
           else:
             presentation.step_text = 'no merged CLs found'
             presentation.status = self.m.step.WARNING
-    return most_recent_uprev
+
+    all_merged_change_infos = [
+        ci for ci in all_merged_change_infos if ci.submitted
+    ]
+    all_merged_change_infos.sort(key=lambda ci: ci.submitted, reverse=True)
+    if all_merged_change_infos:
+      return all_merged_change_infos[0]
+    return None
 
   def _get_outdated_cls(
       self,
