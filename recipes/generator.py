@@ -1938,6 +1938,39 @@ def GenTests(
           }],
       ),
       api.post_check(
+          post_process.DoesNotRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.mark CL 1 ready for review',
+      ),
+  )
+
+  yield api.test(
+      'cron-trigger-wip-no-rebase',
+      _props(
+          branch_policies=[
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+          rebase_before_retry=False,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          changes,
+          value_dict_wip,
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.mark CL 1 ready for review',
       ),

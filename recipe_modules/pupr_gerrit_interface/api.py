@@ -645,7 +645,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         # Already running for CQ. No need to retry.
         return
 
-      if patch_set_to_retry.work_in_progress:
+      if patch_set_to_retry.work_in_progress and not self.rebase_before_retry:
         self.m.gerrit.set_change_ready_for_review_remote(
             patch_set_to_retry.to_gerrit_change_proto())
 
