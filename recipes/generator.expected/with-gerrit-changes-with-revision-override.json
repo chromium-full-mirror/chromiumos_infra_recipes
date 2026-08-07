@@ -2289,6 +2289,492 @@
   },
   {
     "cmd": [],
+    "name": "find open uprev CLs"
+  },
+  {
+    "cmd": [],
+    "name": "find open uprev CLs.find CLs from chromium host",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find open uprev CLs.find CLs from chromium host.query https://chromium-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=testing-chromeos-base/chromite",
+      "-p",
+      "status=open",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:testing-chromeos-base/chromite",
+      "-p",
+      "owner=self",
+      "-p",
+      "branch=main",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "find open uprev CLs.find CLs from chromium host.query https://chromium-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find open uprev CLs.find CLs from chrome-internal host",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find open uprev CLs.find CLs from chrome-internal host.query https://chrome-internal-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=testing-chromeos-base/chromite",
+      "-p",
+      "status=open",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:testing-chromeos-base/chromite",
+      "-p",
+      "owner=self",
+      "-p",
+      "branch=main",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "find open uprev CLs.find CLs from chrome-internal host.query https://chrome-internal-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examine outdated CLs"
+  },
+  {
+    "cmd": [],
+    "name": "examine outdated CLs.merged CLs from chromium host (within 30 days)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@merged CLs@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LOG_END@merged CLs@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examine outdated CLs.merged CLs from chromium host (within 30 days).query https://chromium-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=testing-chromeos-base/chromite",
+      "-p",
+      "status=merged",
+      "-p",
+      "-age=30d",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:testing-chromeos-base/chromite",
+      "-p",
+      "branch=main",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "examine outdated CLs.merged CLs from chromium host (within 30 days).query https://chromium-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/gerrit-fetch-changes"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "examine outdated CLs.merged CLs from chromium host (within 30 days).gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "timeout": 2160,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 91827,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 91827,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/27/91827/0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/27/91827/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@merged CLs@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LOG_END@merged CLs@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).query https://chrome-internal-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=testing-chromeos-base/chromite",
+      "-p",
+      "status=merged",
+      "-p",
+      "-age=30d",
+      "-p",
+      "footer=Cq-Cl-Tag=pupr:testing-chromeos-base/chromite",
+      "-p",
+      "branch=main",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).query https://chrome-internal-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/gerrit-fetch-changes"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "timeout": 2160,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 91827,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chrome-internal-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 91827,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/27/91827/0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chrome-internal.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/27/91827/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chrome-internal-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "try uprev chromeos-base/chromite",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@chroot {@@@",
@@ -2871,492 +3357,6 @@
     "name": "commit uprev.commit in private-overlay.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "find open uprev CLs"
-  },
-  {
-    "cmd": [],
-    "name": "find open uprev CLs.find CLs from chromium host",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "find open uprev CLs.find CLs from chromium host.query https://chromium-review.googlesource.com",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 1 matching CLs@@@",
-      "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "changes",
-      "--host",
-      "https://chromium-review.googlesource.com",
-      "--json_file",
-      "/path/to/tmp/json",
-      "-p",
-      "topic=testing-chromeos-base/chromite",
-      "-p",
-      "status=open",
-      "-p",
-      "footer=Cq-Cl-Tag=pupr:testing-chromeos-base/chromite",
-      "-p",
-      "owner=self",
-      "-p",
-      "branch=main",
-      "--verbose"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "find open uprev CLs.find CLs from chromium host.query https://chromium-review.googlesource.com.gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "find open uprev CLs.find CLs from chrome-internal host",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "find open uprev CLs.find CLs from chrome-internal host.query https://chrome-internal-review.googlesource.com",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 1 matching CLs@@@",
-      "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "changes",
-      "--host",
-      "https://chrome-internal-review.googlesource.com",
-      "--json_file",
-      "/path/to/tmp/json",
-      "-p",
-      "topic=testing-chromeos-base/chromite",
-      "-p",
-      "status=open",
-      "-p",
-      "footer=Cq-Cl-Tag=pupr:testing-chromeos-base/chromite",
-      "-p",
-      "owner=self",
-      "-p",
-      "branch=main",
-      "--verbose"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "find open uprev CLs.find CLs from chrome-internal host.query https://chrome-internal-review.googlesource.com.gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "examine outdated CLs"
-  },
-  {
-    "cmd": [],
-    "name": "examine outdated CLs.merged CLs from chromium host (within 30 days)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@merged CLs@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_END@merged CLs@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "examine outdated CLs.merged CLs from chromium host (within 30 days).query https://chromium-review.googlesource.com",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 1 matching CLs@@@",
-      "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "changes",
-      "--host",
-      "https://chromium-review.googlesource.com",
-      "--json_file",
-      "/path/to/tmp/json",
-      "-p",
-      "topic=testing-chromeos-base/chromite",
-      "-p",
-      "status=merged",
-      "-p",
-      "-age=30d",
-      "-p",
-      "footer=Cq-Cl-Tag=pupr:testing-chromeos-base/chromite",
-      "-p",
-      "branch=main",
-      "--verbose"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "examine outdated CLs.merged CLs from chromium host (within 30 days).query https://chromium-review.googlesource.com.gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/gerrit-fetch-changes"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "examine outdated CLs.merged CLs from chromium host (within 30 days).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
-    "timeout": 2160,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
-      "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/27/91827/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/27/91827/0\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@merged CLs@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@",
-      "@@@STEP_LOG_END@merged CLs@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).query https://chrome-internal-review.googlesource.com",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 1 matching CLs@@@",
-      "@@@STEP_LINK@found CL 91827@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "changes",
-      "--host",
-      "https://chrome-internal-review.googlesource.com",
-      "--json_file",
-      "/path/to/tmp/json",
-      "-p",
-      "topic=testing-chromeos-base/chromite",
-      "-p",
-      "status=merged",
-      "-p",
-      "-age=30d",
-      "-p",
-      "footer=Cq-Cl-Tag=pupr:testing-chromeos-base/chromite",
-      "-p",
-      "branch=main",
-      "--verbose"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).query https://chrome-internal-review.googlesource.com.gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"91827\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/gerrit-fetch-changes"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "examine outdated CLs.merged CLs from chrome-internal host (within 30 days).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
-    "timeout": 2160,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chrome-internal-review.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 91827,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
-      "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/27/91827/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chrome-internal.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/27/91827/0\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chrome-internal-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
-      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

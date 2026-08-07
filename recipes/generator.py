@@ -237,21 +237,6 @@ class GeneratorRun:
 
     self._validate_properties()
     self._validate_triggers()
-    footer = self.properties.additional_commit_footer.strip()
-    if self.properties.non_wip_additional_commit_footer:
-      non_wip_footer = (
-          self.properties.non_wip_additional_commit_footer.strip())
-      footer = f'{footer}\n{non_wip_footer}' if footer else non_wip_footer
-
-    self.m.pupr_local_uprev.set_generator_attributes(
-        additional_commit_message=self.properties.additional_commit_message,
-        additional_commit_footer=footer,
-        allow_partial_uprev=self.properties.allow_partial_uprev,
-        build_targets=self.properties.build_targets,
-        packages=self.properties.packages,
-        uprev_target_kind=self.properties.uprev_target_kind,
-        version_files=self.properties.version_files,
-    )
     self.m.pupr_gerrit_interface.rebase_before_retry = (
         self.properties.rebase_before_retry)
 
@@ -282,12 +267,6 @@ class GeneratorRun:
         with self.m.context(cwd=self.workspace_path):
           self.m.cros_sdk.create_chroot()
 
-      if not self.retry_only_run:
-        self._modified_projects = self.create_local_uprev()
-        if self._modified_projects is None:
-          return self.make_summary('no modified projects')
-        self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
-
       branch = (self.properties.retry_ref.ref[len('refs/heads/'):]
                 if self.properties.retry_ref.ref.startswith('refs/heads/') else
                 self.properties.retry_ref.ref) if self.retry_only_run else (
@@ -310,29 +289,36 @@ class GeneratorRun:
               open_changes, self.policy.max_cq_retry,
               max_cq_retry_action=self.policy.max_cq_retry_action))
 
+      limit_exceeded, running_count = (
+          self.m.pupr_gerrit_interface.check_limit_exceeded(
+              open_changes, self.policy))
+
+      footer = self.properties.additional_commit_footer.strip()
+      if not limit_exceeded and self.properties.non_wip_additional_commit_footer:
+        non_wip_footer = (
+            self.properties.non_wip_additional_commit_footer.strip())
+        footer = f'{footer}\n{non_wip_footer}' if footer else non_wip_footer
+
+      self.m.pupr_local_uprev.set_generator_attributes(
+          additional_commit_message=self.properties.additional_commit_message,
+          additional_commit_footer=footer,
+          allow_partial_uprev=self.properties.allow_partial_uprev,
+          build_targets=self.properties.build_targets,
+          packages=self.properties.packages,
+          uprev_target_kind=self.properties.uprev_target_kind,
+          version_files=self.properties.version_files,
+      )
+
       if not self.retry_only_run:
         # A real uprev creation run creates local uprev commits on disk.
         # Retry policy execution is skipped here because applying a local rebase
         # on top of newly created local commits in the same task workspace
         # would cause conflicts. Uprev creation and retry runs are mutually
         # exclusive execution paths.
-        limit_exceeded, running_count = (
-            self.m.pupr_gerrit_interface.check_limit_exceeded(
-                open_changes, self.policy))
-        if limit_exceeded and self.properties.non_wip_additional_commit_footer:
-          for project in sorted(self._repo_projects):
-            cwd = self._get_project_cwd(project)
-            with self.m.context(cwd=cwd):
-              self.m.git.reset_hard('HEAD~1')
-          props = self.properties
-          self.m.pupr_local_uprev.set_generator_attributes(
-              additional_commit_message=props.additional_commit_message,
-              additional_commit_footer=props.additional_commit_footer,
-              allow_partial_uprev=props.allow_partial_uprev,
-              build_targets=props.build_targets,
-              packages=props.packages,
-          )
-          self._modified_projects = self.create_local_uprev()
+        self._modified_projects = self.create_local_uprev()
+        if self._modified_projects is None:
+          return self.make_summary('no modified projects')
+        self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
 
         summary = self.m.pupr_gerrit_interface.create_uprev_cls(
             self._repo_projects,
@@ -354,17 +340,7 @@ class GeneratorRun:
             self.retry_only_run,
         )
 
-
-
     return summary
-
-  def _get_project_cwd(self,
-                       project: repo_api.ProjectInfo) -> config_types.Path:
-    """Return absolute path for a repo project."""
-    try:
-      return self.m.path.abs_to_path(project.path)
-    except ValueError:  # pragma: no cover
-      return self.workspace_path / project.path  # pragma: no cover
 
   def create_local_uprev(self) -> Optional[List[repo_api.ProjectInfo]]:
     """Create and commit uprevs on the local filesystem.
@@ -1710,8 +1686,6 @@ def GenTests(
       ),
       api.git.diff_check(True),
       api.git.diff_check(True),
-      api.git.diff_check(True),
-      api.git.diff_check(True),
       api.cros_build_api.set_upreved_ebuilds(
           ['src/overlay/foo.ebuild', 'src/private-overlay/bar.ebuild']),
       api.gerrit.set_query_changes_response(
@@ -1737,7 +1711,7 @@ def GenTests(
           },
       ),
       api.repo.project_infos_step_data(
-          'commit uprev (2)',
+          'commit uprev',
           data=[
               {
                   'project': 'overlay'
@@ -1746,7 +1720,7 @@ def GenTests(
           iteration=1,
       ),
       api.repo.project_infos_step_data(
-          'commit uprev (2)',
+          'commit uprev',
           data=[
               {
                   'project': 'private-overlay',
@@ -1794,6 +1768,11 @@ def GenTests(
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
+          [],
           'https://chromium-review.googlesource.com',
       ),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
@@ -1885,12 +1864,14 @@ def GenTests(
 
   value_dict_wip = dict(value_dict)
   value_dict_wip[1] = dict(value_dict[1])
+  value_dict_wip[1]['status'] = 'NEW'
+  value_dict_wip[1]['hashtags'] = ['pupr-retry-pinned']
   value_dict_wip[1]['work_in_progress'] = True
   value_dict_wip[1]['revision_info'] = {
       'ref': 'refs/change/foo',
       'commit': {
           'message':
-              'a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{"ref": "refs/tags/79.0.3945.20", "repository": "/chromium/src", "revision": "'
+              'a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{"ref": "refs/heads/main", "repository": "https://chromium.googlesource.com/chromium/src", "revision": "'
               + revision + '"}]',
       },
   }
@@ -1934,12 +1915,24 @@ def GenTests(
           gerrit_changes_json,
           'https://chromium-review.googlesource.com',
       ),
+      api.gerrit.set_query_changes_response(
+          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
+          [],
+          'https://chromium-review.googlesource.com',
+      ),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
+      api.repo.project_infos_step_data(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev',
+          data=[{
+              'project': 'overlay',
+              'path': 'src/third_party/chromiumos-overlay',
+          }],
+      ),
       api.repo.project_infos_step_data(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patch set for Change-Id 1',
           data=[{
               'project': 'chromium/src',
-              'path': 'src/chromium'
+              'path': 'src/chromium',
           }],
       ),
       api.post_check(
@@ -2006,6 +1999,11 @@ def GenTests(
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
+          [],
           'https://chromium-review.googlesource.com',
       ),
       api.post_check(

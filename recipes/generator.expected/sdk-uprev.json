@@ -1619,337 +1619,6 @@
   },
   {
     "cmd": [],
-    "name": "uprev sdk"
-  },
-  {
-    "cmd": [],
-    "name": "uprev sdk.validate SDK uprev spec",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uprev sdk.call chromite.api.SdkService/Uprev",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"binhostGsBucket\": \"gs://chromeos-prebuilt/\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"version\": \"2023.03.14.159265\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"toolchainTarballTemplate\": \"2023/03/%(target)s-2023.03.14.159265.tar.xz\"@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"modified_files\": [@@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@      \"path\": \"[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf\"@@@",
-      "@@@STEP_LOG_LINE@response@    },@@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@      \"path\": \"[CLEANUP]/chromiumos_workspace/src/overlays/overlay-amd64-host/prebuilt.conf\"@@@",
-      "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ],@@@",
-      "@@@STEP_LOG_LINE@response@  \"version\": \"2023.03.14.159265\"@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"binhostGsBucket\": \"gs://chromeos-prebuilt/\",\n  \"version\": \"2023.03.14.159265\",\n  \"toolchainTarballTemplate\": \"2023/03/%(target)s-2023.03.14.159265.tar.xz\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
-    ],
-    "infra_step": true,
-    "name": "uprev sdk.call chromite.api.SdkService/Uprev.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "uprev sdk.call chromite.api.SdkService/Uprev.read chromite version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@chromite-HEAD.version@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "https://chromium.googlesource.com/chromiumos/chromite",
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
-    ],
-    "infra_step": true,
-    "name": "uprev sdk.call chromite.api.SdkService/Uprev.git clone",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
-    "infra_step": true,
-    "name": "uprev sdk.call chromite.api.SdkService/Uprev.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.SdkService/Uprev"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "uprev sdk.call chromite.api.SdkService/Uprev.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "uprev sdk.call chromite.api.SdkService/Uprev.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uprev sdk.call chromite.api.SdkService/Uprev.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uprev sdk.commit uprev",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf",
-      "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-amd64-host/prebuilt.conf",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "uprev sdk.commit uprev.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/overlays/board-overlays|src/overlays|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/overlays-chromiumos-overlay|src/third_paty/chromiumos-overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "start",
-      "pupr",
-      "src/overlays",
-      "src/third_paty/chromiumos-overlay"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "uprev sdk.commit uprev.repo start",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uprev sdk.commit uprev.commit in chromiumos-overlay",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "."
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_paty/chromiumos-overlay",
-    "infra_step": true,
-    "name": "uprev sdk.commit uprev.commit in chromiumos-overlay.git add",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "SDK: Automatic uprev to 2023.03.14.159265.\n\nGenerated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=CQ\n\nCq-Cl-Tag: pupr:cros_sdk\n",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_paty/chromiumos-overlay",
-    "infra_step": true,
-    "name": "uprev sdk.commit uprev.commit in chromiumos-overlay.write commit message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@SDK: Automatic uprev to 2023.03.14.159265.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=None@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=CQ@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: pupr:cros_sdk@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_paty/chromiumos-overlay",
-    "infra_step": true,
-    "name": "uprev sdk.commit uprev.commit in chromiumos-overlay.git commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uprev sdk.commit uprev.commit in overlays",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "."
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlays",
-    "infra_step": true,
-    "name": "uprev sdk.commit uprev.commit in overlays.git add",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "SDK: Automatic uprev to 2023.03.14.159265.\n\nGenerated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=CQ\n\nCq-Cl-Tag: pupr:cros_sdk\n",
-      "[CLEANUP]/commit_msg_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlays",
-    "infra_step": true,
-    "name": "uprev sdk.commit uprev.commit in overlays.write commit message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@SDK: Automatic uprev to 2023.03.14.159265.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@BUG=None@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@TEST=CQ@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cq-Cl-Tag: pupr:cros_sdk@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlays",
-    "infra_step": true,
-    "name": "uprev sdk.commit uprev.commit in overlays.git commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "find open uprev CLs"
   },
   {
@@ -2360,6 +2029,337 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chrome-internal-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev sdk"
+  },
+  {
+    "cmd": [],
+    "name": "uprev sdk.validate SDK uprev spec",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev sdk.call chromite.api.SdkService/Uprev",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"binhostGsBucket\": \"gs://chromeos-prebuilt/\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"version\": \"2023.03.14.159265\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"toolchainTarballTemplate\": \"2023/03/%(target)s-2023.03.14.159265.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"modified_files\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf\"@@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"[CLEANUP]/chromiumos_workspace/src/overlays/overlay-amd64-host/prebuilt.conf\"@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ],@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": \"2023.03.14.159265\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"binhostGsBucket\": \"gs://chromeos-prebuilt/\",\n  \"version\": \"2023.03.14.159265\",\n  \"toolchainTarballTemplate\": \"2023/03/%(target)s-2023.03.14.159265.tar.xz\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "uprev sdk.call chromite.api.SdkService/Uprev.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "uprev sdk.call chromite.api.SdkService/Uprev.read chromite version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD"
+    ],
+    "infra_step": true,
+    "name": "uprev sdk.call chromite.api.SdkService/Uprev.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
+    "infra_step": true,
+    "name": "uprev sdk.call chromite.api.SdkService/Uprev.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SdkService/Uprev"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "uprev sdk.call chromite.api.SdkService/Uprev.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "uprev sdk.call chromite.api.SdkService/Uprev.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev sdk.call chromite.api.SdkService/Uprev.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev sdk.commit uprev",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf",
+      "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-amd64-host/prebuilt.conf",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "uprev sdk.commit uprev.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/overlays/board-overlays|src/overlays|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/overlays-chromiumos-overlay|src/third_paty/chromiumos-overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "pupr",
+      "src/overlays",
+      "src/third_paty/chromiumos-overlay"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "uprev sdk.commit uprev.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev sdk.commit uprev.commit in chromiumos-overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "."
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_paty/chromiumos-overlay",
+    "infra_step": true,
+    "name": "uprev sdk.commit uprev.commit in chromiumos-overlay.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "SDK: Automatic uprev to 2023.03.14.159265.\n\nGenerated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=CQ\n\nCq-Cl-Tag: pupr:cros_sdk\n",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_paty/chromiumos-overlay",
+    "infra_step": true,
+    "name": "uprev sdk.commit uprev.commit in chromiumos-overlay.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@SDK: Automatic uprev to 2023.03.14.159265.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=None@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=CQ@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: pupr:cros_sdk@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_paty/chromiumos-overlay",
+    "infra_step": true,
+    "name": "uprev sdk.commit uprev.commit in chromiumos-overlay.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev sdk.commit uprev.commit in overlays",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "."
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlays",
+    "infra_step": true,
+    "name": "uprev sdk.commit uprev.commit in overlays.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "SDK: Automatic uprev to 2023.03.14.159265.\n\nGenerated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=CQ\n\nCq-Cl-Tag: pupr:cros_sdk\n",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlays",
+    "infra_step": true,
+    "name": "uprev sdk.commit uprev.commit in overlays.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@SDK: Automatic uprev to 2023.03.14.159265.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@BUG=None@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@TEST=CQ@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cq-Cl-Tag: pupr:cros_sdk@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlays",
+    "infra_step": true,
+    "name": "uprev sdk.commit uprev.commit in overlays.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
