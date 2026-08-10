@@ -5,6 +5,7 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
 
 DEPS = [
@@ -12,6 +13,7 @@ DEPS = [
     'recipe_engine/swarming',
     'build_menu',
     'code_coverage',
+    'repo',
 ]
 
 
@@ -145,6 +147,51 @@ def GenTests(api):
           },
           '$chromeos/code_coverage': {
               'project': 'chromiumos/platform2'
+          }
+      },
+  )
+
+  yield api.build_menu.test(
+      'cq-skips-excluded-project',
+      api.repo.project_infos_step_data(
+          'cherry-pick gerrit changes.apply gerrit patch sets', [{
+              'project': 'chromiumos/third_party/zephyrproject',
+              'path': 'src/third_party/zephyrproject'
+          }]),
+      api.post_check(
+          post_process.MustRun,
+          'upload code coverage data.upload incremental coverage to gerrit'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data.upload incremental coverage to gerrit.filter to changed files only.get patch sets.gerrit-fetch-changes'
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data.upload incremental coverage to gerrit.filter to changed files only.write filtered file'
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data.upload incremental coverage to gerrit.gsutil upload'
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'upload code coverage data.Set merger properties',
+          'merger_incremental_coverage',
+          ['[]'],
+      ),
+      cq=True,
+      gerrit_changes=[
+          GerritChange(
+              host='chromium-review.googlesource.com',
+              project='chromiumos/third_party/zephyrproject',
+              change=123456,
+              patchset=7,
+          )
+      ],
+      input_properties={
+          '$chromeos/code_coverage': {
+              'project': 'chromiumos/platform2',
+              'cq_builder': True,
           }
       },
   )

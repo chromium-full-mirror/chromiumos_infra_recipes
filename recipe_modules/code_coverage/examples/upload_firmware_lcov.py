@@ -5,6 +5,7 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
 
 DEPS = [
@@ -12,6 +13,7 @@ DEPS = [
     'build_menu',
     'code_coverage',
     'recipe_engine/cv',
+    'repo',
 ]
 
 
@@ -87,4 +89,30 @@ def GenTests(api):
               'force_postsubmit_relevance': True
           },
       },
+  )
+
+  yield api.build_menu.test(
+      'cq-skips-excluded-project',
+      api.repo.project_infos_step_data(
+          'cherry-pick gerrit changes.apply gerrit patch sets', [{
+              'project': 'chromiumos/third_party/zephyrproject',
+              'path': 'src/third_party/zephyrproject'
+          }]),
+      api.post_check(
+          post_process.MustRun,
+          'upload code coverage data (firmware lcov).upload incremental coverage to gerrit'
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data (firmware lcov).upload incremental coverage to gerrit.upload cleaned.file for 123456 (ps #7)'
+      ),
+      cq=True,
+      gerrit_changes=[
+          GerritChange(
+              host='chromium-review.googlesource.com',
+              project='chromiumos/third_party/zephyrproject',
+              change=123456,
+              patchset=7,
+          )
+      ],
   )

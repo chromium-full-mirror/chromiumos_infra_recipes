@@ -50,6 +50,10 @@ ABSOLUTE_COVERAGE_CIPD_FILE = 'absolute_code_coverage'
 # Number of file coverage entries per chunk
 FILE_ENTRIES_PER_CHUNK = 3000
 
+# These projects don't ever need coverage data
+EXCLUDED_PROJECTS = [
+    "chromiumos/third_party/zephyrproject",
+]
 
 class CodeCoverageApi(recipe_api.RecipeApi):
   """This module contains apis to generate code coverage data."""
@@ -434,6 +438,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       change_to_file_names = {}
       with self.m.step.nest('get patch sets'):
         for commit in self.m.cros_infra_config.gerrit_changes:
+          if commit.project in EXCLUDED_PROJECTS:
+            continue
           file_names = []
           patch_set = self.m.gerrit.fetch_patch_set_from_change(
               commit, include_files=True)
@@ -593,12 +599,16 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         change_to_filtered_coverage = self._filter_coverage_to_cl_files(
             incremental_coverage_file)
         for change in self.m.cros_infra_config.gerrit_changes:
+          if change.project in EXCLUDED_PROJECTS:
+            continue
           if change.change in change_to_filtered_coverage:
             self._merger_incremental(change_to_filtered_coverage[change.change],
                                      change, gs_artifact_bucket,
                                      gs_artifact_path, coverage_type)
       else:
         for change in self.m.cros_infra_config.gerrit_changes:
+          if change.project in EXCLUDED_PROJECTS:
+            continue
           self._invoke_incremental_coverage_tool(incremental_coverage_file,
                                                  change, coverage_type)
 
