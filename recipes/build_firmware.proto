@@ -73,4 +73,10 @@ message BuildFirmwareProperties {
 
   // Build target with avb.
   bool avb_enabled = 15;
+
+  // The number of parallel shards to divide firmware building/testing into.
+  int32 shard_count = 16;
+
+  // The 1-indexed shard assignment (used automatically when spanning).
+  int32 shard_index = 17;
 }

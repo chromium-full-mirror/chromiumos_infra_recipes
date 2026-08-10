@@ -1,0 +1,25 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
+    "name": "guard bump_version",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@bump_version is not supported with shard_count > 1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set mutable output properties"
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "bump_version is not supported with shard_count > 1"
+    },
+    "name": "$result"
+  }
+]

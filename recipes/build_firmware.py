@@ -17,10 +17,13 @@ import collections
 import os
 from pathlib import Path
 
-from google.protobuf.json_format import MessageToDict
 from google.protobuf import json_format
+from google.protobuf.json_format import MessageToDict
+from google.protobuf import struct_pb2
 
 import PB.chromiumos.common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.recipe_engine import result as result_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
@@ -34,6 +37,7 @@ from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/bcid_reporter',
+    'recipe_engine/context',
     'recipe_engine/buildbucket',
     'recipe_engine/cv',
     'recipe_engine/file',
@@ -130,12 +134,131 @@ def CreateContainers(api, config):
       pres.step_text = 'Failed to create containers: ' + str(e)
 
 
+def _extract_coverage_artifacts(completed_builds):
+  results = []
+  for b in completed_builds.values():
+    if 'artifacts' not in b.output.properties:
+      continue
+    artifacts = b.output.properties['artifacts']
+    gs_bucket = artifacts['gs_bucket'] if 'gs_bucket' in artifacts else None
+    gs_path = artifacts['gs_path'] if 'gs_path' in artifacts else None
+    if gs_bucket and gs_path:
+      results.append((gs_bucket, gs_path, b.id))
+  return results
+
+
 def RunSteps(api, properties):
   with api.mutable_output.wrap():
     start_time = api.time.utcnow()
     commit = api.src_state.gitiles_commit
     if properties.gitiles_commit:
       commit = properties.gitiles_commit
+    shard_count = properties.shard_count
+    shard_index = properties.shard_index
+    if shard_count > 1 and properties.bump_version:
+      step_result = api.step('guard bump_version', cmd=None)
+      step_result.presentation.status = api.step.FAILURE
+      step_result.presentation.step_text = 'bump_version is not supported with shard_count > 1'
+      raise api.step.StepFailure(
+          'bump_version is not supported with shard_count > 1')
+
+    if shard_count > 1 and not shard_index:
+      with api.step.nest('schedule and wait for shards') as pres, \
+           api.build_menu.configure_builder(commit=commit) as config:
+
+        location = properties.firmware_location or config.general.firmware_location
+        if properties.code_coverage and location != common_pb2.PLATFORM_ZEPHYR:
+          raise api.step.StepFailure(
+              'firmware_builder: coverage is only supported for PLATFORM_ZEPHYR'
+          )
+
+        requests = []
+        builder = api.buildbucket.build.builder.builder
+        bucket = api.buildbucket.build.builder.bucket
+
+        for i in range(1, shard_count + 1):
+          props = MessageToDict(properties, preserving_proto_field_name=True)
+
+          props['shard_index'] = i
+
+          props['shard_count'] = shard_count
+          requests.append(
+              api.buildbucket.schedule_request(
+                  bucket=bucket, builder=builder, properties=props,
+                  gerrit_changes=api.buildbucket.build.input.gerrit_changes,
+                  gitiles_commit=api.buildbucket.build.input.gitiles_commit))
+
+        builds = api.buildbucket.schedule(requests)
+
+        # Wait for them and collect outputs
+        completed_builds = api.buildbucket.collect_builds(
+            [b.id for b in builds],
+            step_name='collect shard builds',
+            timeout=3600 * 2,
+        )
+
+        failed_ids = []
+        for b in completed_builds.values():
+          if b.status != bb_common_pb2.SUCCESS:
+            failed_ids.append(str(b.id))
+
+        if properties.code_coverage:
+          # Setup workspace to use cros_sdk
+          with api.build_menu.setup_workspace():
+            chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
+
+            with api.step.nest('download shard coverage'):
+              shards_dir = api.src_state.workspace_path.joinpath(
+                  'src', 'platform', 'ec', 'zephyr', 'shards')
+              api.file.ensure_directory('create shards dir', shards_dir)
+              for gs_bucket, gs_path, build_id in _extract_coverage_artifacts(
+                  completed_builds):
+                api.gsutil.download(
+                    gs_bucket,
+                    f'{gs_path}/coverage.tbz2',
+                    shards_dir.joinpath(f'{build_id}_coverage.tbz2'),
+                    name=f'download shard {build_id}',
+                )
+
+            api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
+            cmd = [
+                './firmware_builder.py',
+                'merge-shards',
+                '--merge-dir',
+                'shards',
+            ]
+            with api.context(
+                cwd=api.src_state.workspace_path.joinpath(
+                    'src', 'platform', 'ec', 'zephyr')):
+              api.cros_sdk.run(
+                  'merge coverage shards',
+                  cmd,
+              )
+
+            coverage_tar = api.src_state.workspace_path.joinpath(
+                'src', 'platform', 'ec', 'build', 'zephyr', 'coverage.tbz2')
+            # Use the proper GS bucket and determine a unique path for this builder/run
+            dest_bucket = (
+                api.cros_infra_config.config.artifacts.artifacts_gs_bucket)
+            base_artifacts_path = api.cros_artifacts.artifacts_gs_path(
+                api.buildbucket.build.builder.builder,
+                common_pb2.BuildTarget(name='coverage'),
+            )
+            dest_path = f'{base_artifacts_path}/coverage.tbz2'
+            api.gsutil.upload(
+                coverage_tar,
+                dest_bucket,
+                dest_path,
+            )
+
+        if failed_ids:
+          pres.step_text = f'{len(failed_ids)} shards failed.'
+          pres.status = api.step.FAILURE
+          raise api.step.StepFailure(f"shards failed: {','.join(failed_ids)}")
+
+        pres.step_text = 'All shards succeeded.'
+      return result_pb2.RawResult(status=bb_common_pb2.SUCCESS)
+
     with api.failures.ignore_exceptions():
       with api.step.nest('checking attestation eligibility') as pres:
         # Config determines whether to report artifacts.
@@ -183,52 +306,64 @@ def RunSteps(api, properties):
             return None, None
           raise e
 
-      try:
-        response = service.BuildAllFirmware(
-            BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                    code_coverage=properties.code_coverage,
-                                    firmware_targets=firmware_targets,
-                                    avb_enabled=properties.avb_enabled),
-            name='build firmware')
-      except StepFailure as e:
-        _upload_artifacts(ignore_failure=True)
-        raise e
+      # Inject shard arguments through the USE environment variable,
+      # which safely propagates through the cros_sdk chroot boundary natively.
+      use_env = {}
+      if properties.shard_count > 1:
+        use_env[
+            'USE'] = f"%(USE)s shard_index_{properties.shard_index} shard_count_{properties.shard_count}"
 
-      binary_sizes = {}
-      if response.metrics and response.metrics.value:
-        for fw_metric in response.metrics.value:
-          region_prefix = ''
-          if fw_metric.platform_name:
-            region_prefix += fw_metric.platform_name + '_'
-          if fw_metric.target_name:
-            region_prefix += fw_metric.target_name + '_'
-          for fw_section in fw_metric.fw_section:
-            if fw_section.track_on_gerrit:
-              if fw_section.used:
-                binary_sizes[region_prefix +
-                             fw_section.region] = fw_section.used
-              if fw_section.total:
-                binary_sizes[region_prefix + fw_section.region +
-                             '.budget'] = fw_section.total
+      with api.context(env=use_env):
+        try:
+          response = service.BuildAllFirmware(
+              BuildAllFirmwareRequest(
+                  firmware_location=location,
+                  chroot=chroot,
+                  code_coverage=properties.code_coverage,
+                  firmware_targets=firmware_targets,
+                  avb_enabled=properties.avb_enabled,
+              ),
+              name="build firmware",
+          )
+        except StepFailure as e:
+          _upload_artifacts(ignore_failure=True)
+          raise e
 
-      if binary_sizes:
-        api.easy.set_properties_step(binary_sizes=binary_sizes,
-                                     step_name='output binary sizes')
-      snapshot_sha = api.src_state.gitiles_commit.id
-      api.easy.set_properties_step(got_revision=snapshot_sha,
-                                   step_name='output got_revision')
+        binary_sizes = {}
+        if response.metrics and response.metrics.value:
+          for fw_metric in response.metrics.value:
+            region_prefix = ''
+            if fw_metric.platform_name:
+              region_prefix += fw_metric.platform_name + '_'
+            if fw_metric.target_name:
+              region_prefix += fw_metric.target_name + '_'
+            for fw_section in fw_metric.fw_section:
+              if fw_section.track_on_gerrit:
+                if fw_section.used:
+                  binary_sizes[region_prefix +
+                               fw_section.region] = fw_section.used
+                if fw_section.total:
+                  binary_sizes[region_prefix + fw_section.region +
+                               '.budget'] = fw_section.total
 
-      try:
-        service.TestAllFirmware(
-            TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                   code_coverage=properties.code_coverage,
-                                   firmware_targets=firmware_targets,
-                                   avb_enabled=properties.avb_enabled),
-            name='test firmware')
-      except StepFailure as e:
-        _upload_artifacts(ignore_failure=True)
-        UploadTestResults(api, location, build.builder.builder)
-        raise e
+        if binary_sizes:
+          api.easy.set_properties_step(binary_sizes=binary_sizes,
+                                       step_name='output binary sizes')
+        snapshot_sha = api.src_state.gitiles_commit.id
+        api.easy.set_properties_step(got_revision=snapshot_sha,
+                                     step_name='output got_revision')
+
+        try:
+          service.TestAllFirmware(
+              TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
+                                     code_coverage=properties.code_coverage,
+                                     firmware_targets=firmware_targets,
+                                     avb_enabled=properties.avb_enabled),
+              name='test firmware')
+        except StepFailure as e:
+          _upload_artifacts(ignore_failure=True)
+          UploadTestResults(api, location, build.builder.builder)
+          raise e
 
       uploaded_artifacts, artifact_dir = _upload_artifacts()
       published = collections.defaultdict(list)
@@ -587,6 +722,18 @@ def GenTests(api):
     kwargs.setdefault('input_properties', {'firmware_location': 1})
     build = api.test_util.test_child_build(None, **kwargs).build
     return api.test(name, build, version, *args, status=status)
+
+  yield test(
+      'fw-coverage-fails-non-zephyr',
+      builder='fw-ec-cq',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_EC,
+          'code_coverage': True,
+          'shard_count': 2,
+          'shard_index': 0,
+      },
+      status='FAILURE',
+  )
 
   yield test(
       'postsubmit',
@@ -1239,4 +1386,121 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'schedule legacy signing build'),
       api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
       status='FAILURE',
+  )
+
+  b1 = api.buildbucket.ci_build_message(build_id=123, status="SUCCESS")
+  b3 = api.buildbucket.ci_build_message(build_id=125, status="SUCCESS")
+  b4 = api.buildbucket.ci_build_message(build_id=126, status="SUCCESS")
+  artifacts1 = struct_pb2.Struct()
+  artifacts1.update({"gs_bucket": "my-bucket", "gs_path": "my-path"})
+  b1.output.properties.update({"artifacts": artifacts1})
+
+  b2 = api.buildbucket.ci_build_message(build_id=124, status="SUCCESS")
+  artifacts2 = struct_pb2.Struct()
+  artifacts2.update({"gs_bucket": "my-bucket", "gs_path": "my-path"})
+  b2.output.properties.update({"artifacts": artifacts2})
+
+  b_fail = api.buildbucket.ci_build_message(build_id=125, status="FAILURE")
+  b_miss = api.buildbucket.ci_build_message(build_id=130, status="SUCCESS")
+  b_miss.output.properties.update({"artifacts": {}})
+
+  yield test(
+      "dynamic-shard-missing-artifacts",
+      api.post_check(
+          post_process.DoesNotRun,
+          "configure builder.cros_infra_config.gitiles-fetch-ref",
+      ),
+      api.buildbucket.simulated_collect_output(
+          [b_miss],
+          step_name="schedule and wait for shards.collect shard builds",
+      ),
+      cq=True,
+      dry_run=True,
+      builder="fw-ec-cq",
+      input_properties={
+          "firmware_location": 2,
+          "code_coverage": True,
+          "chromiumos_sdk_pin_file": sdk_pin_path,
+          "shard_count": 2,
+          "shard_index": 0,
+      },
+  )
+
+  yield test(
+      "dynamic-shard-worker",
+      api.post_check(
+          post_process.DoesNotRun,
+          "configure builder.cros_infra_config.gitiles-fetch-ref",
+      ),
+      cq=True,
+      dry_run=True,
+      builder="fw-ec-cq",
+      input_properties={
+          "firmware_location": 2,
+          "code_coverage": True,
+          "chromiumos_sdk_pin_file": sdk_pin_path,
+          "shard_count": 2,
+          "shard_index": 1,
+      },
+  )
+
+  yield test(
+      "dynamic-shard-fanout",
+      api.post_check(
+          post_process.DoesNotRun,
+          "configure builder.cros_infra_config.gitiles-fetch-ref",
+      ),
+      api.buildbucket.simulated_collect_output(
+          [b1, b2, b3, b4],
+          step_name="schedule and wait for shards.collect shard builds",
+      ),
+      cq=True,
+      dry_run=True,
+      builder="fw-ec-cq",
+      input_properties={
+          "firmware_location": 2,
+          "code_coverage": True,
+          "chromiumos_sdk_pin_file": sdk_pin_path,
+          "shard_count": 2,
+          "shard_index": 0,
+      },
+  )
+
+  yield test(
+      "sharding-with-bump-version-fails",
+      api.post_check(post_process.StatusFailure),
+      api.post_check(post_process.SummaryMarkdownRE,
+                     ".*bump_version is not supported.*"),
+      api.post_check(post_process.DropExpectation),
+      input_properties={
+          "firmware_location": 2,
+          "code_coverage": True,
+          "bump_version": True,
+          "shard_count": 2,
+          "shard_index": 1,
+      },
+      status="FAILURE",
+  )
+
+  yield test(
+      "dynamic-shard-fanout-failure",
+      api.post_check(
+          post_process.DoesNotRun,
+          "configure builder.cros_infra_config.gitiles-fetch-ref",
+      ),
+      api.buildbucket.simulated_collect_output(
+          [b_fail],
+          step_name="schedule and wait for shards.collect shard builds",
+      ),
+      cq=True,
+      dry_run=True,
+      builder="fw-ec-cq",
+      input_properties={
+          "firmware_location": 2,
+          "code_coverage": True,
+          "chromiumos_sdk_pin_file": sdk_pin_path,
+          "shard_count": 2,
+          "shard_index": 0,
+      },
+      status="FAILURE",
   )
