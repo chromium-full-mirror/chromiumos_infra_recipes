@@ -419,8 +419,8 @@ class GeneratorRun:
       for policy in self.properties.branch_policies:
         if not policy.pattern:
           raise recipe_api.StepFailure('must specify pattern')
-        if not policy.reviewers:
-          raise recipe_api.StepFailure('need at least one reviewer')
+        if not policy.reviewers and not policy.gerrit_flow_expressions:
+          raise recipe_api.StepFailure('need at least one reviewer or flow')
 
         for reviewer in policy.reviewers:
           if not reviewer.email:
@@ -966,6 +966,40 @@ def GenTests(
       ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
+  )
+
+  yield _with_infos(
+      'with-gerrit-flow',
+      _props(
+          branch_policies=[
+              _policy(
+                  reviewers=None,
+                  no_existing_cls_policy=generator_pb2.FULL_RUN,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  outdated_cls_policy=generator_pb2.OUTDATED_ABANDON,
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  max_cq_retry=2,
+                  gerrit_flow_expressions=(
+                      '[{"condition": "-label:Commit-Queue", "action": '
+                      '{"name": "add-reviewer", "parameters": '
+                      '["cros-ec-champion@google.com"]}}]'),
+              )
+          ],
+      ),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.post_check(post_process.MustRun, 'add gerrit flows'),
+      api.post_check(
+          post_process.MustRun,
+          'add gerrit flows.add gerrit flow to CL 1.create flow on CL 1',
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'add gerrit flows.add gerrit flow to CL 1.create flow on CL 1',
+          'expressions',
+          ['"name": "add-reviewer"'],
+      ),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(

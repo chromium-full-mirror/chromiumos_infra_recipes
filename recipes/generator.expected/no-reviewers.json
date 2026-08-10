@@ -249,7 +249,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "need at least one reviewer"
+      "humanReason": "need at least one reviewer or flow"
     },
     "name": "$result"
   }
