@@ -139,9 +139,9 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
 
   Returns:
     The message to include in the summary markdown of the build."""
-  # Skip upload in CQ.
-  if api.cv.active:
-    api.step.empty('Skipping CL upload in CQ')
+  # Skip upload in CQ / dry_run.
+  if api.cv.active or api.properties.get('dry_run', False):
+    api.step.empty('Skipping CL upload in CQ / dry_run')
     return ''
   # Check out the android codebase.
   checkout = api.path.mkdtemp()
@@ -374,9 +374,19 @@ def RunSteps(api: RecipeApi,
           get_keyset_is_mp(signed_image_response), fw_config_path,
           abandon=api.cros_infra_config.is_staging, host=ARSP_HOST)
 
+      gcs_path = f'{api.signing.gs_upload_bucket}/{api.signing_utils.get_gs_dir_for_channel(common_pb2.CHANNEL_AGNOSTIC, api.build_menu.build_target.name)}'
+      gcs_url = f'https://console.cloud.google.com/storage/browser/{gcs_path}'
+
+      with api.step.nest('upload results') as pres:
+        pres.links['GCS Upload'] = gcs_url
+        pres.step_text = f'Artifacts uploaded to {gcs_path}'
+
+      summary_msg = f'{desktop_msg}\n\n' if desktop_msg else ''
+      summary_msg += f'Artifacts uploaded to [{gcs_path}]({gcs_url})'
+
       api.bcid_reporter.report_stage('upload-complete')
       return result_pb2.RawResult(
-          summary_markdown=f'{desktop_msg}',
+          summary_markdown=summary_msg,
           status=bb_common_pb2.SUCCESS,
       )
 
@@ -713,8 +723,10 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.'
           'ImageService/SignImage', 'request',
           ['\"keyset\": \"DevPreMPKeys\"']),
-      api.post_check(post_process.SummaryMarkdown,
-                     'No firmware images changed.'),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          'No firmware images changed.\n\nArtifacts uploaded to [signed-firmware/kukui/1.0](https://console.cloud.google.com/storage/browser/signed-firmware/kukui/1.0)'
+      ),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='firmware-packager-android-kukui-main',
@@ -813,7 +825,8 @@ def GenTests(api: RecipeTestApi):
           ['\"keyset\": \"DevPreMPKeys\"']),
       # Skip CL upload.
       api.post_check(post_process.DoesNotRun, 'git commit'),
-      api.post_check(post_process.MustRun, 'Skipping CL upload in CQ'),
+      api.post_check(post_process.MustRun,
+                     'Skipping CL upload in CQ / dry_run'),
       api.post_check(post_process.DoesNotRun, 'upload to cipd'),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
@@ -821,4 +834,33 @@ def GenTests(api: RecipeTestApi):
       builder='firmware-packager-android-kukui-main',
       cq=True,
       gerrit_changes=test_gerrit_changes,
+  )
+
+  yield api.build_menu.test(
+      'dry_run',
+      api.properties(
+          **{
+              'dry_run':
+                  True,
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_AGNOSTIC],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware',
+                                        use_dev_keys=True)),
+          }),
+      api.step_data(
+          'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
+          retcode=1),
+      # Skip CL upload.
+      api.post_check(post_process.DoesNotRun, 'git commit'),
+      api.post_check(post_process.MustRun,
+                     'Skipping CL upload in CQ / dry_run'),
+      api.post_check(post_process.DoesNotRun, 'upload to cipd'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      bucket='staging',
+      builder='firmware-packager-android-kukui-main',
   )
