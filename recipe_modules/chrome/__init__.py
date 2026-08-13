@@ -6,6 +6,8 @@
 
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
+from .api import ChromeApi as API
+
 DEPS = [
     'recipe_engine/cas',
     'recipe_engine/context',
@@ -22,10 +24,9 @@ DEPS = [
     'gerrit',
     'git_footers',
     'future_utils',
+    'remoteexec',
     'workspace_util',
 ]
 
 
 PROPERTIES = ChromeProperties
-
-from .api import ChromeApi as API

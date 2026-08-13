@@ -1,0 +1,49 @@
+[
+  {
+    "cmd": [],
+    "name": "ensure reclient binaries"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/rbe",
+      "-ensure-file",
+      "infra/rbe/client/${platform} release",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "ensure reclient binaries.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-release---------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/rbe/client/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "updating gclient solution with rbe_instance",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@rbe_project@my-project@@@",
+      "@@@STEP_LOG_END@rbe_project@@@",
+      "@@@STEP_LOG_LINE@reapi_instance@my-instance@@@",
+      "@@@STEP_LOG_END@reapi_instance@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

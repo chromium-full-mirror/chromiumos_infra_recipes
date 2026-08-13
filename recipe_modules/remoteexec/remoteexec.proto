@@ -13,4 +13,8 @@ message RemoteexecProperties {
   string reproxy_cfg_file = 2;
   // Enable uploading the log files.
   bool enable_logs_upload = 3;
+  // name of RBE project
+  string rbe_project = 4;
+  // name of ReAPI instance
+  string reapi_instance = 5;
 }

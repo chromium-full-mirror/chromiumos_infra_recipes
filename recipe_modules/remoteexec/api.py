@@ -18,6 +18,8 @@ class RemoteexecApi(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self._reclient_version = properties.reclient_version
     self._reproxy_cfg_file = properties.reproxy_cfg_file
+    self._rbe_project = properties.rbe_project
+    self._reapi_instance = properties.reapi_instance
     self._enable_logs_upload = properties.enable_logs_upload
     self._reclient_dir = None
 
@@ -45,6 +47,22 @@ class RemoteexecApi(recipe_api.RecipeApi):
                        str(self._reclient_version))
       self.m.cipd.ensure(reclient_dir, pkgs)
       self._reclient_dir = reclient_dir
+
+  def set_rbe_instance_hook(self, gclient_solution):
+    """Enable download_remoteexec_cfg gclient hook by setting gclient variables."""
+    if not self._rbe_project:
+      return
+
+    with self.m.step.nest(
+        'updating gclient solution with rbe_instance') as presentation:
+      presentation.logs['rbe_project'] = self._rbe_project
+      presentation.logs['reapi_instance'] = self._reapi_instance
+
+      rbe_instance = "projects/%s/instances/%s" % (
+          self._rbe_project, self._reapi_instance or "default_instance")
+      if not gclient_solution.custom_vars:
+        gclient_solution.custom_vars = {}
+      gclient_solution.custom_vars['rbe_instance'] = rbe_instance
 
   def process_artifacts(
       self,

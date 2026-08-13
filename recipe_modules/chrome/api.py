@@ -270,6 +270,7 @@ class ChromeApi(recipe_api.RecipeApi):
         soln.custom_vars = {
             'checkout_src_internal': internal,
         }
+        self.m.remoteexec.set_rbe_instance_hook(soln)
         if self._deps_cas:
           self.m.cas.download('download DEPS from cas', self._deps_cas.digest,
                               chrome_root)
