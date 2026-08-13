@@ -17,8 +17,8 @@ class PuprGerritInterfaceTestApi(recipe_test_api.RecipeTestApi):
       parent_step_name: str,
       changes: List[GerritChange],
       values_dict: Optional[Dict[int, dict]] = None,
-      owner_email: str = 'bot@google.com',
-      uploader_email: str = 'bot@google.com',
+      owner_account_id: int = 100,
+      uploader_account_id: int = 100,
       iteration: int = 1,
       step_name: Optional[str] = None,
   ) -> recipe_test_api.TestData:
@@ -26,8 +26,10 @@ class PuprGerritInterfaceTestApi(recipe_test_api.RecipeTestApi):
     values_dict = values_dict or {}
     for change in changes:
       entry = values_dict.setdefault(change.change, {})
-      entry.setdefault('owner', {'email': owner_email})
-      entry.setdefault('uploader', {'email': uploader_email})
+      if 'owner' not in entry:
+        entry['owner'] = {'_account_id': owner_account_id}
+      if 'uploader' not in entry:
+        entry['uploader'] = {'_account_id': uploader_account_id}
     return self.m.gerrit.set_gerrit_fetch_changes_response(
         parent_step_name,
         changes,
@@ -42,20 +44,20 @@ class PuprGerritInterfaceTestApi(recipe_test_api.RecipeTestApi):
       change_number: int,
       host: str = 'chromium-review.googlesource.com',
       patchset: int = 5,
-      owner_email: str = 'bot@google.com',
-      uploader_email: str = 'bot@google.com',
+      owner_account_id: int = 100,
+      uploader_account_id: int = 100,
   ) -> recipe_test_api.TestData:
     """Return simulated fetch_patch_sets response for a retry_cl call."""
     changes = [GerritChange(host=host, change=change_number, patchset=patchset)]
     values_dict = {
         change_number: {
             'owner': {
-                'email': owner_email
+                '_account_id': owner_account_id
             },
             'revision_info': {
                 '_number': patchset,
                 'uploader': {
-                    'email': uploader_email
+                    '_account_id': uploader_account_id
                 },
             },
         }

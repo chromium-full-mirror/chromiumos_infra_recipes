@@ -10,6 +10,7 @@ from typing import Dict, List, Optional, Tuple
 from google.protobuf.json_format import MessageToDict
 from recipe_engine import recipe_api
 from recipe_engine.config_types import Path
+from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.generator import ABANDON
@@ -339,8 +340,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     """
     patchsets = self.m.gerrit.fetch_patch_sets([change])
     latest_ps = sorted(patchsets, key=lambda ps: ps.patch_set, reverse=True)[0]
-    return bool(latest_ps.uploader_email and latest_ps.owner_email and
-                latest_ps.uploader_email == latest_ps.owner_email)
+    return bool(latest_ps.uploader_account_id and latest_ps.owner_account_id and
+                latest_ps.uploader_account_id == latest_ps.owner_account_id)
 
   def check_limit_exceeded(self, open_changes: List[GerritChange],
                            policy: BranchPolicy) -> Tuple[bool, int]:
@@ -500,8 +501,10 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         if policy.cr_policy == CR_REJECT:
           labels[Label.CODE_REVIEW] = -2
         if not self.is_trusted_patchset_uploader(change):
-          labels.pop(Label.BOT_COMMIT, None)
-          labels.pop(Label.COMMIT_QUEUE, None)
+          raise StepFailure(
+              f'The latest patchset on CL {change.change} was uploaded by an account '
+              'other than the owner service account (go/pdeio-trusted-robot-policy).'
+          )
         if labels:
           self.m.gerrit.set_change_labels_remote(change, labels)
 
@@ -553,10 +556,17 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         labels.pop(Label.BOT_COMMIT, None)
       gerrit_change = patch_set.to_gerrit_change_proto()
       if not self.is_trusted_patchset_uploader(gerrit_change):
-        labels.pop(Label.BOT_COMMIT, None)
-        labels.pop(Label.COMMIT_QUEUE, None)
-      if labels:
-        self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
+        comment_message = (
+            'The latest patchset was uploaded by an account other than the owner '
+            'service account. PUpr cannot vote Bot-Commit or Commit-Queue on untrusted '
+            'patchsets (go/pdeio-trusted-robot-policy), so this CL is now ignored by PUpr. '
+            'If you want to submit this CL, please find someone to review it.')
+        self.m.gerrit.add_change_comment_remote(gerrit_change, comment_message)
+        if not self.m.pupr.is_cl_ignored(patch_set):
+          self.m.gerrit.add_change_hashtags_remote(gerrit_change,
+                                                   [HASHTAG_IGNORED])
+        return
+      self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
 
   def apply_retry_policy(self, open_changes: List[GerritChange],
                          most_recent_uprev: Optional[PatchSet],

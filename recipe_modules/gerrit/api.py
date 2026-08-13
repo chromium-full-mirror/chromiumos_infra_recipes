@@ -104,14 +104,14 @@ class PatchSet:
     return self._change_info['subject']
 
   @property
-  def uploader_email(self) -> str:
-    """Return the uploader email address for this PatchSet."""
-    return self._rev_info.get('uploader', {}).get('email', '')
+  def uploader_account_id(self) -> int:
+    """Return the Gerrit account ID of the patchset uploader, or 0 if missing."""
+    return self._rev_info.get('uploader', {}).get('_account_id', 0)
 
   @property
-  def owner_email(self) -> str:
-    """Return the owner email address for this PatchSet."""
-    return self._change_info.get('owner', {}).get('email', '')
+  def owner_account_id(self) -> int:
+    """Return the Gerrit account ID of the change owner, or 0 if missing."""
+    return self._change_info.get('owner', {}).get('_account_id', 0)
 
   @property
   def change_id(self) -> int:

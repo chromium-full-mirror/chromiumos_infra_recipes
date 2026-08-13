@@ -214,7 +214,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'untrusted-uploader-strips-approvals',
+      'untrusted-uploader-raises-step-failure',
       api.properties(send_to_cq_policy=FULL_RUN, projects=1),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
@@ -223,8 +223,9 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           'update CL labels', [
               common.GerritChange(host='host-review.googlesource.com',
                                   change=123, project='project', patchset=1)
-          ], uploader_email='human@google.com'),
+          ], uploader_account_id=200),
       api.path.exists(api.src_state.workspace_path),
+      api.expect_status('FAILURE'),
       api.post_check(post_process.DoesNotRun,
                      'update CL labels.set labels on CL 123'),
       api.post_process(post_process.DropExpectation))
@@ -337,7 +338,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
-      api.path.exists(api.src_state.workspace_path),
+      mock_bot_cls(123), api.path.exists(api.src_state.workspace_path),
       api.post_check(
           post_process.LogContains,
           'add gerrit flows.add gerrit flow to CL 123.create flow on CL 123',

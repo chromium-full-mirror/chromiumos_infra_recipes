@@ -4075,7 +4075,10 @@
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
       "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"src/[CLEANUP]/chromiumos_workspace/src/overlay\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"owner\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"_account_id\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
@@ -4085,17 +4088,17 @@
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/src/[CLEANUP]/chromiumos_workspace/src/overlay\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -4105,7 +4108,10 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"uploader\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"_account_id\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -4113,6 +4119,73 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 1, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 0}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/[CLEANUP]/chromiumos_workspace/src/overlay/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "update CL labels.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 0}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "update CL labels.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -4160,7 +4233,7 @@
       "/path/to/tmp/json",
       "copy",
       "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_2"
+      "[CLEANUP]/service_account_auth_token_tmp_3"
     ],
     "infra_step": true,
     "name": "update CL labels.add comment on CL 1 (2).ensure auth token.Write auth token to temp file",
@@ -4175,7 +4248,7 @@
       "-X",
       "POST",
       "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "@[CLEANUP]/service_account_auth_token_tmp_3",
       "-H",
       "Content-Type: application/json",
       "-d",
@@ -4212,7 +4285,10 @@
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
       "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"src/[CLEANUP]/chromiumos_workspace/src/private-overlay\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"owner\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"_account_id\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
@@ -4222,17 +4298,17 @@
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/src/[CLEANUP]/chromiumos_workspace/src/private-overlay\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -4242,7 +4318,10 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"uploader\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"_account_id\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -4250,6 +4329,73 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 1, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1 (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 0}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/[CLEANUP]/chromiumos_workspace/src/private-overlay/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1 (2).ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "update CL labels.set labels on CL 1 (2).ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_4"
+    ],
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1 (2).ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_4",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 0}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "update CL labels.set labels on CL 1 (2).curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -4297,7 +4443,7 @@
       "/path/to/tmp/json",
       "copy",
       "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_3"
+      "[CLEANUP]/service_account_auth_token_tmp_5"
     ],
     "infra_step": true,
     "name": "update CL labels.add comment on CL 1 (3).ensure auth token.Write auth token to temp file",
@@ -4312,7 +4458,7 @@
       "-X",
       "POST",
       "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_3",
+      "@[CLEANUP]/service_account_auth_token_tmp_5",
       "-H",
       "Content-Type: application/json",
       "-d",
@@ -4349,7 +4495,10 @@
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
       "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"src/overlay\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"owner\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"_account_id\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
@@ -4359,17 +4508,17 @@
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/src/overlay\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -4379,7 +4528,10 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"uploader\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"_account_id\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -4387,6 +4539,73 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 1, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1 (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 0}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1 (3).ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "update CL labels.set labels on CL 1 (3).ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_6"
+    ],
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1 (3).ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_6",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 0}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "update CL labels.set labels on CL 1 (3).curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -4434,7 +4653,7 @@
       "/path/to/tmp/json",
       "copy",
       "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_4"
+      "[CLEANUP]/service_account_auth_token_tmp_7"
     ],
     "infra_step": true,
     "name": "update CL labels.add comment on CL 1 (4).ensure auth token.Write auth token to temp file",
@@ -4449,7 +4668,7 @@
       "-X",
       "POST",
       "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_4",
+      "@[CLEANUP]/service_account_auth_token_tmp_7",
       "-H",
       "Content-Type: application/json",
       "-d",
@@ -4486,7 +4705,10 @@
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
       "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"src/private-overlay\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"owner\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"_account_id\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
@@ -4496,17 +4718,17 @@
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/0\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/src/private-overlay\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -4516,7 +4738,10 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"uploader\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"_account_id\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -4524,6 +4749,73 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 1, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1 (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 0}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update CL labels.set labels on CL 1 (4).ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "update CL labels.set labels on CL 1 (4).ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_8"
+    ],
+    "infra_step": true,
+    "name": "update CL labels.set labels on CL 1 (4).ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_8",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 0}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "update CL labels.set labels on CL 1 (4).curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

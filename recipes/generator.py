@@ -818,9 +818,22 @@ def GenTests(
       ),
   )
 
+  def _mock_bot_cls(*cl_nums: int):
+    ret = None
+    for i, n in enumerate(cl_nums, start=1):
+      step = api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
+          'update CL labels', [
+              bb_common_pb2.GerritChange(
+                  host='chromium-review.googlesource.com', change=n,
+                  project='project', patchset=1)
+          ], iteration=i)
+      ret = (ret + step) if ret else step
+    return ret
+
   def _with_infos(name: str, *args, **kwargs) -> recipe_test_api.TestData:
     return api.test(
         name,
+        _mock_bot_cls(1, 1),
         api.repo.project_infos_step_data(
             'commit uprev',
             data=[
@@ -1013,6 +1026,7 @@ def GenTests(
 
   yield api.test(
       'one-change',
+      _mock_bot_cls(1),
       _props(
           branch_policies=[_policy(
               existing_cls_policy=generator_pb2.FULL_RUN)]),
@@ -1289,6 +1303,7 @@ def GenTests(
 
   yield api.test(
       'version-file-uprev-branch-policy',
+      _mock_bot_cls(1),
       api.properties(triggers=[trigger_prop]),
       _props(
           uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
@@ -1353,6 +1368,7 @@ def GenTests(
 
   yield _with_infos(
       'multiple-packages',
+      _mock_bot_cls(1, 1, 1, 1),
       api.properties(triggers=[trigger_prop]),
       _props(
           packages=[
@@ -1654,6 +1670,7 @@ def GenTests(
 
   yield _with_infos(
       'non-wip-additional-footer',
+      _mock_bot_cls(1, 1, 1, 1),
       api.properties(triggers=[trigger_prop]),
       _props(
           packages=[
@@ -1668,6 +1685,7 @@ def GenTests(
 
   yield _with_infos(
       'non-wip-additional-footer-throttled',
+      _mock_bot_cls(1, 1, 1, 1),
       api.properties(triggers=[trigger_prop]),
       _props(
           packages=[
@@ -2029,6 +2047,7 @@ def GenTests(
 
   yield api.test(
       'no-merged-changes-warning',
+      _mock_bot_cls(1, 1),
       _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -2060,6 +2079,7 @@ def GenTests(
 
   yield api.test(
       'sdk-uprev',
+      _mock_bot_cls(1, 1),
       _props(uprev_target_kind=generator_pb2.UprevTargetKind.SDK),
       api.properties(
           **{
@@ -2087,6 +2107,7 @@ def GenTests(
 
   yield api.test(
       'version-file-uprev',
+      _mock_bot_cls(1),
       _props(
           uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
           version_files=['chrome/src/chromeos/CHROMEOS_LKGM'],

@@ -132,10 +132,10 @@ def _get_values_dict(api):
           'ref':
               'refs/something/02/2/3',
           'owner': {
-              'email': 'owner@example.com'
+              '_account_id': 100
           },
           'uploader': {
-              'email': 'uploader@example.com'
+              '_account_id': 200
           },
           'files': {
               'their/fake/file': {
@@ -423,10 +423,10 @@ def RunSteps(api):
     api.assertions.assertEqual(
         patch.is_latest_patch_set(),
         values['current_revision'] == values['patch_set_revision'])
-    api.assertions.assertEqual(patch.uploader_email,
-                               values.get('uploader', {}).get('email', ''))
-    api.assertions.assertEqual(patch.owner_email,
-                               values.get('owner', {}).get('email', ''))
+    api.assertions.assertEqual(patch.uploader_account_id,
+                               values.get('uploader', {}).get('_account_id', 0))
+    api.assertions.assertEqual(patch.owner_account_id,
+                               values.get('owner', {}).get('_account_id', 0))
     if patch.labels is not None:
       api.assertions.assertEqual(
           patch.has_label_vote('Code-Review', -2),

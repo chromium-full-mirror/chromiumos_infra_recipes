@@ -1064,11 +1064,23 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       ),
       api.pupr_gerrit_interface.set_retry_cl_response(
           'apply retry policy RETRY_LATEST_PINNED', 1234,
-          uploader_email='human@google.com'),
+          uploader_account_id=200),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
       api.post_check(post_process.MustRun,
                      'apply retry policy RETRY_LATEST_PINNED.retry CL 1234'),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_PINNED.retry CL 1234.add comment on CL 1234'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_PINNED.retry CL 1234.add hashtags on CL 1234'
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'apply retry policy RETRY_LATEST_PINNED.retry CL 1234.add hashtags on CL 1234',
+          'hashtags', ['"pupr-ignored"']),
       api.post_check(
           post_process.DoesNotRun,
           'apply retry policy RETRY_LATEST_PINNED.retry CL 1234.set labels on CL 1234'

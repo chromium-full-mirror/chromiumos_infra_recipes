@@ -1975,6 +1975,138 @@
   },
   {
     "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add comment on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@comment text@The latest patchset was uploaded by an account other than the owner service account. PUpr cannot vote Bot-Commit or Commit-Queue on untrusted patchsets (go/pdeio-trusted-robot-policy), so this CL is now ignored by PUpr. If you want to submit this CL, please find someone to review it.@@@",
+      "@@@STEP_LOG_END@comment text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add comment on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add comment on CL 1.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add comment on CL 1.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"The latest patchset was uploaded by an account other than the owner service account. PUpr cannot vote Bot-Commit or Commit-Queue on untrusted patchsets (go/pdeio-trusted-robot-policy), so this CL is now ignored by PUpr. If you want to submit this CL, please find someone to review it.\"}]}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add comment on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add hashtags on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@hashtags@[\"pupr-ignored\"]@@@",
+      "@@@STEP_LOG_END@hashtags@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add hashtags on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add hashtags on CL 1.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_3"
+    ],
+    "infra_step": true,
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add hashtags on CL 1.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_3",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"add\": [\"pupr-ignored\"]}",
+      "https://chromium-review.googlesource.com/changes/1/hashtags"
+    ],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.add hashtags on CL 1.curl https://chromium-review.googlesource.com/changes/1/hashtags",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up SDK chroot"
   },
   {
