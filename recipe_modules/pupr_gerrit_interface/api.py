@@ -159,14 +159,14 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       failing_patchsets = []
       remaining_open_cls = []
       for i, ps in enumerate(open_patch_sets):
+        if (self.m.pupr.is_cl_ignored(ps) or
+            self.m.pupr.is_verified_minus_one_cl(ps)):
+          continue
         failed_attempts_count = (
             self.m.pupr.num_dry_run_cq_failures(ps) +
             self.m.pupr.num_full_cq_failures(ps))
-        is_ignored_or_v1 = (
-            self.m.pupr.is_cl_ignored(ps) or
-            self.m.pupr.is_verified_minus_one_cl(ps))
-        if not is_ignored_or_v1 and (self.m.pupr.is_cl_pinned(ps) or
-                                     failed_attempts_count <= max_cq_retry):
+        if self.m.pupr.is_cl_pinned(
+            ps) or failed_attempts_count <= max_cq_retry:
           remaining_open_cls.append(open_changes[i])
         else:
           failing_patchsets.append(ps)

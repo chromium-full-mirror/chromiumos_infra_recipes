@@ -269,3 +269,61 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           'ignore unpinned CLs repeatedly failing CQ.add hashtags on CL 1235',
       ),
   )
+
+  yield api.test(
+      'ignore already-ignored or verified-minus-one CLs',
+      api.properties(
+          HandleRepeatedlyFailingChangesProperties(
+              open_changes=_create_gerrit_changes(3),
+              max_cq_retry=1,
+              expected_remaining_changes_number=[1234],
+          )),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get CLs repeatedly failing CQ',
+          _create_gerrit_changes(3),
+          {
+              1234: {
+                  'patch_set': 1,
+                  'files': {
+                      'a/b/d/test.txt': {}
+                  },
+                  'branch': 'main',
+                  'hashtags': [],
+                  'created': '2023-01-09 13:11:20.000000000',
+                  'messages': [],
+                  'message': 'Normal active CL'
+              },
+              1235: {
+                  'patch_set': 1,
+                  'files': {
+                      'a/b/d/test.txt': {}
+                  },
+                  'branch': 'main',
+                  'hashtags': ['pupr-ignored'],
+                  'created': '2023-01-09 13:11:20.000000000',
+                  'messages': [],
+                  'message': 'Ignored CL'
+              },
+              1236: {
+                  'patch_set': 1,
+                  'files': {
+                      'a/b/d/test.txt': {}
+                  },
+                  'branch': 'main',
+                  'labels': {
+                      'Verified': {
+                          'value': -1
+                      }
+                  },
+                  'hashtags': [],
+                  'created': '2023-01-09 13:11:20.000000000',
+                  'messages': [],
+                  'message': 'Verified-1 CL'
+              },
+          },
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'abandon unpinned CLs repeatedly failing CQ',
+      ),
+  )
