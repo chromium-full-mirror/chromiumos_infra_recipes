@@ -16,6 +16,7 @@ See go/pupr and go/pupr-generator for rationale, design decisions, and usage
 instructions.
 """
 
+import contextlib
 import dataclasses
 import functools
 import re
@@ -229,17 +230,9 @@ class GeneratorRun:
       return f'[retry-only] {msg}'
     return msg
 
-  def run(self) -> str:
-    """Run the Generator."""
-    self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
-                                         self.m.src_state.gerrit_changes)
-    self.workspace_path = self.m.cros_source.workspace_path
-
-    self._validate_properties()
-    self._validate_triggers()
-    self.m.pupr_gerrit_interface.rebase_before_retry = (
-        self.properties.rebase_before_retry)
-
+  @contextlib.contextmanager
+  def _workspace_context(self) -> Generator[None, None, None]:
+    """Manage the lifecycle of workspace mounts, caches, and source checkouts."""
     chrome_future = None
     if self.properties.checkout_chrome:
       chrome_future = self.m.futures.spawn(self._checkout_chrome)
@@ -252,6 +245,85 @@ class GeneratorRun:
         chrome_root = chrome_future.result()
         self.m.cros_sdk.set_chrome_root(chrome_root)
 
+      yield
+
+  def _get_target_branch(self, policy_info: PolicyInfo) -> str:
+    """Determine the branch to query on Gerrit."""
+    if self.retry_only_run:
+      ref = self.properties.retry_ref.ref
+      return ref[len('refs/heads/'):] if ref.startswith('refs/heads/') else ref
+    return policy_info.branch or 'main'
+
+  def _get_commit_footer(self, limit_exceeded: bool) -> str:
+    """Assemble the commit footer based on rate limits."""
+    footer = self.properties.additional_commit_footer.strip()
+    if not limit_exceeded and self.properties.non_wip_additional_commit_footer:
+      non_wip_footer = (
+          self.properties.non_wip_additional_commit_footer.strip())
+      footer = f'{footer}\n{non_wip_footer}' if footer else non_wip_footer
+    return footer
+
+  def _set_local_uprev_generator_attributes(self, limit_exceeded: bool) -> None:
+    """Set generator attributes on the pupr_local_uprev module."""
+    self.m.pupr_local_uprev.set_generator_attributes(
+        additional_commit_message=self.properties.additional_commit_message,
+        additional_commit_footer=self._get_commit_footer(limit_exceeded),
+        allow_partial_uprev=self.properties.allow_partial_uprev,
+        build_targets=self.properties.build_targets,
+        packages=self.properties.packages,
+        uprev_target_kind=self.properties.uprev_target_kind,
+        version_files=self.properties.version_files,
+    )
+
+  def _run_creation(
+      self,
+      policy_info: PolicyInfo,
+      open_changes: List[common_pb2.GerritChange],
+      limit_exceeded: bool,
+      running_count: int,
+  ) -> str:
+    """Execute uprev creation and upload new CLs."""
+    self._modified_projects = self.create_local_uprev()
+    if self._modified_projects is None:
+      return self.make_summary('no modified projects')
+    self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
+
+    return self.m.pupr_gerrit_interface.create_uprev_cls(
+        self._repo_projects,
+        open_changes,
+        self.policy,
+        self.topic,
+        limit_exceeded=limit_exceeded,
+        running_count=running_count,
+    )
+
+  def _run_retry(
+      self,
+      open_changes: List[common_pb2.GerritChange],
+      most_recent_uprev: Optional[common_pb2.GerritChange],
+  ) -> str:
+    """Execute retry policy on existing open CLs."""
+    self.m.pupr_gerrit_interface.apply_retry_policy(
+        open_changes,
+        most_recent_uprev,
+        self.policy,
+        self.topic,
+        self.retry_only_run,
+    )
+    return self.make_summary('success')
+
+  def run(self) -> str:
+    """Run the Generator."""
+    self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
+                                         self.m.src_state.gerrit_changes)
+    self.workspace_path = self.m.cros_source.workspace_path
+
+    self._validate_properties()
+    self._validate_triggers()
+    self.m.pupr_gerrit_interface.rebase_before_retry = (
+        self.properties.rebase_before_retry)
+
+    with self._workspace_context():
       policy_info = self.select_policy()
       self.set_policy(policy_info.policy)
       if self.policy.ignore:
@@ -267,11 +339,7 @@ class GeneratorRun:
         with self.m.context(cwd=self.workspace_path):
           self.m.cros_sdk.create_chroot()
 
-      branch = (self.properties.retry_ref.ref[len('refs/heads/'):]
-                if self.properties.retry_ref.ref.startswith('refs/heads/') else
-                self.properties.retry_ref.ref) if self.retry_only_run else (
-                    policy_info.branch or 'main')
-
+      branch = self._get_target_branch(policy_info)
       open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
           self.topic, branch=branch)
       most_recent_uprev = (
@@ -293,54 +361,19 @@ class GeneratorRun:
           self.m.pupr_gerrit_interface.check_limit_exceeded(
               open_changes, self.policy))
 
-      footer = self.properties.additional_commit_footer.strip()
-      if not limit_exceeded and self.properties.non_wip_additional_commit_footer:
-        non_wip_footer = (
-            self.properties.non_wip_additional_commit_footer.strip())
-        footer = f'{footer}\n{non_wip_footer}' if footer else non_wip_footer
+      self._set_local_uprev_generator_attributes(limit_exceeded)
 
-      self.m.pupr_local_uprev.set_generator_attributes(
-          additional_commit_message=self.properties.additional_commit_message,
-          additional_commit_footer=footer,
-          allow_partial_uprev=self.properties.allow_partial_uprev,
-          build_targets=self.properties.build_targets,
-          packages=self.properties.packages,
-          uprev_target_kind=self.properties.uprev_target_kind,
-          version_files=self.properties.version_files,
-      )
-
-      if not self.retry_only_run:
-        # A real uprev creation run creates local uprev commits on disk.
-        # Retry policy execution is skipped here because applying a local rebase
-        # on top of newly created local commits in the same task workspace
-        # would cause conflicts. Uprev creation and retry runs are mutually
-        # exclusive execution paths.
-        self._modified_projects = self.create_local_uprev()
-        if self._modified_projects is None:
-          return self.make_summary('no modified projects')
-        self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
-
-        summary = self.m.pupr_gerrit_interface.create_uprev_cls(
-            self._repo_projects,
-            open_changes,
-            self.policy,
-            self.topic,
-            limit_exceeded=limit_exceeded,
-            running_count=running_count,
-        )
-
-      else:
+      if self.retry_only_run:
         # Retry-only runs evaluate retry policies for existing open CLs.
-        summary = self.make_summary('success')
-        self.m.pupr_gerrit_interface.apply_retry_policy(
-            open_changes,
-            most_recent_uprev,
-            self.policy,
-            self.topic,
-            self.retry_only_run,
-        )
+        return self._run_retry(open_changes, most_recent_uprev)
 
-    return summary
+      # A real uprev creation run creates local uprev commits on disk.
+      # Retry policy execution is skipped here because applying a local rebase
+      # on top of newly created local commits in the same task workspace
+      # would cause conflicts. Uprev creation and retry runs are mutually
+      # exclusive execution paths.
+      return self._run_creation(policy_info, open_changes, limit_exceeded,
+                                running_count)
 
   def create_local_uprev(self) -> Optional[List[repo_api.ProjectInfo]]:
     """Create and commit uprevs on the local filesystem.
