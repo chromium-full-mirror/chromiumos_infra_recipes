@@ -14,7 +14,7 @@ class PuprGerritInterfaceTestApi(recipe_test_api.RecipeTestApi):
 
   def set_gerrit_fetch_changes_response(
       self,
-      parent_step_name: str,
+      parent_step_name: Optional[str],
       changes: List[GerritChange],
       values_dict: Optional[Dict[int, dict]] = None,
       owner_account_id: int = 100,
@@ -40,7 +40,7 @@ class PuprGerritInterfaceTestApi(recipe_test_api.RecipeTestApi):
 
   def set_retry_cl_response(
       self,
-      parent_step_name: str,
+      parent_step_name: Optional[str],
       change_number: int,
       host: str = 'chromium-review.googlesource.com',
       patchset: int = 5,
@@ -62,8 +62,9 @@ class PuprGerritInterfaceTestApi(recipe_test_api.RecipeTestApi):
             },
         }
     }
+    step_prefix = f'{parent_step_name}.' if parent_step_name else ''
     return self.m.gerrit.set_gerrit_fetch_changes_response(
-        f'{parent_step_name}.retry CL {change_number}',
+        f'{step_prefix}retry CL {change_number}',
         changes,
         values_dict,
     )

@@ -85,23 +85,25 @@ def RunSteps(api: recipe_api.RecipeApi,
           build_targets=BUILD_TARGETS,
       ))
 
+  open_changes = [
+      GerritChange(host='chromium-review.googlesource.com', change=1234 + i)
+      for i in range(0, properties.changes)
+  ]
+  open_patch_sets = api.pupr_gerrit_interface.fetch_open_patch_sets(
+      open_changes)
   mrm = api.pupr_gerrit_interface.find_most_recently_merged_uprev(
       'topic', branch='main') if properties.changes > 0 else None
-  remaining_changes = api.pupr_gerrit_interface.handle_outdated_changes(
-      [
-          GerritChange(host='chromium-review.googlesource.com', change=1234 + i)
-          for i in range(0, properties.changes)
-      ], mrm,
+  remaining_patch_sets = api.pupr_gerrit_interface.handle_outdated_changes(
+      open_patch_sets, mrm,
       BranchPolicy(pattern='.*', repl='',
                    reviewers=[Reviewer(email='a@example.com')],
                    no_existing_cls_policy=FULL_RUN, existing_cls_policy=SUBMIT,
                    retry_cl_policy=RETRY_LATEST_PINNED,
                    outdated_cls_policy=properties.outdated_cls_policy),
       properties.retry_only)
-  expected_remaining = ([
-      GerritChange(host='chromium-review.googlesource.com', change=1234 + i)
-      for i in range(0, properties.changes)
-  ] if properties.expected else [])
+  expected_remaining = ([1234 + i for i in range(0, properties.changes)]
+                        if properties.expected else [])
+  remaining_changes = [ps.change_id for ps in remaining_patch_sets]
   api.assertions.assertEqual(expected_remaining, remaining_changes)
 
 

@@ -57,14 +57,15 @@ def RunSteps(api: recipe_api.RecipeApi,
           build_targets=BUILD_TARGETS,
       ))
 
-  remaining_changes = api.pupr_gerrit_interface.handle_repeatedly_failing_changes(
-      properties.open_changes,
+  open_patch_sets = api.pupr_gerrit_interface.fetch_open_patch_sets(
+      list(properties.open_changes))
+  remaining_patch_sets = api.pupr_gerrit_interface.handle_repeatedly_failing_changes(
+      open_patch_sets,
       max_cq_retry=properties.max_cq_retry,
       max_cq_retry_action=properties.max_cq_retry_action,
   )
-  api.assertions.assertEqual(
-      properties.expected_remaining_changes_number,
-      [gerrit_change.change for gerrit_change in remaining_changes])
+  api.assertions.assertEqual(properties.expected_remaining_changes_number,
+                             [ps.change_id for ps in remaining_patch_sets])
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
@@ -136,7 +137,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
         [gerrit_change.change for gerrit_change in gerrit_changes], cl_specs)
 
     # If configured to not abandon CLs due to CQ failures,
-    # gerrit.fetch_patch_sets will not be called and should not set response.
+    # gerrit.fetch_patch_sets will not be called inside handle_repeatedly_failing_changes.
     if max_cq_retry < 0:
       return api.test(
           name,
@@ -146,6 +147,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                   expected_remaining_changes_number=[
                       gerrit_change.change for gerrit_change in gerrit_changes
                   ])),
+          api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
+              None, gerrit_changes, gerrit_fetch_changes_response),
           api.post_check(post_process.DoesNotRun,
                          'get CLs repeatedly failing CQ'),
           api.post_check(post_process.DoesNotRun,
@@ -164,8 +167,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                     if is_pinned or retries <= max_cq_retry
                 ])),
         api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
-            'get CLs repeatedly failing CQ', gerrit_changes,
-            gerrit_fetch_changes_response),
+            None, gerrit_changes, gerrit_fetch_changes_response),
         api.post_check(post_process.LogEquals, 'get CLs repeatedly failing CQ',
                        'max CQ retry', str(max_cq_retry)),
         *[
@@ -210,7 +212,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               max_cq_retry_action=MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE,
           )),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'get CLs repeatedly failing CQ',
+          None,
           _create_gerrit_changes(4),
           _create_gerrit_fetch_changes_response(
               [1234, 1235, 1236, 1237],
@@ -250,7 +252,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               max_cq_retry_action=MAX_CQ_RETRY_ACTION_IGNORE,
           )),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'get CLs repeatedly failing CQ',
+          None,
           _create_gerrit_changes(4),
           _create_gerrit_fetch_changes_response(
               [1234, 1235, 1236, 1237],
@@ -281,7 +283,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               expected_remaining_changes_number=[1234],
           )),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'get CLs repeatedly failing CQ',
+          None,
           _create_gerrit_changes(3),
           {
               1234: {

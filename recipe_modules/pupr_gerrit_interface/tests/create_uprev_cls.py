@@ -60,11 +60,14 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
         for i in range(1, properties.projects + 1)
     ]
 
+  open_patch_sets = api.pupr_gerrit_interface.fetch_open_patch_sets(
+      list(properties.open_changes))
   limit_exceeded, running_count = api.pupr_gerrit_interface.check_limit_exceeded(
-      list(properties.open_changes), branch_policy)
+      open_patch_sets, branch_policy)
   summary = api.pupr_gerrit_interface.create_uprev_cls(
-      projects, list(properties.open_changes), branch_policy, 'a topic',
-      limit_exceeded=limit_exceeded, running_count=running_count)
+      projects, [ps.to_gerrit_change_proto() for ps in open_patch_sets],
+      branch_policy, 'a topic', limit_exceeded=limit_exceeded,
+      running_count=running_count)
 
 
   return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
@@ -290,8 +293,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                                    max_concurrent_cq_runs=1,
                                    open_changes=open_changes_list)),
       api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
-          'check concurrent CQ runs', open_changes_list,
-          fetch_response_running),
+          None, open_changes_list, fetch_response_running),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
@@ -311,8 +313,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                                    max_concurrent_cq_runs=2,
                                    open_changes=open_changes_list)),
       api.pupr_gerrit_interface.set_gerrit_fetch_changes_response(
-          'check concurrent CQ runs', open_changes_list,
-          fetch_response_running),
+          None, open_changes_list, fetch_response_running),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),

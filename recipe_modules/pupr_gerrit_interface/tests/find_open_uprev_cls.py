@@ -53,6 +53,8 @@ def RunSteps(api: recipe_api.RecipeApi, properties: FindOpenUprevCLsProperties):
   # Act
   open_changes = api.pupr_gerrit_interface.find_open_uprev_cls(
       PUPR_TOPIC, branch='main')
+  empty_patch_sets = api.pupr_gerrit_interface.fetch_open_patch_sets([])
+  api.assertions.assertEqual([], empty_patch_sets)
 
   # Assert
   api.assertions.maxDiff = None

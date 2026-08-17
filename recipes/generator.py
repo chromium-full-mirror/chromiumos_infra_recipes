@@ -15,6 +15,7 @@ package releases. It can also be scheduled to run on a cron.
 See go/pupr and go/pupr-generator for rationale, design decisions, and usage
 instructions.
 """
+from __future__ import annotations
 
 import contextlib
 import dataclasses
@@ -37,6 +38,7 @@ from recipe_engine import config_types
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.git import api as git_api
 from RECIPE_MODULES.chromeos.pupr import api as pupr_api
 from RECIPE_MODULES.chromeos.pupr_gerrit_interface import api as pupr_gerrit_interface_api
@@ -280,7 +282,7 @@ class GeneratorRun:
   def _run_creation(
       self,
       policy_info: PolicyInfo,
-      open_changes: list[common_pb2.GerritChange],
+      open_patch_sets: list[PatchSet],
       limit_exceeded: bool,
       running_count: int,
   ) -> str:
@@ -290,6 +292,7 @@ class GeneratorRun:
       return self.make_summary('no modified projects')
     self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
 
+    open_changes = [ps.to_gerrit_change_proto() for ps in open_patch_sets]
     return self.m.pupr_gerrit_interface.create_uprev_cls(
         self._repo_projects,
         open_changes,
@@ -301,18 +304,31 @@ class GeneratorRun:
 
   def _run_retry(
       self,
-      open_changes: list[common_pb2.GerritChange],
-      most_recent_uprev: common_pb2.GerritChange | None,
+      policy_info: PolicyInfo,
+      open_patch_sets: list[PatchSet],
+      most_recent_uprev: PatchSet | None,
   ) -> str:
     """Execute retry policy on existing open CLs."""
-    self.m.pupr_gerrit_interface.apply_retry_policy(
-        open_changes,
-        most_recent_uprev,
-        self.policy,
-        self.topic,
-        self.retry_only_run,
-    )
-    return self.make_summary('success')
+    local_rebase_target = (
+        self.m.pupr_gerrit_interface.apply_retry_policy_remote(
+            open_patch_sets,
+            most_recent_uprev,
+            self.policy,
+            self.retry_only_run,
+        ))
+    if not local_rebase_target:
+      return self.make_summary('success')
+
+    with self._workspace_context():
+      self.checkout_branch(policy_info)
+      self.m.pupr_gerrit_interface.rebase_and_retry(
+          open_patch_sets,
+          local_rebase_target,
+          self.policy,
+          self.topic,
+          self.retry_only_run,
+      )
+      return self.make_summary('success')
 
   def run(self) -> str:
     """Run the Generator."""
@@ -326,12 +342,42 @@ class GeneratorRun:
         pupr_gerrit_interface_api.GerritInterfaceConfig(
             rebase_before_retry=self.properties.rebase_before_retry))
 
+    policy_info = self.select_policy()
+    self.set_policy(policy_info.policy)
+    if self.policy.ignore:
+      self.m.step.empty('policy set to ignore')
+      return self.make_summary('ignore by policy')
+
+    branch = self._get_target_branch(policy_info)
+    open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
+        self.topic, branch=branch)
+    open_patch_sets = self.m.pupr_gerrit_interface.fetch_open_patch_sets(
+        open_changes)
+    most_recent_uprev = (
+        self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
+            self.topic, branch=branch) if open_patch_sets else None)
+    open_patch_sets = (
+        self.m.pupr_gerrit_interface.handle_outdated_changes(
+            open_patch_sets,
+            most_recent_uprev,
+            self.policy,
+            self.retry_only_run,
+        ))
+    open_patch_sets = (
+        self.m.pupr_gerrit_interface.handle_repeatedly_failing_changes(
+            open_patch_sets, self.policy.max_cq_retry,
+            max_cq_retry_action=self.policy.max_cq_retry_action))
+
+    limit_exceeded, running_count = (
+        self.m.pupr_gerrit_interface.check_limit_exceeded(
+            open_patch_sets, self.policy))
+
+    self._set_local_uprev_generator_attributes(limit_exceeded)
+
+    if self.retry_only_run:
+      return self._run_retry(policy_info, open_patch_sets, most_recent_uprev)
+
     with self._workspace_context():
-      policy_info = self.select_policy()
-      self.set_policy(policy_info.policy)
-      if self.policy.ignore:
-        self.m.step.empty('policy set to ignore')
-        return self.make_summary('ignore by policy')
       self.checkout_branch(policy_info)
 
       if self.m.cv.active or self.m.src_state.gerrit_changes:
@@ -342,40 +388,7 @@ class GeneratorRun:
         with self.m.context(cwd=self.workspace_path):
           self.m.cros_sdk.create_chroot()
 
-      branch = self._get_target_branch(policy_info)
-      open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
-          self.topic, branch=branch)
-      most_recent_uprev = (
-          self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
-              self.topic, branch=branch) if open_changes else None)
-      open_changes = (
-          self.m.pupr_gerrit_interface.handle_outdated_changes(
-              open_changes,
-              most_recent_uprev,
-              self.policy,
-              self.retry_only_run,
-          ))
-      open_changes = (
-          self.m.pupr_gerrit_interface.handle_repeatedly_failing_changes(
-              open_changes, self.policy.max_cq_retry,
-              max_cq_retry_action=self.policy.max_cq_retry_action))
-
-      limit_exceeded, running_count = (
-          self.m.pupr_gerrit_interface.check_limit_exceeded(
-              open_changes, self.policy))
-
-      self._set_local_uprev_generator_attributes(limit_exceeded)
-
-      if self.retry_only_run:
-        # Retry-only runs evaluate retry policies for existing open CLs.
-        return self._run_retry(open_changes, most_recent_uprev)
-
-      # A real uprev creation run creates local uprev commits on disk.
-      # Retry policy execution is skipped here because applying a local rebase
-      # on top of newly created local commits in the same task workspace
-      # would cause conflicts. Uprev creation and retry runs are mutually
-      # exclusive execution paths.
-      return self._run_creation(policy_info, open_changes, limit_exceeded,
+      return self._run_creation(policy_info, open_patch_sets, limit_exceeded,
                                 running_count)
 
   def create_local_uprev(self) -> list[repo_api.ProjectInfo] | None:
@@ -1588,7 +1601,7 @@ def GenTests(
       ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          None,
           changes,
           value_dict,
       ),
@@ -1643,7 +1656,7 @@ def GenTests(
       ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          None,
           [
               bb_common_pb2.GerritChange(
                   change=1, host='chromium-review.googlesource.com')
@@ -1719,7 +1732,7 @@ def GenTests(
       ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          None,
           changes,
           value_dict,
       ),
@@ -1782,7 +1795,7 @@ def GenTests(
           'https://chromium-review.googlesource.com',
       ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'check concurrent CQ runs',
+          None,
           changes,
           {
               1: {
@@ -1837,12 +1850,12 @@ def GenTests(
       ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          None,
           changes,
           value_dict,
       ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
+          'rebase CL 1.get CL 1 description',
           changes,
           value_dict,
       ),
@@ -1866,13 +1879,13 @@ def GenTests(
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.post_check(
           post_process.StepSuccess,
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1',
+          'rebase CL 1',
       ),
       # Commit message should contain the same version label as the original.
       # The change should be uploaded as a new patch set for the same Change-Id.
       api.post_check(
           post_process.StepCommandRE,
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev.commit in overlay.write commit message',
+          'rebase CL 1.commit uprev.commit in overlay.write commit message',
           [
               '.*',
               '.*',
@@ -1982,12 +1995,12 @@ def GenTests(
       ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          None,
           changes,
           value_dict_wip,
       ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
+          'rebase CL 1.get CL 1 description',
           changes,
           value_dict_wip,
       ),
@@ -2010,14 +2023,14 @@ def GenTests(
       ),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.repo.project_infos_step_data(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev',
+          'rebase CL 1.commit uprev',
           data=[{
               'project': 'overlay',
               'path': 'src/third_party/chromiumos-overlay',
           }],
       ),
       api.repo.project_infos_step_data(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patch set for Change-Id 1',
+          'upload patch set for Change-Id 1',
           data=[{
               'project': 'chromium/src',
               'path': 'src/chromium',
@@ -2047,7 +2060,7 @@ def GenTests(
       ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          None,
           changes,
           value_dict_wip,
       ),
@@ -2080,7 +2093,7 @@ def GenTests(
       ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          None,
           changes,
           value_dict,
       ),
