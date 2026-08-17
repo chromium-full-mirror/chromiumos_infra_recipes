@@ -4,6 +4,7 @@
 
 """Module for interfacing with Gerrit in PUpr (Parallel Uprevs)."""
 
+import dataclasses
 import json
 from typing import Dict, List, Optional, Tuple
 
@@ -45,31 +46,36 @@ HOSTS_REMOTES = (('chromium', 'cros'), ('chrome-internal', 'cros-internal'))
 ProjectsByRemote = Dict[str, List[ProjectInfo]]
 
 
+@dataclasses.dataclass(frozen=True)
+class GerritInterfaceConfig:
+  """Configuration for PUpr Gerrit interface."""
+  rebase_before_retry: bool
+
+  @classmethod
+  def for_test(
+      cls,
+      rebase_before_retry: bool = False,
+  ) -> 'GerritInterfaceConfig':
+    """Factory to construct config with sensible defaults for test cases."""
+    return cls(rebase_before_retry=rebase_before_retry)
+
+
 class PuprGerritInterfaceApi(recipe_api.RecipeApi):
   """A module to interface between PUpr builders and Gerrit."""
 
   def __init__(self, *args, **kwargs):
     """Initialize the module's attributes."""
     super().__init__(*args, **kwargs)
-    self.rebase_before_retry = False
-
+    self.config = GerritInterfaceConfig.for_test()
 
   @property
   def workspace_path(self) -> Path:
     """Return the checkout path where the build is processed."""
     return self.m.cros_source.workspace_path
 
-  def set_generator_attributes(self, rebase_before_retry: bool):
-    """Set attributes whose values are determined in Generator.
-
-    Args:
-      rebase_before_retry: Whether to rebase open changes before retrying. See
-        documentation in generator.proto.
-
-    TODO(b/259445191): All of these attributes should be moved from
-      generator.proto to pupr_local_uprev.proto.
-    """
-    self.rebase_before_retry = rebase_before_retry
+  def set_generator_config(self, config: GerritInterfaceConfig) -> None:
+    """Set the configuration dataclass."""
+    self.config = config
 
   def find_open_uprev_cls(self, topic: str,
                           branch: str = 'main') -> List[GerritChange]:
@@ -617,7 +623,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           )
           return
 
-      if self.rebase_before_retry:
+      if self.config.rebase_before_retry:
         changes_to_retry = [
             change for change in open_changes
             if change.host == patch_set_to_retry.host and
@@ -668,7 +674,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         # Already running for CQ. No need to retry.
         return
 
-      if patch_set_to_retry.work_in_progress and not self.rebase_before_retry:
+      if patch_set_to_retry.work_in_progress and not self.config.rebase_before_retry:
         self.m.gerrit.set_change_ready_for_review_remote(
             patch_set_to_retry.to_gerrit_change_proto())
 
@@ -691,6 +697,6 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       A timestamp string, in the same format as PatchSet.created, after which
       any CL would be considered outdated.
     """
-    if self.rebase_before_retry:
+    if self.config.rebase_before_retry:
       return most_recent_uprev.created
     return most_recent_uprev.submitted

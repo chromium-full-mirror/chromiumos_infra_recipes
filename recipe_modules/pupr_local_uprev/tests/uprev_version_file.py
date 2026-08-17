@@ -14,6 +14,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
+from RECIPE_MODULES.chromeos.pupr_local_uprev.api import LocalUprevConfig
 
 DEPS = [
     'recipe_engine/assertions',
@@ -42,11 +43,12 @@ VERSIONS = [
 
 def RunSteps(api: RecipeApi):
   # Arrange
-  api.pupr_local_uprev.set_generator_attributes(
-      uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
-      version_files=FILE_PATHS,
-      allow_partial_uprev=api.properties.get('allow_partial_uprev', False),
-  )
+  api.pupr_local_uprev.set_generator_config(
+      LocalUprevConfig.for_test(
+          uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
+          version_files=FILE_PATHS,
+          allow_partial_uprev=api.properties.get('allow_partial_uprev', False),
+      ))
 
   # Act
   ebuilds_by_project = api.pupr_local_uprev.uprev_version_files(VERSIONS, TOPIC)

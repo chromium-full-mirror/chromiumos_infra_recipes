@@ -5,9 +5,10 @@
 """Module to create uprevs on the local checkout for PUpr (Parallel Uprevs)."""
 
 import collections
+import dataclasses
 import json
 import re
-from typing import Any, DefaultDict, List, NamedTuple, Optional
+from typing import Any, DefaultDict, NamedTuple
 from urllib.parse import urlparse
 
 from recipe_engine import config_types
@@ -25,6 +26,42 @@ from RECIPE_MODULES.chromeos.repo import api as repo_api
 UPREV_VERSION_LABEL = 'Pupr-Upstream-Versions'
 
 
+@dataclasses.dataclass(frozen=True)
+class LocalUprevConfig:
+  """Configuration for a local PUpr uprev run."""
+  additional_commit_message: str
+  additional_commit_footer: str
+  allow_partial_uprev: bool
+  packages: tuple[common_pb2.PackageInfo, ...]
+  build_targets: tuple[common_pb2.BuildTarget, ...]
+  uprev_target_kind: generator_pb2.UprevTargetKind | None
+  version_files: tuple[str, ...]
+
+  @classmethod
+  def for_test(
+      cls,
+      additional_commit_message: str = '',
+      additional_commit_footer: str = '',
+      allow_partial_uprev: bool = False,
+      packages: tuple[common_pb2.PackageInfo, ...]
+      | list[common_pb2.PackageInfo] | None = None,
+      build_targets: tuple[common_pb2.BuildTarget, ...]
+      | list[common_pb2.BuildTarget] | None = None,
+      uprev_target_kind: generator_pb2.UprevTargetKind | None = None,
+      version_files: tuple[str, ...] | list[str] | None = None,
+  ) -> 'LocalUprevConfig':
+    """Factory to construct config with sensible defaults for test cases."""
+    return cls(
+        additional_commit_message=additional_commit_message,
+        additional_commit_footer=additional_commit_footer,
+        allow_partial_uprev=allow_partial_uprev,
+        packages=tuple(packages) if packages is not None else (),
+        build_targets=tuple(build_targets) if build_targets is not None else (),
+        uprev_target_kind=uprev_target_kind,
+        version_files=tuple(version_files) if version_files is not None else (),
+    )
+
+
 class Ebuild(NamedTuple):
   path: str
   version: str
@@ -38,58 +75,23 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     """Initialize the module's attributes."""
     super().__init__(*args, **kwargs)
     self.properties = properties
-    self._additional_commit_message = ''
-    self._additional_commit_footer = ''
-    self._allow_partial_uprev = False
-    self.packages: List[common_pb2.PackageInfo] = []
-    self._build_targets: List[common_pb2.BuildTarget] = []
-    self._uprev_target_kind: Optional['generator_pb2.UprevTargetKind'] = None
-    self._version_files: List[str] = []
+    self.config = LocalUprevConfig.for_test()
 
   @property
   def workspace_path(self) -> config_types.Path:
     """Return the checkout path where the build is processed."""
     return self.m.cros_source.workspace_path
 
-  def set_generator_attributes(
-      self, additional_commit_message: str = '',
-      additional_commit_footer: str = '', allow_partial_uprev: bool = False,
-      packages: Optional[List[common_pb2.PackageInfo]] = None,
-      build_targets: Optional[List[common_pb2.BuildTarget]] = None,
-      uprev_target_kind: Optional['generator_pb2.UprevTargetKind'] = None,
-      version_files: Optional[List[str]] = None) -> None:
-    """Set attributes whose values are determined in Generator.
-
-    Args:
-      additional_commit_message: Additional text to be added in the commit
-        description.
-      additional_commit_footer: Additional footer to be added in the commit
-        description.
-      allow_partial_uprev: Whether to generate CLs when either of the packages
-          had no modified file.
-      packages: The packages that this build should uprev.
-      build_targets: The build targets to uprev. Only relevant if required by
-          endpoint.
-      uprev_target_kind: The uprev target kind.
-      version_files: The version files to uprev.
-
-    TODO(b/262302698): All of these attributes should be moved from
-    generator.proto to pupr_local_uprev.proto.
-    """
-    self._additional_commit_message = additional_commit_message
-    self._additional_commit_footer = additional_commit_footer
-    self._allow_partial_uprev = allow_partial_uprev
-    self.packages = packages if packages is not None else []
-    self._build_targets = build_targets if build_targets is not None else []
-    self._uprev_target_kind = uprev_target_kind
-    self._version_files = version_files if version_files is not None else []
+  def set_generator_config(self, config: LocalUprevConfig) -> None:
+    """Set the full uprev configuration dataclass."""
+    self.config = config
 
   def uprev_packages(
       self,
-      versions: List[packages_pb2.UprevVersionedPackageRequest.GitRef],
+      versions: list[packages_pb2.UprevVersionedPackageRequest.GitRef],
       topic: str,
       change_id: str = '',
-  ) -> Optional[List[repo_api.ProjectInfo]]:
+  ) -> list[repo_api.ProjectInfo] | None:
     """Try to uprev the specified packages. If successful, commit the uprev.
 
     Args:
@@ -105,14 +107,14 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       If not all packages are uprevved and allow_partial_uprev==False, return
         None. This signifies that the PUpr run should terminate immediately.
     """
-    modified_package_names: List[str] = []
-    all_valid_responses: List[packages_pb2.UprevPackagesResponse] = []
-    for package in self.packages:
+    modified_package_names: list[str] = []
+    all_valid_responses: list[packages_pb2.UprevPackagesResponse] = []
+    for package in self.config.packages:
       package_responses = self._uprev_package(package, versions)
       if package_responses:
         all_valid_responses.extend(package_responses)
         modified_package_names.append(package.package_name)
-      elif not self._allow_partial_uprev:
+      elif not self.config.allow_partial_uprev:
         return None
     if not all_valid_responses:
       return None
@@ -123,8 +125,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
   def _uprev_package(
       self,
       package: common_pb2.PackageInfo,
-      versions: List[packages_pb2.UprevVersionedPackageRequest.GitRef],
-  ) -> List[packages_pb2.UprevPackagesResponse]:
+      versions: list[packages_pb2.UprevVersionedPackageRequest.GitRef],
+  ) -> list[packages_pb2.UprevPackagesResponse]:
     """Locally uprev a single package.
 
     Args:
@@ -140,7 +142,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
           chroot=self.m.cros_sdk.chroot,
           package_info=package,
           versions=versions,
-          build_targets=self._build_targets,
+          build_targets=self.config.build_targets,
       )
       presentation.logs['request'] = str(request)
       response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
@@ -150,7 +152,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
         presentation.step_text = 'no new versions for {}'.format(cpv)
         return []
 
-      valid_responses: List[packages_pb2.UprevPackagesResponse] = []
+      valid_responses: list[packages_pb2.UprevPackagesResponse] = []
       with self.m.step.nest('verify updates'):
         for uprev_resp in response.responses:
           if self._uprev_packages_response_has_changes(uprev_resp):
@@ -159,7 +161,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       if not valid_responses:
         presentation.step_text = (
             'skipping uprev for {}. no modified files'.format(cpv))
-        if not self._allow_partial_uprev:
+        if not self.config.allow_partial_uprev:
           return []
         presentation.logs[
             'partial_uprev'] = 'no modified file for {}. continue because allow_partial_uprev=True'.format(
@@ -172,10 +174,10 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     return valid_responses
 
   def _commit_package_uprevs(
-      self, versions: List[packages_pb2.UprevVersionedPackageRequest.GitRef],
-      uprev_packages_responses: List[packages_pb2.UprevPackagesResponse],
-      modified_package_names: List[str], topic: str,
-      change_id: str = '') -> List[repo_api.ProjectInfo]:
+      self, versions: list[packages_pb2.UprevVersionedPackageRequest.GitRef],
+      uprev_packages_responses: list[packages_pb2.UprevPackagesResponse],
+      modified_package_names: list[str], topic: str,
+      change_id: str = '') -> list[repo_api.ProjectInfo]:
     """Commit the package uprevs on the local filesystem.
 
     Args:
@@ -193,7 +195,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('commit uprev'):
       # Flatten the list of modified files.
-      modified_ebuilds: List[Ebuild] = []
+      modified_ebuilds: list[Ebuild] = []
       for uprev_resp in uprev_packages_responses:
         modified_ebuilds.extend(
             Ebuild(path=ebuild.path, version=uprev_resp.version,
@@ -202,7 +204,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
       # Sort ebuilds by repo project.
       with self.m.context(cwd=self.workspace_path):
-        ebuilds_by_project: DefaultDict[repo_api.ProjectInfo, List[Ebuild]]
+        ebuilds_by_project: DefaultDict[repo_api.ProjectInfo, list[Ebuild]]
         ebuilds_by_project = collections.defaultdict(list)
         for ebuild in modified_ebuilds:
           dirname = self.m.path.dirname(ebuild.path)
@@ -232,7 +234,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
     return list(ebuilds_by_project)
 
-  def _create_pupr_branches(self, projects: List[repo_api.ProjectInfo]) -> None:
+  def _create_pupr_branches(self, projects: list[repo_api.ProjectInfo]) -> None:
     """Create Git branches for all the given repo projects.
 
     Create branches via `repo` so that they track correctly.
@@ -244,10 +246,9 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       self.m.repo.start('pupr', projects=project_paths)
 
   def _create_commit_message(
-      self, prefix: str, uprevved_versions: List[str], topic: str,
-      target_refs: Optional[List[
-          packages_pb2.UprevVersionedPackageRequest.GitRef]] = None,
-      additional_msg: str = '', change_id: str = '') -> str:
+      self, prefix: str, uprevved_versions: list[str], topic: str,
+      target_refs: list[packages_pb2.UprevVersionedPackageRequest.GitRef]
+      | None = None, additional_msg: str = '', change_id: str = '') -> str:
     """Create a commit message for the uprev.
 
     Sample commit message:
@@ -279,7 +280,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       target_refs: GitRefs that were targeted for uprev. This should always be
         set for ebuild uprevs.
       additional_msg: If given, extra information to add to the commit message.
-        This will be added after self._additional_commit_message.
+        This will be added after self.config.additional_commit_message.
       change_id: If given, set Change-Id to the commit message, so that the
         commit is uploaded as a new patch set of an existing Change. When this
         is set, the uprev should not span multiple repositories.
@@ -288,10 +289,10 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
         f'{prefix}: Automatic uprev to {", ".join(uprevved_versions)}.', ''
     ]
 
-    if self._additional_commit_message:
+    if self.config.additional_commit_message:
       commit_lines.append(
-          self._additional_commit_message.format(versions=uprevved_versions,
-                                                 refs=target_refs))
+          self.config.additional_commit_message.format(
+              versions=uprevved_versions, refs=target_refs))
     if additional_msg:
       commit_lines.append(additional_msg)
 
@@ -309,13 +310,13 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
           f'{UPREV_VERSION_LABEL}: {_serialize_versions(target_refs)}')
     footers.append(f'Cq-Cl-Tag: pupr:{topic}')
     if self.m.src_state.gerrit_changes:
-      depends: List[str] = []
+      depends: list[str] = []
       for change in self.m.src_state.gerrit_changes:
         host = change.host.split('.', 1)[0].replace('-review', '')
         depends.append(f'{host}:{change.change}')
       footers.append(f'Cq-Depend: {",".join(depends)}')
-    if self._additional_commit_footer:
-      footers.append(self._additional_commit_footer)
+    if self.config.additional_commit_footer:
+      footers.append(self.config.additional_commit_footer)
     if change_id:
       footers.append('Change-Id: ' + change_id)
     if footers:
@@ -323,7 +324,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
     return '\n'.join(commit_lines) + '\n'
 
-  def uprev_sdk(self, topic: str) -> List[repo_api.ProjectInfo]:
+  def uprev_sdk(self, topic: str) -> list[repo_api.ProjectInfo]:
     """Uprev the SDK on the local filesystem, and commit the uprev.
 
     Args:
@@ -359,7 +360,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
         raise recipe_api.InfraFailure('No toolchain template specified.')
 
   def _commit_sdk_uprev(self, uprev_sdk_response: sdk_pb2.UprevResponse,
-                        topic: str) -> List[repo_api.ProjectInfo]:
+                        topic: str) -> list[repo_api.ProjectInfo]:
     """Commit the SDK uprev on the local filesystem.
 
     uprev_sdk_response: The Build API response from uprevving the SDK.
@@ -391,7 +392,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
     return modified_projects
 
-  def rebase_cl(self, open_changes: List[bb_common_pb2.GerritChange],
+  def rebase_cl(self, open_changes: list[bb_common_pb2.GerritChange],
                 topic: str, change_num: int) -> None:
     """Create a new uprev patch (locally) for change_id.
 
@@ -414,7 +415,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      if self._uprev_target_kind == generator_pb2.UprevTargetKind.VERSION_FILE:
+      if self.config.uprev_target_kind == generator_pb2.UprevTargetKind.VERSION_FILE:
         version_file_refs = [
             packages_pb2.UprevVersionFileRequest.GitRef(repository=v.repository,
                                                         ref=v.ref,
@@ -435,10 +436,10 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
   def uprev_version_files(
       self,
-      versions: List[packages_pb2.UprevVersionFileRequest.GitRef],
+      versions: list[packages_pb2.UprevVersionFileRequest.GitRef],
       topic: str,
       change_id: str = '',
-  ) -> Optional[List[repo_api.ProjectInfo]]:
+  ) -> list[repo_api.ProjectInfo] | None:
     """Try to uprev the specified version files. If successful, commit the uprev.
 
     Args:
@@ -452,14 +453,14 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       If not all version files are uprevved and allow_partial_uprev==False, return
         None. This signifies that the PUpr run should terminate immediately.
     """
-    modified_file_paths: List[str] = []
-    all_valid_responses: List[packages_pb2.UprevFileResponse] = []
-    for file_path in self._version_files:
+    modified_file_paths: list[str] = []
+    all_valid_responses: list[packages_pb2.UprevFileResponse] = []
+    for file_path in self.config.version_files:
       file_responses = self._uprev_version_file(file_path, versions)
       if file_responses:
         all_valid_responses.extend(file_responses)
         modified_file_paths.append(file_path)
-      elif not self._allow_partial_uprev:
+      elif not self.config.allow_partial_uprev:
         return None
     if not all_valid_responses:
       return None
@@ -470,8 +471,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
   def _uprev_version_file(
       self,
       file_path: str,
-      versions: List[packages_pb2.UprevVersionFileRequest.GitRef],
-  ) -> List[packages_pb2.UprevFileResponse]:
+      versions: list[packages_pb2.UprevVersionFileRequest.GitRef],
+  ) -> list[packages_pb2.UprevFileResponse]:
     """Locally uprev a single version file.
 
     Args:
@@ -495,7 +496,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
         presentation.step_text = 'no new versions for {}'.format(file_path)
         return []
 
-      valid_responses: List[packages_pb2.UprevFileResponse] = []
+      valid_responses: list[packages_pb2.UprevFileResponse] = []
       with self.m.step.nest('verify updates'):
         for uprev_resp in response.responses:
           if self._uprev_file_response_has_changes(uprev_resp):
@@ -512,9 +513,9 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     return valid_responses
 
   def _commit_file_uprevs(
-      self, versions: List[packages_pb2.UprevVersionFileRequest.GitRef],
-      uprev_file_responses: List[packages_pb2.UprevFileResponse], topic: str,
-      change_id: str = '') -> List[repo_api.ProjectInfo]:
+      self, versions: list[packages_pb2.UprevVersionFileRequest.GitRef],
+      uprev_file_responses: list[packages_pb2.UprevFileResponse], topic: str,
+      change_id: str = '') -> list[repo_api.ProjectInfo]:
     """Commit the file uprevs on the local filesystem.
 
     Args:
@@ -529,12 +530,12 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('commit uprev'):
       # Flatten the list of modified files.
-      modified_files: List[str] = []
+      modified_files: list[str] = []
       for uprev_resp in uprev_file_responses:
         modified_files.extend(uprev_resp.modified_files)
 
-      chrome_files: List[str] = []
-      repo_files_by_project: DefaultDict[repo_api.ProjectInfo, List[str]]
+      chrome_files: list[str] = []
+      repo_files_by_project: DefaultDict[repo_api.ProjectInfo, list[str]]
       repo_files_by_project = collections.defaultdict(list)
 
       chrome_root = self.m.path.start_dir / 'chrome'
@@ -663,7 +664,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     """Return whether the given `UprevFileResponse` has changes."""
     return self._has_git_changes(response.modified_files)
 
-  def _has_git_changes(self, paths: List[str]) -> bool:
+  def _has_git_changes(self, paths: list[str]) -> bool:
     """Return whether any of the given paths has git diff changes."""
     for path in paths:
       with self.m.context(
@@ -675,7 +676,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
 
 def _deserialize_versions(
-    json_str: str) -> List[packages_pb2.UprevVersionedPackageRequest.GitRef]:
+    json_str: str) -> list[packages_pb2.UprevVersionedPackageRequest.GitRef]:
   """Deserialize versions information.
 
   Args:
@@ -693,7 +694,7 @@ def _deserialize_versions(
 
 
 def _serialize_versions(
-    versions: List[packages_pb2.UprevVersionedPackageRequest.GitRef]) -> str:
+    versions: list[packages_pb2.UprevVersionedPackageRequest.GitRef]) -> str:
   """Serialize versions information.
 
   Args:

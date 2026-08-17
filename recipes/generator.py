@@ -20,7 +20,7 @@ import contextlib
 import dataclasses
 import functools
 import re
-from typing import Generator, List, Optional
+from typing import Generator
 import urllib
 
 from google.protobuf import json_format
@@ -39,6 +39,7 @@ from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 from RECIPE_MODULES.chromeos.git import api as git_api
 from RECIPE_MODULES.chromeos.pupr import api as pupr_api
+from RECIPE_MODULES.chromeos.pupr_gerrit_interface import api as pupr_gerrit_interface_api
 from RECIPE_MODULES.chromeos.pupr_local_uprev import api as pupr_local_uprev_api
 from RECIPE_MODULES.chromeos.repo import api as repo_api
 
@@ -85,7 +86,7 @@ def RunSteps(
 class PolicyInfo:
   policy: generator_pb2.BranchPolicy
   branch: str = ''
-  reference: Optional[git_api.Reference] = None
+  reference: git_api.Reference | None = None
 
 
 class GeneratorRun:
@@ -100,9 +101,9 @@ class GeneratorRun:
     self.m = api
     self.properties = properties
 
-    self.workspace_path: Optional[config_types.Path] = None
-    self._policy: Optional[generator_pb2.BranchPolicy] = None
-    self._modified_projects: Optional[List[repo_api.ProjectInfo]] = None
+    self.workspace_path: config_types.Path | None = None
+    self._policy: generator_pb2.BranchPolicy | None = None
+    self._modified_projects: list[repo_api.ProjectInfo] | None = None
 
     # If we see gitiles_info populated in the recipe properties, we will be
     # performing a fetch from the Gitiles API for the package's target uprev
@@ -129,7 +130,7 @@ class GeneratorRun:
             is generator_pb2.UprevTargetKind.VERSION_FILE)
 
   @functools.cached_property
-  def triggers(self) -> List[triggers_pb2.Trigger]:
+  def triggers(self) -> list[triggers_pb2.Trigger]:
     """Get this run's triggers, all of which have the gitiles field set."""
     if self._has_cron_trigger:
       return [
@@ -142,7 +143,7 @@ class GeneratorRun:
   @property
   def target_package_versions(
       self,
-  ) -> List[packages_pb2.UprevVersionedPackageRequest.GitRef]:
+  ) -> list[packages_pb2.UprevVersionedPackageRequest.GitRef]:
     """Return the package versions to try to uprev to.
 
     Raises:
@@ -161,7 +162,7 @@ class GeneratorRun:
   @property
   def target_version_file_versions(
       self,
-  ) -> List[packages_pb2.UprevVersionFileRequest.GitRef]:
+  ) -> list[packages_pb2.UprevVersionFileRequest.GitRef]:
     """Return the version file versions to try to uprev to.
 
     Raises:
@@ -183,7 +184,7 @@ class GeneratorRun:
     return self._has_cron_trigger
 
   @property
-  def cpvs(self) -> List[str]:
+  def cpvs(self) -> list[str]:
     """Get the category-package-version for this build's packages."""
     assert self._is_package_uprevver
     return [
@@ -220,7 +221,7 @@ class GeneratorRun:
         'Not sure how to generate topic')  # pragma: nocover
 
   @property
-  def _repo_projects(self) -> List[repo_api.ProjectInfo]:
+  def _repo_projects(self) -> list[repo_api.ProjectInfo]:
     """Return all repo projects with code that this PUpr uprevs."""
     assert self._modified_projects is not None
     return self._modified_projects
@@ -265,20 +266,21 @@ class GeneratorRun:
 
   def _set_local_uprev_generator_attributes(self, limit_exceeded: bool) -> None:
     """Set generator attributes on the pupr_local_uprev module."""
-    self.m.pupr_local_uprev.set_generator_attributes(
-        additional_commit_message=self.properties.additional_commit_message,
-        additional_commit_footer=self._get_commit_footer(limit_exceeded),
-        allow_partial_uprev=self.properties.allow_partial_uprev,
-        build_targets=self.properties.build_targets,
-        packages=self.properties.packages,
-        uprev_target_kind=self.properties.uprev_target_kind,
-        version_files=self.properties.version_files,
-    )
+    self.m.pupr_local_uprev.set_generator_config(
+        pupr_local_uprev_api.LocalUprevConfig(
+            additional_commit_message=self.properties.additional_commit_message,
+            additional_commit_footer=self._get_commit_footer(limit_exceeded),
+            allow_partial_uprev=self.properties.allow_partial_uprev,
+            build_targets=tuple(self.properties.build_targets),
+            packages=tuple(self.properties.packages),
+            uprev_target_kind=self.properties.uprev_target_kind,
+            version_files=tuple(self.properties.version_files),
+        ))
 
   def _run_creation(
       self,
       policy_info: PolicyInfo,
-      open_changes: List[common_pb2.GerritChange],
+      open_changes: list[common_pb2.GerritChange],
       limit_exceeded: bool,
       running_count: int,
   ) -> str:
@@ -299,8 +301,8 @@ class GeneratorRun:
 
   def _run_retry(
       self,
-      open_changes: List[common_pb2.GerritChange],
-      most_recent_uprev: Optional[common_pb2.GerritChange],
+      open_changes: list[common_pb2.GerritChange],
+      most_recent_uprev: common_pb2.GerritChange | None,
   ) -> str:
     """Execute retry policy on existing open CLs."""
     self.m.pupr_gerrit_interface.apply_retry_policy(
@@ -320,8 +322,9 @@ class GeneratorRun:
 
     self._validate_properties()
     self._validate_triggers()
-    self.m.pupr_gerrit_interface.rebase_before_retry = (
-        self.properties.rebase_before_retry)
+    self.m.pupr_gerrit_interface.set_generator_config(
+        pupr_gerrit_interface_api.GerritInterfaceConfig(
+            rebase_before_retry=self.properties.rebase_before_retry))
 
     with self._workspace_context():
       policy_info = self.select_policy()
@@ -375,7 +378,7 @@ class GeneratorRun:
       return self._run_creation(policy_info, open_changes, limit_exceeded,
                                 running_count)
 
-  def create_local_uprev(self) -> Optional[List[repo_api.ProjectInfo]]:
+  def create_local_uprev(self) -> list[repo_api.ProjectInfo] | None:
     """Create and commit uprevs on the local filesystem.
 
     Returns:
@@ -485,7 +488,7 @@ class GeneratorRun:
                                                     self.triggers)
 
   @property
-  def _raw_triggers(self) -> List[triggers_pb2.Trigger]:
+  def _raw_triggers(self) -> list[triggers_pb2.Trigger]:
     """Get the triggers which actually launched this run."""
     return self.properties.triggers or self.m.scheduler.triggers
 
@@ -570,7 +573,7 @@ class GeneratorRun:
       StepFailure: If more than one applicable trigger is selected.
     """
     with self.m.step.nest('select policy'):
-      policy_infos: List[PolicyInfo] = []
+      policy_infos: list[PolicyInfo] = []
       for trigger in self.triggers:
         tag = self._get_target_version_for_trigger(trigger)
         policy_info = self._get_policy_info_for_tag(tag)
@@ -611,7 +614,7 @@ class GeneratorRun:
         return gitiles_response
     return trigger.gitiles.ref
 
-  def _read_gitiles(self, ref: str) -> Optional[str]:
+  def _read_gitiles(self, ref: str) -> str | None:
     """Read a file via the Gitiles API, as specified by properties.gitiles_info.
 
     Args:

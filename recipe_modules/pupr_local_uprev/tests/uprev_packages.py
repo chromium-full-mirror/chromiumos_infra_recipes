@@ -16,6 +16,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
+from RECIPE_MODULES.chromeos.pupr_local_uprev.api import LocalUprevConfig
 
 DEPS = [
     'recipe_engine/assertions',
@@ -43,13 +44,14 @@ VERSIONS = [UprevVersionedPackageRequest.GitRef()]
 
 def RunSteps(api: RecipeApi, properties: UprevPackagesProperties):
   # Arrange
-  api.pupr_local_uprev.set_generator_attributes(
-      additional_commit_message=properties.additional_commit_message,
-      additional_commit_footer=properties.additional_commit_footer,
-      allow_partial_uprev=properties.allow_partial_uprev,
-      packages=PACKAGES,
-      build_targets=BUILD_TARGETS,
-  )
+  api.pupr_local_uprev.set_generator_config(
+      LocalUprevConfig.for_test(
+          additional_commit_message=properties.additional_commit_message,
+          additional_commit_footer=properties.additional_commit_footer,
+          allow_partial_uprev=properties.allow_partial_uprev,
+          packages=PACKAGES,
+          build_targets=BUILD_TARGETS,
+      ))
 
   # Act
   ebuilds_by_project = api.pupr_local_uprev.uprev_packages(VERSIONS, TOPIC)

@@ -13,11 +13,12 @@ from PB.recipe_modules.chromeos.pupr_gerrit_interface.tests.tests import \
   HandleRepeatedlyFailingChangesProperties
 from PB.recipes.chromeos.generator import MAX_CQ_RETRY_ACTION_IGNORE
 from PB.recipes.chromeos.generator import MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE
-from RECIPE_MODULES.chromeos.gerrit.api import JSONObject
-from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
+from RECIPE_MODULES.chromeos.gerrit.api import JSONObject
+from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
+from RECIPE_MODULES.chromeos.pupr_local_uprev.api import LocalUprevConfig
 
 DEPS = [
     'recipe_engine/assertions',
@@ -50,10 +51,11 @@ merged_value_dict = {
 def RunSteps(api: recipe_api.RecipeApi,
              properties: HandleRepeatedlyFailingChangesProperties):
   # Arrange
-  api.pupr_local_uprev.set_generator_attributes(
-      packages=PACKAGES,
-      build_targets=BUILD_TARGETS,
-  )
+  api.pupr_local_uprev.set_generator_config(
+      LocalUprevConfig.for_test(
+          packages=PACKAGES,
+          build_targets=BUILD_TARGETS,
+      ))
 
   remaining_changes = api.pupr_gerrit_interface.handle_repeatedly_failing_changes(
       properties.open_changes,

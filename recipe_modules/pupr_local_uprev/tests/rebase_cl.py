@@ -13,6 +13,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
+from RECIPE_MODULES.chromeos.pupr_local_uprev.api import LocalUprevConfig
 
 DEPS = [
     'cros_build_api',
@@ -35,10 +36,11 @@ PACKAGES = [PACKAGE_CHROME, PACKAGE_LACROS]
 
 
 def RunSteps(api: RecipeApi):
-  api.pupr_local_uprev.set_generator_attributes(
-      packages=PACKAGES,
-      build_targets=BUILD_TARGETS,
-  )
+  api.pupr_local_uprev.set_generator_config(
+      LocalUprevConfig.for_test(
+          packages=PACKAGES,
+          build_targets=BUILD_TARGETS,
+      ))
   api.pupr_local_uprev.rebase_cl(OPEN_CHANGES, 'cool_topic', 1234)
 
 

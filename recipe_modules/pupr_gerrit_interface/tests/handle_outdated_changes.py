@@ -18,6 +18,7 @@ from PB.recipes.chromeos.generator import SUBMIT
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
+from RECIPE_MODULES.chromeos.pupr_local_uprev.api import LocalUprevConfig
 
 
 DEPS = [
@@ -78,10 +79,11 @@ merged_value_dict = {
 def RunSteps(api: recipe_api.RecipeApi,
              properties: HandleOutdatedChangesProperties):
   # Arrange
-  api.pupr_local_uprev.set_generator_attributes(
-      packages=PACKAGES,
-      build_targets=BUILD_TARGETS,
-  )
+  api.pupr_local_uprev.set_generator_config(
+      LocalUprevConfig.for_test(
+          packages=PACKAGES,
+          build_targets=BUILD_TARGETS,
+      ))
 
   mrm = api.pupr_gerrit_interface.find_most_recently_merged_uprev(
       'topic', branch='main') if properties.changes > 0 else None
