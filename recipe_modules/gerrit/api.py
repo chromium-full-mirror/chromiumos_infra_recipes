@@ -853,6 +853,37 @@ class GerritApi(RecipeApi):
           f'https://{gerrit_change.host}/changes/{gerrit_change.change}/ready',
           {}, test_output_data='{}')
 
+  def add_reviewers_remote(
+      self,
+      gerrit_change: GerritChange,
+      reviewers: list[str],
+      state: str = 'REVIEWER',
+      tag: str | None = None,
+  ):
+    """Add reviewers or CCs to a Gerrit change.
+
+    Args:
+      gerrit_change: The change to add reviewers to.
+      reviewers: A list of reviewer email addresses / accounts.
+      state: 'REVIEWER' or 'CC'.
+      tag: Optional tag to apply to the change message.
+    """
+    if not reviewers:
+      return
+    with self.m.step.nest(
+        f'add reviewers to CL {gerrit_change.change}') as pres:
+      pres.logs['reviewers'] = reviewers
+      pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
+      for reviewer in reviewers:
+        payload = {'reviewer': reviewer, 'state': state}
+        if tag:
+          payload['tag'] = tag
+        self._do_post(
+            f'https://{gerrit_change.host}/changes/{gerrit_change.change}/reviewers',
+            payload,
+            test_output_data=self.m.json.dumps({'input': reviewer}),
+        )
+
   def add_change_hashtags_remote(self, gerrit_change: GerritChange,
                                  hashtags: List[str]):
     """Add hashtags to gerrit_change.

@@ -208,6 +208,34 @@ message BranchPolicy {
   // See
   // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#create-flow
   repeated recipe_modules.chromeos.gerrit.Flow gerrit_flows = 15;
+
+  // PUpr automations to execute on matching Gerrit changes.
+  // This is a temporary solution for GerritFlow until the service account can
+  // create flows (b/546579189). You need to enable retry to make this work
+  // properly.
+  repeated PuprGerritAutomation gerrit_automations = 16;
+}
+
+// Action to perform on a Gerrit change when a PUpr automation rule matches.
+message PuprGerritAutomationAction {
+  // Action name. Supported actions:
+  // - "add-reviewer": Adds the specified accounts as reviewers to matching CLs
+  //   if they are not already listed as reviewers, CCs, or removed reviewers
+  //   (to avoid repeated additions).
+  string name = 1;
+
+  // Parameters for the action (e.g. email addresses for "add-reviewer").
+  repeated string parameters = 2;
+}
+
+// Automation rule to execute on matching open Gerrit changes.
+message PuprGerritAutomation {
+  // Gerrit search query conditions to match open CLs, e.g. ["is:wip",
+  // "-label:Commit-Queue", "-label:Verified"].
+  repeated string conditions = 1;
+
+  // Actions to execute on matching CLs.
+  repeated PuprGerritAutomationAction actions = 2;
 }
 
 // Holds information needed for packages who need to fetch a file from the

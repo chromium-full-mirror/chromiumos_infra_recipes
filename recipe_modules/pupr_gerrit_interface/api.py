@@ -26,9 +26,11 @@ from PB.recipes.chromeos.generator import NO_RETRY
 from PB.recipes.chromeos.generator import OUTDATED_ABANDON
 from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
 from PB.recipes.chromeos.generator import OutdatedClsPolicy
+from PB.recipes.chromeos.generator import PuprGerritAutomationAction
 from PB.recipes.chromeos.generator import RetryClPolicy
 from PB.recipes.chromeos.generator import SUBMIT
 from PB.recipes.chromeos.generator import SendToCqPolicy
+from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_IGNORED
@@ -753,3 +755,87 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     if self.config.rebase_before_retry:
       return most_recent_uprev.created
     return most_recent_uprev.submitted
+
+  def apply_automations(
+      self,
+      policy: BranchPolicy,
+      topic: str,
+      branch: str = 'main',
+  ) -> None:
+    """Evaluate and execute PUpr automation rules on CLs matching conditions."""
+    if not policy.gerrit_automations:
+      return
+
+    with self.m.step.nest('apply automations'):
+      for automation in policy.gerrit_automations:
+        self._apply_automation_rule(
+            list(automation.conditions), list(automation.actions), topic,
+            branch)
+
+  def _apply_automation_rule(
+      self,
+      conditions: list[str],
+      actions: list[PuprGerritAutomationAction],
+      topic: str,
+      branch: str,
+  ) -> None:
+    query_terms = [parse_condition_query(c) for c in conditions]
+    cond_str = ' '.join(conditions)
+    with self.m.step.nest(f'evaluate conditions: {cond_str}') as presentation:
+      presentation.logs['conditions'] = conditions
+
+      for host, _ in HOSTS_REMOTES:
+        host_url = f'https://{host}-review.googlesource.com'
+        query_params = [
+            ('topic', topic),
+            ('status', 'open'),
+            ('-age', '30d'),
+            ('footer', f'Cq-Cl-Tag=pupr:{topic}'),
+            ('owner', 'self'),
+        ]
+        if branch:
+          query_params.append(('branch', branch))
+        query_params.extend(query_terms)
+
+        matching_change_infos = self.m.gerrit.query_change_infos(
+            host_url, query_params,
+            o_params=['DETAILED_ACCOUNTS', 'DETAILED_LABELS'])
+        for change_info in matching_change_infos:
+          change = change_info_to_gerrit_change(change_info, host_url)
+          for action in actions:
+            self._execute_action(change, change_info, action)
+
+  def _execute_action(
+      self,
+      change: GerritChange,
+      change_info: dict,
+      action: PuprGerritAutomationAction,
+  ) -> None:
+    """Execute an automation action on a change if not already executed."""
+    existing_reviewers = {
+        acc.get('email')
+        for accs in change_info.get('reviewers', {}).values()
+        for acc in accs
+        if acc.get('email')
+    }
+
+    with self.m.step.nest(f'execute {action.name} on CL {change.change}'):
+      if action.name == 'add-reviewer':
+        reviewers_to_add = [
+            reviewer for reviewer in action.parameters
+            if reviewer not in existing_reviewers
+        ]
+        if reviewers_to_add:
+          self.m.gerrit.add_reviewers_remote(change, reviewers_to_add)
+
+      else:
+        self.m.step.empty(f'unsupported action {action.name}')
+
+
+def parse_condition_query(condition_str: str) -> tuple[str, str]:
+  """Extract query term from a Gerrit search condition string."""
+  if ':' not in condition_str:
+    raise StepFailure(
+        f"invalid condition query token '{condition_str}': must be 'key:val'")
+  key, val = condition_str.split(':', 1)
+  return key, val

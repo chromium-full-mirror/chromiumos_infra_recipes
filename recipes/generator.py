@@ -351,6 +351,9 @@ class GeneratorRun:
       return self.make_summary('ignore by policy')
 
     branch = self._get_target_branch(policy_info)
+    if self.retry_only_run:
+      self.m.pupr_gerrit_interface.apply_automations(self.policy, self.topic,
+                                                     branch=branch)
     open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
         self.topic, branch=branch)
     open_patch_sets = self.m.pupr_gerrit_interface.fetch_open_patch_sets(
@@ -477,8 +480,10 @@ class GeneratorRun:
       for policy in self.properties.branch_policies:
         if not policy.pattern:
           raise recipe_api.StepFailure('must specify pattern')
-        if not policy.reviewers and not policy.gerrit_flows:
-          raise recipe_api.StepFailure('need at least one reviewer or flow')
+        if (not policy.reviewers and not policy.gerrit_flows and
+            not policy.gerrit_automations):
+          raise recipe_api.StepFailure(
+              'need at least one reviewer, flow, or automation')
 
         for reviewer in policy.reviewers:
           if not reviewer.email:
