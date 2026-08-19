@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API for testing with cros_schedule."""
+
 from datetime import datetime, timedelta
 import json
 
@@ -11,7 +13,8 @@ from recipe_engine import recipe_test_api
 class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
 
   def test_chromiumdash_fetch_response(self, start_mstone=88, fetch_n=2,
-                                       ltr_last_refresh_date=None):
+                                       ltr_last_refresh_date=None,
+                                       late_stable_date='2021-01-26T00:00:00'):
 
     def _make_mstone(inc_days=0, mstone=start_mstone):
       # Annoyingly, this doesn't contain the 'Z' suffix. We have to include
@@ -33,7 +36,6 @@ class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
           'stable_cut': '2021-01-12T00:00:00',
           'stable_refresh_second': '2021-02-16T00:00:00',
           'mstone': mstone,
-          'late_stable_date': '2021-01-26T00:00:00',
           'stable_date': '2021-01-19T00:00:00',
           'ldaps': {
               'clank': 'govind',
@@ -44,6 +46,8 @@ class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
           'earliest_beta_ios': '2020-11-17T00:00:00',
           'branch_point': '2020-11-12T00:00:00',
       }
+      if late_stable_date:
+        dates['late_stable_date'] = late_stable_date
       if ltr_last_refresh_date:
         dates['ltr_last_refresh_date'] = ltr_last_refresh_date
       for k, v in dates.items():

@@ -187,8 +187,11 @@ def GenTests(api):
           'update config.fetch chromiumdash schedule.curl fetch_milestone_schedule',
           api.raw_io.stream_output(
               api.cros_schedule.test_chromiumdash_fetch_response(
-                  start_mstone=5, fetch_n=1,
-                  ltr_last_refresh_date='2023-01-01T00:00:00'))),
+                  start_mstone=5,
+                  fetch_n=1,
+                  ltr_last_refresh_date='2023-01-01T00:00:00',
+                  late_stable_date='2022-11-01T00:00:00',
+              ))),
       api.post_process(
           post_process.StepCommandContains,
           'update config.write release/release_builders.textpb', [
@@ -369,7 +372,8 @@ def GenTests(api):
           post_process.StepCommandContains,
           'update config.write release/release_builders.textpb', [
               expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
-                              new_block(branch_milestone, branch), BLOCK_3)
+                              new_block(branch_milestone, branch, '2021-03-30'),
+                              BLOCK_3)
           ]), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -429,4 +433,53 @@ def GenTests(api):
                   MAIN_BLOCK, BLOCK_EXPIRATION,
                   new_stabilize_block('stabilize-starline-54321.B',
                                       one_year_out), BLOCK_3, BLOCK_2, BLOCK_1)
+          ]), api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'stable-skipped-branch',
+      api.properties(
+          **{
+              'branch':
+                  'release-R153-16790.B',
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(
+                          email='hardtmad@google.com')], keep_n_milestones=4),
+          }),
+      api.step_data(
+          'update config.fetch chromiumdash schedule.curl fetch_milestone_schedule',
+          api.raw_io.stream_output(
+              api.cros_schedule.test_chromiumdash_fetch_response(
+                  start_mstone=153, fetch_n=1, late_stable_date=None))),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update config.write release/release_builders.textpb', [
+              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
+                              new_block(153, 'release-R153-16790.B'), BLOCK_3,
+                              BLOCK_2, BLOCK_1)
+          ]), api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'stable-eligible-branch',
+      api.properties(
+          **{
+              'branch':
+                  'release-R154-16815.B',
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(
+                          email='hardtmad@google.com')], keep_n_milestones=4),
+          }),
+      api.step_data(
+          'update config.fetch chromiumdash schedule.curl fetch_milestone_schedule',
+          api.raw_io.stream_output(
+              api.cros_schedule.test_chromiumdash_fetch_response(
+                  start_mstone=154, fetch_n=1))),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update config.write release/release_builders.textpb', [
+              expected_config(
+                  MAIN_BLOCK, BLOCK_EXPIRATION,
+                  new_block(154, 'release-R154-16815.B', '2021-03-30'), BLOCK_3,
+                  BLOCK_2, BLOCK_1)
           ]), api.post_process(post_process.DropExpectation))

@@ -127,7 +127,29 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "builders {\n  milestone {\n    number: -1\n    branch_name: \"main\"\n  }\n  build_schedule: \"0 1 * * *\"\n}\nbuilders {\n  milestone {\n    number: 40\n    branch_name: \"release-R40-00040.B\"\n  }\n  expiration_date {\n    value: \"2100-01-01\"\n  }\n}\nbuilders {\n  milestone {\n    number: 5\n    branch_name: \"release-R05-00004.B\"\n  }\n  android_branches {\n    key: \"android-container-rvc\"\n    value: \"git_rvc-arc-m5\"\n  }\n  android_branches {\n    key: \"android-vm-tm\"\n    value: \"git_tm-arc-m5\"\n  }\n}\nbuilders {\n  milestone {\n    number: 3\n    branch_name: \"release-R03-00003.B\"\n  }\n}\n",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/release/timeline_configuration.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "update config.read timeline_configuration.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@timeline_configuration.json@{@@@",
+      "@@@STEP_LOG_LINE@timeline_configuration.json@  \"days_keep_stable\": 35@@@",
+      "@@@STEP_LOG_LINE@timeline_configuration.json@}@@@",
+      "@@@STEP_LOG_END@timeline_configuration.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "builders {\n  milestone {\n    number: -1\n    branch_name: \"main\"\n  }\n  build_schedule: \"0 1 * * *\"\n}\nbuilders {\n  milestone {\n    number: 40\n    branch_name: \"release-R40-00040.B\"\n  }\n  expiration_date {\n    value: \"2100-01-01\"\n  }\n}\nbuilders {\n  milestone {\n    number: 5\n    branch_name: \"release-R05-00004.B\"\n  }\n  expiration_date {\n    value: \"2021-03-30\"\n  }\n  android_branches {\n    key: \"android-container-rvc\"\n    value: \"git_rvc-arc-m5\"\n  }\n  android_branches {\n    key: \"android-vm-tm\"\n    value: \"git_tm-arc-m5\"\n  }\n}\nbuilders {\n  milestone {\n    number: 3\n    branch_name: \"release-R03-00003.B\"\n  }\n}\n",
       "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
@@ -155,6 +177,9 @@
       "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
       "@@@STEP_LOG_LINE@release_builders.textpb@    number: 5@@@",
       "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R05-00004.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  expiration_date {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    value: \"2021-03-30\"@@@",
       "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
       "@@@STEP_LOG_LINE@release_builders.textpb@  android_branches {@@@",
       "@@@STEP_LOG_LINE@release_builders.textpb@    key: \"android-container-rvc\"@@@",

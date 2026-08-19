@@ -51,6 +51,9 @@ MILESTONE_BRANCH_REGEX = r'(?:firmware|release)-R(\d+)-\d+.B'
 FW_MILESTONE_BRANCH_REGEX = r'firmware(?:-ec)?-R(\d+)-\d+\.\d+.B'
 FIRMWARE_BRANCH_REGEX = r'firmware-([a-zA-Z0-9.]+-)+([0-9]+\.)+B(-[a-z0-9_.-]+)?$'
 
+STABLE_CYCLE_DAYS = 28
+DEFAULT_DAYS_KEEP_STABLE = 35
+
 class CrosReleaseConfigApi(recipe_api.RecipeApi):
   CONFIG_PROJECT = 'chromeos/infra/config'
 
@@ -219,15 +222,32 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                                                   test_proto=TEST_DATA)
         expiration_date = None
         if is_release_branch:
-          # Query chromiumdash to see if the branch is LTS.
+          # Query chromiumdash to see if the branch is LTS or stable-eligible.
           branch_metadata = self.m.cros_schedule.json_to_proto(
               self.m.cros_schedule.fetch_chromiumdash_schedule(
                   start_mstone=milestone, fetch_n=1)).mstones[0]
+          timeline_path = config_path / 'release/timeline_configuration.json'
+          timeline = self.m.file.read_json(
+              'read timeline_configuration.json',
+              timeline_path,
+              test_data={
+                  'days_keep_stable': 35,
+              },
+          )
           if branch_metadata.ltr_last_refresh_date and branch_metadata.ltr_last_refresh_date.ToSeconds(
           ):
             expiration_date = ReleaseBuilder.Date(
                 value=(branch_metadata.ltr_last_refresh_date.ToDatetime() +
                        datetime.timedelta(days=14)).strftime('%Y-%m-%d'))
+          elif branch_metadata.late_stable_date and branch_metadata.late_stable_date.ToSeconds(
+          ):
+            # Stable-eligible milestone: pinned until 28d stable cycle + days_keep_stable
+            stable_window = STABLE_CYCLE_DAYS + timeline.get(
+                'days_keep_stable', DEFAULT_DAYS_KEEP_STABLE)
+            expiration_date = ReleaseBuilder.Date(
+                value=(branch_metadata.late_stable_date.ToDatetime() +
+                       datetime.timedelta(days=stable_window)
+                      ).strftime('%Y-%m-%d'))
         elif is_firmware_branch:
           expiration_date = None
         elif branch.startswith('stabilize-starline-'):
