@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.pupr_gerrit_interface.tests.tests;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
+import "recipe_modules/chromeos/gerrit/gerrit.proto";
 import "recipes/chromeos/generator.proto";
 
 message ApplyRetryPolicyProperties {
@@ -27,7 +28,9 @@ message CreateUprevClsProperties {
   recipes.chromeos.generator.CrPolicy cr_policy = 4;
   int32 max_concurrent_cq_runs = 5;
   repeated buildbucket.v2.GerritChange open_changes = 6;
-  string gerrit_flow_expressions = 7;
+  reserved 7;
+  reserved "gerrit_flow_expressions";
+  repeated recipe_modules.chromeos.gerrit.Flow gerrit_flows = 8;
 }
 
 message FindOpenUprevCLsProperties {

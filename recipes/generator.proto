@@ -8,6 +8,7 @@ package recipes.chromeos.generator;
 
 import "chromiumos/common.proto";
 import "go.chromium.org/luci/scheduler/api/scheduler/v1/triggers.proto";
+import "recipe_modules/chromeos/gerrit/gerrit.proto";
 
 // The type of software that this PUpr uprevs.
 enum UprevTargetKind {
@@ -208,19 +209,13 @@ message BranchPolicy {
   // MAX_CQ_RETRY_ACTION_ABANDON.
   MaxCqRetryAction max_cq_retry_action = 13;
 
-  // JSON string representing a list of stage expressions for a Gerrit Flow.
+  reserved 14;
+  reserved "gerrit_flow_expressions";
+
+  // Gerrit flows to add to generated CLs.
   // See
   // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#create-flow
-  // Example: gerrit_flow_expressions = """[
-  //     {
-  //         "condition": "-label:Commit-Queue",
-  //         "action": {
-  //             "name": "add-reviewer",
-  //             "parameters": ["cros-ec-champion@google.com"]
-  //         }
-  //     }
-  // ]"""
-  string gerrit_flow_expressions = 14;
+  repeated recipe_modules.chromeos.gerrit.Flow gerrit_flows = 15;
 }
 
 // Holds information needed for packages who need to fetch a file from the

@@ -5,7 +5,6 @@
 """Module for interfacing with Gerrit in PUpr (Parallel Uprevs)."""
 
 import dataclasses
-import json
 
 from google.protobuf.json_format import MessageToDict
 from recipe_engine import recipe_api
@@ -430,12 +429,12 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       self.m.easy.set_properties_step(
           generated_cls=[MessageToDict(change) for change in changes])
 
-    if changes and policy.gerrit_flow_expressions:
+    if changes and policy.gerrit_flows:
       with self.m.step.nest('add gerrit flows'):
         for change in changes:
           with self.m.step.nest(f'add gerrit flow to CL {change.change}'):
-            expressions = json.loads(policy.gerrit_flow_expressions)
-            self.m.gerrit.create_flow(change, expressions)
+            for flow in policy.gerrit_flows:
+              self.m.gerrit.create_flow_remote(change, flow)
 
     if changes:
       with self.m.step.nest('cq-depend generated CLs'):

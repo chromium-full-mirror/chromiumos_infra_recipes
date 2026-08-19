@@ -2,9 +2,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Test api.gerrit.create_flow."""
+"""Test api.gerrit.create_flow_remote."""
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.gerrit.gerrit import Flow
+from PB.recipe_modules.chromeos.gerrit.gerrit import FlowAction
+from PB.recipe_modules.chromeos.gerrit.gerrit import FlowStageExpression
 
 DEPS = [
     'gerrit',
@@ -17,14 +20,32 @@ def RunSteps(api):
       project='project',
       change=123,
   )
-  expressions = [{
-      'condition': '-label:Commit-Queue',
-      'action': {
-          'name': 'add-reviewer',
-          'parameters': ['cros-ec-champion@google.com'],
-      },
-  }]
-  api.gerrit.create_flow(gerrit_change, expressions)
+  flow_proto = Flow(
+      stage_expressions=[
+          FlowStageExpression(
+              condition='{self} is -label:Commit-Queue',
+              action=FlowAction(
+                  name='add-reviewer',
+                  parameters=['cros-ec-champion@google.com'],
+              ),
+          ),
+          FlowStageExpression(
+              condition='{self} is is:abandoned',
+              action=FlowAction(
+                  name='add-reviewer',
+                  parameters=['fqj@google.com'],
+              ),
+          ),
+          FlowStageExpression(
+              condition='{self} is status:merged',
+              action=FlowAction(
+                  name='add-reviewer',
+                  parameters=['fqj@google.com'],
+              ),
+          ),
+      ],
+  )
+  api.gerrit.create_flow_remote(gerrit_change, flow_proto)
 
 
 def GenTests(api):

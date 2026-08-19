@@ -31,6 +31,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 from PB.recipe_engine import result as result_pb2
+from PB.recipe_modules.chromeos.gerrit import gerrit as gerrit_pb2
 from PB.recipe_modules.chromeos.pupr_local_uprev import (pupr_local_uprev as
                                                          pupr_local_uprev_pb2)
 from PB.recipes.chromeos import generator as generator_pb2
@@ -468,7 +469,7 @@ class GeneratorRun:
       for policy in self.properties.branch_policies:
         if not policy.pattern:
           raise recipe_api.StepFailure('must specify pattern')
-        if not policy.reviewers and not policy.gerrit_flow_expressions:
+        if not policy.reviewers and not policy.gerrit_flows:
           raise recipe_api.StepFailure('need at least one reviewer or flow')
 
         for reviewer in policy.reviewers:
@@ -1018,10 +1019,21 @@ def GenTests(
                   outdated_cls_policy=generator_pb2.OUTDATED_ABANDON,
                   retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
                   max_cq_retry=2,
-                  gerrit_flow_expressions=(
-                      '[{"condition": "-label:Commit-Queue", "action": '
-                      '{"name": "add-reviewer", "parameters": '
-                      '["cros-ec-champion@google.com"]}}]'),
+                  gerrit_flows=[
+                      gerrit_pb2.Flow(
+                          stage_expressions=[
+                              gerrit_pb2.FlowStageExpression(
+                                  condition='{self} is -label:Commit-Queue',
+                                  action=gerrit_pb2.FlowAction(
+                                      name='add-reviewer',
+                                      parameters=[
+                                          'cros-ec-champion@google.com'
+                                      ],
+                                  ),
+                              ),
+                          ],
+                      ),
+                  ],
               )
           ],
       ),
@@ -1075,6 +1087,7 @@ def GenTests(
       api.git.diff_check(True),
       status='FAILURE',
   )
+
 
   yield api.test(
       'non-gitiles-triggers',

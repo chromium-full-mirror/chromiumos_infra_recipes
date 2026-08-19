@@ -1,0 +1,39 @@
+// Copyright 2026 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.gerrit;
+
+// Action for a Gerrit flow stage.
+// See
+// https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#flow-action-info
+message FlowAction {
+  // Name of the action, e.g. "add-reviewer", "vote", "submit", "mark-wip",
+  // "mark-ready".
+  string name = 1;
+
+  // Parameters for the action, e.g. ["cros-ec-champion@google.com"].
+  repeated string parameters = 2;
+}
+
+// Stage expression in a Gerrit flow.
+// See
+// https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#flow-expression-info
+message FlowStageExpression {
+  // Condition for this stage expression, e.g. "{self} is is:abandoned",
+  // "-label:Commit-Queue".
+  string condition = 1;
+
+  // Action to execute when condition is satisfied.
+  FlowAction action = 2;
+}
+
+// A Gerrit flow defining a sequence of stage expressions.
+// See
+// https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#create-flow
+message Flow {
+  // List of stage expressions for the flow.
+  repeated FlowStageExpression stage_expressions = 1;
+}

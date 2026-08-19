@@ -8,6 +8,9 @@ from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine import result
 from PB.recipe_modules.chromeos.pupr_gerrit_interface.tests.tests import \
   CreateUprevClsProperties
+from PB.recipe_modules.chromeos.gerrit.gerrit import Flow
+from PB.recipe_modules.chromeos.gerrit.gerrit import FlowAction
+from PB.recipe_modules.chromeos.gerrit.gerrit import FlowStageExpression
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import BranchPolicy
 from PB.recipes.chromeos.generator import CR_REJECT
@@ -43,7 +46,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
       existing_cls_policy=properties.send_to_cq_policy,
       cr_policy=properties.cr_policy,
       max_concurrent_cq_runs=properties.max_concurrent_cq_runs,
-      gerrit_flow_expressions=properties.gerrit_flow_expressions,
+      gerrit_flows=properties.gerrit_flows,
   )
 
   if properties.projects == 0:
@@ -333,8 +336,42 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       'gerrit-flow',
       api.properties(
           CreateUprevClsProperties(
-              send_to_cq_policy=DRY_RUN, projects=1,
-              gerrit_flow_expressions='[{"condition": "-label:Commit-Queue", "action": {"name": "add-reviewer", "parameters": ["cros-ec-champion@google.com"]}}]'
+              send_to_cq_policy=DRY_RUN,
+              projects=1,
+              gerrit_flows=[
+                  Flow(
+                      stage_expressions=[
+                          FlowStageExpression(
+                              condition='{self} is -label:Commit-Queue',
+                              action=FlowAction(
+                                  name='add-reviewer',
+                                  parameters=['cros-ec-champion@google.com'],
+                              ),
+                          ),
+                          FlowStageExpression(
+                              condition='{self} is status:abandoned',
+                              action=FlowAction(
+                                  name='add-reviewer',
+                                  parameters=['fqj@google.com'],
+                              ),
+                          ),
+                          FlowStageExpression(
+                              condition='{self} is is:abandoned',
+                              action=FlowAction(
+                                  name='add-reviewer',
+                                  parameters=['fqj@google.com'],
+                              ),
+                          ),
+                          FlowStageExpression(
+                              condition='{self} is status:abandoned',
+                              action=FlowAction(
+                                  name='post-comment',
+                                  parameters=['abandoned flow'],
+                              ),
+                          ),
+                      ],
+                  ),
+              ],
           )),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',

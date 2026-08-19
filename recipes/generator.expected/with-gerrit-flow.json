@@ -271,14 +271,14 @@
     "name": "select policy.set chosen_policy_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"\", \"policy\": {\"existingClsPolicy\": \"DRY_RUN\", \"gerritFlowExpressions\": \"[{\\\"condition\\\": \\\"-label:Commit-Queue\\\", \\\"action\\\": {\\\"name\\\": \\\"add-reviewer\\\", \\\"parameters\\\": [\\\"cros-ec-champion@google.com\\\"]}}]\", \"maxCqRetry\": 2, \"noExistingClsPolicy\": \"FULL_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \".*\", \"retryClPolicy\": \"RETRY_LATEST_OR_LATEST_PINNED\"}, \"reference\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"\", \"policy\": {\"existingClsPolicy\": \"DRY_RUN\", \"gerritFlows\": [{\"stageExpressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"{self} is -label:Commit-Queue\"}]}], \"maxCqRetry\": 2, \"noExistingClsPolicy\": \"FULL_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \".*\", \"retryClPolicy\": \"RETRY_LATEST_OR_LATEST_PINNED\"}, \"reference\": null}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"gerritFlowExpressions\": \"[{\\\"condition\\\": \\\"-label:Commit-Queue\\\", \\\"action\\\": {\\\"name\\\": \\\"add-reviewer\\\", \\\"parameters\\\": [\\\"cros-ec-champion@google.com\\\"]}}]\", \"maxCqRetry\": 2, \"noExistingClsPolicy\": \"FULL_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \".*\", \"retryClPolicy\": \"RETRY_LATEST_OR_LATEST_PINNED\"}@@@"
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"gerritFlows\": [{\"stageExpressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"{self} is -label:Commit-Queue\"}]}], \"maxCqRetry\": 2, \"noExistingClsPolicy\": \"FULL_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \".*\", \"retryClPolicy\": \"RETRY_LATEST_OR_LATEST_PINNED\"}@@@"
     ]
   },
   {
@@ -2565,7 +2565,7 @@
     "name": "add gerrit flows.add gerrit flow to CL 1.create flow on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@expressions@[{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"-label:Commit-Queue\"}]@@@",
+      "@@@STEP_LOG_LINE@expressions@[{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/src/overlay/+/1 is -label:Commit-Queue\"}]@@@",
       "@@@STEP_LOG_END@expressions@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
@@ -2619,7 +2619,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"stage_expressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"-label:Commit-Queue\"}]}",
+      "{\"stage_expressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/src/overlay/+/1 is -label:Commit-Queue\"}]}",
       "https://chromium-review.googlesource.com/changes/1/flows"
     ],
     "name": "add gerrit flows.add gerrit flow to CL 1.create flow on CL 1.curl https://chromium-review.googlesource.com/changes/1/flows",
@@ -2639,7 +2639,7 @@
     "name": "add gerrit flows.add gerrit flow to CL 1 (2).create flow on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@expressions@[{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"-label:Commit-Queue\"}]@@@",
+      "@@@STEP_LOG_LINE@expressions@[{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/src/private-overlay/+/1 is -label:Commit-Queue\"}]@@@",
       "@@@STEP_LOG_END@expressions@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
@@ -2693,7 +2693,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"stage_expressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"-label:Commit-Queue\"}]}",
+      "{\"stage_expressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/src/private-overlay/+/1 is -label:Commit-Queue\"}]}",
       "https://chromium-review.googlesource.com/changes/1/flows"
     ],
     "name": "add gerrit flows.add gerrit flow to CL 1 (2).create flow on CL 1.curl https://chromium-review.googlesource.com/changes/1/flows",

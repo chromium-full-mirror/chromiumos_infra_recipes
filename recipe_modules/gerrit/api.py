@@ -12,7 +12,9 @@ import re
 import typing
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Tuple, Union
 
+from google.protobuf.json_format import MessageToDict
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.gerrit.gerrit import Flow
 
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
@@ -793,19 +795,30 @@ class GerritApi(RecipeApi):
           test_output_data=self.m.json.dumps({'labels': str_labels}),
       )
 
-  def create_flow(self, gerrit_change: GerritChange,
-                  flow_expressions: List[Dict[str, Any]]) -> str:
+  def create_flow_remote(self, gerrit_change: GerritChange, flow: Flow) -> str:
     """Create a flow on the given Gerrit change.
 
     Args:
       gerrit_change: The change to create the flow on.
-      flow_expressions: A list of dicts representing the stage expressions.
+      flow: The Flow proto to create on the change.
     """
+    stage_expressions_payload = []
+    change_url = self.parse_gerrit_change_url(gerrit_change)
+
+    for expr in flow.stage_expressions:
+      condition_str = expr.condition.format(self=change_url)
+      action_dict = MessageToDict(expr.action, preserving_proto_field_name=True)
+
+      stage_expressions_payload.append({
+          'condition': condition_str,
+          'action': action_dict,
+      })
+
+    payload = {'stage_expressions': stage_expressions_payload}
     with self.m.step.nest(f'create flow on CL {gerrit_change.change}') as pres:
-      pres.logs['expressions'] = self.m.json.dumps(flow_expressions)
-      pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
+      pres.logs['expressions'] = self.m.json.dumps(stage_expressions_payload)
+      pres.links['gerrit change'] = change_url
       change_num = gerrit_change.change
-      payload = {'stage_expressions': flow_expressions}
       return self._do_post(
           f'https://{gerrit_change.host}/changes/{change_num}/flows',
           payload,
