@@ -270,10 +270,9 @@
     "cmd": [
       "git",
       "ls-remote",
-      ".",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "release-R79-*.B"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "select policy.git ls-remote",
     "~followup_annotations": [

@@ -669,40 +669,30 @@ class GeneratorRun:
       - reference: The reference that matched, or None.
     """
     manifest = self.m.src_state.internal_manifest
-    repo_url = None
+    repo_url = manifest.url
     if self.is_version_file_uprevver:
-      with self.m.context(cwd=self.m.cros_source.workspace_path):
-        for v in self.properties.version_files:
-          if not self.m.repo.project_exists(str(self.m.path.start_dir / v)):
-            v_dir = self.m.path.dirname(self.m.path.start_dir / v)
-            with self.m.context(cwd=v_dir):
-              repo_url = self.m.step(
-                  f'get remote url for {v}',
-                  ['git', 'config', '--get', 'remote.origin.url'],
-                  stdout=self.m.raw_io.output_text(), step_test_data=lambda:
-                  self.m.raw_io.test_api.stream_output_text(
-                      'https://chromium.googlesource.com/chromium/src.git'
-                  )).stdout.strip()
-            break
+      for v in self.properties.version_files:
+        if v.startswith('chrome/') or v.startswith('chromium/'):
+          repo_url = 'https://chromium.googlesource.com/chromium/src.git'
+          break
 
-    with self.m.context(cwd=manifest.path):
-      for policy in self.properties.branch_policies:
-        if re.match(policy.pattern, tag):
-          query = re.sub(policy.pattern, policy.repl, tag)
-          if not query:
-            return PolicyInfo(policy)
-          refs = self.m.git.ls_remote([query], repo_url=repo_url)
-          if len(refs) == 1:
-            ref = refs[0]
-            return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
-          if refs:
-            raise recipe_api.StepFailure(
-                'multiple branches matched {}: {}'.format(
-                    query, ' '.join(x.ref for x in refs)))
-          # If we found no references, this policy does not apply.
+    for policy in self.properties.branch_policies:
+      if re.match(policy.pattern, tag):
+        query = re.sub(policy.pattern, policy.repl, tag)
+        if not query:
+          return PolicyInfo(policy)
+        refs = self.m.git.ls_remote([query], repo_url=repo_url)
+        if len(refs) == 1:
+          ref = refs[0]
+          return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
+        if refs:
+          raise recipe_api.StepFailure(
+              'multiple branches matched {}: {}'.format(
+                  query, ' '.join(x.ref for x in refs)))
+        # If we found no references, this policy does not apply.
 
-      raise recipe_api.StepFailure(
-          'No matching policy found for tag {}'.format(tag))
+    raise recipe_api.StepFailure(
+        'No matching policy found for tag {}'.format(tag))
 
   def checkout_branch(self, policy_info: PolicyInfo) -> None:
     """Check out the appropriate branch based on the selected policy."""
@@ -1395,13 +1385,6 @@ def GenTests(
               pattern='.*',
               repl='branch-heads/7871',
           )],
-      ),
-      api.step_data(
-          'select policy.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info',
-          api.raw_io.stream_output_text(
-              'project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found',
-              stream='stderr'),
-          retcode=1,
       ),
       api.step_data(
           'select policy.git ls-remote',
@@ -2211,13 +2194,6 @@ def GenTests(
           api.file.read_raw(
               content='{"responses": [{"version": "16626.0.0-1076201", "modified_files": ["[START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM"]}]}'
           )),
-      api.step_data(
-          'select policy.check if project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM exists.repo info',
-          api.raw_io.stream_output_text(
-              'project [START_DIR]/chrome/src/chromeos/CHROMEOS_LKGM not found',
-              stream='stderr'),
-          retcode=1,
-      ),
       api.git.diff_check(True),
       api.post_check(
           post_process.MustRun,
