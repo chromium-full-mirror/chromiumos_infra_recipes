@@ -116,17 +116,11 @@ enum MaxCqRetryAction {
 // This ref points to the repository containing retry-able CLs, i.e.
 // the repository containing the .ebuild files that are updated on uprev.
 message RetryRef {
-  // Remote, e.g. "cros" or "cros-internal".
-  string remote = 1;
-
-  // Project name, e.g. "chromiumos/overlays/chromiumos-overlay"
-  string name = 2;
+  reserved 1, 2, 4;
+  reserved "remote", "name", "path";
 
   // Ref, e.g. "refs/heads/main".
   string ref = 3;
-
-  // Project path, e.g. "src/third_party/chromiumos-overlay"
-  string path = 4;
 }
 
 message BranchPolicy {

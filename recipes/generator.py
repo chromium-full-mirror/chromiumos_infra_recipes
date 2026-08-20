@@ -1506,9 +1506,6 @@ def GenTests(
   ]
 
   retry_ref = generator_pb2.RetryRef(
-      remote='cros',
-      path='src/third_party/chromiumos-overlay',
-      name='chromiumos/overlays/chromiumos-overlay',
       ref='refs/heads/main',
   )
 
