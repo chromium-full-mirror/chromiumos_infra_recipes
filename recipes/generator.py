@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import contextlib
 import dataclasses
-import functools
 import re
 from typing import Generator
 import urllib
@@ -118,7 +117,7 @@ class GeneratorRun:
 
     # If we see gitiles_info populated in the recipe properties, we will be
     # performing a fetch from the Gitiles API for the package's target uprev
-    # version. This information will be used in branch determination and sent to
+    # version. This information will be used in branch determination and sent to
     # the uprev handler.
     self.target_version_from_gitiles = None
 
@@ -338,7 +337,19 @@ class GeneratorRun:
         pupr_gerrit_interface_api.GerritInterfaceConfig(
             rebase_before_retry=self.properties.rebase_before_retry))
 
-    policy_info = self.select_policy()
+    if self.retry_only_run:
+      policy_info = self._select_policy_for_retry()
+      if not policy_info:
+        return self.make_summary('success')
+      policy_ref = (
+          policy_info.reference.ref
+          if policy_info.reference else 'refs/heads/main')
+      assert policy_ref == self.properties.retry_ref.ref, (
+          f'policy reference {policy_ref!r} does not match retry_ref '
+          f'{self.properties.retry_ref.ref!r}')
+    else:
+      policy_info = self.select_policy()
+
     self.set_policy(policy_info.policy)
     if self.policy.ignore:
       self.m.step.empty('policy set to ignore')
@@ -456,6 +467,8 @@ class GeneratorRun:
       StepFailure: if there are any issues with the input properties.
     """
     with self.m.step.nest('validate properties') as presentation:
+      if self.retry_only_run and not self.properties.retry_ref.ref:
+        raise recipe_api.StepFailure('must set retry_ref for retry-only run')
       if self._is_package_uprevver and not self.properties.packages:
         raise recipe_api.StepFailure(
             'must set packages to uprev for a package uprevver')
@@ -589,36 +602,86 @@ class GeneratorRun:
       StepFailure: If more than one applicable trigger is selected.
     """
     with self.m.step.nest('select policy'):
-      triggers = self.triggers
-      if self.retry_only_run:
-        triggers = [
+      return self._select_policy_for_triggers(self.triggers)
+
+  def _select_policy_for_retry(self) -> PolicyInfo | None:
+    """Return the policy that applies to this retry run.
+
+    Queries open CLs to recover a temporary trigger from the commit message
+    (Pupr-Upstream-Versions) or open CL branch, and selects the matching policy.
+    Returns None if there are no open CLs.
+    """
+    with self.m.step.nest('select policy'):
+      retry_branch = (
+          self.properties.retry_ref.ref.removeprefix('refs/heads/')
+          if self.properties.retry_ref.ref else '')
+      open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
+          self.topic, branch=retry_branch)
+      open_patch_sets = self.m.pupr_gerrit_interface.fetch_open_patch_sets(
+          open_changes)
+      triggers = self._get_temporary_triggers_for_retry(open_patch_sets)
+      if triggers is None:
+        return None
+      return self._select_policy_for_triggers(triggers)
+
+  def _select_policy_for_triggers(
+      self,
+      triggers: list[triggers_pb2.Trigger],
+  ) -> PolicyInfo:
+    """Return the policy that applies to the given triggers."""
+    policy_infos: list[PolicyInfo] = []
+    for trigger in triggers:
+      tag = self._get_target_version_for_trigger(trigger)
+      policy_info = self._get_policy_info_for_tag(tag)
+      if policy_info not in policy_infos:
+        policy_infos.append(policy_info)
+
+    # If we match more than one policy with the triggers, that is an error.
+    # For Chrome, we are launched with properties.triggers, for exactly one
+    # version. See http://shortn/_qWgYUlVY6X in trigger_official_builds().
+    if len(policy_infos) != 1:
+      raise recipe_api.StepFailure(
+          'expected to find 1 applicable policy, got %d: %s' %
+          (len(policy_infos), policy_infos))
+
+    chosen_policy = policy_infos[0]
+    self.m.easy.set_properties_step(
+        chosen_policy_info={
+            'policy': json_format.MessageToDict(chosen_policy.policy),
+            'branch': chosen_policy.branch,
+            'reference': chosen_policy.reference,
+        })
+    return chosen_policy
+
+  def _get_temporary_triggers_for_retry(
+      self,
+      open_patch_sets: list[PatchSet],
+  ) -> list[triggers_pb2.Trigger] | None:
+    """Determine temporary triggers to select policy on a retry run."""
+    if not open_patch_sets:
+      return None
+
+    sorted_patch_sets = sorted(open_patch_sets, key=lambda ps: ps.created,
+                               reverse=True)
+    for ps in sorted_patch_sets:
+      description = self.m.gerrit.get_change_description(
+          ps.to_gerrit_change_proto())
+      upstream_versions = self.m.pupr.extract_upstream_git_refs(description)
+      if upstream_versions is not None:
+        return [
             triggers_pb2.Trigger(
                 gitiles=triggers_pb2.GitilesTrigger(
-                    ref=self.properties.retry_ref.ref))
+                    ref=v.ref,
+                    repo=v.repository,
+                    revision=v.revision,
+                )) for v in upstream_versions
         ]
-      policy_infos: list[PolicyInfo] = []
-      for trigger in triggers:
-        tag = self._get_target_version_for_trigger(trigger)
-        policy_info = self._get_policy_info_for_tag(tag)
-        if policy_info not in policy_infos:
-          policy_infos.append(policy_info)
 
-      # If we match more than one policy with the triggers, that is an error.
-      # For Chrome, we are launched with properties.triggers, for exactly one
-      # version. See http://shortn/_qWgYUlVY6X in trigger_official_builds().
-      if len(policy_infos) != 1:
-        raise recipe_api.StepFailure(
-            'expected to find 1 applicable policy, got %d: %s' %
-            (len(policy_infos), policy_infos))
-
-      chosen_policy = policy_infos[0]
-      self.m.easy.set_properties_step(
-          chosen_policy_info={
-              'policy': json_format.MessageToDict(chosen_policy.policy),
-              'branch': chosen_policy.branch,
-              'reference': chosen_policy.reference,
-          })
-      return chosen_policy
+    return [
+        triggers_pb2.Trigger(
+            gitiles=triggers_pb2.GitilesTrigger(
+                ref=self.properties.retry_ref.ref))
+    ]
 
   def _get_target_version_for_trigger(self,
                                       trigger: triggers_pb2.Trigger) -> str:
@@ -1519,10 +1582,25 @@ def GenTests(
   )
 
   revision = '83a1812dddfc24f604d92bf61ad58efe9227a6fc'
+  change_description = (
+      'a quick description\n\n'
+      'Change-Id: deadbeef\n\n'
+      f'Pupr-Upstream-Versions: [{{"ref": "refs/heads/main", "repository": "https://chromium.googlesource.com/chromium/src", "revision": "{revision}"}}]'
+  )
+  value_dict_desc = {
+      1: {
+          'message': change_description,
+      },
+      2: {
+          'message': change_description,
+      },
+  }
   value_dict = {
       1: {
-          'change_id': 1,
-          'created': '2020-10-22 18:54:00.000000000',
+          'change_id':
+              1,
+          'created':
+              '2020-10-22 18:54:00.000000000',
           'messages': [
               {
                   'message':
@@ -1547,20 +1625,28 @@ def GenTests(
                       'autogenerated:cv:full-run:1000000002',
               },
           ],
-          'revision_info': {
-              'ref': 'refs/change/foo',
-              'commit': {
-                  'message':
-                      'a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{"ref": "refs/tags/79.0.3945.20", "repository": "/chromium/src", "revision": "'
-                      + revision + '"}]',
-              },
-          },
       },
       2: {
           'change_id': 2,
           'created': '2020-10-23 18:54:00.000000000',
       },
   }
+
+  value_dict_wip = dict(value_dict)
+  value_dict_wip[1] = dict(value_dict[1])
+  value_dict_wip[1]['status'] = 'NEW'
+  value_dict_wip[1]['hashtags'] = ['pupr-retry-pinned']
+  value_dict_wip[1]['work_in_progress'] = True
+
+  value_dict_passed_dry_run = dict(value_dict)
+  value_dict_passed_dry_run[2] = dict(value_dict[2])
+  value_dict_passed_dry_run[2]['messages'] = [
+      {
+          'message': 'Patch Set 3:\n\nThis CL has passed the run',
+          'date': '2020-10-25T18:54:00Z',
+          'tag': 'autogenerated:cv:dry-run:1000000002',
+      },
+  ]
 
   yield _with_infos(
       'no-most-recent-merged-cl',
@@ -1602,6 +1688,31 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy',
+          changes,
+          value_dict,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 2 description',
+          changes,
+          value_dict_desc,
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
           None,
           changes,
@@ -1626,17 +1737,18 @@ def GenTests(
       ]),
       api.git.diff_check(True),
       api.gerrit.set_query_changes_response(
-          'find open uprev CLs.find CLs from chromium host',
+          'select policy.find open uprev CLs.find CLs from chromium host',
           [],
           'https://chromium-review.googlesource.com',
       ),
-      api.post_check(
-          post_process.MustRun,
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
       ),
       api.post_check(
           post_process.DoesNotRun,
-          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*',
+          'find open uprev CLs',
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -1657,12 +1769,29 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          [gerrit_changes_json[0]],
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 1 description',
+          changes[:1],
+          value_dict_desc,
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          [gerrit_changes_json[0]],
+          'https://chromium-review.googlesource.com',
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
           None,
-          [
-              bb_common_pb2.GerritChange(
-                  change=1, host='chromium-review.googlesource.com')
-          ],
+          changes[:1],
           {
               1: {
                   'change_id': 777,
@@ -1698,6 +1827,31 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          [gerrit_changes_json[1]],
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 2 description',
+          changes[1:2],
+          value_dict_desc,
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          [gerrit_changes_json[1]],
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          None,
+          changes[1:2],
+          value_dict,
+      ),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
@@ -1733,15 +1887,35 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          None,
+          'select policy',
           changes,
           value_dict,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 2 description',
+          changes,
+          value_dict_desc,
       ),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json,
           'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          None,
+          changes,
+          value_dict,
       ),
       api.post_check(
           post_process.MustRun,
@@ -1851,25 +2025,26 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          None,
+          'select policy',
           changes,
           value_dict,
       ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'rebase CL 1.get CL 1 description',
+          'select policy.get CL 2 description',
           changes,
-          value_dict,
+          value_dict_desc,
       ),
-      api.gerrit.set_get_change_mergeable(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.test gerrit mergeable',
-          'chromium-review.googlesource.com',
-          1,
-          'current',
-          False,
-      ),
-      api.git_footers.simulated_get_footers(['deadbeef'],
-                                            parent_step_name='rebase CL 1'),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json,
@@ -1880,6 +2055,25 @@ def GenTests(
           [],
           'https://chromium-review.googlesource.com',
       ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          None,
+          changes,
+          value_dict,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'rebase CL 1.get CL 1 description',
+          changes,
+          value_dict_desc,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.test gerrit mergeable',
+          'chromium-review.googlesource.com',
+          1,
+          'current',
+          False,
+      ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1'),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.post_check(
           post_process.StepSuccess,
@@ -1908,79 +2102,6 @@ def GenTests(
       ),
   )
 
-  value_dict = {
-      1: {
-          'change_id': 1,
-          'created': '2020-10-22 18:54:00.000000000',
-          'messages': [
-              {
-                  'message':
-                      'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-                  'date':
-                      '2020-10-26T18:54:00Z',
-              },
-              {
-                  'message': 'Patch Set 3:\n\nCV is trying the patch...',
-                  'date': '2020-10-24T18:54:00Z',
-                  'tag': 'autogenerated:cv:full-run:1000000001',
-              },
-              {
-                  'message':
-                      'Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-                  'date':
-                      '2020-10-25T18:54:00Z',
-                  'tag':
-                      'autogenerated:cv:full-run:1000000002',
-              },
-          ],
-          'revision_info': {
-              'ref': 'refs/change/foo',
-          },
-      },
-      2: {
-          'change_id': 2,
-          'created': '2020-10-23 18:54:00.000000000',
-          'messages': [
-              {
-                  'message':
-                      'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-                  'date':
-                      '2020-10-26T18:54:00Z',
-              },
-              {
-                  'message':
-                      'Patch Set 3:\n\nDry run: CV is trying the patch...',
-                  'date':
-                      '2020-10-24T18:54:00Z',
-                  'tag':
-                      'autogenerated:cv:dry-run:1000000001',
-              },
-              {
-                  'message': 'Patch Set 3:\n\nThis CL has passed the run',
-                  'date': '2020-10-25T18:54:00Z',
-                  'tag': 'autogenerated:cv:dry-run:1000000002',
-              },
-          ],
-          'revision_info': {
-              'ref': 'refs/change/foo',
-          },
-      },
-  }
-
-  value_dict_wip = dict(value_dict)
-  value_dict_wip[1] = dict(value_dict[1])
-  value_dict_wip[1]['status'] = 'NEW'
-  value_dict_wip[1]['hashtags'] = ['pupr-retry-pinned']
-  value_dict_wip[1]['work_in_progress'] = True
-  value_dict_wip[1]['revision_info'] = {
-      'ref': 'refs/change/foo',
-      'commit': {
-          'message':
-              'a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{"ref": "refs/heads/main", "repository": "https://chromium.googlesource.com/chromium/src", "revision": "'
-              + revision + '"}]',
-      },
-  }
-
   yield api.test(
       'cron-trigger-rebase-wip',
       _props(
@@ -1998,25 +2119,26 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          None,
+          'select policy',
           changes,
           value_dict_wip,
       ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'rebase CL 1.get CL 1 description',
+          'select policy.get CL 2 description',
           changes,
-          value_dict_wip,
+          value_dict_desc,
       ),
-      api.gerrit.set_get_change_mergeable(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.test gerrit mergeable',
-          'chromium-review.googlesource.com',
-          1,
-          'current',
-          True,
-      ),
-      api.git_footers.simulated_get_footers(['deadbeef'],
-                                            parent_step_name='rebase CL 1'),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json,
@@ -2027,6 +2149,25 @@ def GenTests(
           [],
           'https://chromium-review.googlesource.com',
       ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          None,
+          changes,
+          value_dict_wip,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'rebase CL 1.get CL 1 description',
+          changes,
+          value_dict_desc,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.test gerrit mergeable',
+          'chromium-review.googlesource.com',
+          1,
+          'current',
+          True,
+      ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1'),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.repo.project_infos_step_data(
           'rebase CL 1.commit uprev',
@@ -2065,15 +2206,35 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          None,
+          'select policy',
           changes,
           value_dict_wip,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 2 description',
+          changes,
+          value_dict_desc,
       ),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json,
           'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          None,
+          changes,
+          value_dict_wip,
       ),
       api.post_check(
           post_process.MustRun,
@@ -2098,10 +2259,25 @@ def GenTests(
           triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
       ]),
       api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
-          None,
+          'select policy',
           changes,
-          value_dict,
+          value_dict_passed_dry_run,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 2 description',
+          changes,
+          value_dict_desc,
       ),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
@@ -2113,9 +2289,18 @@ def GenTests(
           [],
           'https://chromium-review.googlesource.com',
       ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          None,
+          changes,
+          value_dict_passed_dry_run,
+      ),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.abandon CLs before passed CQ+1 CL.abandon CL 1',
       ),
   )
 
@@ -2243,6 +2428,7 @@ def GenTests(
                   .MAX_CQ_RETRY_ACTION_VERIFIED_MINUS_ONE,
               ),
           ],
+          retry_ref=generator_pb2.RetryRef(ref='refs/heads/main'),
       ),
       api.scheduler(triggers=[
           triggers_pb2.Trigger(
@@ -2316,4 +2502,215 @@ def GenTests(
           'set Verified-1 on unpinned CLs repeatedly failing CQ.add hashtags on CL 1235',
       ),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'retry-no-retry-ref-property',
+      _props(
+          branch_policies=[
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
+      api.post_check(
+          post_process.SummaryMarkdownRE,
+          r'must set retry_ref for retry-only run',
+      ),
+      status='FAILURE',
+  )
+
+  value_dict_unknown_tag = {
+      1: {
+          'change_id':
+              1,
+          'created':
+              '2020-10-22 18:54:00.000000000',
+          'branch':
+              'release-R79-12345.B',
+          'message': (
+              'a quick description\n\nChange-Id: deadbeef\n\n'
+              'Pupr-Upstream-Versions: [{"ref": "refs/tags/unknown-tag", "repository": "/chromium/src", "revision": "deadbeef"}]'
+          ),
+      },
+  }
+
+  yield api.test(
+      'retry-upstream-ref-mismatch',
+      _props(
+          packages=[package_chrome],
+          branch_policies=[
+              _policy(
+                  pattern=r'refs/tags/79\..*',
+                  repl='release-R79-12345.B',
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=generator_pb2.RetryRef(
+              ref='refs/heads/release-R79-12345.B'),
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 1 description',
+          changes[:1],
+          value_dict_unknown_tag,
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json[:1],
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      status='FAILURE',
+  )
+
+  value_dict_version_file_desc = {
+      1: {
+          'message': (
+              'a quick description\n\nChange-Id: deadbeef\n\n'
+              'Pupr-Upstream-Versions: [{"ref": "refs/heads/release-R79-12345.B-snapshot", "repository": "/chromiumos/manifest-internal", "revision": "deadbeef"}]'
+          ),
+      },
+  }
+
+  value_dict_version_file = {
+      1: {
+          'change_id': 1,
+          'created': '2020-10-22 18:54:00.000000000',
+      },
+  }
+
+  yield api.test(
+      'retry-version-file-release-branch',
+      _props(
+          uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
+          version_files=['chrome/src/chromeos/CHROMEOS_LKGM'],
+          packages=[],
+          branch_policies=[
+              _policy(
+                  pattern=r'refs/heads/release-R79-12345\.B-snapshot',
+                  repl='branch-heads/3945',
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=generator_pb2.RetryRef(ref='refs/branch-heads/3945'),
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
+      api.git.diff_check(True),
+      api.step_data(
+          'select policy.git ls-remote',
+          api.raw_io.stream_output_text(
+              'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\trefs/branch-heads/3945\n'
+          ),
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 1 description',
+          changes[:1],
+          value_dict_version_file_desc,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          None,
+          changes[:1],
+          value_dict_version_file,
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json[:1],
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json[:1],
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+  )
+
+  value_dict_no_footer_desc = {
+      1: {
+          'message': 'a quick description\n\nChange-Id: deadbeef\n',
+      },
+  }
+
+  value_dict_no_footer = {
+      1: {
+          'change_id': 1,
+          'created': '2020-10-22 18:54:00.000000000',
+      },
+  }
+
+  yield api.test(
+      'retry-no-footer-fallback',
+      _props(
+          branch_policies=[
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'select policy.get CL 1 description',
+          changes[:1],
+          value_dict_no_footer_desc,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          None,
+          changes[:1],
+          value_dict_no_footer,
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json[:1],
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'select policy.find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json[:1],
+          'https://chromium-review.googlesource.com',
+      ),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      api.post_process(post_process.DropExpectation),
   )
