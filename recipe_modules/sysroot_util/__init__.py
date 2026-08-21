@@ -6,6 +6,8 @@
 
 from PB.recipe_modules.chromeos.sysroot_util.sysroot_util import SysrootUtilProperties
 
+from .api import SysrootUtilApi as API
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -26,11 +28,10 @@ DEPS = [
     'goma',
     'image_builder_failures',
     'remoteexec',
+    'siso',
     'src_state',
     'workspace_util',
 ]
 
 
 PROPERTIES = SysrootUtilProperties
-
-from .api import SysrootUtilApi as API

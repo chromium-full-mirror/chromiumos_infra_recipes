@@ -249,6 +249,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           timeout_timestamp.FromDatetime(timeout_datetime)
 
         bazel_use_remote_execution = install_packages.bazel_use_remote_execution
+
+        siso_config = None
+        if self.m.siso.use_siso:
+          siso_config = common_pb2.SisoConfig(use_siso=self.m.siso.use_siso)
+
         return InstallPackagesRequest(
             chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
             packages=packages, flags=InstallPackagesRequest.Flags(
@@ -270,7 +275,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             .BinhostLookupServiceData(
                 snapshot_shas=snapshot_shas, private=is_private,
                 is_staging=self.m.cros_infra_config.is_staging),
-            timeout_timestamp=timeout_timestamp)
+            timeout_timestamp=timeout_timestamp, siso_config=siso_config)
 
       chrome_root = None
       with self.m.step.nest('check chrome source needed') as check_pres:

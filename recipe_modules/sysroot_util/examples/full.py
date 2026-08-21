@@ -12,6 +12,7 @@ from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
+from PB.recipe_modules.chromeos.siso.siso import SisoProperties
 from PB.recipe_modules.chromeos.sysroot_util.examples.full import FullTestProperties
 from recipe_engine import post_process
 
@@ -289,6 +290,10 @@ def GenTests(api):
       api.properties(
           FullTestProperties(use_remoteexec=True,
                              builder_name='amd64-generic-snapshot-remoteexec')))
+
+  yield api.test(
+      'with-siso', test_build(),
+      api.properties(**{'$chromeos/siso': SisoProperties(use_siso=True)}))
 
   yield api.test(
       'failed-image-test',
