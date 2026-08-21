@@ -859,12 +859,12 @@ class CrosSourceApi(RecipeApi):
         self.m.git.remote_update(step_name=step_name)
 
   @contextlib.contextmanager
-  def checkout_overlays_context(self, mount_cache=True, disk_type='pd-ssd'):
+  def checkout_overlays_context(self, mount_cache=True, disk_type=None):
     """Returns a context where overlays can be mounted.
 
     Args:
       mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
-      disk_type (str): GCE disk type to use.  Default: pd-ssd
+      disk_type (str): GCE disk type to use, defaults to machine-compatible disk type.
     """
     with self.m.overlayfs.cleanup_context():
       self._have_overlayfs_cleanup_context = True

@@ -2,9 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Tests for setting up a cache disk."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.gcloud.tests.tests import TestInputProperties
 
 from recipe_engine import post_process
@@ -273,4 +273,20 @@ def GenTests(api):
           +
           ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize'
       ), retcode=404),
+  )
+
+  build = api.buildbucket.ci_build_message()
+  build.infra.swarming.bot_dimensions.extend([
+      common_pb2.StringPair(key='machine_type', value='n4d-standard-8'),
+  ])
+  yield api.test(
+      'n4d-bot-uses-hyperdisk-balanced',
+      api.buildbucket.build(build),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache (5).setup source cache disk.create disk from snapshot image.create disk from image',
+          ['--type=hyperdisk-balanced'],
+      ),
+      api.post_process(post_process.DropExpectation),
   )

@@ -6,8 +6,12 @@
 
 from PB.recipe_modules.chromeos.gcloud.gcloud import (GcloudProperties)
 
+from .api import GcloudApi as API
+from .test_api import GcloudApiTestApi as TEST_API
+
 DEPS = [
     'depot_tools/gsutil',
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
@@ -22,6 +26,3 @@ DEPS = [
 
 
 PROPERTIES = GcloudProperties
-
-from .api import GcloudApi as API
-from .test_api import GcloudApiTestApi as TEST_API
