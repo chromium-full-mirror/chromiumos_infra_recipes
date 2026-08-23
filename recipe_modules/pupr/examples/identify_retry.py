@@ -722,6 +722,29 @@ def RunSteps(api):
   api.assertions.assertEqual(cl.change_id, 301)
   api.assertions.assertEqual(cq_label, 2)
 
+  # Test supports_verified_label
+  cl_no_labels = _patch_set_from_dict([{'info': {'_number': 400}}])[0]
+  cl_with_verified = _patch_set_from_dict([{
+      'info': {
+          '_number': 401,
+          'labels': {
+              'Verified': {}
+          }
+      }
+  }])[0]
+  cl_without_verified = _patch_set_from_dict([{
+      'info': {
+          '_number': 402,
+          'labels': {
+              'Bot-Commit': {}
+          }
+      }
+  }])[0]
+  api.assertions.assertTrue(api.pupr.supports_verified_label(cl_no_labels))
+  api.assertions.assertTrue(api.pupr.supports_verified_label(cl_with_verified))
+  api.assertions.assertFalse(
+      api.pupr.supports_verified_label(cl_without_verified))
+
 
 def GenTests(api):
   yield api.test('basic')

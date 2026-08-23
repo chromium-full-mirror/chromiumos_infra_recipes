@@ -157,9 +157,9 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       open_patch_sets: list[PatchSet],
       max_cq_retry: int,
       max_cq_retry_action: MaxCqRetryAction = MAX_CQ_RETRY_ACTION_ABANDON,
-  ) -> list[PatchSet]:
+  ) -> tuple[list[PatchSet], list[str]]:
     """Abandon or set Verified-1 on unpinned uprev CLs that have failed too many
-    times and return the remaining open CLs.
+    times and return the remaining open CLs and any error messages.
 
     Args:
       open_patch_sets: A list of currently open, relevant PUpr PatchSets.
@@ -169,11 +169,15 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         how many times it has failed.
       max_cq_retry_action: The action to perform when a CL exceeds max_cq_retry.
         Defaults to MAX_CQ_RETRY_ACTION_ABANDON.
+
+    Returns:
+      A tuple of (remaining_open_patch_sets, error_messages).
     """
     # Do not abandon or set Verified-1 on any CL.
     if max_cq_retry < 0 or not open_patch_sets:
-      return open_patch_sets
+      return open_patch_sets, []
 
+    errors: list[str] = []
     with self.m.step.nest('get CLs repeatedly failing CQ') as presentation:
       failing_patchsets = []
       remaining_open_cls = []
@@ -198,18 +202,27 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
             'set Verified-1 on unpinned CLs repeatedly failing CQ'):
           for ps in failing_patchsets:
             if not self.m.pupr.is_verified_minus_one_cl(ps):
-              comment_message = (
-                  'This CL is set to Verified-1 by PUpr since it has failed CQ > {} times. '
-                  'If you believe the failure is due to other reason and the other reason is fixed, '
-                  'you can rebase the CL to clear Verified-1 and find someone to review this CL for submission.'
-              ).format(max_cq_retry)
+              labels = {Label.BOT_COMMIT: 0}
+              if self.m.pupr.supports_verified_label(ps):
+                comment_message = (
+                    'This CL is set to Verified-1 by PUpr since it has failed CQ > {} times. '
+                    'If you believe the failure is due to other reason and the other reason is fixed, '
+                    'you can rebase the CL to clear Verified-1 and find someone to review this CL for submission.'
+                ).format(max_cq_retry)
+                labels[Label.VERIFIED] = -1
+              else:
+                comment_message = (
+                    'Positive votes are removed by PUpr since this CL has failed CQ > {} times. '
+                    'If you believe the failure is due to other reason and the other reason is fixed, '
+                    'you can find someone to review this CL for submission.'
+                ).format(max_cq_retry)
+                errors.append(
+                    f'CL {ps.change_id} on {ps.project} failed CQ repeatedly, but cannot set Verified-1 because the project does not support the Verified label.'
+                )
               self.m.gerrit.add_change_comment_remote(
                   ps.to_gerrit_change_proto(), comment_message)
               self.m.gerrit.set_change_labels_remote(
-                  ps.to_gerrit_change_proto(), {
-                      Label.VERIFIED: -1,
-                      Label.BOT_COMMIT: 0,
-                  })
+                  ps.to_gerrit_change_proto(), labels)
             if not self.m.pupr.is_cl_ignored(ps):
               self.m.gerrit.add_change_hashtags_remote(
                   ps.to_gerrit_change_proto(), [HASHTAG_IGNORED])
@@ -233,7 +246,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
             self.m.gerrit.abandon_change(ps.to_gerrit_change_proto(),
                                          message=comment_message)
 
-    return remaining_open_cls
+    return remaining_open_cls, errors
 
   def find_most_recently_merged_uprev(self, topic: str,
                                       branch: str = 'main') -> PatchSet | None:

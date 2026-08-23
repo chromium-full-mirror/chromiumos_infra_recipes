@@ -185,6 +185,11 @@ class PuprApi(recipe_api.RecipeApi):
     return False
 
   @staticmethod
+  def supports_verified_label(c) -> bool:
+    """Return whether the CL's project supports the Verified label."""
+    return c.labels is None or 'Verified' in c.labels
+
+  @staticmethod
   def is_cl_ignored(c) -> bool:
     """Return whether the CL (PatchSet) has an ignore hashtag from PUpr."""
     return HASHTAG_IGNORED in c.hashtags
