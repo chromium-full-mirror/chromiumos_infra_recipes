@@ -107,6 +107,7 @@ class GeneratorRun:
     self.workspace_path: config_types.Path | None = None
     self._policy: generator_pb2.BranchPolicy | None = None
     self._modified_projects: list[repo_api.ProjectInfo] | None = None
+    self._topic: str | None = None
 
     # If we see gitiles_info populated in the recipe properties, we will be
     # performing a fetch from the Gitiles API for the package's target uprev
@@ -209,8 +210,8 @@ class GeneratorRun:
   @property
   def topic(self) -> str:
     """Get the topic to use for all generated CLs."""
-    if self.policy and self.policy.topic:
-      return self.policy.topic
+    if self._topic:
+      return self._topic
     if self.properties.topic:
       return self.properties.topic
     if self._is_package_uprevver:
@@ -803,7 +804,7 @@ class GeneratorRun:
 
       self.policy.outdated_cls_policy = generator_pb2.OUTDATED_DO_NOTHING
       self.policy.retry_cl_policy = generator_pb2.NO_RETRY
-      self.policy.topic = f'testing-{self.topic}'
+      self._topic = f'testing-{self.topic}'
 
       self.m.easy.set_properties_step(
           updated_policy=json_format.MessageToDict(self.policy))

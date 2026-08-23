@@ -2892,7 +2892,7 @@
     "name": "prevent production changes.set updated_policy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@updated_policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\\\\s*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}, {\"email\": \"lamontjones@chromium.org\"}], \"topic\": \"testing-chromeos-base/chromite\"}@@@"
+      "@@@SET_BUILD_PROPERTY@updated_policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\\\\s*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}, {\"email\": \"lamontjones@chromium.org\"}]}@@@"
     ]
   },
   {
