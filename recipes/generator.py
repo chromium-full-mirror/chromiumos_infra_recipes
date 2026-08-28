@@ -93,6 +93,11 @@ class PolicyInfo:
   branch: str = ''
   reference: git_api.Reference | None = None
 
+  @property
+  def target_branch(self) -> str:
+    """The branch to query on Gerrit (defaults to 'main')."""
+    return self.branch or 'main'
+
 
 class GeneratorRun:
   """A single run of a Generator builder."""
@@ -135,16 +140,10 @@ class GeneratorRun:
     return (self.properties.uprev_target_kind
             is generator_pb2.UprevTargetKind.VERSION_FILE)
 
-  @functools.cached_property
+  @property
   def triggers(self) -> list[triggers_pb2.Trigger]:
-    """Get this run's triggers, all of which have the gitiles field set."""
-    if self._has_cron_trigger:
-      return [
-          triggers_pb2.Trigger(
-              gitiles=triggers_pb2.GitilesTrigger(
-                  ref=self.properties.retry_ref.ref))
-      ]
-    return self._raw_triggers
+    """Get this run's triggers."""
+    return self.properties.triggers or self.m.scheduler.triggers
 
   @property
   def target_package_versions(
@@ -254,13 +253,6 @@ class GeneratorRun:
 
       yield
 
-  def _get_target_branch(self, policy_info: PolicyInfo) -> str:
-    """Determine the branch to query on Gerrit."""
-    if self.retry_only_run:
-      ref = self.properties.retry_ref.ref
-      return ref[len('refs/heads/'):] if ref.startswith('refs/heads/') else ref
-    return policy_info.branch or 'main'
-
   def _get_commit_footer(self, limit_exceeded: bool) -> str:
     """Assemble the commit footer based on rate limits."""
     footer = self.properties.additional_commit_footer.strip()
@@ -352,7 +344,7 @@ class GeneratorRun:
       self.m.step.empty('policy set to ignore')
       return self.make_summary('ignore by policy')
 
-    branch = self._get_target_branch(policy_info)
+    branch = policy_info.target_branch
     if self.retry_only_run:
       self.m.pupr_gerrit_interface.apply_automations(self.policy, self.topic,
                                                      branch=branch)
@@ -517,14 +509,9 @@ class GeneratorRun:
                                                     self.triggers)
 
   @property
-  def _raw_triggers(self) -> list[triggers_pb2.Trigger]:
-    """Get the triggers which actually launched this run."""
-    return self.properties.triggers or self.m.scheduler.triggers
-
-  @property
   def _has_cron_trigger(self) -> bool:
     """Check whether any of this build's triggers is a cron trigger."""
-    return any(trigger.HasField('cron') for trigger in self._raw_triggers)
+    return any(trigger.HasField('cron') for trigger in self.triggers)
 
   def _checkout_chrome(self) -> config_types.Path:
     chrome_root = self.m.path.start_dir / 'chrome'
@@ -602,8 +589,15 @@ class GeneratorRun:
       StepFailure: If more than one applicable trigger is selected.
     """
     with self.m.step.nest('select policy'):
+      triggers = self.triggers
+      if self.retry_only_run:
+        triggers = [
+            triggers_pb2.Trigger(
+                gitiles=triggers_pb2.GitilesTrigger(
+                    ref=self.properties.retry_ref.ref))
+        ]
       policy_infos: list[PolicyInfo] = []
-      for trigger in self.triggers:
+      for trigger in triggers:
         tag = self._get_target_version_for_trigger(trigger)
         policy_info = self._get_policy_info_for_tag(tag)
         if policy_info not in policy_infos:
@@ -700,7 +694,7 @@ class GeneratorRun:
         refs = self.m.git.ls_remote([query], repo_url=repo_url)
         if len(refs) == 1:
           ref = refs[0]
-          return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
+          return PolicyInfo(policy, ref.ref.removeprefix('refs/heads/'), ref)
         if refs:
           raise recipe_api.StepFailure(
               'multiple branches matched {}: {}'.format(

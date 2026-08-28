@@ -284,7 +284,7 @@
     "name": "select policy.set chosen_policy_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"7871\", \"policy\": {\"existingClsPolicy\": \"DO_NOTHING\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"repl\": \"branch-heads/7871\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}, \"reference\": [\"7df59670d5e95a464e3f9cecd242586f7d4860ee\", \"refs/branch-heads/7871\"]}@@@"
+      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"refs/branch-heads/7871\", \"policy\": {\"existingClsPolicy\": \"DO_NOTHING\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"repl\": \"branch-heads/7871\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}, \"reference\": [\"7df59670d5e95a464e3f9cecd242586f7d4860ee\", \"refs/branch-heads/7871\"]}@@@"
     ]
   },
   {
@@ -332,7 +332,7 @@
       "-p",
       "owner=self",
       "-p",
-      "branch=7871",
+      "branch=refs/branch-heads/7871",
       "--verbose"
     ],
     "env": {
@@ -400,7 +400,7 @@
       "-p",
       "owner=self",
       "-p",
-      "branch=7871",
+      "branch=refs/branch-heads/7871",
       "--verbose"
     ],
     "env": {
@@ -584,7 +584,7 @@
       "-p",
       "footer=Cq-Cl-Tag=pupr:chromeos-lkgm",
       "-p",
-      "branch=7871",
+      "branch=refs/branch-heads/7871",
       "--verbose"
     ],
     "env": {
@@ -719,7 +719,7 @@
       "-p",
       "footer=Cq-Cl-Tag=pupr:chromeos-lkgm",
       "-p",
-      "branch=7871",
+      "branch=refs/branch-heads/7871",
       "--verbose"
     ],
     "env": {
@@ -1853,7 +1853,7 @@
     "cmd": [],
     "name": "checkout branch",
     "~followup_annotations": [
-      "@@@STEP_TEXT@using 7871 7df59670d5e95a464e3f9cecd242586f7d4860ee@@@"
+      "@@@STEP_TEXT@using refs/branch-heads/7871 7df59670d5e95a464e3f9cecd242586f7d4860ee@@@"
     ]
   },
   {
@@ -1917,7 +1917,7 @@
       "git",
       "checkout",
       "-b",
-      "7871",
+      "refs/branch-heads/7871",
       "FETCH_HEAD"
     ],
     "cwd": "[START_DIR]/chrome/src/chromeos",
@@ -1931,11 +1931,11 @@
     "cmd": [
       "git",
       "config",
-      "branch.7871.remote",
+      "branch.refs/branch-heads/7871.remote",
       "origin"
     ],
     "cwd": "[START_DIR]/chrome/src/chromeos",
-    "name": "checkout branch.set upstream remote for 7871",
+    "name": "checkout branch.set upstream remote for refs/branch-heads/7871",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1944,11 +1944,11 @@
     "cmd": [
       "git",
       "config",
-      "branch.7871.merge",
+      "branch.refs/branch-heads/7871.merge",
       "refs/branch-heads/7871"
     ],
     "cwd": "[START_DIR]/chrome/src/chromeos",
-    "name": "checkout branch.set upstream merge for 7871",
+    "name": "checkout branch.set upstream merge for refs/branch-heads/7871",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

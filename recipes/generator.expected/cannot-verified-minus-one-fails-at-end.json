@@ -309,6 +309,8 @@
       "footer=Cq-Cl-Tag=pupr:chromeos-base/chromite",
       "-p",
       "owner=self",
+      "-p",
+      "branch=main",
       "--verbose"
     ],
     "env": {
@@ -362,6 +364,8 @@
       "footer=Cq-Cl-Tag=pupr:chromeos-base/chromite",
       "-p",
       "owner=self",
+      "-p",
+      "branch=main",
       "--verbose"
     ],
     "env": {
@@ -518,6 +522,8 @@
       "-age=30d",
       "-p",
       "footer=Cq-Cl-Tag=pupr:chromeos-base/chromite",
+      "-p",
+      "branch=main",
       "--verbose"
     ],
     "env": {
@@ -651,6 +657,8 @@
       "-age=30d",
       "-p",
       "footer=Cq-Cl-Tag=pupr:chromeos-base/chromite",
+      "-p",
+      "branch=main",
       "--verbose"
     ],
     "env": {
