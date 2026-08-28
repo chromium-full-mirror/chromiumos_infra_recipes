@@ -20,6 +20,7 @@ DEPS = [
     'cros_source',
     'gerrit',
     'git',
+    'git_footers',
     'pupr_local_uprev',
 ]
 
@@ -95,6 +96,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           [CHANGE_1234],
           gerrit_fetch_changes_values_dict,
       ),
+      api.git_footers.simulated_get_footers([CHANGE_ID],
+                                            parent_step_name='rebase CL 1234'),
       api.git.diff_check(True),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.post_check(post_process.MustRun, 'rebase CL 1234.commit uprev'),
@@ -109,6 +112,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           [CHANGE_1234],
           gerrit_fetch_changes_values_dict,
       ),
+      api.git_footers.simulated_get_footers([CHANGE_ID],
+                                            parent_step_name='rebase CL 1234'),
       api.git.diff_check(True),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
@@ -122,6 +127,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           [CHANGE_1234],
           gerrit_fetch_changes_values_dict,
       ),
+      api.git_footers.simulated_get_footers([CHANGE_ID],
+                                            parent_step_name='rebase CL 1234'),
       api.git.diff_check(False),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
@@ -129,6 +136,35 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'cl-has-no-pupr-uprev-metadata',
+      api.git_footers.simulated_get_footers([CHANGE_ID],
+                                            parent_step_name='rebase CL 1234'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  gerrit_fetch_no_change_id_dict = {
+      1234: {
+          'change_id': 1234,
+          'created': '2020-10-22 18:54:00.000000000',
+          'revision_info': {
+              'ref': 'refs/change/foo',
+              'commit': {
+                  'message':
+                      'a description with no change id\n\nPupr-Upstream-Versions: []',
+              },
+          },
+      }
+  }
+
+  yield api.test(
+      'cl-has-no-change-id',
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'rebase CL 1234.get CL 1234 description',
+          [CHANGE_1234],
+          gerrit_fetch_no_change_id_dict,
+      ),
+      api.git_footers.simulated_get_footers([],
+                                            parent_step_name='rebase CL 1234'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

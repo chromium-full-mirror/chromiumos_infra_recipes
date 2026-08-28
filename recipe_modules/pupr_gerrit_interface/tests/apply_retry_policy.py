@@ -34,6 +34,7 @@ DEPS = [
     'cros_build_api',
     'gerrit',
     'git',
+    'git_footers',
     'pupr_gerrit_interface',
     'pupr_local_uprev',
     'repo',
@@ -254,6 +255,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1234'),
       api.cros_build_api.set_api_return(
           'rebase CL 1234.try uprev chromeos-base/chromeos-chrome',
           'PackageService/UprevVersionedPackage',
@@ -538,6 +541,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1234'),
       api.cros_build_api.set_api_return(
           'rebase CL 1234.try uprev chromeos-base/chromeos-chrome',
           'PackageService/UprevVersionedPackage',
@@ -612,6 +617,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1234'),
       api.cros_build_api.set_api_return(
           'rebase CL 1234.try uprev chromeos-base/chromeos-chrome',
           'PackageService/UprevVersionedPackage',
@@ -706,6 +713,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1234'),
       api.cros_build_api.set_api_return(
           'rebase CL 1234.try uprev chromeos-base/chromeos-chrome',
           'PackageService/UprevVersionedPackage',
@@ -953,6 +962,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               },
           },
       ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1234'),
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_PINNED.test gerrit mergeable',
           'chromium-review.googlesource.com', 1234, 'current', True),

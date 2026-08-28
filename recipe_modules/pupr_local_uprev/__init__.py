@@ -6,6 +6,8 @@
 
 from PB.recipe_modules.chromeos.pupr_local_uprev.pupr_local_uprev import (
     PuprLocalUprevProperties)
+from .api import PuprLocalUprevApi as API
+from .test_api import PuprLocalUprevTestApi as TEST_API
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -17,13 +19,12 @@ DEPS = [
     'cros_sdk',
     'gerrit',
     'git',
+    'git_footers',
     'naming',
+    'pupr',
     'repo',
     'src_state',
 ]
 
 
 PROPERTIES = PuprLocalUprevProperties
-
-from .api import PuprLocalUprevApi as API
-from .test_api import PuprLocalUprevTestApi as TEST_API

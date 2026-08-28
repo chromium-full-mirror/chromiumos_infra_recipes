@@ -25,6 +25,7 @@ DEPS = [
     'cros_source',
     'gerrit',
     'git',
+    'git_footers',
     'pupr_local_uprev',
     'repo',
     'test_util',
@@ -232,6 +233,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'rebase',
       api.properties(test_rebase=True),
       api.git.diff_check(True),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1234'),
       api.step_data('rebase CL 1234.commit uprev.git branch',
                     api.raw_io.stream_output_text('  pupr\n* main')),
       api.step_data(

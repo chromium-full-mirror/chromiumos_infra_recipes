@@ -64,8 +64,10 @@ DEPS = [
     'easy',
     'gerrit',
     'git',
+    'git_footers',
     'gitiles',
     'naming',
+    'pupr',
     'pupr_gerrit_interface',
     'pupr_local_uprev',
     'repo',
@@ -1872,6 +1874,8 @@ def GenTests(
           'current',
           False,
       ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1'),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json,
@@ -1899,8 +1903,8 @@ def GenTests(
               '.*',
               '.*',
               '.*',
-              r'(.|\n)*' + pupr_local_uprev_api.UPREV_VERSION_LABEL + '.*' +
-              revision + r'(.|\n)*Change-Id: deadbeef(.|\n)*',
+              r'(.|\n)*' + pupr_api.UPREV_VERSION_LABEL + '.*' + revision +
+              r'(.|\n)*Change-Id: deadbeef(.|\n)*',
               '.*',
           ],
       ),
@@ -2017,6 +2021,8 @@ def GenTests(
           'current',
           True,
       ),
+      api.git_footers.simulated_get_footers(['deadbeef'],
+                                            parent_step_name='rebase CL 1'),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json,

@@ -7,7 +7,6 @@
 import collections
 import dataclasses
 import json
-import re
 from typing import Any, DefaultDict, NamedTuple
 from urllib.parse import urlparse
 
@@ -19,11 +18,8 @@ from PB.chromite.api import sdk as sdk_pb2
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipes.chromeos import generator as generator_pb2
+from RECIPE_MODULES.chromeos.pupr.api import UPREV_VERSION_LABEL
 from RECIPE_MODULES.chromeos.repo import api as repo_api
-
-# The label written in the commit message to store versions information of
-# upstream repositories given by gitiles trigger.
-UPREV_VERSION_LABEL = 'Pupr-Upstream-Versions'
 
 
 @dataclasses.dataclass(frozen=True)
@@ -410,11 +406,22 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       retry_changes = [p for p in open_changes if p.change == change_num]
       assert len(retry_changes) == 1
       retry_change = retry_changes[0]
-      # Extract Change-Id from commit message
+      # TODO(b/543713972): Make pupr_local_uprev purely local; avoid querying
+      # Gerrit for change descriptions here and have the caller pass the
+      # required metadata (e.g. Change-Id and existing versions) instead.
       description = self.m.gerrit.get_change_description(retry_change)
-      change_id = _extract_metadata(description, 'Change-Id: (.*)')
-      existing_versions = _deserialize_versions(
-          _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
+      change_ids = self.m.git_footers.from_message(description,
+                                                   key='Change-Id') or []
+      if len(change_ids) != 1:
+        raise recipe_api.StepFailure(
+            f'failed to find a single Change-Id in the Change description (found {len(change_ids)}): {description}'
+        )
+      change_id = change_ids[0]
+      existing_versions = self.m.pupr.extract_upstream_git_refs(description)
+      if existing_versions is None:
+        raise recipe_api.StepFailure(
+            f'failed to find {UPREV_VERSION_LABEL} in the Change description: {description}'
+        )
       if self.config.uprev_target_kind == generator_pb2.UprevTargetKind.VERSION_FILE:
         version_file_refs = [
             packages_pb2.UprevVersionFileRequest.GitRef(repository=v.repository,
@@ -674,25 +681,9 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     return False
 
 
-
-def _deserialize_versions(
-    json_str: str) -> list[packages_pb2.UprevVersionedPackageRequest.GitRef]:
-  """Deserialize versions information.
-
-  Args:
-    json_str: A string serialized by serializeVersions().
-
-  Returns:
-    The versions to consider for an uprev.
-  """
-  objs = json.loads(json_str)
-  return [
-      packages_pb2.UprevVersionedPackageRequest.GitRef(
-          repository=o.get('repository'), ref=o.get('ref'),
-          revision=o.get('revision')) for o in objs
-  ]
-
-
+# TODO(b/543713972): Use a trigger proto (e.g., GitilesTrigger) instead of
+# packages_pb2.UprevVersionedPackageRequest.GitRef for serializing upstream
+# version metadata.
 def _serialize_versions(
     versions: list[packages_pb2.UprevVersionedPackageRequest.GitRef]) -> str:
   """Serialize versions information.
@@ -709,18 +700,3 @@ def _serialize_versions(
       'revision': v.revision,
   } for v in versions]
   return json.dumps(o)
-
-
-def _extract_metadata(description: str, pattern: str) -> str:
-  """Retrieves a single piece of metadata from a CL description.
-
-  Args:
-    description: The CL's commit message.
-    pattern: A string representing a regex pattern, with a single capture group.
-  """
-  m = re.findall(pattern, description)
-  if len(m) != 1:
-    raise recipe_api.StepFailure(
-        'failed to find a single pattern {} in the Change description (found {}): {}'
-        .format(pattern, len(m), description))
-  return m[0]

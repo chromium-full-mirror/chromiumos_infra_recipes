@@ -1974,6 +1974,20 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Change-Id"
+    ],
+    "infra_step": true,
+    "name": "rebase CL 1.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{\"ref\": \"refs/tags/79.0.3945.20\", \"repository\": \"/chromium/src\", \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"}]\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "rebase CL 1.try uprev chromeos-base/chromite",
     "~followup_annotations": [
