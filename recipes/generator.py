@@ -17,6 +17,7 @@ instructions.
 """
 from __future__ import annotations
 
+import abc
 import contextlib
 import dataclasses
 import re
@@ -38,6 +39,7 @@ from recipe_engine import config_types
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
+from recipe_engine.engine_types import StepPresentation
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.git import api as git_api
 from RECIPE_MODULES.chromeos.pupr import api as pupr_api
@@ -98,6 +100,208 @@ class PolicyInfo:
     return self.branch or 'main'
 
 
+class UprevTargetHandler(abc.ABC):
+  """Abstract base handler for kind-specific uprev behaviors."""
+
+  def __init__(self, run: GeneratorRun) -> None:
+    self.run = run
+
+  @property
+  def m(self) -> recipe_api.RecipeApi:
+    return self.run.m
+
+  @property
+  def properties(self) -> generator_pb2.GeneratorProperties:
+    return self.run.properties
+
+  @abc.abstractmethod
+  def validate_properties(self) -> None:
+    """Validate target-specific properties."""
+
+  @abc.abstractmethod
+  def get_default_topic(self) -> str:
+    """Return the default topic for generated CLs."""
+
+  def get_policy_repo_url(self, default_url: str) -> str:
+    """Return the git repository URL used for branch policy matching."""
+    return default_url
+
+  def checkout_branch(self, policy_info: PolicyInfo) -> None:
+    """Check out the target branch for this uprev."""
+    self.m.cros_source.checkout_branch(self.m.src_state.internal_manifest.url,
+                                       policy_info.branch)
+
+  def checkout_default_branch(self, pres: StepPresentation) -> None:
+    """Handle checkout when no specific branch was selected."""
+    pres.step_text = 'using default branch'
+
+  def reapply_pupr_tracking(self, policy_info: PolicyInfo) -> None:
+    """Hook invoked after local uprev creation to adjust git tracking."""
+
+  @abc.abstractmethod
+  def create_local_uprev(self) -> list[repo_api.ProjectInfo] | None:
+    """Create and commit uprevs on the local filesystem."""
+
+
+class PackageUprevHandler(UprevTargetHandler):
+  """Handler for package (ebuild) uprevs."""
+
+  def validate_properties(self) -> None:
+    if not self.properties.packages:
+      raise recipe_api.StepFailure(
+          'must set packages to uprev for a package uprevver')
+
+  def get_default_topic(self) -> str:
+    return self.m.naming.get_package_title(self.properties.packages[0])
+
+  def create_local_uprev(self) -> list[repo_api.ProjectInfo] | None:
+    target_package_versions = [
+        packages_pb2.UprevVersionedPackageRequest.GitRef(
+            repository=urllib.parse.urlparse(trigger.gitiles.repo).path,
+            ref=trigger.gitiles.ref,
+            revision=(self.run.target_version_from_gitiles or
+                      trigger.gitiles.revision),
+        ) for trigger in self.run.triggers
+    ]
+    return self.m.pupr_local_uprev.uprev_packages(target_package_versions,
+                                                  self.run.topic)
+
+
+class SdkUprevHandler(UprevTargetHandler):
+  """Handler for ChromiumOS SDK uprevs."""
+
+  def validate_properties(self) -> None:
+    pass
+
+  def get_default_topic(self) -> str:
+    return 'cros_sdk'
+
+  def checkout_default_branch(self, pres: StepPresentation) -> None:
+    # b/372434018: The source tree here should be identical to the SDK
+    # builder's, unless policy overrides that. The SDK builder's uprevs
+    # use source tree state for dependency invalidation through packages
+    # like virtual/rust.
+    #
+    # The SDK builder uses the same mechanism as the CQ for passing source
+    # state around.
+    self.m.cros_source.sync_checkout(self.m.src_state.gitiles_commit)
+
+  def create_local_uprev(self) -> list[repo_api.ProjectInfo] | None:
+    return self.m.pupr_local_uprev.uprev_sdk(self.run.topic)
+
+
+class VersionFileUprevHandler(UprevTargetHandler):
+  """Handler for version file uprevs."""
+
+  def validate_properties(self) -> None:
+    if not self.properties.version_files:
+      raise recipe_api.StepFailure(
+          'must set version_files to uprev for a version file uprevver')
+
+  def get_default_topic(self) -> str:
+    return self.m.path.basename(
+        self.properties.version_files[0]).lower().replace('_', '-')
+
+  def get_policy_repo_url(self, default_url: str) -> str:
+    for v in self.properties.version_files:
+      if v.startswith('chrome/') or v.startswith('chromium/'):
+        return 'https://chromium.googlesource.com/chromium/src.git'
+    return default_url  # pragma: nocover
+
+  def checkout_branch(self, policy_info: PolicyInfo) -> None:
+    needs_cros_checkout = True
+    if self.properties.version_files:
+      needs_cros_checkout = False
+      processed_non_repo_dirs = set()
+      with self.m.context(cwd=self.m.cros_source.workspace_path):
+        for v in self.properties.version_files:
+          if self.m.repo.project_exists(str(self.m.path.start_dir / v)):
+            needs_cros_checkout = True  # pragma: nocover
+          else:
+            v_dir = self.m.path.dirname(self.m.path.start_dir / v)
+            with self.m.context(cwd=v_dir):
+              git_root = self.m.step(
+                  f'get git root for {v}',
+                  ['git', 'rev-parse', '--show-toplevel'],
+                  stdout=self.m.raw_io.output_text(), step_test_data=lambda:
+                  self.m.raw_io.test_api.stream_output_text(
+                      str(self.m.path.start_dir / 'chrome' / 'src')
+                  )).stdout.strip()
+              if git_root not in processed_non_repo_dirs:
+                target_ref = policy_info.reference.ref.replace(
+                    'refs/heads/', 'refs/remotes/origin/')
+                target_ref = target_ref.replace('refs/branch-heads/',
+                                                'refs/remotes/branch-heads/')
+                self.m.git.fetch(
+                    remote='origin',
+                    refs=[f'{policy_info.reference.ref}:{target_ref}'])
+                self.m.git.checkout(commit='FETCH_HEAD',
+                                    branch=policy_info.branch)
+                self.m.step(f'set upstream remote for {policy_info.branch}', [
+                    'git', 'config', f'branch.{policy_info.branch}.remote',
+                    'origin'
+                ])
+                self.m.step(f'set upstream merge for {policy_info.branch}', [
+                    'git', 'config', f'branch.{policy_info.branch}.merge',
+                    policy_info.reference.ref
+                ])
+                processed_non_repo_dirs.add(git_root)
+    if needs_cros_checkout:  # pragma: nocover
+      self.m.cros_source.checkout_branch(self.m.src_state.internal_manifest.url,
+                                         policy_info.branch)
+
+  # TODO(b/493779542): Deduplicate non-repo git root resolution and upstream
+  # tracking logic between checkout_branch and reapply_pupr_tracking.
+  def reapply_pupr_tracking(self, policy_info: PolicyInfo) -> None:
+    if not (self.properties.version_files and policy_info.branch):
+      return
+
+    processed_non_repo_dirs = set()
+    with self.m.context(cwd=self.m.cros_source.workspace_path):
+      for v in self.properties.version_files:
+        if not self.m.repo.project_exists(str(self.m.path.start_dir / v)):
+          v_dir = self.m.path.dirname(self.m.path.start_dir / v)
+          with self.m.context(cwd=v_dir):
+            git_root = self.m.step(
+                f'get git root for {v}',
+                ['git', 'rev-parse', '--show-toplevel'],
+                stdout=self.m.raw_io.output_text(), step_test_data=lambda: self.
+                m.raw_io.test_api.stream_output_text(
+                    str(self.m.path.start_dir / 'chrome' / 'src')
+                )).stdout.strip()
+            if git_root not in processed_non_repo_dirs:
+              self.m.step(f'set upstream remote for pupr in {v}',
+                          ['git', 'config', 'branch.pupr.remote', 'origin'])
+              self.m.step(f'set upstream merge for pupr in {v}', [
+                  'git', 'config', 'branch.pupr.merge',
+                  policy_info.reference.ref
+              ])
+              processed_non_repo_dirs.add(git_root)
+
+  def create_local_uprev(self) -> list[repo_api.ProjectInfo] | None:
+    target_version_file_versions = [
+        packages_pb2.UprevVersionFileRequest.GitRef(
+            repository=urllib.parse.urlparse(trigger.gitiles.repo).path,
+            ref=trigger.gitiles.ref,
+            revision=(self.run.target_version_from_gitiles or
+                      trigger.gitiles.revision),
+        ) for trigger in self.run.triggers
+    ]
+    return self.m.pupr_local_uprev.uprev_version_files(
+        target_version_file_versions, self.run.topic)
+
+
+_TARGET_HANDLERS: dict[generator_pb2.UprevTargetKind,
+                       type[UprevTargetHandler]] = {
+                           generator_pb2.UprevTargetKind.PACKAGE:
+                               PackageUprevHandler,
+                           generator_pb2.UprevTargetKind.SDK:
+                               SdkUprevHandler,
+                           generator_pb2.UprevTargetKind.VERSION_FILE:
+                               VersionFileUprevHandler,
+                       }
+
+
 class GeneratorRun:
   """A single run of a Generator builder."""
 
@@ -121,23 +325,11 @@ class GeneratorRun:
     # the uprev handler.
     self.target_version_from_gitiles = None
 
-  @property
-  def _is_package_uprevver(self) -> bool:
-    """Return whether this generator run is a package uprevver."""
-    return (self.properties.uprev_target_kind is
-            generator_pb2.UprevTargetKind.PACKAGE)
-
-  @property
-  def _is_sdk_uprevver(self) -> bool:
-    """Return whether this generator run is an SDK uprevver."""
-    return (self.properties.uprev_target_kind is
-            generator_pb2.UprevTargetKind.SDK)
-
-  @property
-  def is_version_file_uprevver(self) -> bool:
-    """Return whether this generator run is a version file uprevver."""
-    return (self.properties.uprev_target_kind
-            is generator_pb2.UprevTargetKind.VERSION_FILE)
+    handler_cls = _TARGET_HANDLERS.get(self.properties.uprev_target_kind)
+    if not handler_cls:
+      raise recipe_api.StepFailure(
+          f'Unsupported uprev_target_kind: {self.properties.uprev_target_kind}')
+    self.target_handler = handler_cls(self)
 
   @property
   def triggers(self) -> list[triggers_pb2.Trigger]:
@@ -145,56 +337,9 @@ class GeneratorRun:
     return self.properties.triggers or self.m.scheduler.triggers
 
   @property
-  def target_package_versions(
-      self,
-  ) -> list[packages_pb2.UprevVersionedPackageRequest.GitRef]:
-    """Return the package versions to try to uprev to.
-
-    Raises:
-      InfraFailure: If this generator does not uprev packages.
-    """
-    assert self._is_package_uprevver
-    return [
-        packages_pb2.UprevVersionedPackageRequest.GitRef(
-            repository=urllib.parse.urlparse(trigger.gitiles.repo).path,
-            ref=trigger.gitiles.ref,
-            revision=(self.target_version_from_gitiles or
-                      trigger.gitiles.revision),
-        ) for trigger in self.triggers
-    ]
-
-  @property
-  def target_version_file_versions(
-      self,
-  ) -> list[packages_pb2.UprevVersionFileRequest.GitRef]:
-    """Return the version file versions to try to uprev to.
-
-    Raises:
-      InfraFailure: If this generator does not uprev version files.
-    """
-    assert self.is_version_file_uprevver
-    return [
-        packages_pb2.UprevVersionFileRequest.GitRef(
-            repository=urllib.parse.urlparse(trigger.gitiles.repo).path,
-            ref=trigger.gitiles.ref,
-            revision=(self.target_version_from_gitiles or
-                      trigger.gitiles.revision),
-        ) for trigger in self.triggers
-    ]
-
-  @property
   def retry_only_run(self) -> bool:
     """Check whether this is a retry-only run."""
     return self._has_cron_trigger
-
-  @property
-  def cpvs(self) -> list[str]:
-    """Get the category-package-version for this build's packages."""
-    assert self._is_package_uprevver
-    return [
-        self.m.naming.get_package_title(package)
-        for package in self.properties.packages
-    ]
 
   @property
   def policy(self) -> generator_pb2.BranchPolicy:
@@ -214,15 +359,7 @@ class GeneratorRun:
       return self._topic
     if self.properties.topic:
       return self.properties.topic
-    if self._is_package_uprevver:
-      return self.cpvs[0]
-    if self._is_sdk_uprevver:
-      return 'cros_sdk'
-    if self.is_version_file_uprevver:
-      return self.m.path.basename(
-          self.properties.version_files[0]).lower().replace('_', '-')
-    raise recipe_api.InfraFailure(
-        'Not sure how to generate topic')  # pragma: nocover
+    return self.target_handler.get_default_topic()
 
   @property
   def _repo_projects(self) -> list[repo_api.ProjectInfo]:
@@ -283,7 +420,7 @@ class GeneratorRun:
     if self._modified_projects is None:
       res.no_action_reason = 'no modified projects'
       return res
-    self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
+    self.target_handler.reapply_pupr_tracking(policy_info)
 
     open_changes = [ps.to_gerrit_change_proto() for ps in open_patch_sets]
     res.record(
@@ -418,50 +555,7 @@ class GeneratorRun:
       If the uprev is successful, a list of repo projects with code changes.
       Otherwise, None, signifying that the build should terminate immediately.
     """
-    if self._is_package_uprevver:
-      return self.m.pupr_local_uprev.uprev_packages(
-          self.target_package_versions, self.topic)
-    if self._is_sdk_uprevver:
-      return self.m.pupr_local_uprev.uprev_sdk(self.topic)
-    if self.is_version_file_uprevver:
-      return self.m.pupr_local_uprev.uprev_version_files(
-          self.target_version_file_versions, self.topic)
-    raise recipe_api.InfraFailure('Not sure how to uprev.')  # pragma: nocover
-
-  def _reapply_pupr_tracking_for_non_repo_projects(
-      self, policy_info: PolicyInfo) -> None:
-    """Re-apply git branch tracking information for the 'pupr' branch.
-
-    pupr_local_uprev checks out a new branch named 'pupr' for local commits,
-    which drops the tracking information that was set up during checkout_branch.
-    This restores the tracking config so that `git cl upload` targets the correct
-    upstream branch (e.g. branch-heads/7827 instead of main) for non-repo projects.
-    """
-    if not (self.is_version_file_uprevver and self.properties.version_files and
-            policy_info.branch):
-      return
-
-    processed_non_repo_dirs = set()
-    with self.m.context(cwd=self.m.cros_source.workspace_path):
-      for v in self.properties.version_files:
-        if not self.m.repo.project_exists(str(self.m.path.start_dir / v)):
-          v_dir = self.m.path.dirname(self.m.path.start_dir / v)
-          with self.m.context(cwd=v_dir):
-            git_root = self.m.step(
-                f'get git root for {v}',
-                ['git', 'rev-parse', '--show-toplevel'],
-                stdout=self.m.raw_io.output_text(), step_test_data=lambda: self.
-                m.raw_io.test_api.stream_output_text(
-                    str(self.m.path.start_dir / 'chrome' / 'src')
-                )).stdout.strip()
-            if git_root not in processed_non_repo_dirs:
-              self.m.step(f'set upstream remote for pupr in {v}',
-                          ['git', 'config', 'branch.pupr.remote', 'origin'])
-              self.m.step(f'set upstream merge for pupr in {v}', [
-                  'git', 'config', 'branch.pupr.merge',
-                  policy_info.reference.ref
-              ])
-              processed_non_repo_dirs.add(git_root)
+    return self.target_handler.create_local_uprev()
 
   def _validate_properties(self) -> None:
     """Ensure the input properties look OK.
@@ -472,12 +566,7 @@ class GeneratorRun:
     with self.m.step.nest('validate properties') as presentation:
       if self.retry_only_run and not self.properties.retry_ref.ref:
         raise recipe_api.StepFailure('must set retry_ref for retry-only run')
-      if self._is_package_uprevver and not self.properties.packages:
-        raise recipe_api.StepFailure(
-            'must set packages to uprev for a package uprevver')
-      if self.is_version_file_uprevver and not self.properties.version_files:
-        raise recipe_api.StepFailure(
-            'must set version_files to uprev for a version file uprevver')
+      self.target_handler.validate_properties()
 
       # Retrieve version information from Gitiles API.
       if self.properties.HasField('gitiles_info'):
@@ -745,12 +834,7 @@ class GeneratorRun:
       - reference: The reference that matched, or None.
     """
     manifest = self.m.src_state.internal_manifest
-    repo_url = manifest.url
-    if self.is_version_file_uprevver:
-      for v in self.properties.version_files:
-        if v.startswith('chrome/') or v.startswith('chromium/'):
-          repo_url = 'https://chromium.googlesource.com/chromium/src.git'
-          break
+    repo_url = self.target_handler.get_policy_repo_url(manifest.url)
 
     for policy in self.properties.branch_policies:
       if re.match(policy.pattern, tag):
@@ -777,60 +861,9 @@ class GeneratorRun:
         assert policy_info.reference is not None
         pres.step_text = 'using {} {}'.format(policy_info.branch,
                                               policy_info.reference.hash)
-        needs_cros_checkout = True
-        if self.is_version_file_uprevver and self.properties.version_files:
-          needs_cros_checkout = False
-          processed_non_repo_dirs = set()
-          with self.m.context(cwd=self.m.cros_source.workspace_path):
-            for v in self.properties.version_files:
-              if self.m.repo.project_exists(str(self.m.path.start_dir / v)):
-                needs_cros_checkout = True  # pragma: nocover
-              else:
-                v_dir = self.m.path.dirname(self.m.path.start_dir / v)
-                with self.m.context(cwd=v_dir):
-                  git_root = self.m.step(
-                      f'get git root for {v}',
-                      ['git', 'rev-parse', '--show-toplevel'],
-                      stdout=self.m.raw_io.output_text(), step_test_data=lambda:
-                      self.m.raw_io.test_api.stream_output_text(
-                          str(self.m.path.start_dir / 'chrome' / 'src')
-                      )).stdout.strip()
-                  if git_root not in processed_non_repo_dirs:
-                    target_ref = policy_info.reference.ref.replace(
-                        'refs/heads/', 'refs/remotes/origin/')
-                    target_ref = target_ref.replace(
-                        'refs/branch-heads/', 'refs/remotes/branch-heads/')
-                    self.m.git.fetch(
-                        remote='origin',
-                        refs=[f'{policy_info.reference.ref}:{target_ref}'])
-                    self.m.git.checkout(commit='FETCH_HEAD',
-                                        branch=policy_info.branch)
-                    self.m.step(
-                        f'set upstream remote for {policy_info.branch}', [
-                            'git', 'config',
-                            f'branch.{policy_info.branch}.remote', 'origin'
-                        ])
-                    self.m.step(f'set upstream merge for {policy_info.branch}',
-                                [
-                                    'git', 'config',
-                                    f'branch.{policy_info.branch}.merge',
-                                    policy_info.reference.ref
-                                ])
-                    processed_non_repo_dirs.add(git_root)
-        if needs_cros_checkout:
-          self.m.cros_source.checkout_branch(
-              self.m.src_state.internal_manifest.url, policy_info.branch)
-      elif self._is_sdk_uprevver:
-        # b/372434018: The source tree here should be identical to the SDK
-        # builder's, unless policy overrides that. The SDK builder's uprevs
-        # use source tree state for dependency invalidation through packages
-        # like virtual/rust.
-        #
-        # The SDK builder uses the same mechanism as the CQ for passing source
-        # state around.
-        self.m.cros_source.sync_checkout(self.m.src_state.gitiles_commit)
+        self.target_handler.checkout_branch(policy_info)
       else:
-        pres.step_text = 'using default branch'
+        self.target_handler.checkout_default_branch(pres)
 
   def cherry_pick_gerrit_changes(self) -> None:
     """Cherry-pick changes from Gerrit, if needed.
@@ -2418,6 +2451,16 @@ def GenTests(
           uprev_target_kind=generator_pb2.UprevTargetKind.VERSION_FILE,
           packages=[],
       ),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'unsupported-uprev-target-kind',
+      _props(
+          uprev_target_kind=generator_pb2.UprevTargetKind
+          .UPREV_TARGET_KIND_UNSPECIFIED,
+      ),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
