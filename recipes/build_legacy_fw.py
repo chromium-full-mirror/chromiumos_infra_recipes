@@ -957,7 +957,7 @@ def GenTests(api):
                                   bucket='firmware'),
               artifacts=BuilderConfig.Artifacts(
                   attestation_eligible=True,
-                  artifacts_gs_bucket='chromeos-image-archive',
+                  artifacts_gs_bucket='firmware-image-archive',
                   artifacts_info=common_pb2.ArtifactsByService(
                       firmware=common_pb2.ArtifactsByService
                       .Firmware(output_artifacts=[
@@ -965,7 +965,7 @@ def GenTests(api):
                               artifact_types=[
                                   'FIRMWARE_TARBALL', 'FIRMWARE_TARBALL_INFO'
                               ], gs_locations=[
-                                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}'
+                                  'firmware-image-archive/{target}/{builder_name}-firmware/{legacy_version}'
                               ])
                       ])))), step_name='checking attestation eligibility'),
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
@@ -1002,7 +1002,7 @@ def GenTests(api):
                                   bucket='firmware'),
               artifacts=BuilderConfig.Artifacts(
                   attestation_eligible=True,
-                  artifacts_gs_bucket='chromeos-image-archive',
+                  artifacts_gs_bucket='firmware-image-archive',
                   artifacts_info=common_pb2.ArtifactsByService(
                       firmware=common_pb2.ArtifactsByService
                       .Firmware(output_artifacts=[
@@ -1010,7 +1010,7 @@ def GenTests(api):
                               artifact_types=[
                                   'FIRMWARE_TARBALL', 'FIRMWARE_TARBALL_INFO'
                               ], gs_locations=[
-                                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}'
+                                  'firmware-image-archive/{target}/{builder_name}-firmware/{legacy_version}'
                               ])
                       ])))), step_name='checking attestation eligibility'),
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
@@ -1052,7 +1052,7 @@ def GenTests(api):
                                   bucket='firmware'),
               artifacts=BuilderConfig.Artifacts(
                   attestation_eligible=True,
-                  artifacts_gs_bucket='chromeos-image-archive',
+                  artifacts_gs_bucket='firmware-image-archive',
                   artifacts_info=common_pb2.ArtifactsByService(
                       firmware=common_pb2.ArtifactsByService
                       .Firmware(output_artifacts=[
@@ -1060,17 +1060,17 @@ def GenTests(api):
                               artifact_types=[
                                   'FIRMWARE_TARBALL', 'FIRMWARE_TARBALL_INFO'
                               ], gs_locations=[
-                                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}'
+                                  'firmware-image-archive/{target}/{builder_name}-firmware/{legacy_version}'
                               ])
                       ])))), step_name='checking attestation eligibility'),
       suite_scheduling(True),
       # Check that the download path includes the target name.
       api.post_check(
           post_process.StepCommandContains,
-          'kukui.sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2 from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui',
+          'kukui.sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2 from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui',
           [
               'cp', '-r',
-              'gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2',
+              'gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2',
               '[CLEANUP]/signing-dir_tmp_1/kukui'
           ]),
       input_properties={
@@ -1098,7 +1098,7 @@ def GenTests(api):
                                   bucket='firmware'),
               artifacts=BuilderConfig.Artifacts(
                   attestation_eligible=True,
-                  artifacts_gs_bucket='chromeos-image-archive',
+                  artifacts_gs_bucket='firmware-image-archive',
                   artifacts_info=common_pb2.ArtifactsByService(
                       firmware=common_pb2.ArtifactsByService
                       .Firmware(output_artifacts=[
@@ -1106,7 +1106,7 @@ def GenTests(api):
                               artifact_types=[
                                   'FIRMWARE_TARBALL', 'FIRMWARE_TARBALL_INFO'
                               ], gs_locations=[
-                                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}'
+                                  'firmware-image-archive/{target}/{builder_name}-firmware/{legacy_version}'
                               ])
                       ])))), step_name='checking attestation eligibility'),
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),

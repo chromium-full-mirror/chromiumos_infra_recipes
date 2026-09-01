@@ -150,7 +150,7 @@
       "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"firmware\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"artifacts\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"artifactsGsBucket\": \"chromeos-image-archive\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"artifactsGsBucket\": \"firmware-image-archive\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"artifactsInfo\": {@@@",
       "@@@STEP_LOG_LINE@builder_config_json@      \"firmware\": {@@@",
       "@@@STEP_LOG_LINE@builder_config_json@        \"outputArtifacts\": [@@@",
@@ -160,7 +160,7 @@
       "@@@STEP_LOG_LINE@builder_config_json@              \"FIRMWARE_TARBALL_INFO\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@            ],@@@",
       "@@@STEP_LOG_LINE@builder_config_json@            \"gsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@              \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@              \"firmware-image-archive/{target}/{builder_name}-firmware/{legacy_version}\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@            ]@@@",
       "@@@STEP_LOG_LINE@builder_config_json@          }@@@",
       "@@@STEP_LOG_LINE@builder_config_json@        ]@@@",
@@ -4446,7 +4446,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/partial-metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/partial-metadata.json@@@"
     ]
   },
   {
@@ -4518,7 +4518,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/partial-metadata.json"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4827,7 +4827,10 @@
   },
   {
     "cmd": [],
-    "name": "kukui"
+    "name": "kukui",
+    "~followup_annotations": [
+      "@@@STEP_WARNINGS@@@"
+    ]
   },
   {
     "cmd": [],
@@ -5365,9 +5368,10 @@
       "@@@STEP_LOG_LINE@report_to_spike@- kukui/firmware_from_source.tar.bz2@@@",
       "@@@STEP_LOG_LINE@report_to_spike@- type IMAGE_ARCHIVES did not have any matching files.@@@",
       "@@@STEP_LOG_END@report_to_spike@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -5675,7 +5679,7 @@
     "name": "kukui.upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-\"@@@"
     ]
   },
   {
@@ -5774,7 +5778,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5815,7 +5819,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5849,7 +5853,7 @@
     "name": "kukui.upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"kukui/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"kukui/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R109-15236.0.0-101-\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"kukui/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"kukui/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"firmware-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R109-15236.0.0-101-\", \"published\": null}@@@"
     ]
   },
   {
@@ -5857,8 +5861,10 @@
     "name": "kukui.upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui@@@"
+      "@@@STEP_TEXT@Possible loss of path: kukui/firmware_from_source.tar.bz2 published as gs://firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0/firmware_from_source.tar.bz2<br/>Possible loss of path: kukui/firmware_metadata.jsonpb published as gs://firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0/firmware_metadata.jsonpb<br/>@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -5872,8 +5878,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui/"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2",
+      "gs://firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5913,8 +5919,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_metadata.jsonpb",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui/"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_metadata.jsonpb",
+      "gs://firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5948,7 +5954,7 @@
     "name": "kukui.upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"kukui/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"kukui/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"kukui/firmware_from_source.tar.bz2\"], \"gs_location\": \"firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"kukui/firmware_metadata.jsonpb\"], \"gs_location\": \"firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0\"}]}@@@"
     ]
   },
   {
@@ -5956,7 +5962,7 @@
     "name": "kukui.publish artifacts to pubsub",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R109-15236.0.0-101-', files_by_artifact={'FIRMWARE_TARBALL': ['kukui/firmware_from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['kukui/firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui', 'files': ['kukui/firmware_from_source.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui', 'files': ['kukui/firmware_metadata.jsonpb']}]})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-ti50-postsubmit/R109-15236.0.0-101-', files_by_artifact={'FIRMWARE_TARBALL': ['kukui/firmware_from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['kukui/firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0', 'files': ['kukui/firmware_from_source.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0', 'files': ['kukui/firmware_metadata.jsonpb']}]})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -6088,7 +6094,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -6104,7 +6110,7 @@
     "name": "kukui.publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gE6fQgDEm0Ka2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAU=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gE6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAU=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -6138,7 +6144,7 @@
       }
     },
     "name": "kukui.publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gE6fQgDEm0Ka2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAU=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gE6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAU=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6257,7 +6263,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6281,7 +6287,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromeos-hwqual-kukui-15236.0.0.tar.bz2 from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromeos-hwqual-kukui-15236.0.0.tar.bz2 from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6296,7 +6302,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6320,7 +6326,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6336,7 +6342,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6360,7 +6366,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6375,7 +6381,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/chromiumos_test_image.tar.xz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6399,7 +6405,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6415,7 +6421,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6439,7 +6445,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui (2)",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui (2)",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6454,7 +6460,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6478,7 +6484,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6494,7 +6500,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/debug.tgz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/debug.tgz",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6518,7 +6524,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download debug.tgz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download debug.tgz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6533,7 +6539,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/debug.tgz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/debug.tgz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/debug.tgz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6557,7 +6563,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download debug.tgz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download debug.tgz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6573,7 +6579,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/dlc",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/dlc",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6597,7 +6603,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download dlc from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download dlc from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6612,7 +6618,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/dlc.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/dlc.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/dlc.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6636,7 +6642,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download dlc.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download dlc.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6652,7 +6658,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/factory_image.zip",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/factory_image.zip",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6676,7 +6682,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download factory_image.zip from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download factory_image.zip from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6691,7 +6697,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/factory_image.zip.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/factory_image.zip.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/factory_image.zip.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6715,7 +6721,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download factory_image.zip.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download factory_image.zip.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6731,7 +6737,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6755,7 +6761,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2 from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2 from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6770,7 +6776,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/firmware_from_source.tar.bz2.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6794,7 +6800,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6810,7 +6816,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_KERN.bin.gz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_KERN.bin.gz",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6834,7 +6840,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_KERN.bin.gz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_KERN.bin.gz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6849,7 +6855,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_KERN.bin.gz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_KERN.bin.gz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/full_dev_part_KERN.bin.gz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6873,7 +6879,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_KERN.bin.gz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_KERN.bin.gz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6889,7 +6895,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_MINIOS.bin.gz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_MINIOS.bin.gz",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6913,7 +6919,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_MINIOS.bin.gz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_MINIOS.bin.gz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6928,7 +6934,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_MINIOS.bin.gz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_MINIOS.bin.gz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/full_dev_part_MINIOS.bin.gz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6952,7 +6958,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_MINIOS.bin.gz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_MINIOS.bin.gz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -6968,7 +6974,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_ROOT.bin.gz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_ROOT.bin.gz",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6992,7 +6998,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_ROOT.bin.gz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_ROOT.bin.gz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -7007,7 +7013,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_ROOT.bin.gz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_ROOT.bin.gz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/full_dev_part_ROOT.bin.gz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7031,7 +7037,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_ROOT.bin.gz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download full_dev_part_ROOT.bin.gz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -7047,7 +7053,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/image.zip",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/image.zip",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7071,7 +7077,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download image.zip from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download image.zip from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -7086,7 +7092,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/image.zip.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/image.zip.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/image.zip.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7110,7 +7116,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download image.zip.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download image.zip.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -7126,7 +7132,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/recovery_image.tar.xz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/recovery_image.tar.xz",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7150,7 +7156,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -7165,7 +7171,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/recovery_image.tar.xz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/recovery_image.tar.xz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/recovery_image.tar.xz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7189,7 +7195,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -7205,7 +7211,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/stateful.tgz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/stateful.tgz",
       "[CLEANUP]/signing-dir_tmp_1/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7229,7 +7235,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download stateful.tgz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download stateful.tgz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -7244,7 +7250,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/stateful.tgz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/stateful.tgz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_1/kukui/stateful.tgz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7268,7 +7274,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui.sign artifacts.download release artifacts.gsutil download stateful.tgz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui.sign artifacts.download release artifacts.gsutil download stateful.tgz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -8287,7 +8293,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -8303,7 +8309,7 @@
     "name": "kukui.build status pubsub update (5).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -8337,7 +8343,7 @@
       }
     },
     "name": "kukui.build status pubsub update (5).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9099,7 +9105,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -9115,7 +9121,7 @@
     "name": "kukui.build status pubsub update (6).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKjQSMgoMU1RFUF9PVkVSQUxMEiIIARBkGhwKDAjEgMT9BBCAyrXuARIMCMqAxP0EEIDKte4BMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAc=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKjQSMgoMU1RFUF9PVkVSQUxMEiIIARBkGhwKDAjEgMT9BBCAyrXuARIMCMqAxP0EEIDKte4BMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAc=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -9149,7 +9155,7 @@
       }
     },
     "name": "kukui.build status pubsub update (6).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKjQSMgoMU1RFUF9PVkVSQUxMEiIIARBkGhwKDAjEgMT9BBCAyrXuARIMCMqAxP0EEIDKte4BMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAc=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKjQSMgoMU1RFUF9PVkVSQUxMEiIIARBkGhwKDAjEgMT9BBCAyrXuARIMCMqAxP0EEIDKte4BMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAc=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9254,7 +9260,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -9270,7 +9276,7 @@
     "name": "kukui.build status pubsub update (7).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqNBIyCgxTVEVQX09WRVJBTEwSIggBEGQaHAoMCMSAxP0EEIDKte4BEgwIyoDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ACA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqNBIyCgxTVEVQX09WRVJBTEwSIggBEGQaHAoMCMSAxP0EEIDKte4BEgwIyoDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ACA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -9304,7 +9310,7 @@
       }
     },
     "name": "kukui.build status pubsub update (7).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqNBIyCgxTVEVQX09WRVJBTEwSIggBEGQaHAoMCMSAxP0EEIDKte4BEgwIyoDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ACA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqNBIyCgxTVEVQX09WRVJBTEwSIggBEGQaHAoMCMSAxP0EEIDKte4BEgwIyoDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ACA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9315,7 +9321,10 @@
   },
   {
     "cmd": [],
-    "name": "kukui (2)"
+    "name": "kukui (2)",
+    "~followup_annotations": [
+      "@@@STEP_WARNINGS@@@"
+    ]
   },
   {
     "cmd": [
@@ -9888,9 +9897,10 @@
       "@@@STEP_LOG_LINE@report_to_spike@- kukui/firmware_from_source.tar.bz2@@@",
       "@@@STEP_LOG_LINE@report_to_spike@- type IMAGE_ARCHIVES did not have any matching files.@@@",
       "@@@STEP_LOG_END@report_to_spike@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -10198,7 +10208,7 @@
     "name": "kukui (2).upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-\"@@@"
     ]
   },
   {
@@ -10297,7 +10307,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -10338,7 +10348,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_2",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -10372,7 +10382,7 @@
     "name": "kukui (2).upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"kukui/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"kukui/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R109-15236.0.0-101-\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"kukui/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"kukui/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"firmware-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R109-15236.0.0-101-\", \"published\": null}@@@"
     ]
   },
   {
@@ -10380,8 +10390,10 @@
     "name": "kukui (2).upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui@@@"
+      "@@@STEP_TEXT@Possible loss of path: kukui/firmware_from_source.tar.bz2 published as gs://firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0/firmware_from_source.tar.bz2<br/>Possible loss of path: kukui/firmware_metadata.jsonpb published as gs://firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0/firmware_metadata.jsonpb<br/>@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -10395,8 +10407,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui/"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2",
+      "gs://firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -10436,8 +10448,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_metadata.jsonpb",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui/"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_metadata.jsonpb",
+      "gs://firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -10471,7 +10483,7 @@
     "name": "kukui (2).upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"kukui/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"kukui/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"kukui/firmware_from_source.tar.bz2\"], \"gs_location\": \"firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"kukui/firmware_metadata.jsonpb\"], \"gs_location\": \"firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0\"}]}@@@"
     ]
   },
   {
@@ -10479,7 +10491,7 @@
     "name": "kukui (2).publish artifacts to pubsub",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R109-15236.0.0-101-', files_by_artifact={'FIRMWARE_TARBALL': ['kukui/firmware_from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['kukui/firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui', 'files': ['kukui/firmware_from_source.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui', 'files': ['kukui/firmware_metadata.jsonpb']}]})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='firmware-image-archive', gs_path='firmware-ti50-postsubmit/R109-15236.0.0-101-', files_by_artifact={'FIRMWARE_TARBALL': ['kukui/firmware_from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['kukui/firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0', 'files': ['kukui/firmware_from_source.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0', 'files': ['kukui/firmware_metadata.jsonpb']}]})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -10611,7 +10623,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -10627,7 +10639,7 @@
     "name": "kukui (2).publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQ6fQgDEm0Ka2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA0=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA0=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -10661,7 +10673,7 @@
       }
     },
     "name": "kukui (2).publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQ6fQgDEm0Ka2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA0=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA0=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -10780,7 +10792,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10804,7 +10816,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromeos-hwqual-kukui-15236.0.0.tar.bz2 from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromeos-hwqual-kukui-15236.0.0.tar.bz2 from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -10819,7 +10831,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10843,7 +10855,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromeos-hwqual-kukui-15236.0.0.tar.bz2.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -10859,7 +10871,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10883,7 +10895,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -10898,7 +10910,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/chromiumos_test_image.tar.xz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10922,7 +10934,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -10938,7 +10950,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10962,7 +10974,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui (2)",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui (2)",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -10977,7 +10989,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11001,7 +11013,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download chromiumos_test_image.tar.xz.intoto.jsonl.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11017,7 +11029,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/debug.tgz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/debug.tgz",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11041,7 +11053,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download debug.tgz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download debug.tgz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11056,7 +11068,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/debug.tgz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/debug.tgz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/debug.tgz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11080,7 +11092,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download debug.tgz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download debug.tgz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11096,7 +11108,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/dlc",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/dlc",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11120,7 +11132,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download dlc from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download dlc from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11135,7 +11147,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/dlc.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/dlc.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/dlc.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11159,7 +11171,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download dlc.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download dlc.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11175,7 +11187,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/factory_image.zip",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/factory_image.zip",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11199,7 +11211,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download factory_image.zip from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download factory_image.zip from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11214,7 +11226,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/factory_image.zip.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/factory_image.zip.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/factory_image.zip.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11238,7 +11250,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download factory_image.zip.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download factory_image.zip.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11254,7 +11266,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11278,7 +11290,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2 from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2 from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11293,7 +11305,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/firmware_from_source.tar.bz2.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11317,7 +11329,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download firmware_from_source.tar.bz2.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11333,7 +11345,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_KERN.bin.gz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_KERN.bin.gz",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11357,7 +11369,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_KERN.bin.gz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_KERN.bin.gz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11372,7 +11384,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_KERN.bin.gz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_KERN.bin.gz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/full_dev_part_KERN.bin.gz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11396,7 +11408,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_KERN.bin.gz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_KERN.bin.gz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11412,7 +11424,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_MINIOS.bin.gz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_MINIOS.bin.gz",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11436,7 +11448,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_MINIOS.bin.gz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_MINIOS.bin.gz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11451,7 +11463,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_MINIOS.bin.gz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_MINIOS.bin.gz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/full_dev_part_MINIOS.bin.gz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11475,7 +11487,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_MINIOS.bin.gz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_MINIOS.bin.gz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11491,7 +11503,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_ROOT.bin.gz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_ROOT.bin.gz",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11515,7 +11527,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_ROOT.bin.gz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_ROOT.bin.gz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11530,7 +11542,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_ROOT.bin.gz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/full_dev_part_ROOT.bin.gz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/full_dev_part_ROOT.bin.gz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11554,7 +11566,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_ROOT.bin.gz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download full_dev_part_ROOT.bin.gz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11570,7 +11582,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/image.zip",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/image.zip",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11594,7 +11606,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download image.zip from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download image.zip from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11609,7 +11621,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/image.zip.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/image.zip.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/image.zip.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11633,7 +11645,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download image.zip.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download image.zip.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11649,7 +11661,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/recovery_image.tar.xz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/recovery_image.tar.xz",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11673,7 +11685,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11688,7 +11700,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/recovery_image.tar.xz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/recovery_image.tar.xz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/recovery_image.tar.xz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11712,7 +11724,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11728,7 +11740,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/stateful.tgz",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/stateful.tgz",
       "[CLEANUP]/signing-dir_tmp_2/kukui"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11752,7 +11764,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download stateful.tgz from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download stateful.tgz from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -11767,7 +11779,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/stateful.tgz.intoto.jsonl",
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/stateful.tgz.intoto.jsonl",
       "[CLEANUP]/signing-dir_tmp_2/kukui/stateful.tgz.intoto.jsonl"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11791,7 +11803,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download stateful.tgz.intoto.jsonl from chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
+    "name": "kukui (2).sign artifacts.download release artifacts.gsutil download stateful.tgz.intoto.jsonl from firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui",
     "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -12810,7 +12822,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -12826,7 +12838,7 @@
     "name": "kukui (2).build status pubsub update (5).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADg==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADg==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -12860,7 +12872,7 @@
       }
     },
     "name": "kukui (2).build status pubsub update (5).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -13424,7 +13436,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -13440,7 +13452,7 @@
     "name": "kukui (2).build status pubsub update (6).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKigSJgoMU1RFUF9PVkVSQUxMEhYIAhBkGhAKBgjMgMT9BBIGCNKAxP0EMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA8=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKigSJgoMU1RFUF9PVkVSQUxMEhYIAhBkGhAKBgjMgMT9BBIGCNKAxP0EMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA8=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -13474,7 +13486,7 @@
       }
     },
     "name": "kukui (2).build status pubsub update (6).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKigSJgoMU1RFUF9PVkVSQUxMEhYIAhBkGhAKBgjMgMT9BBIGCNKAxP0EMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA8=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKigSJgoMU1RFUF9PVkVSQUxMEhYIAhBkGhAKBgjMgMT9BBIGCNKAxP0EMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA8=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -13579,7 +13591,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/kukui/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -13595,7 +13607,7 @@
     "name": "kukui (2).build status pubsub update (7).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqKBImCgxTVEVQX09WRVJBTEwSFggCEGQaEAoGCMyAxP0EEgYI0oDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9AEA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqKBImCgxTVEVQX09WRVJBTEwSFggCEGQaEAoGCMyAxP0EEgYI0oDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9AEA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -13629,7 +13641,7 @@
       }
     },
     "name": "kukui (2).build status pubsub update (7).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqKBImCgxTVEVQX09WRVJBTEwSFggCEGQaEAoGCMyAxP0EEgYI0oDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9AEA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqKBImCgxTVEVQX09WRVJBTEwSFggCEGQaEAoGCMyAxP0EEgYI0oDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9AEA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -13772,7 +13784,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/metadata.json@@@"
     ]
   },
   {
@@ -13870,7 +13882,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/metadata.json"
+      "gs://firmware-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -14132,7 +14144,7 @@
     "cmd": [],
     "name": "output artifact GS paths",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"kukui/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"kukui/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R109-15236.0.0-101-\", \"published\": {\"FIRMWARE_TARBALL\": [{\"files\": [\"kukui/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui\"}, {\"files\": [\"kukui/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"kukui/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui\"}, {\"files\": [\"kukui/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/kukui\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"kukui/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"kukui/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"firmware-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R109-15236.0.0-101-\", \"published\": {\"FIRMWARE_TARBALL\": [{\"files\": [\"kukui/firmware_from_source.tar.bz2\"], \"gs_location\": \"firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0\"}, {\"files\": [\"kukui/firmware_from_source.tar.bz2\"], \"gs_location\": \"firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"kukui/firmware_metadata.jsonpb\"], \"gs_location\": \"firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0\"}, {\"files\": [\"kukui/firmware_metadata.jsonpb\"], \"gs_location\": \"firmware-image-archive/kukui/firmware-ti50-postsubmit-firmware/R109-15236.0.0\"}]}}@@@"
     ]
   },
   {
