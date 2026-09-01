@@ -8360,7 +8360,7 @@
     "name": "kukui.push per device FW",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-board-9999.B/15236.0.0@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0@@@"
     ]
   },
   {
@@ -8786,7 +8786,7 @@
     "name": "kukui.push per device FW.adl_ish_lite.EC",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@destination: gs://firmware-image-archive/firmware-board-9999.B/15236.0.0@@@"
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0@@@"
     ]
   },
   {
@@ -8794,7 +8794,7 @@
       "gcloud",
       "storage",
       "ls",
-      "gs://firmware-image-archive/firmware-board-9999.B/15236.0.0/adl_ish_lite.EC.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0/adl_ish_lite.EC.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -8828,7 +8828,7 @@
       "cp",
       "--if-generation-match=0",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/kukui/adl_ish_lite.EC.15236.0.0.tar.bz2",
-      "gs://firmware-image-archive/firmware-board-9999.B/15236.0.0/adl_ish_lite.EC.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0/adl_ish_lite.EC.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -8860,7 +8860,7 @@
     "name": "kukui.push per device FW.adlrvp_n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@destination: gs://firmware-image-archive/firmware-board-9999.B/15236.0.0@@@"
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0@@@"
     ]
   },
   {
@@ -8868,7 +8868,7 @@
       "gcloud",
       "storage",
       "ls",
-      "gs://firmware-image-archive/firmware-board-9999.B/15236.0.0/adlrvp_n.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0/adlrvp_n.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -8902,7 +8902,7 @@
       "cp",
       "--if-generation-match=0",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/kukui/adlrvp_n.15236.0.0.tar.bz2",
-      "gs://firmware-image-archive/firmware-board-9999.B/15236.0.0/adlrvp_n.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0/adlrvp_n.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -8934,7 +8934,7 @@
     "name": "kukui.push per device FW.anraggar.EC_elf",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@destination: gs://firmware-image-archive/firmware-board-9999.B/15236.0.0@@@"
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0@@@"
     ]
   },
   {
@@ -8942,7 +8942,7 @@
       "gcloud",
       "storage",
       "ls",
-      "gs://firmware-image-archive/firmware-board-9999.B/15236.0.0/anraggar.EC_elf.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0/anraggar.EC_elf.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -8976,7 +8976,7 @@
       "cp",
       "--if-generation-match=0",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/kukui/anraggar.EC_elf.15236.0.0.tar.bz2",
-      "gs://firmware-image-archive/firmware-board-9999.B/15236.0.0/anraggar.EC_elf.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0/anraggar.EC_elf.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -12883,7 +12883,7 @@
     "name": "kukui (2).push per device FW",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/firmware-board-9999.B/15236.0.0@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/kukui/firmware-board-9999.B/15236.0.0@@@"
     ]
   },
   {

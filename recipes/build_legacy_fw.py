@@ -701,15 +701,15 @@ class FirmwareBuilder():
           ])
 
       presentation.links[
-          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{bucket.removeprefix("gs://")}/{branch}/{self._bcs_version.platform_version}'
+          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{bucket.removeprefix("gs://")}/{board}/{branch}/{self._bcs_version.platform_version}'
 
       version_suffix = f'.{self._bcs_version.platform_version}.tar.bz2'
 
       with self.m.deferrals.raise_exceptions_at_end():
         for source in tar_list:
           file_name = self.m.path.basename(source)
-          dest_path = f'{bucket}/{branch}/{self._bcs_version.platform_version}/{file_name}'
-          dest_dir = f'{bucket}/{branch}/{self._bcs_version.platform_version}'
+          dest_path = f'{bucket}/{board}/{branch}/{self._bcs_version.platform_version}/{file_name}'
+          dest_dir = f'{bucket}/{board}/{branch}/{self._bcs_version.platform_version}'
 
           device_target = file_name
           if file_name.endswith(version_suffix):
@@ -1391,7 +1391,7 @@ def GenTests(api):
               'bar/file.15236.0.0.tar.bz2'
           ])),
       api.step_data(
-          'board2.push per device FW.list files',
+          'board1 (2).push per device FW.list files',
           api.file.listdir([
               'foo/ec-private/fingerprint/bar.15236.0.0.tar.bz2',
               'bar/file.15236.0.0.tar.bz2'
@@ -1401,21 +1401,21 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'board1.push per device FW.file.gcloud storage cp'),
       api.post_check(post_process.DoesNotRun,
-                     'board2.push per device FW.bar.gcloud storage cp'),
+                     'board1 (2).push per device FW.bar.gcloud storage cp'),
       api.post_check(post_process.DoesNotRun,
-                     'board2.push per device FW.file.gcloud storage cp'),
+                     'board1 (2).push per device FW.file.gcloud storage cp'),
       api.post_check(post_process.StepTextEquals,
-                     'board2.push per device FW.bar',
+                     'board1 (2).push per device FW.bar',
                      'skipped due to duplication (already uploaded by board1)'),
       api.post_check(post_process.StepTextEquals,
-                     'board2.push per device FW.file',
+                     'board1 (2).push per device FW.file',
                      'skipped due to duplication (already uploaded by board1)'),
       api.post_process(post_process.DropExpectation),
       mock_ls_files=['bar', 'file'],
       build_targets=[{
           'name': 'board1'
       }, {
-          'name': 'board2'
+          'name': 'board1'
       }],
   )
 
