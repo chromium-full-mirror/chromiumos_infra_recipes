@@ -59,12 +59,12 @@ def RunSteps(api: recipe_api.RecipeApi,
 
   open_patch_sets = api.pupr_gerrit_interface.fetch_open_patch_sets(
       list(properties.open_changes))
-  remaining_patch_sets, _ = (
+  remaining_patch_sets = (
       api.pupr_gerrit_interface.handle_repeatedly_failing_changes(
           open_patch_sets,
           max_cq_retry=properties.max_cq_retry,
           max_cq_retry_action=properties.max_cq_retry_action,
-      ))
+      ).value)
   api.assertions.assertEqual(properties.expected_remaining_changes_number,
                              [ps.change_id for ps in remaining_patch_sets])
 

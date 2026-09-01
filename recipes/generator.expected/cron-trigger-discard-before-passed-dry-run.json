@@ -1374,6 +1374,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "[retry-only] success"
+    "summaryMarkdown": "[retry-only] success\n\n### Retried CLs\n* [chromium:2](https://crrev.com/c/2)\n\n### Abandoned CLs\n* [chromium:1](https://crrev.com/c/1)"
   }
 ]

@@ -5104,6 +5104,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "created [chromium:1](https://crrev.com/c/1) [chromium:1](https://crrev.com/c/1)"
+    "summaryMarkdown": "success\n\n### Created CLs\n* [chromium:1](https://crrev.com/c/1)\n* [chromium:1](https://crrev.com/c/1)"
   }
 ]

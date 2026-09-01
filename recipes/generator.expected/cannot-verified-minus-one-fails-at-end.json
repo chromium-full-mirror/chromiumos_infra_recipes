@@ -1379,7 +1379,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "CL 1235 on chromium/src failed CQ repeatedly, but cannot set Verified-1 because the project does not support the Verified label."
+      "humanReason": "[retry-only] failed: CL 1235 on chromium/src failed CQ repeatedly, but cannot set Verified-1 because the project does not support the Verified label.\n\n### Errors\n* CL 1235 on chromium/src failed CQ repeatedly, but cannot set Verified-1 because the project does not support the Verified label."
     },
     "name": "$result"
   }

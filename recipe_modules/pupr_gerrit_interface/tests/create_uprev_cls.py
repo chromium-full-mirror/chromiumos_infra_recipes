@@ -18,6 +18,7 @@ from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
+from RECIPE_MODULES.chromeos.pupr.api import format_gerrit_change_link
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 from recipe_engine import post_process
 from recipe_engine import recipe_api
@@ -67,12 +68,13 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
       list(properties.open_changes))
   limit_exceeded, running_count = api.pupr_gerrit_interface.check_limit_exceeded(
       open_patch_sets, branch_policy)
-  summary = api.pupr_gerrit_interface.create_uprev_cls(
+  res = api.pupr_gerrit_interface.create_uprev_cls(
       projects, [ps.to_gerrit_change_proto() for ps in open_patch_sets],
       branch_policy, 'a topic', limit_exceeded=limit_exceeded,
       running_count=running_count)
 
-
+  summary = 'created ' + ' '.join(
+      format_gerrit_change_link(c) for c in res.created)
   return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
 
 

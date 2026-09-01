@@ -41,6 +41,7 @@ from recipe_engine import recipe_test_api
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.git import api as git_api
 from RECIPE_MODULES.chromeos.pupr import api as pupr_api
+from RECIPE_MODULES.chromeos.pupr.api import Result
 from RECIPE_MODULES.chromeos.pupr_gerrit_interface import api as pupr_gerrit_interface_api
 from RECIPE_MODULES.chromeos.pupr_local_uprev import api as pupr_local_uprev_api
 from RECIPE_MODULES.chromeos.repo import api as repo_api
@@ -81,9 +82,8 @@ PROPERTIES = generator_pb2.GeneratorProperties
 def RunSteps(
     api: recipe_api.RecipeApi,
     properties: generator_pb2.GeneratorProperties) -> result_pb2.RawResult:
-  summary = GeneratorRun(api, properties).run()
-  return result_pb2.RawResult(status=bb_common_pb2.SUCCESS,
-                              summary_markdown=summary)
+  status, summary = GeneratorRun(api, properties).run()
+  return result_pb2.RawResult(status=status, summary_markdown=summary)
 
 
 @dataclasses.dataclass
@@ -230,10 +230,6 @@ class GeneratorRun:
     assert self._modified_projects is not None
     return self._modified_projects
 
-  def make_summary(self, msg: str) -> str:
-    if self.retry_only_run:
-      return f'[retry-only] {msg}'
-    return msg
 
   @contextlib.contextmanager
   def _workspace_context(self) -> Generator[None, None, None]:
@@ -280,31 +276,36 @@ class GeneratorRun:
       open_patch_sets: list[PatchSet],
       limit_exceeded: bool,
       running_count: int,
-  ) -> str:
+  ) -> Result:
     """Execute uprev creation and upload new CLs."""
+    res = Result()
     self._modified_projects = self.create_local_uprev()
     if self._modified_projects is None:
-      return self.make_summary('no modified projects')
+      res.no_action_reason = 'no modified projects'
+      return res
     self._reapply_pupr_tracking_for_non_repo_projects(policy_info)
 
     open_changes = [ps.to_gerrit_change_proto() for ps in open_patch_sets]
-    return self.m.pupr_gerrit_interface.create_uprev_cls(
-        self._repo_projects,
-        open_changes,
-        self.policy,
-        self.topic,
-        limit_exceeded=limit_exceeded,
-        running_count=running_count,
-    )
+    res.record(
+        self.m.pupr_gerrit_interface.create_uprev_cls(
+            self._repo_projects,
+            open_changes,
+            self.policy,
+            self.topic,
+            limit_exceeded=limit_exceeded,
+            running_count=running_count,
+        ))
+    return res
 
   def _run_retry(
       self,
       policy_info: PolicyInfo,
       open_patch_sets: list[PatchSet],
       most_recent_uprev: PatchSet | None,
-  ) -> str:
+  ) -> Result:
     """Execute retry policy on existing open CLs."""
-    local_rebase_target = (
+    res = Result()
+    local_rebase_target = res.record(
         self.m.pupr_gerrit_interface.apply_retry_policy_remote(
             open_patch_sets,
             most_recent_uprev,
@@ -312,20 +313,21 @@ class GeneratorRun:
             self.retry_only_run,
         ))
     if not local_rebase_target:
-      return self.make_summary('success')
+      return res
 
     with self._workspace_context():
       self.checkout_branch(policy_info)
-      self.m.pupr_gerrit_interface.rebase_and_retry(
-          open_patch_sets,
-          local_rebase_target,
-          self.policy,
-          self.topic,
-          self.retry_only_run,
-      )
-      return self.make_summary('success')
+      res.record(
+          self.m.pupr_gerrit_interface.rebase_and_retry(
+              open_patch_sets,
+              local_rebase_target,
+              self.policy,
+              self.topic,
+              self.retry_only_run,
+          ))
+    return res
 
-  def run(self) -> str:
+  def run(self) -> tuple[int, str]:
     """Run the Generator."""
     self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
                                          self.m.src_state.gerrit_changes)
@@ -337,10 +339,13 @@ class GeneratorRun:
         pupr_gerrit_interface_api.GerritInterfaceConfig(
             rebase_before_retry=self.properties.rebase_before_retry))
 
+    result = Result()
+
     if self.retry_only_run:
       policy_info = self._select_policy_for_retry()
       if not policy_info:
-        return self.make_summary('success')
+        result.no_action_reason = 'no matching policy for retry'
+        return result.evaluate(is_retry_only=self.retry_only_run)
       policy_ref = (
           policy_info.reference.ref
           if policy_info.reference else 'refs/heads/main')
@@ -353,7 +358,8 @@ class GeneratorRun:
     self.set_policy(policy_info.policy)
     if self.policy.ignore:
       self.m.step.empty('policy set to ignore')
-      return self.make_summary('ignore by policy')
+      result.no_action_reason = 'ignore by policy'
+      return result.evaluate(is_retry_only=self.retry_only_run)
 
     branch = policy_info.target_branch
     if self.retry_only_run:
@@ -366,14 +372,14 @@ class GeneratorRun:
     most_recent_uprev = (
         self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
             self.topic, branch=branch) if open_patch_sets else None)
-    open_patch_sets = (
+    open_patch_sets = result.record(
         self.m.pupr_gerrit_interface.handle_outdated_changes(
             open_patch_sets,
             most_recent_uprev,
             self.policy,
             self.retry_only_run,
         ))
-    open_patch_sets, failing_errors = (
+    open_patch_sets = result.record(
         self.m.pupr_gerrit_interface.handle_repeatedly_failing_changes(
             open_patch_sets, self.policy.max_cq_retry,
             max_cq_retry_action=self.policy.max_cq_retry_action))
@@ -385,14 +391,9 @@ class GeneratorRun:
     self._set_local_uprev_generator_attributes(limit_exceeded)
 
     if self.retry_only_run:
-      summary = self._run_retry(policy_info, open_patch_sets, most_recent_uprev)
-      # Fail retry-only runs when handling repeatedly failing CLs encountered
-      # errors (e.g. Verified-1 cannot be set on repos without Verified label),
-      # while allowing creation runs to reflect creation status.
-      # TODO(b/543713972): Refactor with errors and success summary.
-      if failing_errors:
-        raise recipe_api.StepFailure('\n'.join(failing_errors))
-      return summary
+      result.record(
+          self._run_retry(policy_info, open_patch_sets, most_recent_uprev))
+      return result.evaluate(is_retry_only=self.retry_only_run)
 
     with self._workspace_context():
       self.checkout_branch(policy_info)
@@ -405,8 +406,10 @@ class GeneratorRun:
         with self.m.context(cwd=self.workspace_path):
           self.m.cros_sdk.create_chroot()
 
-      return self._run_creation(policy_info, open_patch_sets, limit_exceeded,
-                                running_count)
+      result.record(
+          self._run_creation(policy_info, open_patch_sets, limit_exceeded,
+                             running_count))
+      return result.evaluate(is_retry_only=self.retry_only_run)
 
   def create_local_uprev(self) -> list[repo_api.ProjectInfo] | None:
     """Create and commit uprevs on the local filesystem.

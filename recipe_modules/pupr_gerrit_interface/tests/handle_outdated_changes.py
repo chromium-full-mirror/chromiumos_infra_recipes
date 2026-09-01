@@ -100,7 +100,7 @@ def RunSteps(api: recipe_api.RecipeApi,
                    no_existing_cls_policy=FULL_RUN, existing_cls_policy=SUBMIT,
                    retry_cl_policy=RETRY_LATEST_PINNED,
                    outdated_cls_policy=properties.outdated_cls_policy),
-      properties.retry_only)
+      properties.retry_only).value
   expected_remaining = ([1234 + i for i in range(0, properties.changes)]
                         if properties.expected else [])
   remaining_changes = [ps.change_id for ps in remaining_patch_sets]

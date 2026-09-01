@@ -4,12 +4,15 @@
 
 """APIs for PUpr."""
 
+import dataclasses
 from enum import Enum
 import json
 import re
-from typing import List, Tuple
+from typing import Generic, List, Tuple, TypeVar, overload
 
 from PB.chromite.api import packages as packages_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.generator import (
     DRY_RUN,
     DRY_RUN_NOT_APPROVED,
@@ -20,6 +23,128 @@ from PB.recipes.chromeos.generator import (
 from recipe_engine import recipe_api
 
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+
+T = TypeVar('T')
+
+
+def format_gerrit_change_link(c: GerritChange) -> str:
+  """Format a GerritChange proto into a clickable markdown link."""
+  if c.host in ('chromium', 'chromium-review.googlesource.com'):
+    return f'[chromium:{c.change}](https://crrev.com/c/{c.change})'
+  if c.host in ('chrome-internal', 'chrome-internal-review.googlesource.com'):
+    return f'[chrome-internal:{c.change}](https://crrev.com/i/{c.change})'
+  return str(c.change)
+
+
+@dataclasses.dataclass(frozen=True)
+class StepResult(Generic[T]):
+  """Result of a PUpr step containing its primary return value and side-effects."""
+  value: T = None
+  created: list[GerritChange] = dataclasses.field(default_factory=list)
+  retried: list[GerritChange] = dataclasses.field(default_factory=list)
+  abandoned: list[GerritChange] = dataclasses.field(default_factory=list)
+  errors: list[str] = dataclasses.field(default_factory=list)
+  warnings: list[str] = dataclasses.field(default_factory=list)
+
+
+@dataclasses.dataclass
+class Result:
+  """Aggregator for PUpr operations and final status / markdown evaluation."""
+  created: list[GerritChange] = dataclasses.field(default_factory=list)
+  retried: list[GerritChange] = dataclasses.field(default_factory=list)
+  abandoned: list[GerritChange] = dataclasses.field(default_factory=list)
+  cleanup_errors: list[str] = dataclasses.field(default_factory=list)
+  fatal_errors: list[str] = dataclasses.field(default_factory=list)
+  warnings: list[str] = dataclasses.field(default_factory=list)
+  errors: list[str] = dataclasses.field(default_factory=list)
+  no_action_reason: str | None = None
+
+  @overload
+  def record(self, step_result: StepResult[T]) -> T:
+    ...  # pragma: no cover
+
+  @overload
+  def record(self, step_result: 'Result') -> None:
+    ...  # pragma: no cover
+
+  def record(self, step_result: StepResult[T] | 'Result') -> T | None:
+    """Record a StepResult or Result into this aggregator."""
+    if isinstance(step_result, Result):
+      self.created.extend(step_result.created)
+      self.retried.extend(step_result.retried)
+      self.abandoned.extend(step_result.abandoned)
+      self.cleanup_errors.extend(step_result.cleanup_errors)
+      self.fatal_errors.extend(step_result.fatal_errors)
+      self.warnings.extend(step_result.warnings)
+      self.errors.extend(step_result.errors)
+      if step_result.no_action_reason and not self.no_action_reason:
+        self.no_action_reason = step_result.no_action_reason
+      return None
+    self.created.extend(step_result.created)
+    self.retried.extend(step_result.retried)
+    self.abandoned.extend(step_result.abandoned)
+    self.cleanup_errors.extend(step_result.errors)
+    self.warnings.extend(step_result.warnings)
+    return step_result.value
+
+  def evaluate(self, is_retry_only: bool = False) -> tuple[int, str]:
+    """Determine the buildbucket status (SUCCESS/FAILURE) and markdown summary.
+
+    Special Rule:
+    1. If CL creation passes: cleanup errors are demoted to warnings (build is SUCCESS).
+    2. If retry-only run: cleanup errors are promoted to errors (build is FAILURE).
+    """
+    warnings = list(self.warnings)
+    errors = list(self.errors)
+
+    if self.fatal_errors:
+      errors.extend(self.fatal_errors)
+
+    if not is_retry_only and self.created:
+      # Creation succeeded, cleanup errors become warnings
+      warnings.extend(self.cleanup_errors)
+    else:
+      # In retry-only runs, or runs without successful creation, cleanup errors are errors
+      errors.extend(self.cleanup_errors)
+
+    status = bb_common_pb2.FAILURE if errors else bb_common_pb2.SUCCESS
+    prefix = '[retry-only] ' if is_retry_only else ''
+
+    if errors:
+      headline = f'{prefix}failed: {errors[0]}'
+    elif self.no_action_reason:
+      headline = f'{prefix}no action ({self.no_action_reason})'
+    else:
+      headline = f'{prefix}success'
+
+    lines = [headline]
+
+    if self.created:
+      lines.append('\n### Created CLs')
+      for c in self.created:
+        lines.append(f'* {format_gerrit_change_link(c)}')
+
+    if self.retried:
+      lines.append('\n### Retried CLs')
+      for c in self.retried:
+        lines.append(f'* {format_gerrit_change_link(c)}')
+
+    if self.abandoned:
+      lines.append('\n### Abandoned CLs')
+      for c in self.abandoned:
+        lines.append(f'* {format_gerrit_change_link(c)}')
+
+    if warnings:
+      lines.append('\n### Warnings')
+      for w in warnings:
+        lines.append(f'* {w}')
+
+    if errors:
+      lines.append('\n### Errors')
+      for e in errors:
+        lines.append(f'* {e}')
+
+    return status, '\n'.join(lines)
 
 DRY_RUN_TAG_RE = re.compile('^autogenerated:c[qv]:dry-run(:.*)?$')
 FULL_RUN_TAG_RE = re.compile('^autogenerated:c[qv]:full-run(:.*)?$')
@@ -186,6 +311,14 @@ def count_running_cls(open_patch_sets: List[PatchSet]) -> int:
 
 class PuprApi(recipe_api.RecipeApi):
   """A module for PUpr steps."""
+
+  Result = Result
+  StepResult = StepResult
+
+  @staticmethod
+  def format_gerrit_change_link(c: GerritChange) -> str:
+    """Format a GerritChange proto into a clickable markdown link."""
+    return format_gerrit_change_link(c)
 
   @staticmethod
   def extract_upstream_git_refs(

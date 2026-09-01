@@ -34,6 +34,7 @@ from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_IGNORED
+from RECIPE_MODULES.chromeos.pupr.api import StepResult
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 # HOSTS_REMOTES contains tuples (host, remote) representing our Gerrit
@@ -130,7 +131,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       most_recent_uprev: PatchSet | None,
       policy: BranchPolicy,
       retry_only_run: bool,
-  ) -> list[PatchSet]:
+  ) -> StepResult[list[PatchSet]]:
     """Abandon already-open and outdated uprev CLs.
 
     Args:
@@ -141,27 +142,29 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
 
     Returns:
-      List of open PatchSets that remain after abandoning.
+      StepResult containing remaining open patch sets and abandoned changes.
     """
     if not open_patch_sets or not most_recent_uprev:
-      return open_patch_sets
+      return StepResult(value=open_patch_sets)
     outdated_cls = self._get_outdated_cls(open_patch_sets, most_recent_uprev)
     abandoned_cls = self._abandon_outdated_cls(outdated_cls, most_recent_uprev,
                                                policy.outdated_cls_policy,
                                                retry_only_run)
     abandoned_change_ids = {cl.change_id for cl in abandoned_cls}
-    return [
+    remaining_patch_sets = [
         ps for ps in open_patch_sets if ps.change_id not in abandoned_change_ids
     ]
+    abandoned_changes = [cl.to_gerrit_change_proto() for cl in abandoned_cls]
+    return StepResult(value=remaining_patch_sets, abandoned=abandoned_changes)
 
   def handle_repeatedly_failing_changes(
       self,
       open_patch_sets: list[PatchSet],
       max_cq_retry: int,
       max_cq_retry_action: MaxCqRetryAction = MAX_CQ_RETRY_ACTION_ABANDON,
-  ) -> tuple[list[PatchSet], list[str]]:
+  ) -> StepResult[list[PatchSet]]:
     """Abandon or set Verified-1 on unpinned uprev CLs that have failed too many
-    times and return the remaining open CLs and any error messages.
+    times and return the remaining open CLs, abandoned CLs, and any error messages.
 
     Args:
       open_patch_sets: A list of currently open, relevant PUpr PatchSets.
@@ -173,13 +176,15 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         Defaults to MAX_CQ_RETRY_ACTION_ABANDON.
 
     Returns:
-      A tuple of (remaining_open_patch_sets, error_messages).
+      StepResult containing remaining open patch sets, abandoned changes,
+      and errors.
     """
     # Do not abandon or set Verified-1 on any CL.
     if max_cq_retry < 0 or not open_patch_sets:
-      return open_patch_sets, []
+      return StepResult(value=open_patch_sets)
 
     errors: list[str] = []
+    abandoned_changes: list[GerritChange] = []
     with self.m.step.nest('get CLs repeatedly failing CQ') as presentation:
       failing_patchsets = []
       remaining_open_cls = []
@@ -247,8 +252,10 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
             ).format(max_cq_retry)
             self.m.gerrit.abandon_change(ps.to_gerrit_change_proto(),
                                          message=comment_message)
+            abandoned_changes.append(ps.to_gerrit_change_proto())
 
-    return remaining_open_cls, errors
+    return StepResult(value=remaining_open_cls, abandoned=abandoned_changes,
+                      errors=errors)
 
   def find_most_recently_merged_uprev(self, topic: str,
                                       branch: str = 'main') -> PatchSet | None:
@@ -398,7 +405,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       topic: str,
       limit_exceeded: bool = False,
       running_count: int = 0,
-  ) -> str:
+  ) -> StepResult[list[GerritChange]]:
     """Generate and upload CLs for the uprev commit in each project.
 
     Args:
@@ -410,7 +417,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       running_count: Number of currently running CQ CLs.
 
     Returns:
-      Human-readable summary of the operation.
+      StepResult with created GerritChanges.
     """
     send_to_cq_policy = (
         policy.existing_cls_policy
@@ -539,14 +546,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           with self.m.step.nest('submit CL'):
             self.m.gerrit.submit_change(change)
 
-      def gerrit_url(c: GerritChange) -> str:
-        if c.host == 'chromium-review.googlesource.com':
-          return f'[chromium:{c.change}](https://crrev.com/c/{c.change})'
-        if c.host == 'chrome-internal-review.googlesource.com':
-          return f'[chrome-internal:{c.change}](https://crrev.com/i/{c.change})'
-        return str(c.change)
-
-      return 'created ' + ' '.join(gerrit_url(c) for c in changes)
+      return StepResult(value=changes, created=changes)
 
   def upload_new_patch_set(self, gerrit_patch_set: PatchSet,
                            title: str | None = None,
@@ -602,7 +602,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       most_recent_uprev: PatchSet | None,
       policy: BranchPolicy,
       retry_only_run: bool,
-  ) -> LocalRebaseTarget | None:
+  ) -> StepResult[LocalRebaseTarget | None]:
     """Retry any open uprev CLs based on the retry policy via Gerrit REST.
 
     Args:
@@ -613,22 +613,22 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
 
     Returns:
-      A LocalRebaseTarget if on-disk commit regeneration is required,
-      or None if the retry was completed remotely (or no action was needed).
+      StepResult containing local_rebase_target (as value), retried changes,
+      and abandoned changes.
     """
     if policy.retry_cl_policy == NO_RETRY:
-      return None
+      return StepResult(value=None)
     with self.m.step.nest('apply retry policy {}'.format(
         RetryClPolicy.Name(policy.retry_cl_policy))) as presentation:
       if not open_patch_sets:
-        return None
+        return StepResult(value=None)
       if most_recent_uprev:
         open_patch_sets = [
             ps for ps in open_patch_sets
             if ps.created > self._get_outdated_timestamp(most_recent_uprev)
         ]
       if self.m.pupr.retries_frozen(open_patch_sets):
-        return None
+        return StepResult(value=None)
 
       patch_set_to_retry, cq_label, message, cl_passed_dry_run, running = \
           self.m.pupr.identify_retry(policy.retry_cl_policy,
@@ -637,7 +637,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       presentation.step_text = message
 
       if not patch_set_to_retry:
-        return None
+        return StepResult(value=None)
 
       if policy.max_concurrent_cq_runs > 0:
         limit_exceeded, running_count = self.m.pupr.check_concurrent_cq_limit(
@@ -647,7 +647,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
               f'{message} (Retry skipped: concurrent CQ run limit of '
               f'{policy.max_concurrent_cq_runs} reached, currently running: {running_count})'
           )
-          return None
+          return StepResult(value=None)
 
       if self.config.rebase_before_retry:
         changes_to_retry = [
@@ -682,31 +682,38 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         elif not gerrit_mergeable or patch_set_to_retry.work_in_progress:
           # For WIP CLs (or unmergeable CLs), signal that a local on-disk rebase
           # is required.
-          return LocalRebaseTarget(
-              patch_set=patch_set_to_retry,
-              cq_label=cq_label,
-              cl_passed_dry_run=cl_passed_dry_run,
-          )
+          return StepResult(
+              value=LocalRebaseTarget(
+                  patch_set=patch_set_to_retry,
+                  cq_label=cq_label,
+                  cl_passed_dry_run=cl_passed_dry_run,
+              ))
 
       if running:
         # Already running for CQ. No need to retry.
-        return None
+        return StepResult(value=None)
 
       if patch_set_to_retry.work_in_progress and not self.config.rebase_before_retry:
         self.m.gerrit.set_change_ready_for_review_remote(
             patch_set_to_retry.to_gerrit_change_proto())
 
       self.retry_cl(patch_set_to_retry, cq_label)
+      retried_changes = [patch_set_to_retry.to_gerrit_change_proto()]
+      abandoned_changes = []
 
       if cl_passed_dry_run:
         cls_to_abandon = [
             cl for cl in open_patch_sets
             if cl.created < patch_set_to_retry.created
         ]
-        self._abandon_outdated_cls(
+        abandoned_cls = self._abandon_outdated_cls(
             cls_to_abandon, patch_set_to_retry, policy.outdated_cls_policy,
             retry_only_run, step_name='abandon CLs before passed CQ+1 CL')
-      return None
+        abandoned_changes = [
+            cl.to_gerrit_change_proto() for cl in abandoned_cls
+        ]
+      return StepResult(value=None, retried=retried_changes,
+                        abandoned=abandoned_changes)
 
   def rebase_and_retry(
       self,
@@ -715,8 +722,12 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       policy: BranchPolicy,
       topic: str,
       retry_only_run: bool,
-  ) -> None:
-    """Execute local on-disk rebase, upload the new patchset, and retry CQ."""
+  ) -> StepResult[None]:
+    """Execute local on-disk rebase, upload the new patchset, and retry CQ.
+
+    Returns:
+      StepResult containing retried changes and abandoned changes.
+    """
     open_changes_proto = [ps.to_gerrit_change_proto() for ps in open_patch_sets]
     changes_to_retry = [
         change for change in open_changes_proto
@@ -733,14 +744,20 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
                               'CQ will need to rerun everything.'))
 
     self.retry_cl(target.patch_set, target.cq_label)
+    retried_changes = [target.patch_set.to_gerrit_change_proto()]
+    abandoned_changes = []
 
     if target.cl_passed_dry_run:
       cls_to_abandon = [
           cl for cl in open_patch_sets if cl.created < target.patch_set.created
       ]
-      self._abandon_outdated_cls(cls_to_abandon, target.patch_set,
-                                 policy.outdated_cls_policy, retry_only_run,
-                                 step_name='abandon CLs before passed CQ+1 CL')
+      abandoned_cls = self._abandon_outdated_cls(
+          cls_to_abandon, target.patch_set, policy.outdated_cls_policy,
+          retry_only_run, step_name='abandon CLs before passed CQ+1 CL')
+      abandoned_changes = [cl.to_gerrit_change_proto() for cl in abandoned_cls]
+
+    return StepResult(value=None, retried=retried_changes,
+                      abandoned=abandoned_changes)
 
   def _get_outdated_timestamp(self, most_recent_uprev: PatchSet) -> str:
     """Determine the cutoff time at which CLs become outdated.

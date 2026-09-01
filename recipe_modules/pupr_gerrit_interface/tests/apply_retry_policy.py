@@ -96,7 +96,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties: ApplyRetryPolicyProperties):
       outdated_cls_policy=properties.outdated_cls_policy,
       max_concurrent_cq_runs=properties.max_concurrent_cq_runs)
   patch_set_to_rebase = api.pupr_gerrit_interface.apply_retry_policy_remote(
-      open_patch_sets, mrm, policy, properties.retry_only)
+      open_patch_sets, mrm, policy, properties.retry_only).value
   if patch_set_to_rebase:
     api.pupr_gerrit_interface.rebase_and_retry(open_patch_sets,
                                                patch_set_to_rebase, policy,
