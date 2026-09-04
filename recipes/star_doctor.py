@@ -263,6 +263,7 @@ def RunSteps(api: RecipeApi, properties: StarDoctorProperties) -> None:
     irrelevant_files = set()
     irrelevant_files.add(TIMELINE_FILENAME)
     _upload_all_changes(api, properties, irrelevant_files)
+    _record_abandoned_cl_counts(api)
 
 
 def _clone_repos(api: RecipeApi) -> None:
@@ -434,7 +435,90 @@ def _upload_all_changes(api: RecipeApi, properties: StarDoctorProperties,
         project.upload_changes(api, irrelevant_files)
 
 
+def _get_abandoned_cls_count(api: RecipeApi,
+                             project: RepoProject) -> int | None:
+  """Find the number of StarDoctor CLs abandoned since the last merged CL.
+
+  Returns:
+    Count of abandoned StarDoctor CLs since the last merged CL.
+  """
+  last_merged_cl = api.gerrit.query_change_infos(
+      project.review_host,
+      [
+          ('project', project.name),
+          ('owner', CI_PROD_SERVICE_ACCOUNT),
+          ('topic', STARDOCTOR_TOPIC),
+          ('hashtag', CONFIG_UPDATE_HASHTAG),
+          ('status', 'merged'),
+      ],
+      limit=1,
+  )
+
+  if not last_merged_cl or not last_merged_cl[0].get('created'):
+    return None
+
+  last_merged_created = last_merged_cl[0]['created']
+
+  abandoned_cls = api.gerrit.query_change_infos(
+      project.review_host,
+      [
+          ('project', project.name),
+          ('owner', CI_PROD_SERVICE_ACCOUNT),
+          ('topic', STARDOCTOR_TOPIC),
+          ('hashtag', CONFIG_UPDATE_HASHTAG),
+          ('status', 'abandoned'),
+          # Queries for changes which were last modified after the last merged
+          # StarDoctor CL was created.
+          ('after', f'"{last_merged_created}"'),
+      ],
+  )
+
+  abandoned_cls = [
+      chg for chg in abandoned_cls
+      # Filter out any CLs that were created before the last merged CL.
+      if chg.get('created', '') > last_merged_created
+  ]
+  return len(abandoned_cls)
+
+
+def _record_abandoned_cl_counts(api: RecipeApi) -> None:
+  """Output the number of abandoned StarDoctor CLs since the last merged CL.
+
+  The output property is used to alert when CLs are not being merged to prevent
+  configs from getting stale.
+  """
+  abandoned_counts = {}
+  with api.step.nest('track abandoned CLs since last merge') as presentation:
+    for project in (INFRA_CONFIG, CONFIG_INTERNAL):
+      with api.step.nest(project.name):
+        count = _get_abandoned_cls_count(api, project)
+        abandoned_counts[project.name] = count
+    presentation.properties['abandoned_cl_counts'] = abandoned_counts
+
+
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
+
+  def _set_abandoned_cl_count_responses() -> StepTestData:
+    """Set test data for tracking abandoned CLs since last merge queries."""
+    test_datas = []
+    for project in (INFRA_CONFIG, CONFIG_INTERNAL):
+      # 1. get_abandoned_cls_count: query last merged CL
+      test_datas.append(
+          api.gerrit.set_query_changes_response(
+              '.'.join(['track abandoned CLs since last merge', project.name]),
+              [{
+                  '_number': 12340,
+                  'project': project.name,
+                  'status': 'MERGED',
+                  'created': '2026-09-02 20:00:00.000000000',
+              }], project.review_host, iteration=1))
+
+      # 2. get_abandoned_cls_count: query abandoned CLs since last merged CL
+      test_datas.append(
+          api.gerrit.set_query_changes_response(
+              '.'.join(['track abandoned CLs since last merge', project.name]),
+              [], project.review_host, iteration=2))
+    return sum(test_datas[1:], test_datas[0])
 
   def _set_gerrit_query_changes_responses(
       projects_with_pending_changes: Optional[List[RepoProject]] = None
@@ -452,30 +536,43 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       projects_with_pending_changes = []
     test_datas = []
     for project in (INFRA_CONFIG, CONFIG_INTERNAL):
-      for iteration in (1, 2):
-        changes_json = [{
-            '_number': 12345,
-            'project': project.name,
-            'labels': {
-                'Commit-Queue': {},
-            }
-        }]
-        if project in projects_with_pending_changes:  # pragma: no cover
-          changes_json[0]['labels']['Commit-Queue'] = {
-              'approved': {
-                  '_account_id': 1337
-              }
+      # 1. _abandon_stale_changes
+      test_datas.append(
+          api.gerrit.set_query_changes_response(
+              '.'.join(['commit changes', project.name]), [{
+                  '_number': 12345,
+                  'project': project.name,
+                  'labels': {
+                      'Commit-Queue': {},
+                  }
+              }], project.review_host, iteration=1))
+
+      # 2. _get_pending_stardoctor_cls
+      pending_changes_json = [{
+          '_number': 12345,
+          'project': project.name,
+          'labels': {
+              'Commit-Queue': {},
           }
-        test_datas.append(
-            api.gerrit.set_query_changes_response(
-                '.'.join(['commit changes', project.name]), changes_json,
-                project.review_host, iteration=iteration))
-    return sum(test_datas[1:], test_datas[0])
+      }]
+      if project in projects_with_pending_changes:  # pragma: no cover
+        pending_changes_json[0]['labels']['Commit-Queue'] = {
+            'approved': {
+                '_account_id': 1337
+            }
+        }
+      test_datas.append(
+          api.gerrit.set_query_changes_response(
+              '.'.join(['commit changes', project.name]), pending_changes_json,
+              project.review_host, iteration=2))
+
+    return sum(test_datas, _set_abandoned_cl_count_responses())
 
   yield api.test(
       'dont-commit',
       api.time.seed(1613694623.0),
       api.properties(commit_changes=False),
+      _set_abandoned_cl_count_responses(),
   )
 
   yield api.test(
@@ -536,4 +633,49 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                      'generate binary config.deferring exception until later'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'abandoned-cls-count',
+      api.time.seed(1613694623.0),
+      api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
+                     branches=['R9000']),
+      _set_gerrit_query_changes_responses(),
+      api.gerrit.set_query_changes_response(
+          'track abandoned CLs since last merge.chromeos/infra/config', [
+              {
+                  '_number': 12342,
+                  'project': INFRA_CONFIG.name,
+                  'status': 'ABANDONED',
+                  'created': '2026-09-02 21:00:00.000000000',
+              },
+              {
+                  '_number': 12341,
+                  'project': INFRA_CONFIG.name,
+                  'status': 'ABANDONED',
+                  'created': '2026-09-02 20:30:00.000000000',
+              },
+          ], INFRA_CONFIG.review_host, iteration=2),
+      api.post_process(post_process.PropertyEquals, 'abandoned_cl_counts', {
+          'chromeos/infra/config': 2,
+          'chromeos/config-internal': 0,
+      }),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'abandoned-cls-count-no-merged-cl',
+      api.time.seed(1613694623.0),
+      api.properties(commit_changes=False),
+      api.gerrit.set_query_changes_response(
+          'track abandoned CLs since last merge.chromeos/infra/config', [],
+          INFRA_CONFIG.review_host, iteration=1),
+      api.gerrit.set_query_changes_response(
+          'track abandoned CLs since last merge.chromeos/config-internal', [],
+          CONFIG_INTERNAL.review_host, iteration=1),
+      api.post_process(post_process.PropertyEquals, 'abandoned_cl_counts', {
+          'chromeos/infra/config': None,
+          'chromeos/config-internal': None,
+      }),
+      api.post_process(post_process.DropExpectation),
   )

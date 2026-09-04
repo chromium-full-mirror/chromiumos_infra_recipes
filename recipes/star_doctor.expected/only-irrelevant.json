@@ -3131,6 +3131,209 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "track abandoned CLs since last merge",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@abandoned_cl_counts@{\"chromeos/config-internal\": 0, \"chromeos/infra/config\": 0}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "track abandoned CLs since last merge.chromeos/infra/config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "track abandoned CLs since last merge.chromeos/infra/config.query https://chrome-internal-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "--limit",
+      "1",
+      "-p",
+      "project=chromeos/infra/config",
+      "-p",
+      "owner=chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com",
+      "-p",
+      "topic=StarDoctor",
+      "-p",
+      "hashtag=config-update",
+      "-p",
+      "status=merged",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "track abandoned CLs since last merge.chromeos/infra/config.query https://chrome-internal-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": 12340,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2026-09-02 20:00:00.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromeos/infra/config\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"MERGED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "track abandoned CLs since last merge.chromeos/infra/config.query https://chrome-internal-review.googlesource.com (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 0 matching CLs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "project=chromeos/infra/config",
+      "-p",
+      "owner=chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com",
+      "-p",
+      "topic=StarDoctor",
+      "-p",
+      "hashtag=config-update",
+      "-p",
+      "status=abandoned",
+      "-p",
+      "after=\"2026-09-02 20:00:00.000000000\"",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "track abandoned CLs since last merge.chromeos/infra/config.query https://chrome-internal-review.googlesource.com (2).gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "track abandoned CLs since last merge.chromeos/config-internal",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "track abandoned CLs since last merge.chromeos/config-internal.query https://chrome-internal-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "--limit",
+      "1",
+      "-p",
+      "project=chromeos/config-internal",
+      "-p",
+      "owner=chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com",
+      "-p",
+      "topic=StarDoctor",
+      "-p",
+      "hashtag=config-update",
+      "-p",
+      "status=merged",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "track abandoned CLs since last merge.chromeos/config-internal.query https://chrome-internal-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": 12340,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2026-09-02 20:00:00.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromeos/config-internal\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"MERGED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "track abandoned CLs since last merge.chromeos/config-internal.query https://chrome-internal-review.googlesource.com (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 0 matching CLs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--host",
+      "https://chrome-internal-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "project=chromeos/config-internal",
+      "-p",
+      "owner=chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com",
+      "-p",
+      "topic=StarDoctor",
+      "-p",
+      "hashtag=config-update",
+      "-p",
+      "status=abandoned",
+      "-p",
+      "after=\"2026-09-02 20:00:00.000000000\"",
+      "--verbose"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "track abandoned CLs since last merge.chromeos/config-internal.query https://chrome-internal-review.googlesource.com (2).gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
