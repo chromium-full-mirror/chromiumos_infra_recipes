@@ -8,4 +8,8 @@ package recipes.chromeos.qualbot;
 
 import "chromite/api/qualbot.proto";
 
-message QualbotProperties { chromite.api.RunQualbotRequest request = 1; };
+message QualbotProperties {
+  chromite.api.RunQualbotRequest request = 1;
+  // The git ref of fw_qual_automation to check out before running Qualbot.
+  string target_ref = 2;
+}
