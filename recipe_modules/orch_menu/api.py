@@ -314,6 +314,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
         elif self._properties.bump_version:
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
+            # Uprev packages so packages are not stale.
+            if not self.m.cros_source.uprev_and_push_packages():
+              raise StepFailure('Failed to uprev all changes')
             bump_version = self._properties.bump_version and not is_staging
             self.m.cros_version.bump_version(dry_run=not bump_version)
             self.m.cros_release.create_buildspec(

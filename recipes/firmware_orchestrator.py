@@ -4,6 +4,7 @@
 
 """Recipe that schedules child builders and watches for failures."""
 
+import re
 from typing import Generator
 
 from PB.chromiumos.builder_config import BuilderConfigs
@@ -11,13 +12,18 @@ from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.firmware_orchestrator import FirmwareOrchestratorProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
+
+# Minimum branch build version where firmware orchestrator is supported.
+_MIN_FIRMWARE_ORCHESTRATOR_BUILD = 15217
 
 DEPS = [
     'bot_cost',
     'cros_infra_config',
     'cros_source',
+    'cros_version',
     'easy',
     'gerrit',
     'git',
@@ -63,6 +69,15 @@ def RunSteps(
     with api.step.nest('launch child') as pres:
       pres.step_text = 'Builder {} is not configured, attempting to launch dynamic children'.format(
           named_builder)
+      if api.orch_menu.bump_version:
+        branch_match = re.match(
+            r'firmware-(?:.*-)?(\d+)(?:\.[0-9]+)*\.B(?:-.+)?$', branch)
+        if branch_match and int(
+            branch_match.group(1)) < _MIN_FIRMWARE_ORCHESTRATOR_BUILD:
+          raise StepFailure(
+              f'Firmware orchestrator is only supported on branches >= '
+              f'{_MIN_FIRMWARE_ORCHESTRATOR_BUILD} (firmware-nissa and newer); '
+              f'current branch is {branch}.')
     with api.orch_menu.setup_orchestrator() as config:
       if config:
         api.easy.set_properties_step(child_verifier='dynamic')
@@ -122,7 +137,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     dynamic_child.id.name = 'dynamic-child'
 
     # Add the named child config only if not 'no-child' test
-    if name not in ['no-child', 'bump-version', 'follow-on-builders']:
+    if name not in [
+        'no-child', 'bump-version', 'older-branch', 'follow-on-builders'
+    ]:
       builder = builder_config_data.builder_configs.add()
       builder.id.name = child_builder_name
       # Add bucket to ensure config is valid/found
@@ -184,6 +201,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield test(
       'bump-version', api.post_check(post_process.MustRun,
                                      'set up orchestrator'),
+      api.cros_version.workspace_version('R100-55556.0.0'),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.bump version'), expected_properties={
                          'manifest_branch': f'{test_base}6.B',
@@ -192,6 +210,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       input_properties={'$chromeos/orch_menu': {
           'bump_version': True
       }})
+
+  yield test('older-branch',
+             api.cros_version.workspace_version('R99-14505.0.0'),
+             status='FAILURE', branch='firmware-brya-14505.B',
+             input_properties={'$chromeos/orch_menu': {
+                 'bump_version': True
+             }})
 
   yield test(
       'follow-on-builders',

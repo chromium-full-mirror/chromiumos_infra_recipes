@@ -1,0 +1,128 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set manifest_branch",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"firmware-brya-14505.B\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "launch child",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Builder firmware-brya-14505-cq is not configured, attempting to launch dynamic children@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set build cost",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set build cost.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output,status\"}, \"predicate\": {\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output,status\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"key\": \"parent_buildbucket_id\",@@@",
+      "@@@STEP_LOG_LINE@request@              \"value\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@rpc-explorer@https://cr-buildbucket.appspot.com/rpcexplorer/services/buildbucket.v2.Builds/SearchBuilds?request=%7B%22predicate%22%3A+%7B%22builder%22%3A+%7B%22project%22%3A+%22chromeos%22%7D%2C+%22tags%22%3A+%5B%7B%22key%22%3A+%22parent_buildbucket_id%22%2C+%22value%22%3A+%228945511751514863184%22%7D%5D%7D%2C+%22mask%22%3A+%7B%22fields%22%3A+%22builder%2Cid%2Coutput%2Cstatus%22%7D%7D@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "Firmware orchestrator is only supported on branches >= 15217 (firmware-nissa and newer); current branch is firmware-brya-14505.B."
+    },
+    "name": "$result"
+  }
+]
