@@ -344,7 +344,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                   Flow(
                       stage_expressions=[
                           FlowStageExpression(
-                              condition='{self} is -label:Commit-Queue',
+                              condition='{self} is label:Commit-Queue=0',
                               action=FlowAction(
                                   name='add-reviewer',
                                   parameters=['cros-ec-champion@google.com'],

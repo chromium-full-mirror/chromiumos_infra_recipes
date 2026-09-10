@@ -25,7 +25,7 @@ def RunSteps(api: recipe_api.RecipeApi):
   policy = BranchPolicy(
       gerrit_automations=[
           PuprGerritAutomation(
-              conditions=['is:wip', '-label:Commit-Queue'],
+              conditions=['is:wip', 'label:Commit-Queue=0'],
               actions=[
                   PuprGerritAutomationAction(
                       name='add-reviewer',
@@ -80,7 +80,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
       'basic',
       api.gerrit.set_query_changes_response(
-          'apply automations.evaluate conditions: is:wip -label:Commit-Queue',
+          'apply automations.evaluate conditions: is:wip label:Commit-Queue=0',
           [change_info],
           'https://chromium-review.googlesource.com',
       ),
@@ -95,7 +95,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
       'already-applied',
       api.gerrit.set_query_changes_response(
-          'apply automations.evaluate conditions: is:wip -label:Commit-Queue',
+          'apply automations.evaluate conditions: is:wip label:Commit-Queue=0',
           [change_info_with_reviewers],
           'https://chromium-review.googlesource.com',
       ),

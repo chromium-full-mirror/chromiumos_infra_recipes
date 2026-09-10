@@ -1131,7 +1131,7 @@ def GenTests(
                       gerrit_pb2.Flow(
                           stage_expressions=[
                               gerrit_pb2.FlowStageExpression(
-                                  condition='{self} is -label:Commit-Queue',
+                                  condition='{self} is label:Commit-Queue=0',
                                   action=gerrit_pb2.FlowAction(
                                       name='add-reviewer',
                                       parameters=[

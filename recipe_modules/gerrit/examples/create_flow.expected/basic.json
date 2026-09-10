@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "create flow on CL 123",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@expressions@[{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is -label:Commit-Queue\"}, {\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"fqj@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is is:abandoned\"}, {\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"fqj@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is status:merged\"}]@@@",
+      "@@@STEP_LOG_LINE@expressions@[{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is label:Commit-Queue=0\"}, {\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"fqj@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is is:abandoned\"}, {\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"fqj@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is status:merged\"}]@@@",
       "@@@STEP_LOG_END@expressions@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/project/+/123@@@"
     ]
@@ -57,7 +57,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"stage_expressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is -label:Commit-Queue\"}, {\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"fqj@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is is:abandoned\"}, {\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"fqj@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is status:merged\"}]}",
+      "{\"stage_expressions\": [{\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"cros-ec-champion@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is label:Commit-Queue=0\"}, {\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"fqj@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is is:abandoned\"}, {\"action\": {\"name\": \"add-reviewer\", \"parameters\": [\"fqj@google.com\"]}, \"condition\": \"https://chromium-review.googlesource.com/c/project/+/123 is status:merged\"}]}",
       "https://chromium-review.googlesource.com/changes/123/flows"
     ],
     "name": "create flow on CL 123.curl https://chromium-review.googlesource.com/changes/123/flows",

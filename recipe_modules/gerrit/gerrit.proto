@@ -23,7 +23,7 @@ message FlowAction {
 // https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#flow-expression-info
 message FlowStageExpression {
   // Condition for this stage expression, e.g. "{self} is is:abandoned",
-  // "-label:Commit-Queue".
+  // "{self} is label:Commit-Queue=0".
   string condition = 1;
 
   // Action to execute when condition is satisfied.

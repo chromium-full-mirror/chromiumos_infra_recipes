@@ -230,8 +230,8 @@ message PuprGerritAutomationAction {
 
 // Automation rule to execute on matching open Gerrit changes.
 message PuprGerritAutomation {
-  // Gerrit search query conditions to match open CLs, e.g. ["is:wip",
-  // "-label:Commit-Queue", "-label:Verified"].
+  // Gerrit search query conditions to match open CLs, e.g. ["-is:wip",
+  // "label:Commit-Queue=0", "-label:Verified"].
   repeated string conditions = 1;
 
   // Actions to execute on matching CLs.
