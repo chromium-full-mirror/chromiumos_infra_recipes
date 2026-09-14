@@ -43,6 +43,9 @@ _RE_DISK_EXISTS = re.compile('The resource .+ already exists')
 RECOVERY_IMAGE_TEMPLATE = 'initial-{}-source-snapshot'
 RECOVERY_IMAGE_FALLBACK_TEMPLATE = '{}-fallback'
 
+ATTACH_DISK_TIMEOUT_SECONDS = 180
+SET_DISK_AUTODELETE_TIMEOUT_SECONDS = 180
+
 
 class GcloudApi(recipe_api.RecipeApi):
   """A module to interact with Google Cloud."""
@@ -354,8 +357,39 @@ class GcloudApi(recipe_api.RecipeApi):
 
     return disk_device_map.get(disk_name, None)
 
+  def disk_attached_in_gce(self, instance, disk_name, zone):
+    """Check whether a disk is attached to an instance according to GCE.
+
+    Args:
+      instance (str): GCE instance name.
+      disk_name (str): Device name of the disk to check.
+      zone (str): GCE zone of the instance.
+
+    Returns:
+      bool: True if GCE reports the disk as attached to the instance.
+    """
+    describe_cmd = [
+        'gcloud',
+        'compute',
+        'instances',
+        'describe',
+        instance,
+        '--zone={}'.format(zone),
+        '--format=json(disks)',
+    ]
+    try:
+      output = self.m.easy.stdout_json_step(
+          'check GCE attached disks', describe_cmd,
+          test_stdout={'disks': [{
+              'deviceName': disk_name
+          }]}, infra_step=True, timeout=60)
+      disks = output.get('disks', []) if isinstance(output, dict) else []
+      return any(d.get('deviceName') == disk_name for d in disks)
+    except (recipe_api.StepFailure, recipe_api.InfraFailure):
+      return False
+
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
-  def attach_disk(self, name, instance, disk, zone):
+  def attach_disk(self, name, instance, disk, zone, force_attach=False):
     """Attach a disk to a GCE instance.
 
     As a disk is attached, the disk is then added to the stack
@@ -366,16 +400,23 @@ class GcloudApi(recipe_api.RecipeApi):
       instance (str): GCE instance on which disk will be attached.
       disk (str): Google Cloud disk name.
       zone (str): GCE zone to create instance (e.g. us-central1-b).
+      force_attach (bool): If True, attach without checking local attachment.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      # To ensure that the bot doesn't end in a weird state, detach
-      # the disk before attaching since it should already be mounted.
-      if not self.disk_attached(disk_name=name):
+      need_attach = True
+      if not force_attach and self.disk_attached(disk_name=name):
+        # /dev/disk/by-id node exists locally. Verify that the GCE control plane
+        # also considers the disk attached to this instance, to guard against
+        # stale/ghost SCSI device nodes from previous builds or aborted attaches.
+        need_attach = not self.disk_attached_in_gce(instance=instance,
+                                                    disk_name=name, zone=zone)
+
+      if need_attach:
         self.m.step('attach disk', [
             'gcloud', 'compute', 'instances', 'attach-disk', instance,
             '--disk={}'.format(disk), '--device-name={}'.format(name),
             '--zone={}'.format(zone), '--quiet'
-        ], infra_step=True)
+        ], infra_step=True, timeout=ATTACH_DISK_TIMEOUT_SECONDS)
         self._dev_ref = self.lookup_device_id(disk_name=name)
         # The gcloud command will fail silently if it does not attach
         # a disk. However, that disk will not appear in the device map.
@@ -384,6 +425,7 @@ class GcloudApi(recipe_api.RecipeApi):
         if not self._dev_ref:
           raise recipe_api.StepFailure(
               'gcloud sdk failed to attach disk {}'.format(name))
+
       self._attached_disks[name] = '/dev/{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
 
@@ -577,7 +619,7 @@ class GcloudApi(recipe_api.RecipeApi):
                   uuid, mount_path)), infra_step=True)
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
-  def set_disk_autodelete(self, instance, name, zone):
+  def set_disk_autodelete(self, instance, name, zone, disk=None):
     """Set a disk to autodelete when a GCE instance is deleted.
 
     GCE disks are not default to delete when the instance is
@@ -588,18 +630,43 @@ class GcloudApi(recipe_api.RecipeApi):
       instance (str): GCE instance on which disk is attached.
       name (str): Google Cloud disk name.
       zone (str): GCE zone to create instance (e.g. us-central1-b).
+      disk (str): Optional persistent disk name to re-attach if unattached.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('set disk to autodelete', [
-          'gcloud',
-          'compute',
-          'instances',
-          'set-disk-auto-delete',
-          instance,
-          '--auto-delete',
-          '--device-name={}'.format(name),
-          '--zone={}'.format(zone),
-      ], infra_step=True)
+      try:
+        self.m.step('set disk to autodelete', [
+            'gcloud',
+            'compute',
+            'instances',
+            'set-disk-auto-delete',
+            instance,
+            '--auto-delete',
+            '--device-name={}'.format(name),
+            '--zone={}'.format(zone),
+        ], infra_step=True, timeout=SET_DISK_AUTODELETE_TIMEOUT_SECONDS)
+      except (recipe_api.StepFailure, recipe_api.InfraFailure) as e:
+        # If GCE reports that the disk is not attached, attempt to reconcile by
+        # re-attaching it and re-trying.
+        if disk and not self.disk_attached_in_gce(instance, name, zone):
+          if self.m.step.active_result:
+            self.m.step.active_result.presentation.status = self.m.step.WARNING
+          with self.m.step.nest('reconcile unattached disk in GCE') as pres:
+            pres.step_text = 'Disk {} not attached in GCE; re-attaching'.format(
+                name)
+            self.attach_disk(name=name, instance=instance, disk=disk, zone=zone,
+                             force_attach=True)
+          self.m.step('set disk to autodelete (reconciled)', [
+              'gcloud',
+              'compute',
+              'instances',
+              'set-disk-auto-delete',
+              instance,
+              '--auto-delete',
+              '--device-name={}'.format(name),
+              '--zone={}'.format(zone),
+          ], infra_step=True, timeout=SET_DISK_AUTODELETE_TIMEOUT_SECONDS)
+        else:
+          raise e
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def image_exists(self, image):
@@ -1079,8 +1146,15 @@ class GcloudApi(recipe_api.RecipeApi):
     self.m.file.write_text(
         'write overlayfs branch file',
         self.snapshot_version_path / self._overlay_branch_file, self._branch)
-    self.set_disk_autodelete(instance=self.infra_host, name=self._short_name,
-                             zone=self._zone)
+    try:
+      self.set_disk_autodelete(instance=self.infra_host, name=self._short_name,
+                               zone=self._zone, disk=self._disk)
+    except (recipe_api.StepFailure, recipe_api.InfraFailure) as e:
+      with self.m.step.nest('failed to set auto-delete') as pres:
+        pres.status = self.m.step.WARNING
+        pres.step_text = ('Failed to set auto-delete on disk {}: {}. '
+                          'Continuing since disk is mounted and usable.'.format(
+                              self._short_name, e))
 
   def _reset_overlayfs_if_needed(self, cache_name):
     """Reset overlayfs to named cache.
@@ -1182,8 +1256,9 @@ class GcloudApi(recipe_api.RecipeApi):
             cache_name, disk_type, recipe_mount,
             recovery_snapshot=recovery_snapshot)
 
-        self.attach_disk(name=self._short_name, instance=self.infra_host,
-                         disk=self._disk, zone=self._zone)
+        if self.cache_action is not SourceCacheAction.DONT_MOUNT_ANY_CACHE:
+          self.attach_disk(name=self._short_name, instance=self.infra_host,
+                           disk=self._disk, zone=self._zone)
 
       if not self._cache_mounted or self._dont_reuse_mounted_cache or mount_existing:
         self.mount_disk(
@@ -1235,7 +1310,10 @@ class GcloudApi(recipe_api.RecipeApi):
     Each attached disk is added to the stack to be detached by
     the context handler.
     """
-    self._cleanup_gce_stack[-1].append((disk, instance, zone))
+    item = (disk, instance, zone)
+    if any(item in frame for frame in self._cleanup_gce_stack):
+      return
+    self._cleanup_gce_stack[-1].append(item)
 
   def _remove_cleanup_attached_disk(self, disk, instance, zone):
     """Track detach disk for cleanup_attached_disks.

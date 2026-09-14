@@ -13,6 +13,7 @@ from recipe_engine.recipe_api import StepFailure
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -289,4 +290,78 @@ def GenTests(api):
           ['--type=hyperdisk-balanced'],
       ),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'verify-gce-attaches-when-ghost-node',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.step_data(
+          'source cache.check GCE attached disks',
+          stdout=api.json.output({'disks': []}),
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.check GCE attached disks',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.attach disk',
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'gce-describe-fails-assumes-unattached',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.step_data(
+          'source cache.check GCE attached disks',
+          retcode=1,
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.check GCE attached disks',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.attach disk',
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'autodelete-reconciles-unattached-disk',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.step_data('source cache.set disk to autodelete', retcode=1),
+      api.step_data(
+          'source cache.check GCE attached disks (2)',
+          stdout=api.json.output({'disks': []}),
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.reconcile unattached disk in GCE',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.reconcile unattached disk in GCE.attach disk',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.set disk to autodelete (reconciled)',
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'autodelete-failure-degrades-to-warning',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.step_data('source cache.set disk to autodelete', retcode=1),
+      api.step_data('source cache.set disk to autodelete (2)', retcode=1),
+      api.step_data('source cache.set disk to autodelete (3)', retcode=1),
+      api.post_check(
+          post_process.StepWarning,
+          'source cache.failed to set auto-delete',
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='SUCCESS',
   )

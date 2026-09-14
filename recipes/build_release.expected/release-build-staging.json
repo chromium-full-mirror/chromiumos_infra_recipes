@@ -1049,6 +1049,47 @@
   },
   {
     "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--zone=us-central1-b",
+      "--format=json(disks)"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1",
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache.check GCE attached disks",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"disks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"deviceName\": \"internal-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
       "mkdir",
       "-p",
       "/snapshot_mounts/chromeos"
@@ -1232,6 +1273,7 @@
       }
     },
     "name": "source cache.set disk to autodelete",
+    "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
