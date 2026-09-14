@@ -1,0 +1,25 @@
+// Copyright 2026 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.qualbot_autoreleaser;
+
+message QualbotAutoreleaserProperties {
+  enum ReleaseStage {
+    STAGE_UNSPECIFIED = 0;
+    STAGE_STAGING = 1;
+    STAGE_PROD = 2;
+  }
+  // Target release stage to execute (STAGE_STAGING or STAGE_PROD).
+  ReleaseStage stage = 1;
+  // If true, perform a dry run without pushing changes to git.
+  bool dry_run = 2;
+  // Optional override for source git ref.
+  string source_ref = 3;
+  // Optional override for target git ref.
+  string target_ref = 4;
+  // If true, allow force-pushing (e.g. for emergency rollbacks).
+  bool force = 5;
+}
