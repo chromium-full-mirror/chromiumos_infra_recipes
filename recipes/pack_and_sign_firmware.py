@@ -470,8 +470,7 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'sign firmware shellball.sign artifacts.upload signed artifacts to signed-firmware bucket.upload signed artifacts for CHANNEL_AGNOSTIC.generate signed provenance.snoop: report_gcs',
           [
-              '[START_DIR]/reporter/snoopy_broker', '-report-gcs', '-digest',
-              'deadbeef', '-gcs-uri',
+              '-report-gcs', '-digest', 'deadbeef', '-gcs-uri',
               'gs://signed-firmware/kukui/4.0/signed_firmware.bin'
           ]),
       api.post_check(
