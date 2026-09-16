@@ -65,6 +65,16 @@ message GerritQueryCondition {
 
   // Optional age parameter in days (e.g. 7, 14, 30). Defaults to 7 if 0.
   int32 age_days = 2;
+
+  // Optional merged hours parameter. If > 0, merged queries search for changes
+  // merged in the past N hours instead of using age_days.
+  int32 merged_hours = 3;
+
+  // Optional multi-level ordering for output commits.
+  // Each entry can be like "+branch", "-submitted", "-new_version", where
+  // leading '-' specifies descending and '+' (or no prefix) specifies
+  // ascending.
+  repeated string ordering = 4;
 }
 
 message GardenerDataCollectorProperties {

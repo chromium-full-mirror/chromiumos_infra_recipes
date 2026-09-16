@@ -11,6 +11,8 @@ from typing import Callable
 
 import re
 import base64
+import datetime
+import functools
 from google.protobuf import json_format
 from google.protobuf.message import Message
 
@@ -92,7 +94,66 @@ def ResolveAgeDays(condition: GerritQueryCondition | None) -> int:
   """Resolves the age in days from condition.age_days if > 0, defaulting to DEFAULT_QUERY_AGE_DAYS."""
   if condition and condition.age_days > 0:
     return condition.age_days
+  if condition and condition.merged_hours > 0:
+    return max(DEFAULT_QUERY_AGE_DAYS, (condition.merged_hours + 23) // 24)
   return DEFAULT_QUERY_AGE_DAYS
+
+
+ORDERING_FIELD_ALLOWLIST = frozenset(
+    GardenerDataResult.Commit.DESCRIPTOR.fields_by_name)
+
+
+def ParseOrdering(ordering: list[str]) -> list[tuple[str, bool]]:
+  """Parses ordering specifications into a list of (field_name, is_descending)."""
+  specs = []
+  for item in ordering:
+    tok = item.strip()
+    is_desc = tok.startswith('-')
+    field = tok.lstrip('+-').lower()
+    if field in ORDERING_FIELD_ALLOWLIST:
+      specs.append((field, is_desc))
+  return specs
+
+
+def ParseVersionKey(val: str):
+  """Splits version string into numeric and non-numeric components for natural sorting."""
+  tokens = re.findall(r'\d+|\D+', val)
+  return tuple((0, int(t)) if t.isdigit() else (1, t) for t in tokens)
+
+
+def GetSortValue(item: GardenerDataResult.Commit, field: str):
+  """Extracts value for sorting from Commit."""
+  val = getattr(item, field, None)
+  if isinstance(val, str) and 'version' in field and val:
+    return ParseVersionKey(val)
+  return val or None
+
+
+def CompareCommits(a: GardenerDataResult.Commit, b: GardenerDataResult.Commit,
+                   specs: list[tuple[str, bool]]) -> int:
+  """Comparator function for multi-level sorting."""
+  for field, descending in specs:
+    val_a = GetSortValue(a, field)
+    val_b = GetSortValue(b, field)
+    if val_a == val_b:
+      continue
+    if val_a is None:
+      return 1
+    if val_b is None:
+      return -1
+    if val_a < val_b:
+      return 1 if descending else -1
+    return -1 if descending else 1
+  return 0
+
+
+def SortCommits(commits: list[GardenerDataResult.Commit],
+                ordering: list[str]) -> list[GardenerDataResult.Commit]:
+  """Sorts commits according to multi-level ordering specification."""
+  specs = ParseOrdering(ordering)
+  return sorted(
+      commits,
+      key=functools.cmp_to_key(lambda a, b: CompareCommits(a, b, specs)))
 
 
 def ParseChangeInfo(change_info: ChangeInfo) -> GardenerDataResult.Commit:
@@ -219,6 +280,11 @@ def QueryAndCollectCommits(
   if not condition or not condition.situations:
     return []  # pragma: nocover
 
+  cutoff = None
+  if condition.merged_hours > 0:
+    cutoff = api.time.utcnow() - datetime.timedelta(
+        hours=condition.merged_hours)
+
   queries = []
   for i, s in enumerate(condition.situations):
     terms = [(t.key, t.value) for t in s.terms]
@@ -241,12 +307,21 @@ def QueryAndCollectCommits(
                                                      o_params=o_params)
 
       for change in change_infos:
+        if cutoff:
+          if change.get('status') != 'MERGED':
+            continue
+          if datetime.datetime.fromisoformat(change['submitted']) < cutoff:
+            continue
+
         num = change.get('_number')
         if num not in seen_change_numbers:
           seen_change_numbers.add(num)
           results.append(change)
 
-    return [parse_fn(api, x) for x in results]
+    commits = [parse_fn(api, x) for x in results]
+    if condition and condition.ordering:
+      commits = SortCommits(commits, list(condition.ordering))
+    return commits
 
 
 def CollectChromeUprevCommit(
@@ -285,7 +360,6 @@ def CollectLkgmUprevCommit(
       ('-age', f'{age_days}d'),
       IGNORE_WIP_PARAM,
   ]
-
   return QueryAndCollectCommits(
       api,
       condition,
@@ -935,5 +1009,222 @@ def GenTests(api: recipe_api.RecipeApi):
           'find last 14-day LKGM CLs.query https://chromium-review.googlesource.com.gerrit changes',
           ['-p', '-age=14d'],
       ),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'custom-query-merged-hours',
+      api.time.seed(1732678064),
+      api.time.step(0),
+      api.properties(
+          GardenerDataCollectorProperties(
+              lkgm_query_condition=GerritQueryCondition(
+                  merged_hours=24,
+                  situations=[
+                      GerritQueryCondition.Situation(
+                          terms=[
+                              GerritQueryCondition.Term(key='hashtag',
+                                                        value='chrome-lkgm'),
+                          ],
+                      ),
+                  ],
+              ),
+              chrome_uprev_query_condition=GerritQueryCondition(
+                  merged_hours=12,
+                  situations=[
+                      GerritQueryCondition.Situation(
+                          terms=[
+                              GerritQueryCondition.Term(key='topic',
+                                                        value='custom-chrome'),
+                          ],
+                      ),
+                  ],
+              ),
+          )),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day Chrome uprev CLs', [
+              chrome_uprev_gerrit_change_info_good,
+              chrome_uprev_gerrit_change_info_revert,
+          ], 'https://chromium-review.googlesource.com'),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day LKGM CLs', [lkgm_gerrit_change_info_good],
+          'https://chromium-review.googlesource.com'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
+              'branch=main', '-p', '-age=7d', '-p', '-is=wip', '-p',
+              'topic=custom-chrome'
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandDoesNotContain,
+          'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          ['mergedafter', 'status=merged'],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find last 7-day LKGM CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          [
+              '-p', 'repo=chromium/src', '-p', '-age=7d', '-p', '-is=wip', '-p',
+              'hashtag=chrome-lkgm'
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandDoesNotContain,
+          'find last 7-day LKGM CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          ['mergedafter', 'status=merged'],
+      ),
+      api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', []),
+      api.post_process(post_process.PropertyEquals, 'lkgm_commits', [{
+          'branch': 'main',
+          'cq_tries': '1',
+          'created': '2024-11-27 00:20:00.000000000',
+          'new_version': '1065034',
+          'number': '6052367',
+          'old_version': '1065024',
+          'status': 'MERGED',
+          'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
+          'submitted': '2024-11-27 03:27:44.000000000',
+      }]),
+      status='SUCCESS',
+  )
+
+  chrome_uprev_gerrit_change_info_revert_same = dict(
+      chrome_uprev_gerrit_change_info_revert,
+      _number=4242581,
+  )
+  chrome_uprev_gerrit_change_info_revert_r130 = dict(
+      chrome_uprev_gerrit_change_info_revert,
+      _number=4242582,
+      branch='release-R130',
+  )
+  chrome_uprev_gerrit_change_info_good_no_version = dict(
+      chrome_uprev_gerrit_change_info_good,
+      _number=6047780,
+      revisions={},
+  )
+  chrome_uprev_gerrit_change_info_good_no_version_2 = dict(
+      chrome_uprev_gerrit_change_info_good,
+      _number=6047783,
+      revisions={},
+  )
+
+  yield api.test(
+      'custom-query-ordering',
+      api.properties(
+          GardenerDataCollectorProperties(
+              disable_lkgm_uprev_commits=True,
+              chrome_uprev_query_condition=GerritQueryCondition(
+                  ordering=['+branch', '-new_version', '+invalid_field'],
+                  situations=[
+                      GerritQueryCondition.Situation(
+                          terms=[
+                              GerritQueryCondition.Term(
+                                  key='topic',
+                                  value='chromeos-base/chromeos-chrome'),
+                          ],
+                      ),
+                  ],
+              ),
+          )),
+      api.gerrit.set_query_changes_response(
+          'find last 7-day Chrome uprev CLs', [
+              chrome_uprev_gerrit_change_info_revert_r130,
+              chrome_uprev_gerrit_change_info_good_no_version,
+              chrome_uprev_gerrit_change_info_revert,
+              chrome_uprev_gerrit_change_info_revert_same,
+              chrome_uprev_gerrit_change_info_good,
+              chrome_uprev_gerrit_change_info_good_no_version_2,
+          ], 'https://chromium-review.googlesource.com'),
+      api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', [
+          {
+              'branch': 'main',
+              'cq_tries': '1',
+              'created': '2024-11-27 04:13:33.000000000',
+              'new_version': '133.0.6862.0@deadbeef',
+              'number': '6047779',
+              'old_version': '133.0.6861.0@deadbeef',
+              'status': 'NEW',
+              'subject': 'chromeos-chrome: Automatic uprev to 133.0.6862.0.',
+          },
+          {
+              'branch':
+                  'main',
+              'created':
+                  '2023-02-11 14:56:09.000000000',
+              'new_version':
+                  '112.0.5584.0@deadbeef',
+              'number':
+                  '4242579',
+              'old_version':
+                  '112.0.5589.0@deadbeef',
+              'revert_of':
+                  '4242666',
+              'status':
+                  'MERGED',
+              'subject':
+                  'Revert "chromeos-chrome, chromeos-lacros-parallel: Automatic uprev to 112.0.5589.0."',
+              'submitted':
+                  '2023-02-12 03:45:17.000000000',
+          },
+          {
+              'branch':
+                  'main',
+              'created':
+                  '2023-02-11 14:56:09.000000000',
+              'new_version':
+                  '112.0.5584.0@deadbeef',
+              'number':
+                  '4242581',
+              'old_version':
+                  '112.0.5589.0@deadbeef',
+              'revert_of':
+                  '4242666',
+              'status':
+                  'MERGED',
+              'subject':
+                  'Revert "chromeos-chrome, chromeos-lacros-parallel: Automatic uprev to 112.0.5589.0."',
+              'submitted':
+                  '2023-02-12 03:45:17.000000000',
+          },
+          {
+              'branch': 'main',
+              'cq_tries': '1',
+              'created': '2024-11-27 04:13:33.000000000',
+              'number': '6047780',
+              'status': 'NEW',
+              'subject': 'chromeos-chrome: Automatic uprev to 133.0.6862.0.',
+          },
+          {
+              'branch': 'main',
+              'cq_tries': '1',
+              'created': '2024-11-27 04:13:33.000000000',
+              'number': '6047783',
+              'status': 'NEW',
+              'subject': 'chromeos-chrome: Automatic uprev to 133.0.6862.0.',
+          },
+          {
+              'branch':
+                  'release-R130',
+              'created':
+                  '2023-02-11 14:56:09.000000000',
+              'new_version':
+                  '112.0.5584.0@deadbeef',
+              'number':
+                  '4242582',
+              'old_version':
+                  '112.0.5589.0@deadbeef',
+              'revert_of':
+                  '4242666',
+              'status':
+                  'MERGED',
+              'subject':
+                  'Revert "chromeos-chrome, chromeos-lacros-parallel: Automatic uprev to 112.0.5589.0."',
+              'submitted':
+                  '2023-02-12 03:45:17.000000000',
+          },
+      ]),
       status='SUCCESS',
   )
