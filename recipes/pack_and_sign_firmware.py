@@ -188,6 +188,8 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
 
     def _create_cipd_pkg(signed_type: str) -> str:
       pkg_name = f'android/desktop/firmware/{target}/ap/{signed_type}'
+      if api.cros_infra_config.is_staging:
+        pkg_name = f'experimental/{pkg_name}'
       pkg_def = api.cipd.PackageDefinition(package_name=pkg_name,
                                            package_root=checkout / 'firmware')
       pkg_def.add_file(checkout / 'firmware' / signed_type /
@@ -707,6 +709,14 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandDoesNotContain,
           'create gerrit change for /device/google/desktop/kukui-prebuilts/.git_cl upload',
           '--cc'),
+      api.post_check(
+          post_process.MustRun,
+          'upload to cipd.create experimental/android/desktop/firmware/kukui/ap/premp-signed',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'upload to cipd.create experimental/android/desktop/firmware/kukui/ap/dev-signed',
+      ),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       bucket='staging',
