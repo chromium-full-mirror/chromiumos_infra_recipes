@@ -1,0 +1,22 @@
+// Copyright 2026 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_dagwood_firmware;
+
+message TestDagwoodFirmwareProperties {
+  // Target platforms (e.g. "realtek/rts5912", "npcx9/npcx9m7f", "ite/it81202").
+  repeated string platform = 1;
+
+  // Optional test directories to search relative to src/platform/ec. If both
+  // test_path and test_scenario are empty, run all available tests.
+  repeated string test_path = 2;
+
+  // Specific test scenarios to run (e.g. "aic.i2c").
+  repeated string test_scenario = 3;
+
+  // Extra arguments to pass to ./dagwood (e.g. ["--sram"]).
+  repeated string extra_args = 4;
+}
