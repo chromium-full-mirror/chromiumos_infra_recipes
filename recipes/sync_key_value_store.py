@@ -23,6 +23,7 @@ extend the recipe with additional features, please go ahead!
 """
 
 import base64
+import datetime
 import os
 import re
 from typing import List, Tuple
@@ -31,6 +32,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine import result
 from PB.recipes.chromeos.sync_key_value_store import KeyPair
 from PB.recipes.chromeos.sync_key_value_store import SyncKeyValueStoreProperties
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import InfraFailure
@@ -44,6 +46,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/time',
     'depot_tools/gsutil',
     'gitiles',
     'key_value_store',
@@ -83,16 +86,8 @@ def RunSteps(api: RecipeApi,
   _validate_properties(api, properties)
 
   # Read original files.
-  source_contents = api.gitiles.get_file(
-      properties.source_gitiles_file.host,
-      properties.source_gitiles_file.project,
-      properties.source_gitiles_file.path,
-      ref=properties.source_gitiles_file.ref or None,
-      test_output_data=TEST_SOURCE_CONTENTS).decode()
-  dest_contents = api.gsutil.cat(
-      properties.dest_uri, stdout=api.raw_io.output_text(),
-      step_test_data=lambda: api.raw_io.test_api.stream_output_text(
-          TEST_DEST_CONTENTS)).stdout
+  source_contents = _read_source_file(api, properties)
+  dest_contents = _read_dest_file(api, properties)
 
   # Prepare new dest contents, and exit early if no changes made.
   updated_contents = _update_dest_contents(api, source_contents, dest_contents,
@@ -106,6 +101,28 @@ def RunSteps(api: RecipeApi,
                          acl=properties.canned_acl_for_upload,
                          dry_run=properties.dry_run)
   return result.RawResult(status=common.SUCCESS)
+
+
+@exponential_retry(retries=3, delay=datetime.timedelta(seconds=5))
+def _read_source_file(api: RecipeApi,
+                      properties: SyncKeyValueStoreProperties) -> str:
+  """Read the original source file from Gitiles."""
+  return api.gitiles.get_file(properties.source_gitiles_file.host,
+                              properties.source_gitiles_file.project,
+                              properties.source_gitiles_file.path,
+                              ref=properties.source_gitiles_file.ref or None,
+                              retries=3,
+                              test_output_data=TEST_SOURCE_CONTENTS).decode()
+
+
+@exponential_retry(retries=3, delay=datetime.timedelta(seconds=5))
+def _read_dest_file(api: RecipeApi,
+                    properties: SyncKeyValueStoreProperties) -> str:
+  """Read the original destination file from Google Storage."""
+  return api.gsutil.cat(
+      properties.dest_uri, stdout=api.raw_io.output_text(),
+      step_test_data=lambda: api.raw_io.test_api.stream_output_text(
+          TEST_DEST_CONTENTS)).stdout
 
 
 def _validate_properties(api: RecipeApi,
@@ -202,6 +219,7 @@ def _update_dest_contents(
   return dest_contents
 
 
+@exponential_retry(retries=3, delay=datetime.timedelta(seconds=5))
 def _upload_contents_to_gs(api: RecipeApi, contents: str, uri: str,
                            acl: str = '', dry_run: bool = False) -> None:
   """Write a string to a file and upload it to Google Storage.
@@ -291,8 +309,25 @@ def GenTests(api: RecipeTestApi):
       # gsutil upload step should not include the `-a` (acl) flag.
       api.post_check(post_process.StepCommandDoesNotContain,
                      f'upload to {SAMPLE_GS_URI}.gsutil upload', ['-a']),
+      api.post_check(
+          post_process.StepCommandContains,
+          f'fetch gitiles file.curl https://{SAMPLE_GITILES_HOST}/'
+          f'{SAMPLE_GITILES_PROJECT}/+/HEAD/{SAMPLE_GITILES_PATH}?format=TEXT',
+          ['--retry', '3']),
       api.post_process(post_process.DropExpectation),
       status='SUCCESS')
+
+  yield api.test(
+      'retry-transient-503',
+      api.properties(source_gitiles_file=SAMPLE_GITILES_FILE,
+                     dest_uri=SAMPLE_GS_URI, key_pairs=SAMPLE_KEY_PAIRS),
+      api.step_data(
+          f'fetch gitiles file.curl https://{SAMPLE_GITILES_HOST}/'
+          f'{SAMPLE_GITILES_PROJECT}/+/HEAD/{SAMPLE_GITILES_PATH}?format=TEXT',
+          api.raw_io.stream_output(b'HTTP_CODE=503', retcode=22),
+      ), api.post_check(post_process.StepFailure, 'fetch gitiles file'),
+      api.post_check(post_process.StepSuccess, 'fetch gitiles file (2)'),
+      api.post_process(post_process.DropExpectation), status='SUCCESS')
 
   yield api.test(
       'canned-acl',
