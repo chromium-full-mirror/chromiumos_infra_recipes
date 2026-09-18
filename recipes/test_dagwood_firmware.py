@@ -13,7 +13,9 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/json',
+    'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/resultdb',
     'recipe_engine/step',
 ]
 
@@ -41,14 +43,31 @@ def RunSteps(api: RecipeApi, properties: TestDagwoodFirmwareProperties):
 
     cmd.extend(['--output-json', api.json.output()])
 
+    base_variant = {'build_target': ','.join(platforms)}
+    if api.resultdb.enabled:
+      cmd = api.resultdb.wrap(cmd, base_variant=base_variant)
+
     try:
-      api.step(
+      step_res = api.step(
           'execute tests',
           cmd,
           step_test_data=lambda: api.json.test_api.output({
+              'passed': 12,
+              'failed': 0,
+              'skipped': 0,
+              'total': 12,
               'exit_code': 0,
           }),
       )
+      summary = step_res.json.output or {}
+      pres.step_text = (f"Passed: {summary.get('passed', 0)}, "
+                        f"Failed: {summary.get('failed', 0)}, "
+                        f"Skipped: {summary.get('skipped', 0)} "
+                        f"(Total: {summary.get('total', 0)})")
+      if api.buildbucket.build.id:
+        b_id = api.buildbucket.build.id
+        pres.links['Milo Test Results (All)'] = (
+            f"https://ci.chromium.org/ui/b/{b_id}/test-results?q=ExactID%3A*")
     except StepFailure as e:
       pres.status = api.step.FAILURE
       pres.step_text = f"Dagwood test run failed: {e}"
@@ -93,6 +112,10 @@ def GenTests(api: RecipeTestApi):
       api.step_data(
           'dagwood hardware test.execute tests',
           api.json.output({
+              'passed': 10,
+              'failed': 2,
+              'skipped': 0,
+              'total': 12,
               'exit_code': 1,
           }),
           retcode=1,
