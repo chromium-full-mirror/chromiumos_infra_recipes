@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipes.chromeos.keyset_manager;
 
+import "chromite/api/signing.proto";
+
 message KeysetManagerProperties {
   // Buganizer ID to be associated with the request (for logging/future use).
   int64 bug = 1;
@@ -18,4 +20,7 @@ message KeysetManagerProperties {
 
   // If true, update all targets. Must be set if keyset is empty.
   bool update_all = 4;
+
+  // Keyset operations to perform
+  repeated chromite.api.KeysetOp operations = 5;
 }

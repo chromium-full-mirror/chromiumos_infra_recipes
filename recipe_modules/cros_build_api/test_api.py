@@ -809,6 +809,19 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['SignTi50Paos'] = '{}'
     responses['SignViaOnlineHsm'] = '{}'
     responses['CreateKeysHsm'] = '{}'
+    responses['KeysetManager'] = jsonify(
+        status=1,
+        results=[{
+            'op_name':
+                'MiniOsVersionBump',
+            'status':
+                1,
+            'modified_files': [
+                'BryaMPKeys-v25/kernel_data_key.vbpubk',
+                'BryaMPKeys-v25/kernel.keyblock',
+            ],
+        }],
+    )
     return responses
 
   @property
