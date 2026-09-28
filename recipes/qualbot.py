@@ -33,7 +33,6 @@ DEPS = [
     "build_menu",
     "cros_build_api",
     "easy",
-    "git",
 ]
 
 PROPERTIES = QualbotProperties
@@ -49,12 +48,6 @@ def RunSteps(api: RecipeApi, properties: QualbotProperties):
   with api.context(env_prefixes={"PATH": [protoc_path]}):
     with api.build_menu.configure_builder(
         missing_ok=True), api.build_menu.setup_workspace():
-      if properties.target_ref:
-        repo_dir = api.src_state.workspace_path.joinpath(
-            "infra", "fw_qual_automation")
-        with api.context(cwd=repo_dir):
-          api.git.fetch("cros-internal", [properties.target_ref])
-          api.git.checkout("FETCH_HEAD", force=True)
       run_qualbot(api, properties)
 
 
@@ -168,27 +161,6 @@ def GenTests(api: RecipeTestApi):
           post_process.StepSuccess,
           "Run Qualbot.call auto_qual_main",
       ),
-  )
-
-  yield api.build_menu.test(
-      "with-target-ref",
-      api.properties(
-          QualbotProperties(target_ref="refs/heads/release/staging")),
-      api.step_data(
-          "Run Qualbot.call auto_qual_main",
-          mock_sub_build(),
-      ),
-      api.post_check(
-          post_process.StepCommandContains,
-          "git fetch",
-          ["cros-internal", "refs/heads/release/staging"],
-      ),
-      api.post_check(
-          post_process.StepCommandContains,
-          "git checkout",
-          ["--force", "FETCH_HEAD"],
-      ),
-      api.post_process(post_process.DropExpectation),
   )
 
   def check_link(check, steps, link_name, expected_link):
