@@ -322,4 +322,11 @@ message GeneratorProperties {
 
   // Additional footer to be added in the commit description when CL is not WIP.
   string non_wip_additional_commit_footer = 25;
+
+  // Sync the workspace to the default snapshot (src_state.gitiles_commit)
+  // when no specific branch is selected by the branch policy.
+  // Ignored if the UprevTargetHandler subclass defines its own
+  // checkout_default_branch method (for example, SdkUprevHandler already
+  // syncs to the snapshot by default).
+  bool sync_to_snapshot = 26;
 }

@@ -133,7 +133,10 @@ class UprevTargetHandler(abc.ABC):
 
   def checkout_default_branch(self, pres: StepPresentation) -> None:
     """Handle checkout when no specific branch was selected."""
-    pres.step_text = 'using default branch'
+    if self.properties.sync_to_snapshot:
+      self.m.cros_source.sync_checkout(self.m.src_state.gitiles_commit)
+    else:
+      pres.step_text = 'using default branch'
 
   def reapply_pupr_tracking(self, policy_info: PolicyInfo) -> None:
     """Hook invoked after local uprev creation to adjust git tracking."""
@@ -2413,6 +2416,15 @@ def GenTests(
                      'checkout chrome.populate chrome cache'),
       api.post_check(post_process.MustRun, 'checkout chrome.git fetch'),
       api.post_check(post_process.MustRun, 'checkout chrome.git checkout'),
+  )
+
+  yield api.test(
+      'sync-to-snapshot',
+      _props(sync_to_snapshot=True),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.post_check(post_process.MustRun,
+                     'checkout branch.sync to gitiles commit'),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
