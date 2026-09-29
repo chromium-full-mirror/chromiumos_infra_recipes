@@ -46,7 +46,6 @@ GERRIT_HOST = 'https://chromium-review.googlesource.com'
 DEFAULT_QUERY_AGE_DAYS = 7
 
 CHROME_UPREV_REPO_PARAM = ('repo', 'chromiumos/overlays/chromiumos-overlay')
-CHROME_UPREV_BRANCH_PARAM = ('branch', 'main')
 LKGM_REPO_PARAM = ('repo', 'chromium/src')
 IGNORE_WIP_PARAM = ('-is', 'wip')
 
@@ -334,7 +333,6 @@ def CollectChromeUprevCommit(
 
   base_query_params = [
       CHROME_UPREV_REPO_PARAM,
-      CHROME_UPREV_BRANCH_PARAM,
       ('-age', f'{age_days}d'),
       IGNORE_WIP_PARAM,
   ]
@@ -741,9 +739,14 @@ def GenTests(api: recipe_api.RecipeApi):
           'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
           [
               '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
-              'branch=main', '-p', '-age=7d', '-p', '-is=wip', '-p',
+              '-age=7d', '-p', '-is=wip', '-p',
               'topic=chromeos-base/chromeos-chrome'
           ],
+      ),
+      api.post_process(
+          post_process.StepCommandDoesNotContain,
+          'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          ['branch=main'],
       ),
       api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', [{
           'branch': 'main',
@@ -803,9 +806,14 @@ def GenTests(api: recipe_api.RecipeApi):
           'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
           [
               '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
-              'branch=main', '-p', '-age=7d', '-p', '-is=wip', '-p',
+              '-age=7d', '-p', '-is=wip', '-p',
               'topic=chromeos-base/chromeos-chrome'
           ],
+      ),
+      api.post_process(
+          post_process.StepCommandDoesNotContain,
+          'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
+          ['branch=main'],
       ),
       api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', [{
           'branch': 'main',
@@ -933,6 +941,8 @@ def GenTests(api: recipe_api.RecipeApi):
                   situations=[
                       GerritQueryCondition.Situation(
                           terms=[
+                              GerritQueryCondition.Term(key='branch',
+                                                        value='main'),
                               GerritQueryCondition.Term(
                                   key='topic', value='custom-chrome-uprev'),
                           ],
@@ -949,7 +959,7 @@ def GenTests(api: recipe_api.RecipeApi):
           'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
           [
               '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
-              'branch=main', '-p', '-age=7d', '-p', '-is=wip', '-p',
+              '-age=7d', '-p', '-is=wip', '-p', 'branch=main', '-p',
               'topic=custom-chrome-uprev'
           ],
       ),
@@ -1054,8 +1064,7 @@ def GenTests(api: recipe_api.RecipeApi):
           'find last 7-day Chrome uprev CLs.query https://chromium-review.googlesource.com.gerrit changes',
           [
               '-p', 'repo=chromiumos/overlays/chromiumos-overlay', '-p',
-              'branch=main', '-p', '-age=7d', '-p', '-is=wip', '-p',
-              'topic=custom-chrome'
+              '-age=7d', '-p', '-is=wip', '-p', 'topic=custom-chrome'
           ],
       ),
       api.post_process(

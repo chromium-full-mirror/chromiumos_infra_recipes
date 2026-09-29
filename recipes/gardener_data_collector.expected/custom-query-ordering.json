@@ -23,8 +23,6 @@
       "-p",
       "repo=chromiumos/overlays/chromiumos-overlay",
       "-p",
-      "branch=main",
-      "-p",
       "-age=7d",
       "-p",
       "-is=wip",
