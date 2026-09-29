@@ -77,6 +77,16 @@ class VerifierRunInfo:
     return self.verifier.name
 
   @property
+  def bucket(self) -> str:
+    """Bucket to search for the last successful build for this verifier."""
+    return self.verifier.bucket or BUCKET
+
+  @property
+  def gce_project_override(self) -> str:
+    """GCE project override for this verifier."""
+    return self.verifier.gce_project_override
+
+  @property
   def critical(self) -> bool:
     return self.verifier.critical
 
@@ -179,12 +189,17 @@ def _run_recipes_py_tests(api: RecipeApi) -> None:
   )
 
 
-def _get_last_successful_build(api: RecipeApi, builder: str) -> build_pb2.Build:
+def _get_last_successful_build(
+    api: RecipeApi,
+    builder: str,
+    bucket: str = BUCKET,
+) -> build_pb2.Build:
   """Find the most recent successful build for 'builder'.
 
   Args:
     api: See RunSteps documentation.
     builder: The name of the builder to search for.
+    bucket: The bucket to search for the builder.
 
   Returns:
     A Build proto.
@@ -197,7 +212,7 @@ def _get_last_successful_build(api: RecipeApi, builder: str) -> build_pb2.Build:
       BuildPredicate(
           builder={
               'project': PROJECT,
-              'bucket': BUCKET,
+              'bucket': bucket,
               'builder': builder
           }, status=common_pb2.SUCCESS, include_experimental=False), limit=1,
       url_title_fn=api.naming.get_build_title)
@@ -257,7 +272,8 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
         # Then, chain on calls to launch the builder (if it is relevant).
         # Mark this as a dry_run so that builders with side effects (for
         # example, annealing pushes a manifest_ref) can avoid them.
-        last_successful_build = _get_last_successful_build(api, builder)
+        last_successful_build = _get_last_successful_build(
+            api, builder, bucket=verifier.bucket)
         led_result = api.led('get-build', '-real-build',
                              last_successful_build.id)
 
@@ -302,6 +318,15 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
           # Skip paygen on release builds since we launch paygen directly.
           if recipe == 'build_release':
             led_result = led_result.then('edit', '-p', 'skip_paygen=true')
+
+          if verifier.gce_project_override:
+            gcloud_props = (
+                dict(build.input.properties['$chromeos/gcloud'])
+                if '$chromeos/gcloud' in build.input.properties else {})
+            gcloud_props['gce_project'] = verifier.gce_project_override
+            led_result = led_result.then(
+                'edit', '-p',
+                f'$chromeos/gcloud={api.json.dumps(gcloud_props)}')
 
           # Run the child task with priority=20, to put it ahead of actual
           # staging jobs.  We could run it with the dimension 'role=infra',
@@ -636,7 +661,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'basic',
       api.cv(run_mode=api.cv.FULL_RUN),
-      # Specify two builders to run.
+      # Specify builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
               'name': 'staging-Annealing',
@@ -654,7 +679,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }, {
               'name': 'staging-release-main-octopus',
               'always_launch': True,
-              'critical': True
+              'critical': True,
+              'bucket': 'staging-bucket',
+              'gce_project_override': 'chromeos-project',
           }])),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # No builders are skipped
@@ -690,6 +717,25 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(
           post_process.MustRun,
           'analyze and launch builders.analyze and launch staging-release-main-octopus.led launch'
+      ),
+      api.post_process(
+          post_process.LogContains,
+          ('analyze and launch builders.'
+           'analyze and launch staging-release-main-octopus.'
+           'buildbucket.search'),
+          'request',
+          ['"bucket": "staging-bucket"'],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          ('analyze and launch builders.'
+           'analyze and launch staging-release-main-octopus.'
+           'led edit (3)'),
+          [
+              '-p',
+              ('$chromeos/gcloud='
+               '{"gce_project": "chromeos-project"}'),
+          ],
       ),
       api.post_process(
           post_process.DoesNotRun,

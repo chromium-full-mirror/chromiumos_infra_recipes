@@ -16,6 +16,12 @@ message TestRecipesProperties {
 
     // Whether to always launch the builder.
     bool always_launch = 3;
+
+    // The bucket of the builder. Defaults to 'staging'.
+    string bucket = 4;
+
+    // Optional GCE project override for the child led build.
+    string gce_project_override = 5;
   }
 
   // Verifier used to test recipes.  If set, this overrides builders and
