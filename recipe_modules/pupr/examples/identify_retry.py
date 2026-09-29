@@ -7,11 +7,13 @@
 
 import collections
 
+from PB.recipes.chromeos.generator import DO_NOTHING
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import NO_RETRY
 from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
 from PB.recipes.chromeos.generator import RETRY_LATEST_PINNED
+from PB.recipes.chromeos.generator import UNSPECIFIED
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_PINNED_RETRY
 
@@ -33,8 +35,18 @@ def _patch_set_from_dict(changes):
 
 
 def RunSteps(api):
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      NO_RETRY, FULL_RUN, [])
+
+  def identify_first(retry_policy, no_existing_cls_policy, open_cls,
+                     existing_cls_policy):
+    gen = api.pupr.identify_retry(retry_policy, no_existing_cls_policy,
+                                  open_cls, existing_cls_policy)
+    res = next(gen)
+    for _ in gen:
+      pass
+    return res
+
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      NO_RETRY, FULL_RUN, [], DO_NOTHING)
   api.assertions.assertEqual(cl, None)
   api.assertions.assertEqual(cq_label, 0)
   api.assertions.assertEqual(message, 'Not set to retry.')
@@ -45,8 +57,8 @@ def RunSteps(api):
   open_cls = []
 
   # No changes exist
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl, None)
   api.assertions.assertEqual(cq_label, 0)
   api.assertions.assertEqual(message, 'No open CL was found to retry.')
@@ -70,8 +82,8 @@ def RunSteps(api):
       }
   }]
   open_cls = _patch_set_from_dict(changes)
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 10)
   api.assertions.assertEqual(cq_label, 2)
   api.assertions.assertEqual(message,
@@ -96,8 +108,16 @@ def RunSteps(api):
       }
   }]
   open_cls = _patch_set_from_dict(changes)
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
+  api.assertions.assertEqual(cl.change_id, 11)
+  api.assertions.assertEqual(cq_label, 2)
+  api.assertions.assertEqual(message, 'Found running cl: https:///c/11')
+  api.assertions.assertEqual(retry_cl_is_passed, False)
+  api.assertions.assertEqual(retry_cl_is_running, True)
+
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 11)
   api.assertions.assertEqual(cq_label, 1)
   api.assertions.assertEqual(message, 'Found running cl: https:///c/11')
@@ -192,18 +212,36 @@ def RunSteps(api):
       }
   ]
   open_cls = _patch_set_from_dict(changes)
-  # Failed CQ+2 CL should be chosen over failed/running CQ+1 CLs.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
-  api.assertions.assertEqual(cl.change_id, 2)
+  # Running CQ+1 CL is identified first, then failed CQ+2 CL.
+  gen = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN,
+                                open_cls, FULL_RUN)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = next(gen)
+  api.assertions.assertEqual(cl.change_id, 5)
   api.assertions.assertEqual(cq_label, 2)
-  api.assertions.assertEqual(message, 'Found cl: https:///c/2')
+  api.assertions.assertEqual(message, 'Found running cl: https:///c/5')
   api.assertions.assertEqual(retry_cl_is_passed, False)
-  api.assertions.assertEqual(retry_cl_is_running, False)
+  api.assertions.assertEqual(retry_cl_is_running, True)
+
+  cl2, cq_label2, message2, retry_cl_is_passed2, retry_cl_is_running2 = next(
+      gen)
+  api.assertions.assertEqual(cl2.change_id, 2)
+  api.assertions.assertEqual(cq_label2, 2)
+  api.assertions.assertEqual(message2, 'Found cl: https:///c/2')
+  api.assertions.assertEqual(retry_cl_is_passed2, False)
+  api.assertions.assertEqual(retry_cl_is_running2, False)
+
+  # When policy is DRY_RUN, running CQ+1 CL retains cq_label = 1.
+  gen_dry = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN,
+                                    open_cls, DRY_RUN)
+  cl_dry, cq_dry, _, passed_dry, running_dry = next(gen_dry)
+  api.assertions.assertEqual(cl_dry.change_id, 5)
+  api.assertions.assertEqual(cq_dry, 1)
+  api.assertions.assertFalse(passed_dry)
+  api.assertions.assertTrue(running_dry)
 
   # No pinned CLs, so no retry CL.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl, None)
   api.assertions.assertEqual(cq_label, 0)
   api.assertions.assertEqual(message, 'No open CL was found to retry.')
@@ -252,8 +290,8 @@ def RunSteps(api):
   }]
   open_cls = _patch_set_from_dict(changes)
   # Pinned CL should be selected despite the presence of a more recent failed CL.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 1)
   api.assertions.assertEqual(cq_label, 2)
   api.assertions.assertEqual(message, 'Found cl: https:///c/1')
@@ -287,8 +325,8 @@ def RunSteps(api):
   }]
   open_cls = _patch_set_from_dict(changes)
   # Most recent CL is currently running, no retry.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 1)
   api.assertions.assertEqual(cq_label, 2)
   api.assertions.assertEqual(message,
@@ -312,8 +350,8 @@ def RunSteps(api):
   open_cls = _patch_set_from_dict(changes)
 
   # Pinned CL never failed, no retry.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl, None)
   api.assertions.assertEqual(cq_label, 0)
   api.assertions.assertEqual(message,
@@ -345,8 +383,8 @@ def RunSteps(api):
   open_cls = _patch_set_from_dict(changes)
 
   # Latest Dry Run CL failed, so retry as CQ+2.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 1)
   api.assertions.assertEqual(cq_label, 2)
   api.assertions.assertEqual(message, 'Found cl: https:///c/1')
@@ -397,8 +435,8 @@ def RunSteps(api):
   open_cls = _patch_set_from_dict(changes)
 
   # CQ+2 CL does not satify submit requirement, so retry failed CQ+1 CLs.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 2)
   api.assertions.assertEqual(cq_label, 2)
   api.assertions.assertEqual(message, 'Found cl: https:///c/2')
@@ -422,8 +460,16 @@ def RunSteps(api):
   open_cls = _patch_set_from_dict(changes)
 
   # Latest Dry Run CL is running.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
+  api.assertions.assertEqual(cl.change_id, 1)
+  api.assertions.assertEqual(cq_label, 2)
+  api.assertions.assertEqual(message, 'Found running cl: https:///c/1')
+  api.assertions.assertEqual(retry_cl_is_passed, False)
+  api.assertions.assertEqual(retry_cl_is_running, True)
+
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 1)
   api.assertions.assertEqual(cq_label, 1)
   api.assertions.assertEqual(message, 'Found running cl: https:///c/1')
@@ -462,8 +508,8 @@ def RunSteps(api):
   open_cls = _patch_set_from_dict(changes)
   # Latest Dry Run CL has passed the dry run and this PUpr is configured to dry
   # run all CLs, do not retry.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl, None)
   api.assertions.assertEqual(cq_label, 0)
   api.assertions.assertEqual(message, 'No open CL was found to retry.')
@@ -472,8 +518,8 @@ def RunSteps(api):
 
   # Latest Dry Run CL has passed the dry run and this PUpr is configured to
   # full run CLs, upgrade to Full Run.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 1)
   api.assertions.assertEqual(cq_label, 2)
   api.assertions.assertEqual(message, 'Found cl: https:///c/1')
@@ -526,8 +572,8 @@ def RunSteps(api):
   }]
   open_cls = _patch_set_from_dict(changes)
   # Pinned Dry Run CL should be chosen over failed full run CL.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 2)
   # Additionally, check that the full/dry run status of the most recent failure
   # is properly detected.
@@ -570,8 +616,8 @@ def RunSteps(api):
   open_cls = _patch_set_from_dict(changes)
   # Even though there's a failed CQ+2 CL, there's a more recent CL that is
   # /currently/ running with CQ+2, so no retry should take place.
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 2)
   api.assertions.assertEqual(cq_label, 2)
   api.assertions.assertEqual(message,
@@ -613,8 +659,16 @@ def RunSteps(api):
   open_cls = _patch_set_from_dict(changes)
   # Even though there's a failed CQ+1 CL, there's a more recent CL that is
   # /currently/ running with CQ+1. Newer one is considered for retry (if the mode is set).
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
+  api.assertions.assertEqual(cl.change_id, 2)
+  api.assertions.assertEqual(cq_label, 2)
+  api.assertions.assertEqual(message, 'Found running cl: https:///c/2')
+  api.assertions.assertEqual(retry_cl_is_passed, False)
+  api.assertions.assertEqual(retry_cl_is_running, True)
+
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 2)
   api.assertions.assertEqual(cq_label, 1)
   api.assertions.assertEqual(message, 'Found running cl: https:///c/2')
@@ -631,8 +685,8 @@ def RunSteps(api):
       }
   }]
   open_cls = _patch_set_from_dict(changes)
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 100)
   api.assertions.assertEqual(cq_label, 2)
   api.assertions.assertEqual(message, 'Found cl: https:///c/100')
@@ -640,8 +694,8 @@ def RunSteps(api):
   api.assertions.assertEqual(retry_cl_is_running, False)
 
   # Should fallback to CQ+1 if no_existing_cls_policy is DRY_RUN
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 100)
   api.assertions.assertEqual(cq_label, 1)
   api.assertions.assertEqual(message, 'Found cl: https:///c/100')
@@ -672,8 +726,8 @@ def RunSteps(api):
       }
   }]
   open_cls = _patch_set_from_dict(changes)
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl, None)
   api.assertions.assertEqual(cq_label, 0)
   api.assertions.assertEqual(message, 'No open CL was found to retry.')
@@ -690,8 +744,8 @@ def RunSteps(api):
       }
   }]
   open_cls = _patch_set_from_dict(changes)
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl, None)
   api.assertions.assertEqual(cq_label, 0)
   api.assertions.assertEqual(message, 'No open CL was found to retry.')
@@ -717,8 +771,8 @@ def RunSteps(api):
       }
   }]
   open_cls = _patch_set_from_dict(changes)
-  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = api.pupr.identify_retry(
-      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls)
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN, open_cls, DO_NOTHING)
   api.assertions.assertEqual(cl.change_id, 301)
   api.assertions.assertEqual(cq_label, 2)
 
@@ -744,6 +798,192 @@ def RunSteps(api):
   api.assertions.assertTrue(api.pupr.supports_verified_label(cl_with_verified))
   api.assertions.assertFalse(
       api.pupr.supports_verified_label(cl_without_verified))
+
+  # Test DO_NOTHING policy
+  cl, cq_label, message, _, _ = identify_first(RETRY_LATEST_OR_LATEST_PINNED,
+                                               DO_NOTHING, open_cls, DO_NOTHING)
+  api.assertions.assertEqual(cl, None)
+  api.assertions.assertEqual(cq_label, 0)
+
+  # Test existing_cls_policy = DO_NOTHING terminates generator early
+  two_cls = _patch_set_from_dict([
+      {
+          'info': {
+              '_number':
+                  501,
+              'hashtags': [],
+              'created':
+                  '2020-10-22 18:54:00.000000000',
+              'messages': [{
+                  'message': 'Patch Set 1: This CL has failed the run. Reason:',
+                  'date': '2020-10-22T18:54:00Z',
+                  'tag': 'autogenerated:cq:dry-run:1'
+              }]
+          }
+      },
+      {
+          'info': {
+              '_number':
+                  502,
+              'hashtags': [],
+              'created':
+                  '2020-10-23 18:54:00.000000000',
+              'messages': [{
+                  'message': 'Patch Set 1: This CL has failed the run. Reason:',
+                  'date': '2020-10-23T18:54:00Z',
+                  'tag': 'autogenerated:cq:dry-run:2'
+              }]
+          }
+      },
+  ])
+  gen = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN,
+                                two_cls, DO_NOTHING)
+  api.assertions.assertIsNotNone(next(gen)[0])
+  api.assertions.assertIsNone(next(gen)[0])
+  api.assertions.assertIsNone(next(gen, None))
+
+  # Test existing_cls_policy = UNSPECIFIED (0) does not fall back to no_existing_cls_policy
+  gen = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN,
+                                two_cls, UNSPECIFIED)
+  api.assertions.assertIsNotNone(next(gen)[0])
+  api.assertions.assertIsNone(next(gen)[0])
+  api.assertions.assertIsNone(next(gen, None))
+
+  # Test existing_cls_policy = DRY_RUN retries subsequent CLs as DRY_RUN
+  gen = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN,
+                                two_cls, DRY_RUN)
+  cl1, cq1, _, _, _ = next(gen)
+  cl2, cq2, _, _, _ = next(gen)
+  api.assertions.assertEqual(cl1.change_id, 502)
+  api.assertions.assertEqual(cq1, 2)
+  api.assertions.assertEqual(cl2.change_id, 501)
+  api.assertions.assertEqual(cq2, 1)
+  api.assertions.assertIsNone(next(gen)[0])
+  api.assertions.assertIsNone(next(gen, None))
+
+  # Test when latest candidate passed dry run, remaining candidate that has not passed dry run is selected for DRY_RUN
+  passed_and_unrun_cls = _patch_set_from_dict([
+      {
+          'info': {
+              '_number': 601,
+              'created': '2020-10-22 18:54:00.000000000',
+              'hashtags': [],
+              'messages': [],
+          }
+      },
+      {
+          'info': {
+              '_number':
+                  602,
+              'created':
+                  '2020-10-23 18:54:00.000000000',
+              'hashtags': [],
+              'messages': [{
+                  'message': 'Patch Set 1:\n\nThis CL has passed the run',
+                  'date': '2020-10-23T18:54:00Z',
+                  'tag': 'autogenerated:cv:dry-run:1',
+              }],
+          }
+      },
+  ])
+  cl, cq_label, message, retry_cl_is_passed, retry_cl_is_running = identify_first(
+      RETRY_LATEST_OR_LATEST_PINNED, DRY_RUN, passed_and_unrun_cls, DO_NOTHING)
+  api.assertions.assertEqual(cl.change_id, 601)
+  api.assertions.assertEqual(cq_label, 1)
+
+  # Test when policy is FULL_RUN, passed dry run is identified before running CQ+1 CL
+  passed_and_running_cls = _patch_set_from_dict([
+      {
+          'info': {
+              '_number':
+                  701,
+              'created':
+                  '2020-10-24 18:54:00.000000000',
+              'hashtags': [],
+              'messages': [{
+                  'message':
+                      'Patch Set 1:\n\nDry run: CV is trying the patch...',
+                  'date':
+                      '2020-10-24T18:54:00Z',
+                  'tag':
+                      'autogenerated:cv:dry-run:1',
+              }],
+          }
+      },
+      {
+          'info': {
+              '_number':
+                  702,
+              'created':
+                  '2020-10-23 18:54:00.000000000',
+              'hashtags': [],
+              'messages': [{
+                  'message': 'Patch Set 1:\n\nThis CL has passed the run',
+                  'date': '2020-10-23T18:54:00Z',
+                  'tag': 'autogenerated:cv:dry-run:2',
+              }],
+          }
+      },
+  ])
+  gen = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN,
+                                passed_and_running_cls, FULL_RUN)
+  cl1, cq1, _, passed1, running1 = next(gen)
+  api.assertions.assertEqual(cl1.change_id, 702)
+  api.assertions.assertEqual(cq1, 2)
+  api.assertions.assertTrue(passed1)
+  api.assertions.assertFalse(running1)
+
+  cl2, cq2, _, passed2, running2 = next(gen)
+  api.assertions.assertEqual(cl2.change_id, 701)
+  api.assertions.assertEqual(cq2, 2)
+  api.assertions.assertFalse(passed2)
+  api.assertions.assertTrue(running2)
+
+  # Test when there are multiple failed full run CLs
+  multiple_failed_full_runs = _patch_set_from_dict([
+      {
+          'info': {
+              '_number':
+                  801,
+              'created':
+                  '2020-10-22 18:54:00.000000000',
+              'hashtags': [],
+              'messages': [{
+                  'message':
+                      'Patch Set 1:\n\nThis CL has failed the run. Reason: ...',
+                  'date':
+                      '2020-10-22T18:54:00Z',
+                  'tag':
+                      'autogenerated:cv:full-run:1',
+              }],
+          }
+      },
+      {
+          'info': {
+              '_number':
+                  802,
+              'created':
+                  '2020-10-23 18:54:00.000000000',
+              'hashtags': [],
+              'messages': [{
+                  'message':
+                      'Patch Set 1:\n\nThis CL has failed the run. Reason: ...',
+                  'date':
+                      '2020-10-23T18:54:00Z',
+                  'tag':
+                      'autogenerated:cv:full-run:2',
+              }],
+          }
+      },
+  ])
+  gen = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, FULL_RUN,
+                                multiple_failed_full_runs, FULL_RUN)
+  cl1, cq1, _, _, _ = next(gen)
+  api.assertions.assertEqual(cl1.change_id, 802)
+  api.assertions.assertEqual(cq1, 2)
+  cl2, cq2, _, _, _ = next(gen)
+  api.assertions.assertEqual(cl2.change_id, 801)
+  api.assertions.assertEqual(cq2, 2)
 
 
 def GenTests(api):

@@ -630,88 +630,118 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       if self.m.pupr.retries_frozen(open_patch_sets):
         return StepResult(value=None)
 
+      identify_retry = self.m.pupr.identify_retry(policy.retry_cl_policy,
+                                                  policy.no_existing_cls_policy,
+                                                  open_patch_sets,
+                                                  policy.existing_cls_policy)
       patch_set_to_retry, cq_label, message, cl_passed_dry_run, running = \
-          self.m.pupr.identify_retry(policy.retry_cl_policy,
-                                     policy.no_existing_cls_policy,
-                                     open_patch_sets)
+          next(identify_retry)
       presentation.step_text = message
 
       if not patch_set_to_retry:
         return StepResult(value=None)
 
-      if policy.max_concurrent_cq_runs > 0:
-        limit_exceeded, running_count = self.m.pupr.check_concurrent_cq_limit(
-            open_patch_sets, policy.max_concurrent_cq_runs)
-        if limit_exceeded:
-          presentation.step_text = (
-              f'{message} (Retry skipped: concurrent CQ run limit of '
-              f'{policy.max_concurrent_cq_runs} reached, currently running: {running_count})'
-          )
-          return StepResult(value=None)
-
-      if self.config.rebase_before_retry:
-        changes_to_retry = [
-            ps.to_gerrit_change_proto()
-            for ps in open_patch_sets
-            if ps.host == patch_set_to_retry.host and
-            ps.change_id == patch_set_to_retry.change_id
-        ]
-        with self.m.step.nest('test gerrit mergeable'):
-          gerrit_mergeable = self.m.gerrit.get_change_mergeable(
-              patch_set_to_retry.change_id, patch_set_to_retry.host)
-        with self.m.step.nest('test cq-orchestrator mergeable') as cqstep:
-          # TODO(b/543713972): In the remote fastpath, neither chrome_root nor
-          # chromeos_root is checked out yet. git-test-submit will perform a
-          # shallow clone directly against Gerrit without local reference repos.
-          # Consider passing bot git cache paths if reference optimization is
-          # needed for large repositories (e.g. chromium/src).
-          cq_mergable = self.m.gerrit.changes_submittable(changes_to_retry)
-          # gerrit.changes_submittable generates non-critical StepFailure.
-          # Set cqstep.status to SUCCESS to avoid parent being StepFailure
-          cqstep.status = 'SUCCESS'
-        if gerrit_mergeable and not cq_mergable and not patch_set_to_retry.work_in_progress:
-          self.m.gerrit.rebase_change_remote(changes_to_retry[0])
-          self.m.gerrit.add_change_comment_remote(
-              changes_to_retry[0],
-              ('[Auto-Rebase] Rebased via Gerrit to save CQ time. '
-               'Previously passed CQ results will be reused. '
-               'It is completely expected for this changeset to now '
-               'show as an `add` instead of a `rename`.'))
-          # A rebase resets the CQ+1/+2 status.
-          running = False
-        elif not gerrit_mergeable or patch_set_to_retry.work_in_progress:
-          # For WIP CLs (or unmergeable CLs), signal that a local on-disk rebase
-          # is required.
-          return StepResult(
-              value=LocalRebaseTarget(
-                  patch_set=patch_set_to_retry,
-                  cq_label=cq_label,
-                  cl_passed_dry_run=cl_passed_dry_run,
-              ))
-
-      if running:
-        # Already running for CQ. No need to retry.
+      running_count = self.m.pupr.count_running_cls(open_patch_sets)
+      max_cq_runs = (
+          policy.max_concurrent_cq_runs
+          if policy.max_concurrent_cq_runs > 0 else 1)
+      if (policy.max_concurrent_cq_runs > 0 and running_count >= max_cq_runs and
+          not running and not cl_passed_dry_run):
+        presentation.step_text = (
+            f'{message} (Retry skipped: concurrent CQ run limit of '
+            f'{policy.max_concurrent_cq_runs} reached, currently running: {running_count})'
+        )
         return StepResult(value=None)
 
-      if patch_set_to_retry.work_in_progress and not self.config.rebase_before_retry:
-        self.m.gerrit.set_change_ready_for_review_remote(
-            patch_set_to_retry.to_gerrit_change_proto())
-
-      self.retry_cl(patch_set_to_retry, cq_label)
-      retried_changes = [patch_set_to_retry.to_gerrit_change_proto()]
+      current_running_count = running_count
+      retried_changes = []
       abandoned_changes = []
 
-      if cl_passed_dry_run:
-        cls_to_abandon = [
-            cl for cl in open_patch_sets
-            if cl.created < patch_set_to_retry.created
-        ]
-        abandoned_cls = self._abandon_outdated_cls(
-            cls_to_abandon, patch_set_to_retry, policy.outdated_cls_policy,
-            retry_only_run, step_name='abandon CLs before passed CQ+1 CL')
-        abandoned_changes = [
-            cl.to_gerrit_change_proto() for cl in abandoned_cls
-        ]
+      while patch_set_to_retry:
+        was_running = running
+        # Already running CLs can proceed to be rebased without adding new
+        # concurrent runs. Passed dry runs can also run as CQ+2 because they
+        # will finish immediately and do not waste CQ capacity. Otherwise,
+        # terminate once the maximum concurrent CQ limit is reached.
+        if (not was_running and not cl_passed_dry_run and
+            current_running_count >= max_cq_runs):
+          break
+
+        if self.config.rebase_before_retry:
+          changes_to_retry = [
+              ps.to_gerrit_change_proto()
+              for ps in open_patch_sets
+              if ps.host == patch_set_to_retry.host and
+              ps.change_id == patch_set_to_retry.change_id
+          ]
+          with self.m.step.nest('test gerrit mergeable'):
+            gerrit_mergeable = self.m.gerrit.get_change_mergeable(
+                patch_set_to_retry.change_id, patch_set_to_retry.host)
+          with self.m.step.nest('test cq-orchestrator mergeable') as cqstep:
+            # TODO(b/543713972): In the remote fastpath, neither chrome_root nor
+            # chromeos_root is checked out yet. git-test-submit will perform a
+            # shallow clone directly against Gerrit without local reference repos.
+            # Consider passing bot git cache paths if reference optimization is
+            # needed for large repositories (e.g. chromium/src).
+            cq_mergable = self.m.gerrit.changes_submittable(changes_to_retry)
+            # gerrit.changes_submittable generates non-critical StepFailure.
+            # Set cqstep.status to SUCCESS to avoid parent being StepFailure
+            cqstep.status = 'SUCCESS'
+          if gerrit_mergeable and not cq_mergable and not patch_set_to_retry.work_in_progress:
+            self.m.gerrit.rebase_change_remote(changes_to_retry[0])
+            self.m.gerrit.add_change_comment_remote(
+                changes_to_retry[0],
+                ('[Auto-Rebase] Rebased via Gerrit to save CQ time. '
+                 'Previously passed CQ results will be reused. '
+                 'It is completely expected for this changeset to now '
+                 'show as an `add` instead of a `rename`.'))
+            # A rebase resets the CQ+1/+2 status.
+            running = False
+          elif not gerrit_mergeable or patch_set_to_retry.work_in_progress:
+            # Local rebase creates a new patchset that invalidates dry run results
+            # and requires a full CQ run, which is disallowed when the concurrent
+            # CQ limit is reached.
+            if not was_running and current_running_count >= max_cq_runs:
+              break
+
+            # For WIP CLs (or unmergeable CLs), signal that a local on-disk rebase
+            # is required. We only support local rebase of one CL so terminate early.
+            return StepResult(
+                value=LocalRebaseTarget(
+                    patch_set=patch_set_to_retry,
+                    cq_label=cq_label,
+                    cl_passed_dry_run=cl_passed_dry_run,
+                ),
+                retried=retried_changes,
+                abandoned=abandoned_changes,
+            )
+
+        if not running:
+          if patch_set_to_retry.work_in_progress and not self.config.rebase_before_retry:
+            self.m.gerrit.set_change_ready_for_review_remote(
+                patch_set_to_retry.to_gerrit_change_proto())
+
+          self.retry_cl(patch_set_to_retry, cq_label)
+          retried_changes.append(patch_set_to_retry.to_gerrit_change_proto())
+          if not was_running:
+            current_running_count += 1
+
+          if cl_passed_dry_run:
+            cls_to_abandon = [
+                cl for cl in open_patch_sets
+                if cl.created < patch_set_to_retry.created
+            ]
+            abandoned_cls = self._abandon_outdated_cls(
+                cls_to_abandon, patch_set_to_retry, policy.outdated_cls_policy,
+                retry_only_run, step_name='abandon CLs before passed CQ+1 CL')
+            abandoned_changes.extend(
+                [cl.to_gerrit_change_proto() for cl in abandoned_cls])
+
+        target = next(identify_retry, None)
+        if not target or not target[0]:
+          break
+        patch_set_to_retry, cq_label, _, cl_passed_dry_run, running = target
+
       return StepResult(value=None, retried=retried_changes,
                         abandoned=abandoned_changes)
 

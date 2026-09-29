@@ -34,6 +34,7 @@ def RunSteps(api):
         open_patch_sets, 1)
   api.assertions.assertTrue(limit_exceeded)
   api.assertions.assertEqual(running_count, 1)
+  api.assertions.assertEqual(api.pupr.count_running_cls(open_patch_sets), 1)
 
 
 def GenTests(api):
