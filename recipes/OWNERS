@@ -36,3 +36,4 @@ per-file build_legacy_fw* = file:chromiumos/owners:v1:/firmware/OWNERS.cros_ec
 per-file build_legacy_fw* = file:chromiumos/owners:v1:/firmware/OWNERS.cros_ap
 per-file firmware* = file:chromiumos/owners:v1:/firmware/OWNERS.cros_ec
 per-file firmware* = file:chromiumos/owners:v1:/firmware/OWNERS.cros_ap
+per-file test_dagwood_firmware* = file:chromiumos/owners:v1:/firmware/OWNERS.cros_ec
