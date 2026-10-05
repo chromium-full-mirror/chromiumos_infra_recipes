@@ -68,6 +68,13 @@ class GreennessApi(recipe_api.RecipeApi):
             pres=pres,
             end_bbid=self.m.buildbucket.build.id,
             wait_for_complete=wait_for_complete,
+            # Poll for greenness a total of 13 hours - the maximum duration of
+            # snapshot-orchestrator.
+            # Note - the get_snapshot_greenness function polls every 30 minutes
+            # up to the retries count. We'd need to poll a total of 26 times to
+            # poll for 13 total hours. This function is called twice throughout
+            # the build, so split the retries between the two calls.
+            retries=13,
         )
         pres.logs['last snapshot greenness'] = str(greenness.items())
         return greenness
@@ -193,13 +200,11 @@ class GreennessApi(recipe_api.RecipeApi):
             last_greenness = self._get_last_greenness(wait_for_complete=True)
 
           # If greenness dict is empty, it means the metric was 0 in the last run.
-          # Only update score since build_score should have already been
-          # propagated forward correctly.
-          score = last_greenness.get(
-              builder, greenness_pb2.AggregateGreenness.Greenness()).metric
+          builder_greenness = last_greenness.get(
+              builder, greenness_pb2.AggregateGreenness.Greenness())
           self._builder_greenness_dict[builder] = GreennessTuple(
-              score=score,
-              build_score=greenness.build_score,
+              score=builder_greenness.metric,
+              build_score=builder_greenness.build_metric,
               critical=greenness.critical,
               relevant=greenness.relevant,
           )
