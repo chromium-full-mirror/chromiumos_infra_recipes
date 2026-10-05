@@ -8,4 +8,8 @@ package recipes.chromeos.qualbot;
 
 import "chromite/api/qualbot.proto";
 
-message QualbotProperties { chromite.api.RunQualbotRequest request = 1; };
+message QualbotProperties {
+  chromite.api.RunQualbotRequest request = 1;
+  // The CIPD ref of fw_qual_automation (e.g. 'staging' or 'prod') to check out.
+  string target_ref = 2;
+}

@@ -33,9 +33,13 @@ DEPS = [
     "build_menu",
     "cros_build_api",
     "easy",
+    "git",
 ]
 
 PROPERTIES = QualbotProperties
+
+
+DEFAULT_CIPD_PACKAGE = "chromiumos/infra/cros_test_runner/fw_qual_automation"
 
 
 def RunSteps(api: RecipeApi, properties: QualbotProperties):
@@ -48,6 +52,26 @@ def RunSteps(api: RecipeApi, properties: QualbotProperties):
   with api.context(env_prefixes={"PATH": [protoc_path]}):
     with api.build_menu.configure_builder(
         missing_ok=True), api.build_menu.setup_workspace():
+      if properties.target_ref:
+        desc = api.cipd.describe(
+            package_name=DEFAULT_CIPD_PACKAGE,
+            version=properties.target_ref,
+        )
+        target_revision = next(
+            (t.tag.split(":", 1)[1]
+             for t in desc.tags
+             if t.tag.startswith("git_revision:")),
+            None,
+        )
+        if not target_revision:
+          raise api.step.StepFailure(
+              "Missing git_revision tag on CIPD package "
+              f"{DEFAULT_CIPD_PACKAGE}@{properties.target_ref}")
+        repo_dir = api.src_state.workspace_path.joinpath(
+            "infra", "fw_qual_automation")
+        with api.context(cwd=repo_dir):
+          api.git.fetch("cros-internal", [target_revision])
+          api.git.checkout("FETCH_HEAD", force=True)
       run_qualbot(api, properties)
 
 
@@ -161,6 +185,58 @@ def GenTests(api: RecipeTestApi):
           post_process.StepSuccess,
           "Run Qualbot.call auto_qual_main",
       ),
+  )
+
+  yield api.build_menu.test(
+      "with-target-ref",
+      api.properties(QualbotProperties(target_ref="staging")),
+      api.step_data(
+          f"cipd describe {DEFAULT_CIPD_PACKAGE}",
+          api.cipd.example_describe(
+              package_name=DEFAULT_CIPD_PACKAGE,
+              version="staging",
+              test_data_tags=["git_revision:deadbeef1234567890"],
+          ),
+      ),
+      api.step_data(
+          "Run Qualbot.call auto_qual_main",
+          mock_sub_build(),
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "cipd describe chromiumos/infra/cros_test_runner/fw_qual_automation",
+          ["-version", "staging"],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "git fetch",
+          ["cros-internal", "deadbeef1234567890"],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "git checkout",
+          ["--force", "FETCH_HEAD"],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.build_menu.test(
+      "with-target-ref-missing-tag",
+      api.properties(QualbotProperties(target_ref="staging")),
+      api.step_data(
+          f"cipd describe {DEFAULT_CIPD_PACKAGE}",
+          api.cipd.example_describe(
+              package_name=DEFAULT_CIPD_PACKAGE,
+              version="staging",
+              test_data_tags=[],
+          ),
+      ),
+      api.post_check(
+          post_process.SummaryMarkdownRE,
+          "Missing git_revision tag on CIPD package",
+      ),
+      api.post_process(post_process.DropExpectation),
+      status="FAILURE",
   )
 
   def check_link(check, steps, link_name, expected_link):
