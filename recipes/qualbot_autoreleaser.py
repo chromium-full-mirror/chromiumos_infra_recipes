@@ -14,12 +14,17 @@ This recipe automates the release lifecycle across staging and production:
   previous CIPD instance ID or git_revision:<sha> tag.
 """
 
+from google.protobuf import timestamp_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as bb_builder_common
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as bb_service
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
 from PB.recipes.chromeos.qualbot_autoreleaser import QualbotAutoreleaserProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
+    "recipe_engine/buildbucket",
     "recipe_engine/cipd",
     "recipe_engine/context",
     "recipe_engine/file",
@@ -87,11 +92,65 @@ def _promote_prod(
   source_ref = properties.source_ref or "staging"
   target_ref = properties.target_ref or "prod"
 
-  with api.step.nest("promote prod cipd ref"):
-    # TODO(b/552097725): Validate that staging is healthy enough for prod roll.
+  with api.step.nest("promote prod cipd ref") as pres:
+    # Look up the CIPD package instance currently pointed to by source_ref.
     desc = api.cipd.describe(package_name=DEFAULT_CIPD_PACKAGE,
                              version=source_ref)
 
+    if not properties.force:
+      # Compute soak window start: since source_ref was last updated, capped to
+      # the last 24 hours.
+      now_ts = api.buildbucket.build.create_time.ToSeconds()
+      ref_ts = next(
+          (r.modified_ts for r in desc.refs if r.ref == source_ref),
+          desc.registered_ts,
+      )
+      start_ts = max(ref_ts, now_ts - 24 * 60 * 60)
+
+      # Query completed scheduled staging pipeline runs in the soak window,
+      # excluding ad-hoc or CL tryjob runs via user_agent:luci-scheduler.
+      builds = api.buildbucket.search(
+          predicate=bb_service.BuildPredicate(
+              builder=bb_builder_common.BuilderID(
+                  project="chromeos",
+                  bucket="staging",
+                  builder="staging-qualbot-pipeline",
+              ),
+              create_time=bb_common.TimeRange(
+                  start_time=timestamp_pb2.Timestamp(seconds=start_ts),
+              ),
+              status=bb_common.ENDED_MASK,
+              tags=[
+                  bb_common.StringPair(key="user_agent",
+                                       value="luci-scheduler"),
+              ],
+          ))
+      log_lines = [
+          f"source_ref: {source_ref} (instance_id={desc.pin.instance_id})",
+          f"ref_ts: {ref_ts}, now_ts: {now_ts}, soak_start_ts: {start_ts}",
+          f"considered builds ({len(builds)}):",
+      ]
+      for b in builds:
+        status_name = bb_common.Status.Name(b.status)
+        log_lines.append(f"  - build {b.id}: {status_name} "
+                         f"(https://ci.chromium.org/b/{b.id})")
+        pres.links[f"staging build {b.id} ({status_name})"] = (
+            f"https://ci.chromium.org/b/{b.id}")
+      pres.logs["soak gate summary"] = log_lines
+
+      # Require at least one completed staging soak run and that all succeeded.
+      if not builds:
+        raise api.step.StepFailure(
+            "No completed staging-qualbot-pipeline builds found since "
+            "staging ref update.")
+      failed_builds = [b for b in builds if b.status != bb_common.SUCCESS]
+      if failed_builds:
+        failed_ids = ", ".join(str(b.id) for b in failed_builds)
+        raise api.step.StepFailure(
+            "Staging health gate failed: non-passing "
+            f"staging-qualbot-pipeline builds ({failed_ids}).")
+
+    # Point target_ref ('prod') to the verified staging CIPD instance.
     if not dry_run:
       api.cipd.set_ref(
           package_name=DEFAULT_CIPD_PACKAGE,
@@ -131,6 +190,10 @@ def GenTests(api: RecipeTestApi):
               stage=QualbotAutoreleaserProperties.STAGE_PROD,
               dry_run=True,
           )),
+      api.buildbucket.simulated_search_results(
+          [api.buildbucket.ci_build_message(status="SUCCESS")],
+          step_name="promote prod cipd ref.buildbucket.search",
+      ),
       api.post_check(
           post_process.StepCommandContains,
           "promote prod cipd ref.cipd describe chromiumos/infra/cros_test_runner/fw_qual_automation",
@@ -149,6 +212,68 @@ def GenTests(api: RecipeTestApi):
           QualbotAutoreleaserProperties(
               stage=QualbotAutoreleaserProperties.STAGE_PROD,
           )),
+      api.buildbucket.simulated_search_results(
+          [api.buildbucket.ci_build_message(status="SUCCESS")],
+          step_name="promote prod cipd ref.buildbucket.search",
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "promote prod cipd ref.cipd set-ref chromiumos/infra/cros_test_runner/fw_qual_automation",
+          ["-ref", "prod"],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "promote_prod_no_builds",
+      api.properties(
+          QualbotAutoreleaserProperties(
+              stage=QualbotAutoreleaserProperties.STAGE_PROD,
+          )),
+      api.buildbucket.simulated_search_results(
+          [],
+          step_name="promote prod cipd ref.buildbucket.search",
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          "promote prod cipd ref.cipd set-ref chromiumos/infra/cros_test_runner/fw_qual_automation",
+      ),
+      api.post_process(post_process.DropExpectation),
+      status="FAILURE",
+  )
+
+  yield api.test(
+      "promote_prod_failed_staging_build",
+      api.properties(
+          QualbotAutoreleaserProperties(
+              stage=QualbotAutoreleaserProperties.STAGE_PROD,
+          )),
+      api.buildbucket.simulated_search_results(
+          [
+              api.buildbucket.ci_build_message(status="SUCCESS"),
+              api.buildbucket.ci_build_message(status="FAILURE"),
+          ],
+          step_name="promote prod cipd ref.buildbucket.search",
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          "promote prod cipd ref.cipd set-ref chromiumos/infra/cros_test_runner/fw_qual_automation",
+      ),
+      api.post_process(post_process.DropExpectation),
+      status="FAILURE",
+  )
+
+  yield api.test(
+      "promote_prod_force",
+      api.properties(
+          QualbotAutoreleaserProperties(
+              stage=QualbotAutoreleaserProperties.STAGE_PROD,
+              force=True,
+          )),
+      api.post_check(
+          post_process.DoesNotRun,
+          "promote prod cipd ref.buildbucket.search",
+      ),
       api.post_check(
           post_process.StepCommandContains,
           "promote prod cipd ref.cipd set-ref chromiumos/infra/cros_test_runner/fw_qual_automation",
