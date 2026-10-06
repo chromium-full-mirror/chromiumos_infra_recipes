@@ -1063,17 +1063,17 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # We upload artifacts whether the build passed or failed (see
       # crbug/1086630).
 
-      # TODO(b/193131170): Switch to using updated ArtifactInfo fields.
-      for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
-        with self.m.failures.ignore_exceptions():
-          self.m.code_coverage.upload_firmware_lcov(outpath / fname)
-
       for fname in files_by_artifact.get('CODE_COVERAGE_E2E', []):
         self.m.code_coverage.update_e2e_metadata(
             gs_bucket, gs_path, sysroot.build_target.name,
             str(self.m.cros_version.version))
 
       if upload_coverage:
+        # TODO(b/193131170): Switch to using updated ArtifactInfo fields.
+        for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
+          with self.m.failures.ignore_exceptions():
+            self.m.code_coverage.upload_firmware_lcov(outpath / fname)
+
         cov_files = {}
         cov_files['LLVM'] = files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', [])
         cov_files['LLVM'].extend(

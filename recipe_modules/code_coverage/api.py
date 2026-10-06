@@ -183,7 +183,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               test_data=('coverage.json',),
           )
 
-          for coverage_file in coverage_files:
+          for coverage_file in (
+              f for f in coverage_files if self.m.path.basename(f) != 'html'):
             self._upload_incremental_coverage_to_gerrit(
                 coverage_file, coverage_type, incremental_settings,
                 gs_artifact_bucket, gs_artifact_path, merger_flow_enabled)

@@ -50,6 +50,7 @@ DEPS = [
     'recipe_engine/time',
     'build_menu',
     'build_reporting',
+    'code_coverage',
     'cros_artifacts',
     'cros_build_api',
     'cros_infra_config',
@@ -164,7 +165,7 @@ def RunSteps(api, properties):
 
     if shard_count > 1 and not shard_index:
       with api.step.nest('schedule and wait for shards') as pres, \
-           api.build_menu.configure_builder(commit=commit) as config:
+           api.build_menu.configure_builder(commit=commit, disable_sdk=True) as config:
 
         location = properties.firmware_location or config.general.firmware_location
         if properties.code_coverage and location != common_pb2.PLATFORM_ZEPHYR:
@@ -175,18 +176,29 @@ def RunSteps(api, properties):
         requests = []
         builder = api.buildbucket.build.builder.builder
         bucket = api.buildbucket.build.builder.bucket
+        gitiles_commit = (
+            api.src_state.gitiles_commit
+            if api.src_state.gitiles_commit.ref else None)
 
         for i in range(1, shard_count + 1):
-          props = MessageToDict(properties, preserving_proto_field_name=True)
+          props = dict(api.cv.props_for_child_build)
+          props.update(api.cros_infra_config.props_for_child_build)
+          props.update(
+              MessageToDict(properties, preserving_proto_field_name=True))
 
           props['shard_index'] = i
 
           props['shard_count'] = shard_count
           requests.append(
               api.buildbucket.schedule_request(
-                  bucket=bucket, builder=builder, properties=props,
+                  bucket=bucket,
+                  builder=builder,
+                  properties=props,
                   gerrit_changes=api.buildbucket.build.input.gerrit_changes,
-                  gitiles_commit=api.buildbucket.build.input.gitiles_commit))
+                  gitiles_commit=gitiles_commit,
+                  as_shadow_if_parent_is_led=True,
+                  led_inherit_parent=True,
+              ))
 
         builds = api.buildbucket.schedule(requests)
 
@@ -204,7 +216,7 @@ def RunSteps(api, properties):
 
         if properties.code_coverage:
           # Setup workspace to use cros_sdk
-          with api.build_menu.setup_workspace():
+          with api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
             chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
 
             with api.step.nest('download shard coverage'):
@@ -220,20 +232,20 @@ def RunSteps(api, properties):
                     name=f'download shard {build_id}',
                 )
 
-            api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
+            api.cros_sdk.create_chroot(
+                version=config.general.sdk_cache_version,
+                sdk_version=chromiumos_sdk_version,
+            )
             cmd = [
-                './firmware_builder.py',
+                '/mnt/host/source/src/platform/ec/zephyr/firmware_builder.py',
                 'merge-shards',
                 '--merge-dir',
-                'shards',
+                '/mnt/host/source/src/platform/ec/zephyr/shards',
             ]
-            with api.context(
-                cwd=api.src_state.workspace_path.joinpath(
-                    'src', 'platform', 'ec', 'zephyr')):
-              api.cros_sdk.run(
-                  'merge coverage shards',
-                  cmd,
-              )
+            api.cros_sdk.run(
+                'merge coverage shards',
+                cmd,
+            )
 
             coverage_tar = api.src_state.workspace_path.joinpath(
                 'src', 'platform', 'ec', 'build', 'zephyr', 'coverage.tbz2')
@@ -250,6 +262,8 @@ def RunSteps(api, properties):
                 dest_bucket,
                 dest_path,
             )
+            with api.failures.ignore_exceptions():
+              api.code_coverage.upload_firmware_lcov(coverage_tar)
 
         if failed_ids:
           pres.step_text = f'{len(failed_ids)} shards failed.'
@@ -277,6 +291,12 @@ def RunSteps(api, properties):
       chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
       api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
       api.cros_sdk.run('set ccache limit', ['ccache', '-M', '50G'])
+      if properties.shard_count > 1:
+        use_flags = list(config.build.use_flags) + [
+            common_pb2.UseFlag(flag=f'shard_index_{properties.shard_index}'),
+            common_pb2.UseFlag(flag=f'shard_count_{properties.shard_count}'),
+        ]
+        api.cros_sdk.set_use_flags(use_flags)
 
       service = api.cros_build_api.FirmwareService
       chroot = api.cros_sdk.chroot
@@ -293,9 +313,13 @@ def RunSteps(api, properties):
       def _upload_artifacts(ignore_failure: bool = False):
         try:
           return api.build_menu.upload_artifacts(
-              config=config, report_to_spike=api.cros_infra_config.config
-              .artifacts.attestation_eligible, use_file_paths=True,
-              build_targets=firmware_targets)
+              config=config,
+              report_to_spike=api.cros_infra_config.config.artifacts
+              .attestation_eligible,
+              use_file_paths=True,
+              build_targets=firmware_targets,
+              upload_coverage=(properties.shard_count <= 1),
+          )
         except StepFailure as e:
           if ignore_failure:
             # Log upload failure but preserve the build/test exception.
@@ -310,63 +334,68 @@ def RunSteps(api, properties):
       # which safely propagates through the cros_sdk chroot boundary natively.
       use_env = {}
       if properties.shard_count > 1:
-        use_env[
-            'USE'] = f"%(USE)s shard_index_{properties.shard_index} shard_count_{properties.shard_count}"
+        use_env['USE'] = (f'%(USE)s shard_index_{properties.shard_index} '
+                          f'shard_count_{properties.shard_count}')
 
-      with api.context(env=use_env):
-        try:
-          response = service.BuildAllFirmware(
-              BuildAllFirmwareRequest(
-                  firmware_location=location,
-                  chroot=chroot,
-                  code_coverage=properties.code_coverage,
-                  firmware_targets=firmware_targets,
-                  avb_enabled=properties.avb_enabled,
-              ),
-              name="build firmware",
-          )
-        except StepFailure as e:
-          _upload_artifacts(ignore_failure=True)
-          raise e
+      try:
+        with api.context(env=use_env):
+          try:
+            response = service.BuildAllFirmware(
+                BuildAllFirmwareRequest(
+                    firmware_location=location,
+                    chroot=chroot,
+                    code_coverage=properties.code_coverage,
+                    firmware_targets=firmware_targets,
+                    avb_enabled=properties.avb_enabled,
+                ),
+                name="build firmware",
+            )
+          except StepFailure as e:
+            _upload_artifacts(ignore_failure=True)
+            raise e
 
-        binary_sizes = {}
-        if response.metrics and response.metrics.value:
-          for fw_metric in response.metrics.value:
-            region_prefix = ''
-            if fw_metric.platform_name:
-              region_prefix += fw_metric.platform_name + '_'
-            if fw_metric.target_name:
-              region_prefix += fw_metric.target_name + '_'
-            for fw_section in fw_metric.fw_section:
-              if fw_section.track_on_gerrit:
-                if fw_section.used:
-                  binary_sizes[region_prefix +
-                               fw_section.region] = fw_section.used
-                if fw_section.total:
-                  binary_sizes[region_prefix + fw_section.region +
-                               '.budget'] = fw_section.total
+          binary_sizes = {}
+          if response.metrics and response.metrics.value:
+            for fw_metric in response.metrics.value:
+              region_prefix = ''
+              if fw_metric.platform_name:
+                region_prefix += fw_metric.platform_name + '_'
+              if fw_metric.target_name:
+                region_prefix += fw_metric.target_name + '_'
+              for fw_section in fw_metric.fw_section:
+                if fw_section.track_on_gerrit:
+                  if fw_section.used:
+                    binary_sizes[region_prefix +
+                                 fw_section.region] = fw_section.used
+                  if fw_section.total:
+                    binary_sizes[region_prefix + fw_section.region +
+                                 '.budget'] = fw_section.total
 
-        if binary_sizes:
-          api.easy.set_properties_step(binary_sizes=binary_sizes,
-                                       step_name='output binary sizes')
-        snapshot_sha = api.src_state.gitiles_commit.id
-        api.easy.set_properties_step(got_revision=snapshot_sha,
-                                     step_name='output got_revision')
+          if binary_sizes:
+            api.easy.set_properties_step(binary_sizes=binary_sizes,
+                                         step_name='output binary sizes')
+          snapshot_sha = api.src_state.gitiles_commit.id
+          api.easy.set_properties_step(got_revision=snapshot_sha,
+                                       step_name='output got_revision')
 
-        try:
-          service.TestAllFirmware(
-              TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                     code_coverage=properties.code_coverage,
-                                     firmware_targets=firmware_targets,
-                                     avb_enabled=properties.avb_enabled,
-                                     toolchain=properties.toolchain),
-              name='test firmware')
-        except StepFailure as e:
-          _upload_artifacts(ignore_failure=True)
-          UploadTestResults(api, location, build.builder.builder)
-          raise e
+          try:
+            service.TestAllFirmware(
+                TestAllFirmwareRequest(firmware_location=location,
+                                       chroot=chroot,
+                                       code_coverage=properties.code_coverage,
+                                       firmware_targets=firmware_targets,
+                                       avb_enabled=properties.avb_enabled,
+                                       toolchain=properties.toolchain),
+                name='test firmware')
+          except StepFailure as e:
+            _upload_artifacts(ignore_failure=True)
+            UploadTestResults(api, location, build.builder.builder)
+            raise e
 
-      uploaded_artifacts, artifact_dir = _upload_artifacts()
+        uploaded_artifacts, artifact_dir = _upload_artifacts()
+      finally:
+        if properties.shard_count > 1:
+          api.cros_sdk.set_use_flags(config.build.use_flags)
       published = collections.defaultdict(list)
       if uploaded_artifacts and uploaded_artifacts.published:
         published.update(uploaded_artifacts.published)
@@ -1455,6 +1484,11 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           [b1, b2, b3, b4],
           step_name="schedule and wait for shards.collect shard builds",
+      ),
+      api.step_data(
+          'schedule and wait for shards.'
+          'upload code coverage data (firmware lcov).listdir',
+          api.file.listdir(['lcov.info', 'html']),
       ),
       cq=True,
       dry_run=True,

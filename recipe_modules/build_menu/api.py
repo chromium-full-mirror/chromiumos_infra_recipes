@@ -984,6 +984,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       use_file_paths=False,
       artifacts_info=None,
       build_targets=None,
+      upload_coverage=None,
   ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
     """Upload artifacts from the build.
 
@@ -1010,6 +1011,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
           publish url.  Defaults to False.
       artifacts_info (ArtifactsByService): Artifacts to fetch.
       build_targets (list): List of board name targets
+      upload_coverage (Optional[bool]): If set, overrides whether code coverage
+          artifacts are uploaded to the coverage service. If None, defaults to
+          uploading when packages are installed and unit tests are configured.
 
     Returns:
       (Option[UploadedArtifacts]) information about uploaded artifacts, if any
@@ -1021,7 +1025,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # If tests are not run, we dont have the coverage data and this step should be skipped.
     unit_test_configured = self.m.cros_infra_config.should_run(
         config.unit_tests.ebuilds_run_spec)
-    run_upload_coverage = self.packages_installed and unit_test_configured
+    run_upload_coverage = ((self.packages_installed and unit_test_configured)
+                           if upload_coverage is None else upload_coverage)
     artifacts_info = artifacts_info or config.artifacts.artifacts_info
 
     if self.m.cros_artifacts.has_output_artifacts(
