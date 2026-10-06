@@ -179,6 +179,43 @@ def _update_device_stability(api, properties, _project_infos, dry_run):
   return []
 
 
+def _get_snapshot_builder_config(properties: ConfigPostsubmitProperties,
+                                 builder_name: str):
+  """Returns the SnapshotBuilderConfig for a snapshot builder.
+
+  Args:
+    properties: Recipe input properties.
+    builder_name: Name of the snapshot builder that generated the configs.
+
+  Returns:
+    The builder's entry in snapshot_builder_configs. If there is no entry, an
+    equivalent config is derived from the legacy project_repo_snapshot_builders
+    field. Builders in that list write to project repos, all other builders
+    write to the program repo.
+
+  Raises:
+    recipe_api.StepFailure: If the builder's snapshot_builder_configs entry
+      enables neither destination.
+  """
+  if builder_name in properties.snapshot_builder_configs:
+    builder_config = properties.snapshot_builder_configs[builder_name]
+    if not (builder_config.write_to_program_repo or
+            builder_config.HasField('project_repo_config')):
+      raise recipe_api.StepFailure(
+          f'snapshot_builder_configs entry for {builder_name} sets '
+          'neither write_to_program_repo nor project_repo_config')
+    return builder_config
+
+  if builder_name in properties.project_repo_snapshot_builders:
+    return ConfigPostsubmitProperties.SnapshotBuilderConfig(
+        project_repo_config=(ConfigPostsubmitProperties.SnapshotBuilderConfig
+                             .ProjectRepoConfig()),
+    )
+  return ConfigPostsubmitProperties.SnapshotBuilderConfig(
+      write_to_program_repo=True,
+  )
+
+
 def _update_android_config(api, properties, _project_infos, dry_run):
   """Downloads CrOS configs from snapshot builders and generates Android XMLs.
 
@@ -214,6 +251,8 @@ def _update_android_config(api, properties, _project_infos, dry_run):
     for builder_name in properties.snapshot_builders_to_monitor:
       with api.step.nest(
           f"Process builder {builder_name}"), api.deferrals.defer_exceptions():
+        builder_config = _get_snapshot_builder_config(properties, builder_name)
+
         builds = api.buildbucket.search(
             builds_service_pb2.BuildPredicate(
                 builder=builder_common_pb2.BuilderID(
@@ -418,16 +457,20 @@ Flag: EXEMPT desktop only
 '''
 
         with api.context(cwd=workspace_path):
-          # If the builder is in project_repo_snapshot_builders, then each
-          # project repo gets its own commit. Otherwise all configs are committed
-          # to the program repo.
+          # If the builder writes to project repos, then each project repo gets
+          # its own commit. If the builder writes to the program repo, then all
+          # configs are committed to the program repo. A builder can do both.
           #
           # Note that the configs go to slightly different places depending on
-          # whether the builder is in project_repo_snapshot_builders, so we need
-          # fully separate logic. For example, hal_config.xml is in a
+          # whether they are committed to the program repo or a project repo, so
+          # we need fully separate logic. For example, hal_config.xml is in a
           # project-specific directory in the program repo.
-          if builder_name in properties.project_repo_snapshot_builders:
+          if builder_config.HasField('project_repo_config'):
+            allowlist = builder_config.project_repo_config.project_allowlist
             for project_name, hal_xml_path in project_to_hal_xml_path.items():
+              if allowlist and project_name not in allowlist:
+                continue
+
               repo_path_str = f'device/google/desktop/{project_name}'
               api.repo.sync(projects=[repo_path_str], current_branch=True,
                             step_name=f'repo sync {project_name}')
@@ -436,8 +479,8 @@ Flag: EXEMPT desktop only
               final_xml_path = project_path / 'configs/hal_config.xml'
               api.file.ensure_directory("ensure HAL XML path",
                                         final_xml_path.parent)
-              api.file.move(
-                  f'move HAL XML for {project_name}',
+              api.file.copy(
+                  f'copy HAL XML for {project_name}',
                   hal_xml_path,
                   final_xml_path,
               )
@@ -491,7 +534,8 @@ Flag: EXEMPT desktop only
                       android_host=host,
                       workspace_path=workspace_path,
                   ))
-          else:
+
+          if builder_config.write_to_program_repo:
             program_name = builder_name.removesuffix('-snapshot')
             repo_path_str = f'device/google/desktop/{program_name}'
             api.repo.sync(projects=[repo_path_str], current_branch=True,
@@ -499,10 +543,10 @@ Flag: EXEMPT desktop only
 
             program_path = api.context.cwd / repo_path_str
             if project_to_hal_xml_path:
-              # Combine the hal_config.xmls from eacn project into one XML file,
+              # Combine the hal_config.xmls from each project into one XML file,
               # because the Makefile is expecting a single XML file. Eventually
-              # all projects should be migrated to project_repo_snapshot_builders
-              # and this can be removed.
+              # all projects should be migrated to project_repo_config in
+              # snapshot_builder_configs and this can be removed.
               #
               # The root of the first XML file is used as the root of the combined
               # file. All children of the root element of the other files are
@@ -816,7 +860,8 @@ def GenTests(api):
   def default_properties(allowed_projects=None, allowed_programs=None,
                          abandon: bool = False, skip_upload: bool = False,
                          android_host: str = None,
-                         snapshot_builders_to_monitor=None):
+                         snapshot_builders_to_monitor=None,
+                         snapshot_builder_configs=None):
     if allowed_projects is None:
       allowed_projects = [{'repo_name': 'chromeos/project/galaxy/milkyway'}]
 
@@ -847,6 +892,7 @@ def GenTests(api):
             snapshot_builders_to_monitor=snapshot_builders_to_monitor,
             project_repo_snapshot_builders=['example-snapshot-project-repo'],
             android_host=android_host,
+            snapshot_builder_configs=snapshot_builder_configs,
         ))
 
   def config_dlm_step_data(api):
@@ -914,6 +960,19 @@ def GenTests(api):
         f"Do {action.__name__.strip('_')} and create CL.Create CL for {repo_name}.query for existing changes",
         host_url=host_url,
         changes=changes or [],
+    )
+
+  def two_projects_step_data(api, builder):
+    """Returns StepData for configs of two projects from builder."""
+    bsp_dir = (f'[CLEANUP]/unzip_{builder}/example_program/'
+               'chromeos-config-bsp-private-0.0.1')
+    return api.step_data(
+        f'Do update_android_config and create CL.Process builder {builder}'
+        '.find jsonproto files',
+        api.file.glob_paths([
+            f'{bsp_dir}/{project}/generated/config.jsonproto'
+            for project in ('example_project', 'another_project')
+        ]),
     )
 
   yield api.test(
@@ -1045,6 +1104,200 @@ def GenTests(api):
               'device/google/desktop/example_project'
           ],
       ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'update_android_config_snapshot_builder_config_allowlist',
+      default_properties(
+          snapshot_builders_to_monitor=['example-snapshot-project-repo'],
+          snapshot_builder_configs={
+              'example-snapshot-project-repo':
+                  PROPERTIES.SnapshotBuilderConfig(
+                      project_repo_config=(
+                          PROPERTIES.SnapshotBuilderConfig.ProjectRepoConfig(
+                              project_allowlist=['example_project'],
+                          )),
+                  ),
+          },
+      ),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api, 'example-snapshot-project-repo'),
+      config_dlm_step_data(api),
+      two_projects_step_data(api, 'example-snapshot-project-repo'),
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot-project-repo.repo sync example_project',
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot-project-repo.repo sync another_project',
+      ),
+      api.post_check(post_process.DoesNotRunRE,
+                     r'.*\.write combined HAL XML for .*'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'update_android_config_snapshot_builder_config_program_and_project',
+      default_properties(
+          snapshot_builder_configs={
+              'example-snapshot':
+                  PROPERTIES.SnapshotBuilderConfig(
+                      write_to_program_repo=True,
+                      project_repo_config=(
+                          PROPERTIES.SnapshotBuilderConfig.ProjectRepoConfig(
+                              project_allowlist=['example_project'],
+                          )),
+                  ),
+          },
+      ),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api),
+      config_dlm_step_data(api),
+      two_projects_step_data(api, 'example-snapshot'),
+      existing_changes_step_data(
+          api, action=_update_android_config,
+          host_url='https://googleplex-android-review.googlesource.com',
+          repo_name='device/google/desktop/example_program'),
+      existing_changes_step_data(
+          api, action=_update_android_config,
+          host_url='https://googleplex-android-review.googlesource.com',
+          repo_name='device/google/desktop/example_project'),
+      # The program repo still gets the combined configs of all projects.
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.read first hal_config.xml for another_project',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.read hal_config.xml for example_project',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.write combined HAL XML for example',
+      ),
+      # Only the allowlisted project gets its own project repo.
+      api.post_process(
+          post_process.StepCommandContains,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.repo sync example_project',
+          [
+              'sync', '--current-branch', '--verbose', '--force-checkout',
+              'device/google/desktop/example_project'
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.copy HAL XML for example_project',
+          [
+              '[CLEANUP]/googleplex-android_workspace/device/google/desktop/'
+              'example_project/configs/hal_config.xml',
+          ],
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.repo sync another_project',
+      ),
+      # A CL is created for both the program repo and the project repo.
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Create CL for '
+          'device/google/desktop/example_program',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Create CL for '
+          'device/google/desktop/example_project',
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # An entry in snapshot_builder_configs takes precedence over the legacy
+  # project_repo_snapshot_builders field. The builder name doesn't end in
+  # '-snapshot', so the program repo is named after the whole builder name.
+  yield api.test(
+      'update_android_config_snapshot_builder_config_overrides_legacy',
+      default_properties(
+          snapshot_builders_to_monitor=['example-snapshot-project-repo'],
+          snapshot_builder_configs={
+              'example-snapshot-project-repo':
+                  PROPERTIES.SnapshotBuilderConfig(write_to_program_repo=True),
+          },
+      ),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api, 'example-snapshot-project-repo'),
+      config_dlm_step_data(api),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot-project-repo.repo sync '
+          'device/google/desktop/example-snapshot-project-repo',
+          ['device/google/desktop/example-snapshot-project-repo'],
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot-project-repo.repo sync example_project',
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'update_android_config_snapshot_builder_config_no_destination',
+      default_properties(
+          snapshot_builder_configs={
+              'example-snapshot': PROPERTIES.SnapshotBuilderConfig(),
+          },
+      ),
+      config_repos_step_data(api),
+      config_dlm_step_data(api),
+      api.post_check(
+          post_process.DoesNotRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.Find latest successful build for example-snapshot',
+      ),
+      api.post_check(post_process.StatusFailure),
+      api.post_check(post_process.SummaryMarkdownRE,
+                     'sets neither write_to_program_repo nor'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'update_android_config_snapshot_builder_config_all_projects',
+      default_properties(
+          snapshot_builder_configs={
+              'example-snapshot':
+                  PROPERTIES.SnapshotBuilderConfig(
+                      project_repo_config=(
+                          PROPERTIES.SnapshotBuilderConfig.ProjectRepoConfig()),
+                  ),
+          },
+      ),
+      config_repos_step_data(api),
+      snapshot_build_step_data(api),
+      config_dlm_step_data(api),
+      two_projects_step_data(api, 'example-snapshot'),
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.repo sync example_project',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'Do update_android_config and create CL.Process builder '
+          'example-snapshot.repo sync another_project',
+      ),
+      api.post_check(post_process.DoesNotRunRE,
+                     r'.*\.write combined HAL XML for .*'),
       api.post_process(post_process.DropExpectation),
   )
 
