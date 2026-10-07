@@ -79,4 +79,7 @@ message BuildFirmwareProperties {
 
   // The 1-indexed shard assignment (used automatically when spanning).
   int32 shard_index = 17;
+
+  // Toolchain to pass as --toolchain to firmware_builder.py test.
+  string toolchain = 18;
 }

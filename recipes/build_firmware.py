@@ -358,7 +358,8 @@ def RunSteps(api, properties):
               TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                      code_coverage=properties.code_coverage,
                                      firmware_targets=firmware_targets,
-                                     avb_enabled=properties.avb_enabled),
+                                     avb_enabled=properties.avb_enabled,
+                                     toolchain=properties.toolchain),
               name='test firmware')
         except StepFailure as e:
           _upload_artifacts(ignore_failure=True)
@@ -766,6 +767,7 @@ def GenTests(api):
           'bump_version': False,
           'set_suite_scheduling': True,
           'avb_enabled': True,
+          'toolchain': 'host/gnu',
       })
 
   yield test(
