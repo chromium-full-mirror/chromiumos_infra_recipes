@@ -189,7 +189,7 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
                                f'ec_component_manifest_{version}.zip',
                                'ec_component_manifest_LATEST.zip')
 
-    def _create_cipd_pkg(signed_type: str) -> str:
+    def _create_cipd_pkg(signed_type: str) -> api.cipd.Pin:
       pkg_name = f'android/desktop/firmware/{target}/ap/{signed_type}'
       if api.cros_infra_config.is_staging:
         pkg_name = f'experimental/{pkg_name}'
@@ -200,12 +200,28 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
       if ec_component_manifest_path:
         pkg_def.add_file(checkout / 'firmware/ec_component_manifest' /
                          f'ec_component_manifest_{version}.zip')
-      api.cipd.create_from_pkg(pkg_def=pkg_def, tags={'version': version})
-      return pkg_name
+      return api.cipd.create_from_pkg(pkg_def=pkg_def,
+                                      tags={'version': version})
 
     with api.step.nest('upload to cipd'):
-      unsigned_pkg = _create_cipd_pkg('dev-signed')
-      signed_pkg = _create_cipd_pkg(directory)
+      unsigned_pin = _create_cipd_pkg('dev-signed')
+      signed_pin = _create_cipd_pkg(directory)
+
+    cipd_versions_path = checkout / 'firmware/cipd.versions'
+    existing_versions = ''
+    if api.path.exists(cipd_versions_path):
+      existing_versions = api.file.read_text('read cipd.versions',
+                                             cipd_versions_path)
+    new_entries = (f'{unsigned_pin.package}\n'
+                   f'  version:{version}\n'
+                   f'  {unsigned_pin.instance_id}\n\n'
+                   f'{signed_pin.package}\n'
+                   f'  version:{version}\n'
+                   f'  {signed_pin.instance_id}\n')
+    updated_versions = (f'{existing_versions.rstrip()}\n\n{new_entries}'
+                        if existing_versions.strip() else new_entries)
+    api.file.write_text('write cipd.versions', cipd_versions_path,
+                        updated_versions)
 
     # Check to make sure there was actually a change.
     diff_lines = api.git.get_working_dir_diff_files()
@@ -220,8 +236,8 @@ def upload_firmware_prebuilts(api: RecipeApi, unsigned_shellball_path: Path,
         bbid,
         target,
         fw_config_path,
-        unsigned_package_name=unsigned_pkg,
-        signed_package_name=signed_pkg,
+        unsigned_package_name=unsigned_pin.package,
+        signed_package_name=signed_pin.package,
     )
     api.git.commit(commit_msg)
     # TODO: b/466455984 - Remove skip when no longer needed.
@@ -530,6 +546,19 @@ def GenTests(api: RecipeTestApi):
               '-pkg-def',
               re.compile(r'dev-signed/chromeos-firmwareupdate_'),
           ]),
+      api.post_check(post_process.DoesNotRun, 'read cipd.versions'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'write cipd.versions',
+          [
+              'android/desktop/firmware/kukui/ap/dev-signed\n'
+              '  version:4.0\n'
+              '  40-chars-fake-of-the-package-instance_id\n\n'
+              'android/desktop/firmware/kukui/ap/premp-signed\n'
+              '  version:4.0\n'
+              '  40-chars-fake-of-the-package-instance_id\n'
+          ],
+      ),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='firmware-packager-android-kukui-main',
@@ -672,7 +701,13 @@ def GenTests(api: RecipeTestApi):
           api.path.cleanup_dir /
           'tmp_tmp_1/firmware/dev-signed/chromeos-firmwareupdate_LATEST',
           api.path.cleanup_dir /
-          'tmp_tmp_1/firmware/premp-signed/chromeos-firmwareupdate_LATEST'),
+          'tmp_tmp_1/firmware/premp-signed/chromeos-firmwareupdate_LATEST',
+          api.path.cleanup_dir / 'tmp_tmp_1/firmware/cipd.versions'),
+      api.step_data(
+          'read cipd.versions',
+          api.file.read_text('android/desktop/firmware/kukui/ap/dev-signed\n'
+                             '  version:3.0\n'
+                             '  old-instance-id\n')),
       api.post_check(
           post_process.DoesNotRun,
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
@@ -694,6 +729,22 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'create symlink'),
       api.post_check(post_process.MustRun, 'remove existing symlink (2)'),
       api.post_check(post_process.MustRun, 'create symlink (2)'),
+      api.post_check(post_process.MustRun, 'read cipd.versions'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'write cipd.versions',
+          [
+              'android/desktop/firmware/kukui/ap/dev-signed\n'
+              '  version:3.0\n'
+              '  old-instance-id\n\n'
+              'android/desktop/firmware/kukui/ap/dev-signed\n'
+              '  version:4.0\n'
+              '  40-chars-fake-of-the-package-instance_id\n\n'
+              'android/desktop/firmware/kukui/ap/premp-signed\n'
+              '  version:4.0\n'
+              '  40-chars-fake-of-the-package-instance_id\n'
+          ],
+      ),
       api.post_check(post_process.MustRun, 'git commit'),
       api.post_check(post_process.DoesNotRun, 'abandon CL 1'),
       api.post_process(post_process.DropExpectation),
