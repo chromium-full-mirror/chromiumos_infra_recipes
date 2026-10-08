@@ -47,9 +47,6 @@ ABSOLUTE_COVERAGE_CIPD_PACKAGE = f'{PACKAGE_ROOT}/absolute_code_coverage'
 ABSOLUTE_COVERAGE_CIPD_VERSION = 'absolute_code_coverage:cl600915087'
 ABSOLUTE_COVERAGE_CIPD_FILE = 'absolute_code_coverage'
 
-# Number of file coverage entries per chunk
-FILE_ENTRIES_PER_CHUNK = 3000
-
 # These projects don't ever need coverage data
 EXCLUDED_PROJECTS = [
     "chromiumos/third_party/zephyrproject",
@@ -112,7 +109,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         step_name=step_name,
         # Filtering only works for llvm json files.
         incremental_settings=CoverageFileSettings(True, False),
-        absolute_cs_settings=CoverageFileSettings(True, True),
+        # No absolute_cs_settings: the Bifrost ingress used by the absolute
+        # coverage uploader was turned down (b/564309761).
     )
 
   def upload_code_coverage(self, tarfile, coverage_type, gs_artifact_bucket,
@@ -510,6 +508,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                                                gs_artifact_path=None):
     """Uploads the coverage data to code search.
 
+      Only the merger flow uploads absolute coverage; the direct upload through
+      Bifrost VomFass is gone with its ingress (b/564309761).
+
       Args:
         fpath (str): path to the coverage file.
         coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
@@ -518,57 +519,18 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
         gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
     """
-    if self._cq_builder or self.m.cv.active or absolute_cs_settings is None:
+    if (not merger_flow_enabled or self._cq_builder or self.m.cv.active or
+        absolute_cs_settings is None):
       return
 
-    with self.m.step.nest(
-        'upload absolute coverage to Code Search') as presentation:
+    with self.m.step.nest('upload absolute coverage to Code Search'):
       absolute_coverage_file = self._write_cleaned_coverage_file(
           fpath, absolute_cs_settings)
 
       codesearch_commit_id = self.m.gitiles.fetch_revision(
           HOST, CODESEARCH_PROJECT, self._branch)
-      if merger_flow_enabled:
-        self._merger_absolute(absolute_coverage_file, codesearch_commit_id,
-                              gs_artifact_bucket, gs_artifact_path,
-                              coverage_type)
-      else:
-        build = self.m.buildbucket.build
-        chunks_file = self._chunk_coverage_file(absolute_coverage_file,
-                                                coverage_type)
-        presentation.logs['chunked_files'] = str(chunks_file)
-
-        for chunk_file in chunks_file:
-          self.m.step(
-              f'absolute coverage upload for {fpath}',
-              [
-                  'luci-auth',
-                  'context',
-                  '--',
-                  self._absolute_coverage_tool,
-                  '--absolute_coverage_service_env',
-                  self._coverage_env,
-                  '--timeout',
-                  '10m',
-                  '--host',
-                  HOST,
-                  '--project',
-                  CODESEARCH_PROJECT,
-                  '--commit_id',
-                  codesearch_commit_id,
-                  '--ref',
-                  # self._branch,
-                  # TODO(b/189193947): must be main for code search integration.
-                  DEFAULT_CODE_BRANCH,
-                  '--uploader_name',
-                  build.builder.builder,
-                  '--uploader_id',
-                  codesearch_commit_id + '_' + str(build.id),
-                  '--format',
-                  coverage_type,
-                  '--coverage_file',
-                  str(chunk_file),
-              ])
+      self._merger_absolute(absolute_coverage_file, codesearch_commit_id,
+                            gs_artifact_bucket, gs_artifact_path, coverage_type)
 
   def _upload_incremental_coverage_to_gerrit(self, fpath, coverage_type,
                                              incremental_settings,
@@ -726,37 +688,3 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           'gitiles_commit_project'] = project_name_to_use
       result.presentation.properties['gitiles_commit_ref'] = self._branch
       result.presentation.properties['gitiles_commit_id'] = commit_id
-
-  def _chunk_coverage_file(self, coverage_file, coverage_type):
-    """Splits large |coverage_file| into smaller files.
-
-    Method to split coverage |coverage_file| into smaller files,
-    each containing |chunk_size| coverage records.
-
-    Args:
-      coverage_file (str): Path of the coverage file to be chunked.
-      coverage_type (str): Type of coverage.
-
-    Returns:
-        Absolute paths of the chunked files.
-    """
-    dest_dir = self.m.path.mkdtemp(prefix='chunked')
-    self.m.step('Chunking coverage file', [
-        'vpython3',
-        self.resource('chunk_coverage_file.py'),
-        '--coverage-file',
-        coverage_file,
-        '--coverage-type',
-        coverage_type,
-        '--file-entries-per-chunk',
-        FILE_ENTRIES_PER_CHUNK,
-        '--chunk-dest-dir',
-        str(dest_dir),
-    ])
-
-    result = []
-    for f in self.m.file.listdir('listdir', dest_dir,
-                                 test_data=('coverage.json',)):
-      result.append(str(f))
-
-    return result
