@@ -97,6 +97,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
     """
+    # Only the incremental upload is left, and it only runs for CQ builds.
+    if not (self._cq_builder or self.m.cv.active):
+      return
+
     self.process_coverage_data(
         tarfile,
         'LCOV',

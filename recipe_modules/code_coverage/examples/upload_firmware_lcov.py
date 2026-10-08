@@ -64,21 +64,8 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'non-cq-uploads-nothing',
-      api.post_check(
-          post_process.DoesNotRun,
-          'upload code coverage data (firmware lcov).upload incremental coverage to gerrit'
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'upload code coverage data (firmware lcov).upload absolute coverage to Code Search'
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'upload code coverage data (firmware lcov).Set merger properties'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'upload code coverage data (firmware lcov).upload absolute coverage to chromium coverage'
-      ),
+      api.post_check(post_process.DoesNotRun,
+                     'upload code coverage data (firmware lcov)'),
       cq=False,
       input_properties={
           '$chromeos/cros_relevance': {
