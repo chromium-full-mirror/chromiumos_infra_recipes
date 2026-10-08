@@ -173,13 +173,14 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     ], num_builds=20),
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     # build_firmware recipe
-    StagingReCheck('chromeos', 'staging', 'staging-firmware-zephyr-cq', [
-        image_builder_exemption,
-        build_firmware_exemption,
-        test_firmware_exemption,
-    ], num_builds=2),
-    StagingReCheck('chromeos', 'staging', 'staging-firmware-zephyr-postsubmit',
-                   [
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-firmware-zephyr-(gcc|llvm)-cq', [
+                       image_builder_exemption,
+                       build_firmware_exemption,
+                       test_firmware_exemption,
+                   ], num_builds=1),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-firmware-zephyr-(gcc|llvm)-postsubmit', [
                        image_builder_exemption,
                        build_firmware_exemption,
                        test_firmware_exemption,
