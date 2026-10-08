@@ -43,10 +43,6 @@ INCREMENTAL_COVERAGE_CIPD_PACKAGE = f'{PACKAGE_ROOT}/incremental_code_coverage'
 INCREMENTAL_COVERAGE_CIPD_VERSION = 'incremental_code_coverage:cl600915087'
 INCREMENTAL_COVERAGE_CIPD_FILE = 'incremental_code_coverage'
 
-ABSOLUTE_COVERAGE_CIPD_PACKAGE = f'{PACKAGE_ROOT}/absolute_code_coverage'
-ABSOLUTE_COVERAGE_CIPD_VERSION = 'absolute_code_coverage:cl600915087'
-ABSOLUTE_COVERAGE_CIPD_FILE = 'absolute_code_coverage'
-
 # These projects don't ever need coverage data
 EXCLUDED_PROJECTS = [
     "chromiumos/third_party/zephyrproject",
@@ -76,8 +72,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self._cq_builder = props.cq_builder
     # Path to incremental coverage client.
     self._incremental_coverage_tool = None
-    # Path to absolute coverage client.
-    self._absolute_coverage_tool = None
     self._merger_input_incremental_coverage = []
     self._merger_input_absolute_coverage = []
 
@@ -391,14 +385,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           pkgs = self.m.cipd.EnsureFile()
           pkgs.add_package(INCREMENTAL_COVERAGE_CIPD_PACKAGE,
                            INCREMENTAL_COVERAGE_CIPD_VERSION)
-          pkgs.add_package(ABSOLUTE_COVERAGE_CIPD_PACKAGE,
-                           ABSOLUTE_COVERAGE_CIPD_VERSION)
           self.m.cipd.ensure(self._code_coverage_root, pkgs)
 
           self._incremental_coverage_tool = self._code_coverage_root.joinpath(
               INCREMENTAL_COVERAGE_CIPD_FILE)
-          self._absolute_coverage_tool = self._code_coverage_root.joinpath(
-              ABSOLUTE_COVERAGE_CIPD_FILE)
 
   def _write_cleaned_coverage_file(self, path_to_coverage_file,
                                    coverage_file_setting):
