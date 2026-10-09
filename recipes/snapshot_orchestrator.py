@@ -100,10 +100,6 @@ def GenTests(api: RecipeTestApi):
           '$chromeos/greenness': {
               'publish_property': True
           },
-          '$chromeos/cros_lkgm': {
-              'enable_lkgm': True,
-              'full_run': True
-          }
       })
 
   collect, collect_after = api.orch_menu.orch_child_builds(
@@ -132,10 +128,8 @@ def GenTests(api: RecipeTestApi):
           },
           '$chromeos/cros_lkgm': {
               'enable_lkgm': True,
-              'enable_pupr': True,
               'pupr_builder_name': 'cros_lkgm-pupr',
               'builder_threshold_percentage': 0,
-              'full_run': True
           }
       })
 
@@ -174,10 +168,8 @@ def GenTests(api: RecipeTestApi):
           },
           '$chromeos/cros_lkgm': {
               'enable_lkgm': True,
-              'enable_pupr': True,
               'pupr_builder_name': 'cros_lkgm-pupr',
               'builder_threshold_percentage': 100,
-              'full_run': True
           }
       })
 

@@ -193,11 +193,6 @@ def GenTests(api: RecipeTestApi):
       data.ctp_normal,
       api.properties(
           **{
-              '$chromeos/cros_lkgm': {
-                  'enable_lkgm': True,
-                  'full_run': True,
-                  'builder_threshold_percentage': 0,
-              },
               '$chromeos/orch_menu':
                   OrchMenuProperties(skip_paygen=True,
                                      schedule_public_build=True),
@@ -214,8 +209,6 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.simulated_collect_output(
           [get_success_orch()],
           step_name='collect public orchestrator.collect'),
-      # On ToT, shouldn't be getting branch.
-      api.post_check(post_process.DoesNotRun, 'get chrome branch'),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       api.post_check(post_process.MustRun, 'run tests'),
@@ -301,11 +294,6 @@ def GenTests(api: RecipeTestApi):
       data.ctp_normal,
       api.properties(
           **{
-              '$chromeos/cros_lkgm': {
-                  'enable_lkgm': True,
-                  'full_run': True,
-                  'builder_threshold_percentage': 0,
-              },
               '$chromeos/orch_menu':
                   OrchMenuProperties(skip_paygen=True,
                                      schedule_public_build=True),
@@ -316,8 +304,6 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.simulated_collect_output(
           [get_success_orch()],
           step_name='collect public orchestrator.collect'),
-      # On ToT, shouldn't be getting branch.
-      api.post_check(post_process.DoesNotRun, 'get chrome branch'),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       builder='release-main-orchestrator',
@@ -424,7 +410,6 @@ def GenTests(api: RecipeTestApi):
           **{
               '$chromeos/cros_lkgm': {
                   'enable_lkgm': True,
-                  'enable_pupr': True,
                   'pupr_builder_name': 'cros_lkgm-pupr',
                   'builder_threshold_percentage': 0,
               },

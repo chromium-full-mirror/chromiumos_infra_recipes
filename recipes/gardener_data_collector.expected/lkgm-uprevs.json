@@ -27,7 +27,7 @@
       "-p",
       "-is=wip",
       "-p",
-      "hashtag=chrome-lkgm",
+      "topic=chromeos-lkgm",
       "-o",
       "MESSAGES",
       "-o",
@@ -90,20 +90,20 @@
       "@@@STEP_LOG_LINE@json.output@            \"name\": \"Chromium LUCI CQ\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"tz\": 0@@@",
       "@@@STEP_LOG_LINE@json.output@          },@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Automated Commit: LKGM 16110.0.0-1065034 for chromeos.\\n\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.\\n\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"parents\": [@@@",
       "@@@STEP_LOG_LINE@json.output@            {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"commit\": \"821901f8a13683d50420293f2e14cce7b9ccd49b\",@@@",
       "@@@STEP_LOG_LINE@json.output@              \"subject\": \"[Autofill] Fix use-of-uninitialized-value in TestAutofillClient\"@@@",
       "@@@STEP_LOG_LINE@json.output@            }@@@",
       "@@@STEP_LOG_LINE@json.output@          ],@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"subject\": \"Automated Commit: LKGM 16110.0.0-1065034 for chromeos.\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"subject\": \"chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"description\": \"Rebase\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"MERGED\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Automated Commit: LKGM 16110.0.0-1065034 for chromeos.\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.\",@@@",
       "@@@STEP_LOG_LINE@json.output@    \"submitted\": \"2024-11-27 03:27:44.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
@@ -167,7 +167,7 @@
     "name": "set output properties",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@chrome_uprev_commits@[]@@@",
-      "@@@SET_BUILD_PROPERTY@lkgm_commits@[{\"branch\": \"main\", \"cq_tries\": \"1\", \"created\": \"2024-11-27 00:20:00.000000000\", \"new_version\": \"1065034\", \"number\": \"6052367\", \"old_version\": \"1065024\", \"status\": \"MERGED\", \"subject\": \"Automated Commit: LKGM 16110.0.0-1065034 for chromeos.\", \"submitted\": \"2024-11-27 03:27:44.000000000\"}]@@@"
+      "@@@SET_BUILD_PROPERTY@lkgm_commits@[{\"branch\": \"main\", \"cq_tries\": \"1\", \"created\": \"2024-11-27 00:20:00.000000000\", \"new_version\": \"1065034\", \"number\": \"6052367\", \"old_version\": \"1065024\", \"status\": \"MERGED\", \"subject\": \"chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.\", \"submitted\": \"2024-11-27 03:27:44.000000000\"}]@@@"
     ]
   },
   {

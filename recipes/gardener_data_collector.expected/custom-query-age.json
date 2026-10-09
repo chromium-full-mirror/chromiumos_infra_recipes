@@ -77,7 +77,7 @@
       "-p",
       "-is=wip",
       "-p",
-      "hashtag=chrome-lkgm",
+      "topic=chromeos-lkgm",
       "-o",
       "MESSAGES",
       "-o",

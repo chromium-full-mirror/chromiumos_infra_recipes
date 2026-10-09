@@ -23,13 +23,10 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     self._enable_lkgm = properties.enable_lkgm
-    self._enable_pupr = properties.enable_pupr
     self._pupr_builder_name = properties.pupr_builder_name
-    self._full_run = properties.full_run
     self._builder_threshold_percentage = properties.builder_threshold_percentage
     self._required_green_builders = properties.required_green_builders
     self._public_build = None
-    self._public_build_results = None
     self._lkgm_skipped_reason = None
     super().__init__(*args, **kwargs)
 
@@ -125,13 +122,14 @@ class CrosLkgmApi(recipe_api.RecipeApi):
             'collect_public_build called but no public build exists')
 
       #TODO: Bring down the collect timeout after investigation. b/304094706
-      self._public_build_results = self.m.buildbucket.collect_build(
-          self._public_build.id, step_name='collect', timeout=60 * 60 * 13)
+      self.m.buildbucket.collect_build(self._public_build.id,
+                                       step_name='collect',
+                                       timeout=60 * 60 * 13)
 
   def do_lkgm_via_pupr(self, gitiles_commit: GitilesCommit):
     """Triggers cros_lkgm.pupr if conditions are met.
 
-    Checks if enable_lkgm and enable_pupr are True, if builder aggregated greenness
+    Checks if enable_lkgm is True, if builder aggregated greenness
     is >= builder_threshold_percentage, and if configured required builders
     are all green with at least one being relevant.
 
@@ -140,9 +138,6 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     """
     if not self._enable_lkgm:
       self._lkgm_skipped_reason = 'LKGM is not enabled'
-      return
-    if not self._enable_pupr:
-      self._lkgm_skipped_reason = 'PUpr is not enabled'
       return
 
     with self.m.step.nest('do lkgm via pupr') as presentation:

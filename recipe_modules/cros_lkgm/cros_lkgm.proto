@@ -10,17 +10,14 @@ message CrosLkgmProperties {
   // Feature flag for LKGM.
   bool enable_lkgm = 1;
 
-  // Whether or not to submit the LKGM CL.
-  bool full_run = 2;
+  reserved 2;
 
   // Percent of release and public builders that must be green for the build
   // to be considered an LKGM candidate. Should be a value in [0, 100].
   int32 builder_threshold_percentage = 3;
 
   reserved 4;
-
-  // Enable triggering PUpr for LKGM uprev.
-  bool enable_pupr = 5;
+  reserved 5;
 
   // The name of the PUpr builder to trigger.
   string pupr_builder_name = 6;

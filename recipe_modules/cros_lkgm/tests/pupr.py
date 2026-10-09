@@ -72,17 +72,15 @@ def RunSteps(api):
 
 def GenTests(api):
   # Helper to generate test cases.
-  def build_test(name, enable_pupr, test_failed_builds, expected_pupr_triggered,
+  def build_test(name, enable_lkgm, test_failed_builds, expected_pupr_triggered,
                  builder='release-main-orchestrator', no_builds=False,
                  custom_pupr_builder_name='cros_lkgm.pupr',
                  required_green_builders=None, custom_builds=None,
                  builder_threshold_percentage=50,
-                 expected_lkgm_skipped_reason=None, extra_checks=None,
-                 enable_lkgm=True):
+                 expected_lkgm_skipped_reason=None, extra_checks=None):
     # Prepare properties.
     lkgm_props = {
         'enable_lkgm': enable_lkgm,
-        'enable_pupr': enable_pupr,
         'builder_threshold_percentage': builder_threshold_percentage,
     }
     if custom_pupr_builder_name:
@@ -144,34 +142,31 @@ def GenTests(api):
     )
 
   # Test cases:
-  yield build_test('lkgm-disabled', enable_pupr=True, enable_lkgm=False,
-                   test_failed_builds=False, expected_pupr_triggered=False,
-                   expected_lkgm_skipped_reason='LKGM is not enabled')
-  yield build_test('pupr-disabled', enable_pupr=False, test_failed_builds=False,
+  yield build_test('lkgm-disabled', enable_lkgm=False, test_failed_builds=False,
                    expected_pupr_triggered=False,
-                   expected_lkgm_skipped_reason='PUpr is not enabled')
-  yield build_test('pupr-enabled-green', enable_pupr=True,
+                   expected_lkgm_skipped_reason='LKGM is not enabled')
+  yield build_test('pupr-enabled-green', enable_lkgm=True,
                    test_failed_builds=False, expected_pupr_triggered=True)
   yield build_test(
-      'pupr-enabled-not-green', enable_pupr=True, test_failed_builds=True,
+      'pupr-enabled-not-green', enable_lkgm=True, test_failed_builds=True,
       expected_pupr_triggered=False,
       expected_lkgm_skipped_reason='aggregated greenness: 0.00%, threshold: 50% (below threshold)'
   )
   yield build_test(
-      'pupr-enabled-no-builds', enable_pupr=True, test_failed_builds=False,
+      'pupr-enabled-no-builds', enable_lkgm=True, test_failed_builds=False,
       expected_pupr_triggered=False, no_builds=True,
       expected_lkgm_skipped_reason='aggregated greenness: 0.00%, threshold: 50% (below threshold)'
   )
-  yield build_test('pupr-enabled-staging', enable_pupr=True,
+  yield build_test('pupr-enabled-staging', enable_lkgm=True,
                    test_failed_builds=False, expected_pupr_triggered=True,
                    builder='staging-release-main-orchestrator')
   yield build_test(
-      'pupr-enabled-no-name', enable_pupr=True, test_failed_builds=False,
+      'pupr-enabled-no-name', enable_lkgm=True, test_failed_builds=False,
       expected_pupr_triggered=False, custom_pupr_builder_name='',
       expected_lkgm_skipped_reason='no PUpr builder name configured')
 
   yield build_test(
-      'pupr-custom-builder', enable_pupr=True, test_failed_builds=False,
+      'pupr-custom-builder', enable_lkgm=True, test_failed_builds=False,
       expected_pupr_triggered=True, custom_pupr_builder_name='custom-pupr-job',
       extra_checks=[
           api.post_check(post_process.LogContains,
@@ -182,7 +177,7 @@ def GenTests(api):
       ])
 
   yield build_test(
-      'pupr-required-builders-all-green', enable_pupr=True,
+      'pupr-required-builders-all-green', enable_lkgm=True,
       test_failed_builds=False, expected_pupr_triggered=True,
       required_green_builders=['eve-snapshot'], custom_builds=[{
           'builder': 'eve-snapshot',
@@ -191,7 +186,7 @@ def GenTests(api):
       }])
 
   yield build_test(
-      'pupr-required-builders-not-green', enable_pupr=True,
+      'pupr-required-builders-not-green', enable_lkgm=True,
       test_failed_builds=False, expected_pupr_triggered=False,
       required_green_builders=['eve-snapshot',
                                'kevin-snapshot'], custom_builds=[
@@ -233,7 +228,7 @@ def GenTests(api):
           gitiles_commit=common_pb2.GitilesCommit(id='ababab')))
 
   yield build_test(
-      'pupr-required-builders-none-relevant', enable_pupr=True,
+      'pupr-required-builders-none-relevant', enable_lkgm=True,
       test_failed_builds=False, expected_pupr_triggered=False,
       required_green_builders=['eve-snapshot',
                                'kevin-snapshot'], custom_builds=[
@@ -261,7 +256,7 @@ def GenTests(api):
       ])
 
   yield build_test(
-      'pupr-required-builders-missing', enable_pupr=True,
+      'pupr-required-builders-missing', enable_lkgm=True,
       test_failed_builds=False, expected_pupr_triggered=False,
       required_green_builders=['missing-snapshot'], extra_checks=[
           api.post_check(post_process.StepTextContains, 'do lkgm via pupr',
@@ -269,7 +264,7 @@ def GenTests(api):
       ])
 
   yield build_test(
-      'pupr-trigger-fails', enable_pupr=True, test_failed_builds=False,
+      'pupr-trigger-fails', enable_lkgm=True, test_failed_builds=False,
       expected_pupr_triggered=True, extra_checks=[
           api.step_data('do lkgm via pupr.trigger cros_lkgm.pupr', retcode=1),
           api.post_check(post_process.StepFailure, 'do lkgm via pupr'),
@@ -279,7 +274,7 @@ def GenTests(api):
       ])
 
   yield build_test(
-      'pupr-assessment-fails', enable_pupr=True, test_failed_builds=False,
+      'pupr-assessment-fails', enable_lkgm=True, test_failed_builds=False,
       expected_pupr_triggered=False, extra_checks=[
           api.properties(mock_greenness_failure=True),
           api.post_check(post_process.StepFailure, 'do lkgm via pupr'),

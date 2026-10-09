@@ -637,14 +637,22 @@ def GenTests(api: recipe_api.RecipeApi):
 
   # A simplified returned json object for the LKGM commits query.
   lkgm_gerrit_change_info_good = {
-      'project': 'chromium/src',
-      'branch': 'main',
-      'change_id': 'Ie5d42742d988003a3deb580e6dec7d5039a45016',
-      'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
-      'status': 'MERGED',
-      'created': '2024-11-27 00:20:00.000000000',
-      'submitted': '2024-11-27 03:27:44.000000000',
-      '_number': 6052367,
+      'project':
+          'chromium/src',
+      'branch':
+          'main',
+      'change_id':
+          'Ie5d42742d988003a3deb580e6dec7d5039a45016',
+      'subject':
+          'chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.',
+      'status':
+          'MERGED',
+      'created':
+          '2024-11-27 00:20:00.000000000',
+      'submitted':
+          '2024-11-27 03:27:44.000000000',
+      '_number':
+          6052367,
       'messages': [{
           'id':
               'a0981969bab8f83a4b418efdf24025770bc03742',
@@ -702,9 +710,9 @@ def GenTests(api: recipe_api.RecipeApi):
                           0
                   },
                   'subject':
-                      'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
+                      'chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.',
                   'message':
-                      'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.\n'
+                      'chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.\n'
               },
               'branch': 'refs/heads/main',
               'description': 'Rebase'
@@ -837,8 +845,8 @@ def GenTests(api: recipe_api.RecipeApi):
                   situations=[
                       GerritQueryCondition.Situation(
                           terms=[
-                              GerritQueryCondition.Term(key='hashtag',
-                                                        value='chrome-lkgm'),
+                              GerritQueryCondition.Term(key='topic',
+                                                        value='chromeos-lkgm'),
                           ],
                       ),
                   ],
@@ -852,19 +860,28 @@ def GenTests(api: recipe_api.RecipeApi):
           'find last 7-day LKGM CLs.query https://chromium-review.googlesource.com.gerrit changes',
           [
               '-p', 'repo=chromium/src', '-p', '-age=7d', '-p', '-is=wip', '-p',
-              'hashtag=chrome-lkgm'
+              'topic=chromeos-lkgm'
           ],
       ),
       api.post_process(post_process.PropertyEquals, 'lkgm_commits', [{
-          'branch': 'main',
-          'cq_tries': '1',
-          'created': '2024-11-27 00:20:00.000000000',
-          'new_version': '1065034',
-          'number': '6052367',
-          'old_version': '1065024',
-          'status': 'MERGED',
-          'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
-          'submitted': '2024-11-27 03:27:44.000000000',
+          'branch':
+              'main',
+          'cq_tries':
+              '1',
+          'created':
+              '2024-11-27 00:20:00.000000000',
+          'new_version':
+              '1065034',
+          'number':
+              '6052367',
+          'old_version':
+              '1065024',
+          'status':
+              'MERGED',
+          'subject':
+              'chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.',
+          'submitted':
+              '2024-11-27 03:27:44.000000000',
       }]),
       status='SUCCESS',
   )
@@ -919,15 +936,24 @@ def GenTests(api: recipe_api.RecipeApi):
           ],
       ),
       api.post_process(post_process.PropertyEquals, 'lkgm_commits', [{
-          'branch': 'main',
-          'cq_tries': '1',
-          'created': '2024-11-27 00:20:00.000000000',
-          'new_version': '1065034',
-          'number': '6052367',
-          'old_version': '1065024',
-          'status': 'MERGED',
-          'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
-          'submitted': '2024-11-27 03:27:44.000000000',
+          'branch':
+              'main',
+          'cq_tries':
+              '1',
+          'created':
+              '2024-11-27 00:20:00.000000000',
+          'new_version':
+              '1065034',
+          'number':
+              '6052367',
+          'old_version':
+              '1065024',
+          'status':
+              'MERGED',
+          'subject':
+              'chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.',
+          'submitted':
+              '2024-11-27 03:27:44.000000000',
       }]),
       status='SUCCESS',
   )
@@ -985,8 +1011,8 @@ def GenTests(api: recipe_api.RecipeApi):
                   situations=[
                       GerritQueryCondition.Situation(
                           terms=[
-                              GerritQueryCondition.Term(key='hashtag',
-                                                        value='chrome-lkgm'),
+                              GerritQueryCondition.Term(key='topic',
+                                                        value='chromeos-lkgm'),
                           ],
                       ),
                   ],
@@ -1033,8 +1059,8 @@ def GenTests(api: recipe_api.RecipeApi):
                   situations=[
                       GerritQueryCondition.Situation(
                           terms=[
-                              GerritQueryCondition.Term(key='hashtag',
-                                                        value='chrome-lkgm'),
+                              GerritQueryCondition.Term(key='topic',
+                                                        value='chromeos-lkgm'),
                           ],
                       ),
                   ],
@@ -1077,7 +1103,7 @@ def GenTests(api: recipe_api.RecipeApi):
           'find last 7-day LKGM CLs.query https://chromium-review.googlesource.com.gerrit changes',
           [
               '-p', 'repo=chromium/src', '-p', '-age=7d', '-p', '-is=wip', '-p',
-              'hashtag=chrome-lkgm'
+              'topic=chromeos-lkgm'
           ],
       ),
       api.post_process(
@@ -1087,15 +1113,24 @@ def GenTests(api: recipe_api.RecipeApi):
       ),
       api.post_process(post_process.PropertyEquals, 'chrome_uprev_commits', []),
       api.post_process(post_process.PropertyEquals, 'lkgm_commits', [{
-          'branch': 'main',
-          'cq_tries': '1',
-          'created': '2024-11-27 00:20:00.000000000',
-          'new_version': '1065034',
-          'number': '6052367',
-          'old_version': '1065024',
-          'status': 'MERGED',
-          'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
-          'submitted': '2024-11-27 03:27:44.000000000',
+          'branch':
+              'main',
+          'cq_tries':
+              '1',
+          'created':
+              '2024-11-27 00:20:00.000000000',
+          'new_version':
+              '1065034',
+          'number':
+              '6052367',
+          'old_version':
+              '1065024',
+          'status':
+              'MERGED',
+          'subject':
+              'chromeos/CHROMEOS_LKGM: Automatic uprev to 16110.0.0-1065034.',
+          'submitted':
+              '2024-11-27 03:27:44.000000000',
       }]),
       status='SUCCESS',
   )
