@@ -27,7 +27,7 @@ from PB.recipe_engine import result as result_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
-from PB.chromiumos.builder_config import BuilderConfigs
+from PB.chromiumos.builder_config import BuilderConfig, BuilderConfigs
 from PB.chromiumos.build_report import BuildReport
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 from recipe_engine import post_process
@@ -61,6 +61,7 @@ DEPS = [
     'deferrals',
     'easy',
     'failures',
+    'firmware_config',
     'mutable_output',
     'signing',
     'signing_utils',
@@ -406,6 +407,8 @@ def RunSteps(api, properties):
         step.logs['debug'] = ''
         for metadata_path in uploaded_artifacts.files_by_artifact.get(
             'FIRMWARE_TARBALL_INFO', []):
+          if metadata_path.startswith('configs/'):
+            continue
           # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
           metadata_path = api.path.abspath(
               api.path.join(artifact_dir, metadata_path))
@@ -418,9 +421,12 @@ def RunSteps(api, properties):
                 'JSONPB',
             )
             for obj in metadata.objects:
+              info = getattr(
+                  obj,
+                  obj.WhichOneof('firmware_object_info') or 'tarball_info')
               step.logs[
-                  'debug'] += f'metadata_by_name[{obj.file_name}]={obj.tarball_info}\n'
-              metadata_by_name[obj.file_name] = obj.tarball_info
+                  'debug'] += f'metadata_by_name[{obj.file_name}]={info}\n'
+              metadata_by_name[obj.file_name] = info
           else:
             step.logs['debug'] += f'{metadata_path} does not exist\n'
 
@@ -443,6 +449,8 @@ def RunSteps(api, properties):
               continue
             for artifact_name in uploaded_artifacts.files_by_artifact[
                 artifact_type]:
+              if artifact_name.startswith('configs/'):
+                continue
               file_metadata = metadata_by_name.get(artifact_name)
               if file_metadata and file_metadata.board:
                 for board in file_metadata.board:
@@ -592,6 +600,11 @@ def RunSteps(api, properties):
                           force_publish=metadata.publish_to_goldeneye)
 
 
+      # CQ runs should not write to the database.
+      if not api.cv.active:
+        api.firmware_config.publish(uploaded_artifacts, artifact_dir,
+                                    metadata_by_name, start_time)
+
       UploadTestResults(api, location, build.builder.builder)
 
       CreateContainers(api, config)
@@ -723,6 +736,134 @@ def GenTests(api):
                                                         board=['rex'])),
   ])
 
+  # An EC tarball can be shared by several boards, as bloonchipper is by nine.
+  ZEPHYR_SHARED_METADATA = FirmwareArtifactInfo()
+  ZEPHYR_SHARED_METADATA.CopyFrom(ZEPHYR_METADATA)
+  # objects[2] is karis.EC.tar.bz2.
+  ZEPHYR_SHARED_METADATA.objects[2].tarball_info.board.append('fatcat')
+
+  ZEPHYR_CONFIG_PATHS = [
+      'firmware_metadata.jsonpb',
+      'configs/brox/ec-ro.config',
+      'configs/brox/ec-rw.config',
+      'configs/brox/components.json',
+      'configs/karis/ec-ro.config',
+      'configs/karis/ec-rw.config',
+      'configs/screebo/ec.config',
+  ]
+  ZEPHYR_CONFIG_ARTIFACTS = api.json.dumps({
+      'artifacts': {
+          'artifacts': [
+              {
+                  'artifactType':
+                      BuilderConfig.Artifacts.FIRMWARE_TARBALL_INFO,
+                  'location':
+                      common_pb2.PLATFORM_ZEPHYR,
+                  'paths': [{
+                      'location': common_pb2.Path.OUTSIDE,
+                      'path': f'[CLEANUP]/artifacts_tmp_1/{name}',
+                  } for name in ZEPHYR_CONFIG_PATHS],
+              },
+              {
+                  'artifactType':
+                      BuilderConfig.Artifacts.FIRMWARE_TARBALL,
+                  'location':
+                      common_pb2.PLATFORM_ZEPHYR,
+                  'paths': [{
+                      'location': common_pb2.Path.OUTSIDE,
+                      'path': f'[CLEANUP]/artifacts_tmp_1/{obj.file_name}',
+                  } for obj in ZEPHYR_METADATA.objects],
+              },
+              {
+                  'artifactType':
+                      BuilderConfig.Artifacts.FIRMWARE_TOKEN_DATABASE,
+                  'location':
+                      common_pb2.PLATFORM_ZEPHYR,
+                  'paths': [{
+                      'location': common_pb2.Path.OUTSIDE,
+                      'path': '[CLEANUP]/artifacts_tmp_1/tokens.bin',
+                  }],
+              },
+          ],
+      },
+  })
+
+  # An AP build uploads the image and exported configs of each target, and the
+  # source and the logs of each baseboard.
+  AP_TARBALLS = {
+      'grogu.1234.56.0.tar.bz2': 'skywalker',
+      'penghu.1234.56.0.tar.bz2': 'atria',
+      'atria/firmware_from_source.tar.bz2': 'atria',
+      'atria/ebuild_logs.tar.xz': 'atria',
+  }
+  AP_CONFIG_PATHS = [
+      'firmware_metadata.jsonpb',
+      'configs/grogu/coreboot.config',
+      'configs/grogu/depthcharge.config',
+      'configs/grogu/libpayload.config',
+      'configs/penghu/coreboot.config',
+      'configs/penghu/depthcharge.config',
+      'configs/penghu/libpayload.config',
+  ]
+  AP_ARTIFACTS = api.json.dumps({
+      'artifacts': {
+          'artifacts': [
+              {
+                  'artifactType':
+                      BuilderConfig.Artifacts.FIRMWARE_TARBALL_INFO,
+                  'location':
+                      common_pb2.PLATFORM_AP,
+                  'paths': [{
+                      'location': common_pb2.Path.OUTSIDE,
+                      'path': f'[CLEANUP]/artifacts_tmp_1/{name}',
+                  } for name in AP_CONFIG_PATHS],
+              },
+              {
+                  'artifactType':
+                      BuilderConfig.Artifacts.FIRMWARE_TARBALL,
+                  'location':
+                      common_pb2.PLATFORM_AP,
+                  'paths': [{
+                      'location': common_pb2.Path.OUTSIDE,
+                      'path': f'[CLEANUP]/artifacts_tmp_1/{name}',
+                  } for name in AP_TARBALLS],
+              },
+          ],
+      },
+  })
+  AP_METADATA = FirmwareArtifactInfo(objects=[
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name=name, tarball_info=FirmwareArtifactInfo.TarballInfo(
+              type='MAIN', board=[board]))
+      for name, board in AP_TARBALLS.items()
+  ])
+  AP_BUILDER_CONFIGS = json_format.ParseDict(
+      {
+          'builderConfigs': [{
+              'artifacts': {
+                  'artifactsGsBucket': 'chromeos-image-archive',
+                  'artifactsInfo': {
+                      'firmware': {
+                          'outputArtifacts': [{
+                              'artifactTypes': [
+                                  'FIRMWARE_TARBALL',
+                                  'FIRMWARE_TARBALL_INFO',
+                              ],
+                          }],
+                      },
+                  },
+              },
+              'general': {
+                  'firmwareLocation': 'PLATFORM_AP',
+              },
+              'id': {
+                  'bucket': 'postsubmit',
+                  'name': 'firmware-ap-postsubmit',
+                  'type': 'POSTSUBMIT',
+              },
+          }],
+      }, BuilderConfigs())
+
   def get_signing_image_props_for_test(is_staging=False):
     """
     Get SignImageProperties for test.
@@ -788,6 +929,8 @@ def GenTests(api):
       api.post_check(
           post_process.DoesNotRun,
           'sending pub/sub notifications.publish artifacts to pubsub'),
+      # CQ runs should not write to the database either.
+      api.post_check(post_process.DoesNotRun, 'publish target configs'),
       cq=True,
       dry_run=True,
       builder='firmware-zephyr-cq',
@@ -799,29 +942,96 @@ def GenTests(api):
           'toolchain': 'host/gnu',
       })
 
-  yield test(
+  def zephyr_postsubmit(name, *args, metadata=ZEPHYR_METADATA, **kwargs):
+    """A zephyr postsubmit build that uploads the EC tarballs and configs."""
+    return test(
+        name,
+        api.cros_build_api.set_api_return(
+            'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+            '{}'),
+        api.cros_build_api.set_api_return(
+            'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+            ZEPHYR_CONFIG_ARTIFACTS),
+        api.path.files_exist(api.path.cleanup_dir /
+                             'artifacts_tmp_1/firmware_metadata.jsonpb'),
+        api.step_data('reading metadata.read fw metadata',
+                      api.file.read_proto(metadata)), *args,
+        builder='firmware-zephyr-postsubmit', input_properties={
+            'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+            'bump_version': False,
+            'set_suite_scheduling': True,
+            'avb_enabled': False,
+        }, **kwargs)
+
+  yield zephyr_postsubmit(
       'firmware-zephyr-postsubmit',
+      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
+      api.post_check(
+          post_process.DoesNotRun,
+          'sending pub/sub notifications.publish artifacts to pubsub'),
+      # Exported RO/RW/singleimage configs and components are published per board.
+      # karis is shared by rex and fatcat, so it has a row for each.
+      api
+      .post_check(post_process.LogContains, 'publish target configs', 'input', [
+          '"database": "build_metadata"',
+          '"platform": "brox"',
+          '"platform": "rex"',
+          '"platform": "fatcat"',
+          '"target": "brox"',
+          '"target": "karis"',
+          '"target": "screebo"',
+          '"ec-ro": "[CLEANUP]/artifacts_tmp_1/configs/brox/ec-ro.config"',
+          '"ec-rw": "[CLEANUP]/artifacts_tmp_1/configs/brox/ec-rw.config"',
+          '"components_path": "[CLEANUP]/artifacts_tmp_1/configs/brox/components.json"',
+          '"ec": "[CLEANUP]/artifacts_tmp_1/configs/screebo/ec.config"',
+      ]),
+      api.post_check(post_process.LogDoesNotContain, 'publish target configs',
+                     'input', ['EC_elf']),
+      metadata=ZEPHYR_SHARED_METADATA,
+  )
+
+  yield zephyr_postsubmit(
+      'firmware-zephyr-postsubmit-staging',
+      api.post_check(post_process.LogContains, 'publish target configs',
+                     'input', ['"database": "build_metadata_staging"']),
+      bucket='staging',
+  )
+
+  yield test(
+      'firmware-ap-postsubmit',
+      api.cros_infra_config.override_builder_configs_test_data(
+          AP_BUILDER_CONFIGS, step_name='checking attestation eligibility'),
       api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           '{}'),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          ZEPHYR_ARTIFACTS),
+          AP_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data('reading metadata.read fw metadata',
-                    api.file.read_proto(ZEPHYR_METADATA)),
-      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
-      api.post_check(
-          post_process.DoesNotRun,
-          'sending pub/sub notifications.publish artifacts to pubsub'),
-      builder='firmware-zephyr-postsubmit',
+                    api.file.read_proto(AP_METADATA)),
+      # Exported coreboot, depthcharge, and libpayload configs are published.
+      api
+      .post_check(post_process.LogContains, 'publish target configs', 'input', [
+          '"platform": "skywalker"',
+          '"platform": "atria"',
+          '"target": "grogu"',
+          '"target": "penghu"',
+          '"coreboot": "[CLEANUP]/artifacts_tmp_1/configs/grogu/coreboot.config"',
+          '"depthcharge": "[CLEANUP]/artifacts_tmp_1/configs/grogu/depthcharge.config"',
+          '"libpayload": "[CLEANUP]/artifacts_tmp_1/configs/grogu/libpayload.config"',
+      ]),
+      api.post_check(post_process.LogDoesNotContain, 'publish target configs',
+                     'input', ['firmware_from_source', 'ebuild_logs']),
+      builder='firmware-ap-postsubmit',
       input_properties={
-          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'firmware_location': common_pb2.PLATFORM_AP,
           'bump_version': False,
           'set_suite_scheduling': True,
           'avb_enabled': False,
-      })
+      },
+  )
 
   yield test(
       'fw-branch-postsubmit',
