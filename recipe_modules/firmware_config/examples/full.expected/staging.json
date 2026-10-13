@@ -1,0 +1,220 @@
+[
+  {
+    "cmd": [],
+    "name": "read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish target configs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@input@{@@@",
+      "@@@STEP_LOG_LINE@input@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@input@    \"branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"bucket\": \"staging\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"builder\": \"staging-firmware-zephyr-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"commit\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"id\": 8945511751514863184,@@@",
+      "@@@STEP_LOG_LINE@input@    \"milestone\": 99,@@@",
+      "@@@STEP_LOG_LINE@input@    \"number\": 0,@@@",
+      "@@@STEP_LOG_LINE@input@    \"platform_version\": \"1234.56.0\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"start_time\": \"2012-05-14T12:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@input@  },@@@",
+      "@@@STEP_LOG_LINE@input@  \"database\": \"build_metadata_staging\",@@@",
+      "@@@STEP_LOG_LINE@input@  \"targets\": [@@@",
+      "@@@STEP_LOG_LINE@input@    {@@@",
+      "@@@STEP_LOG_LINE@input@      \"components_path\": null,@@@",
+      "@@@STEP_LOG_LINE@input@      \"configs\": {@@@",
+      "@@@STEP_LOG_LINE@input@        \"coreboot\": \"[CLEANUP]/artifacts/configs/grogu/coreboot.config\"@@@",
+      "@@@STEP_LOG_LINE@input@      },@@@",
+      "@@@STEP_LOG_LINE@input@      \"platform\": \"\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"target\": \"grogu\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"uri\": \"gs://chromeos-image-archive/firmware-zephyr-postsubmit/R99-1234.56.0-1/grogu.16849.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@input@    },@@@",
+      "@@@STEP_LOG_LINE@input@    {@@@",
+      "@@@STEP_LOG_LINE@input@      \"components_path\": \"[CLEANUP]/artifacts/configs/krabby/components.json\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"configs\": {@@@",
+      "@@@STEP_LOG_LINE@input@        \"ec-ro\": \"[CLEANUP]/artifacts/configs/krabby/ec-ro.config\",@@@",
+      "@@@STEP_LOG_LINE@input@        \"ec-rw\": \"[CLEANUP]/artifacts/configs/krabby/ec-rw.config\"@@@",
+      "@@@STEP_LOG_LINE@input@      },@@@",
+      "@@@STEP_LOG_LINE@input@      \"platform\": \"corsola\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"target\": \"krabby\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"uri\": \"gs://chromeos-image-archive/firmware-zephyr-postsubmit/R99-1234.56.0-1/krabby.EC.16640.2.39.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@input@    }@@@",
+      "@@@STEP_LOG_LINE@input@  ]@@@",
+      "@@@STEP_LOG_LINE@input@}@@@",
+      "@@@STEP_LOG_END@input@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/spanner.data",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish target configs.get access token for default account",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_MODULE[chromeos::firmware_config]/resources/publish_target_configs.py",
+      "--token-file",
+      "extra.secret.token.should.not.be.logged",
+      "--input-json",
+      "{\"build\": {\"branch\": \"snapshot\", \"bucket\": \"staging\", \"builder\": \"staging-firmware-zephyr-postsubmit\", \"commit\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"id\": 8945511751514863184, \"milestone\": 99, \"number\": 0, \"platform_version\": \"1234.56.0\", \"start_time\": \"2012-05-14T12:53:23Z\"}, \"database\": \"build_metadata_staging\", \"targets\": [{\"components_path\": null, \"configs\": {\"coreboot\": \"[CLEANUP]/artifacts/configs/grogu/coreboot.config\"}, \"platform\": \"\", \"target\": \"grogu\", \"uri\": \"gs://chromeos-image-archive/firmware-zephyr-postsubmit/R99-1234.56.0-1/grogu.16849.0.0.tar.bz2\"}, {\"components_path\": \"[CLEANUP]/artifacts/configs/krabby/components.json\", \"configs\": {\"ec-ro\": \"[CLEANUP]/artifacts/configs/krabby/ec-ro.config\", \"ec-rw\": \"[CLEANUP]/artifacts/configs/krabby/ec-rw.config\"}, \"platform\": \"corsola\", \"target\": \"krabby\", \"uri\": \"gs://chromeos-image-archive/firmware-zephyr-postsubmit/R99-1234.56.0-1/krabby.EC.16640.2.39.tar.bz2\"}]}"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish target configs.write rows",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

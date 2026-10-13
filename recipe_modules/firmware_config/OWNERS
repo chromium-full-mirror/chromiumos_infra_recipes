@@ -1,0 +1,2 @@
+include chromiumos/owners:v1:/firmware/OWNERS.cros_ec
+include chromiumos/owners:v1:/firmware/OWNERS.cros_ap
