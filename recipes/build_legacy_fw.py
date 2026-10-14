@@ -549,7 +549,10 @@ class FirmwareBuilder():
         chroot_path = lambda x: '/' + self.m.path.relpath(x, dest_path)
       root = dest_path.joinpath(sysroot.path.strip('/'), 'firmware')
       config_dir = dest_path.joinpath(
-          sysroot.path.strip('/'), 'usr/share/chromeos-config/yaml')
+          sysroot.path.strip('/'), 'build/share/chromeos-config/yaml')
+      if not self.m.path.exists(config_dir):
+        config_dir = dest_path.joinpath(
+            sysroot.path.strip('/'), 'usr/share/chromeos-config/yaml')
 
       private_dirs = self.m.file.glob_paths(
           'glob private', root, '**/ec-private/fingerprint',
@@ -1090,7 +1093,7 @@ def GenTests(api):
 
   yield test(
       'release-unibuild',
-      exists('chroot', 'build', 'target', 'usr', 'share', 'chromeos-config',
+      exists('chroot', 'build', 'target', 'build', 'share', 'chromeos-config',
              'yaml', 'config.yaml'),
       api.cros_infra_config.use_custom_builder_config(
           BuilderConfig(
@@ -1126,7 +1129,7 @@ def GenTests(api):
                      'upload artifacts.create firmware archive.create tarball',
                      [
                          '-C',
-                         '/build/target/usr/share/chromeos-config/yaml',
+                         '/build/target/build/share/chromeos-config/yaml',
                          'config.yaml',
                      ]),
       input_properties={
