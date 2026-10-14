@@ -115,7 +115,11 @@ def run_qualbot(api: RecipeApi, properties: QualbotProperties):
       elif properties.request.task == "auto-schedule":
         cmd.append("--dry-run")
       elif properties.request.task == "pipeline":
-        cmd.append("--dry-run")
+        if (api.buildbucket.build.builder.builder ==
+            "staging-qualbot-pipeline-e2e"):
+          cmd.append("--staging-tables")
+        else:
+          cmd.append("--dry-run")
     else:
       cmd.append("--upload")
 
@@ -372,6 +376,27 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           "Run Qualbot.call auto_qual_main",
       ),
+  )
+
+  yield api.build_menu.test(
+      "staging-pipeline-e2e",
+      api.buildbucket.generic_build(builder="staging-qualbot-pipeline-e2e",
+                                    bucket="staging"),
+      api.properties(
+          QualbotProperties(request={
+              "task": "pipeline",
+              "is_staging": True
+          })),
+      api.step_data(
+          "Run Qualbot.call auto_qual_main",
+          mock_sub_build(),
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "Run Qualbot.call auto_qual_main",
+          ["--staging-tables"],
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.build_menu.test(
