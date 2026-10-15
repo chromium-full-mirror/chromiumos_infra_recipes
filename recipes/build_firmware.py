@@ -50,7 +50,6 @@ DEPS = [
     'recipe_engine/time',
     'build_menu',
     'build_reporting',
-    'code_coverage',
     'cros_artifacts',
     'cros_build_api',
     'cros_infra_config',
@@ -248,23 +247,17 @@ def RunSteps(api, properties):
                 cmd,
             )
 
-            coverage_tar = api.src_state.workspace_path.joinpath(
-                'src', 'platform', 'ec', 'build', 'zephyr', 'coverage.tbz2')
-            # Use the proper GS bucket and determine a unique path for this builder/run
-            dest_bucket = (
-                api.cros_infra_config.config.artifacts.artifacts_gs_bucket)
-            base_artifacts_path = api.cros_artifacts.artifacts_gs_path(
-                api.buildbucket.build.builder.builder,
-                common_pb2.BuildTarget(name='coverage'),
+            api.build_menu.upload_artifacts(
+                config=config,
+                report_to_spike=api.cros_infra_config.config.artifacts
+                .attestation_eligible,
+                use_file_paths=True,
+                build_targets=[
+                    FirmwareTarget(name=bt.name)
+                    for bt in properties.build_targets
+                ],
+                upload_coverage=True,
             )
-            dest_path = f'{base_artifacts_path}/coverage.tbz2'
-            api.gsutil.upload(
-                coverage_tar,
-                dest_bucket,
-                dest_path,
-            )
-            with api.failures.ignore_exceptions():
-              api.code_coverage.upload_firmware_lcov(coverage_tar)
 
         if failed_ids:
           pres.step_text = f'{len(failed_ids)} shards failed.'
@@ -1694,11 +1687,6 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           [b1, b2, b3, b4],
           step_name="schedule and wait for shards.collect shard builds",
-      ),
-      api.step_data(
-          'schedule and wait for shards.'
-          'upload code coverage data (firmware lcov).listdir',
-          api.file.listdir(['lcov.info', 'html']),
       ),
       cq=True,
       dry_run=True,
