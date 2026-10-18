@@ -4,8 +4,8 @@
 
 """Recipe for Qualbot.
 
-This recipe directly invokes the auto_qual_main script to bypass bbagent API restrictions
-and enable streaming child steps using the legacy annotator Wrapper.
+This recipe directly invokes the auto_qual_main script as a native luciexe
+sub-build to stream child steps directly to LogDog Butler.
 """
 
 import json
@@ -78,20 +78,20 @@ def RunSteps(api: RecipeApi, properties: QualbotProperties):
 def run_qualbot(api: RecipeApi, properties: QualbotProperties):
   """Run the auto qual script locally."""
   with api.step.nest("Run Qualbot") as presentation:
-    run_annotations_luciexe = api.cipd.ensure_tool(
-        "infra/tools/run_annotations/${platform}", "latest")
-
     json_output_path = api.path.mkdtemp(
         prefix="qualbot_output").joinpath("qualbot.json")
     script_path = api.src_state.workspace_path.joinpath("infra",
                                                         "fw_qual_automation",
                                                         "auto_qual_main.py")
 
+    # api.step.sub_build inserts ['--output', <path>] at cmd.index('--') (or
+    # index 1 if '--' is absent, which would pass --output to vpython3).
+    # auto_qual_main.py strips '--output <path>' and this '--' delimiter via
+    # extract_luciexe_output_arg() before argparse.parse_args() runs.
     cmd = [
-        run_annotations_luciexe,
-        "--",
         "vpython3",
         script_path,
+        "--",
         "--log-level",
         "INFO",
         "--json-out",
