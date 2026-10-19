@@ -40,6 +40,10 @@ FW_QUAL_REPO_URL = (
     "https://chrome-internal.googlesource.com/chromeos/infra/fw_qual_automation"
 )
 DEFAULT_CIPD_PACKAGE = "chromiumos/infra/cros_test_runner/fw_qual_automation"
+STAGING_GATE_BUILDERS = (
+    "staging-qualbot-pipeline",
+    "staging-qualbot-pipeline-e2e",
+)
 
 
 def RunSteps(api: RecipeApi, properties: QualbotAutoreleaserProperties):
@@ -107,48 +111,63 @@ def _promote_prod(
       )
       start_ts = max(ref_ts, now_ts - 24 * 60 * 60)
 
-      # Query completed scheduled staging pipeline runs in the soak window,
-      # excluding ad-hoc or CL tryjob runs via user_agent:luci-scheduler.
-      builds = api.buildbucket.search(
-          predicate=bb_service.BuildPredicate(
-              builder=bb_builder_common.BuilderID(
-                  project="chromeos",
-                  bucket="staging",
-                  builder="staging-qualbot-pipeline",
-              ),
-              create_time=bb_common.TimeRange(
-                  start_time=timestamp_pb2.Timestamp(seconds=start_ts),
-              ),
-              status=bb_common.ENDED_MASK,
-              tags=[
-                  bb_common.StringPair(key="user_agent",
-                                       value="luci-scheduler"),
-              ],
-          ))
       log_lines = [
           f"source_ref: {source_ref} (instance_id={desc.pin.instance_id})",
           f"ref_ts: {ref_ts}, now_ts: {now_ts}, soak_start_ts: {start_ts}",
-          f"considered builds ({len(builds)}):",
       ]
-      for b in builds:
-        status_name = bb_common.Status.Name(b.status)
-        log_lines.append(f"  - build {b.id}: {status_name} "
-                         f"(https://ci.chromium.org/b/{b.id})")
-        pres.links[f"staging build {b.id} ({status_name})"] = (
-            f"https://ci.chromium.org/b/{b.id}")
+      missing_builders = []
+      failed_builds_by_builder = {}
+
+      # Query completed scheduled staging pipeline runs in the soak window for
+      # each required staging builder, excluding ad-hoc or CL tryjob runs via
+      # user_agent:luci-scheduler.
+      for builder_name in STAGING_GATE_BUILDERS:
+        builds = api.buildbucket.search(
+            predicate=bb_service.BuildPredicate(
+                builder=bb_builder_common.BuilderID(
+                    project="chromeos",
+                    bucket="staging",
+                    builder=builder_name,
+                ),
+                create_time=bb_common.TimeRange(
+                    start_time=timestamp_pb2.Timestamp(seconds=start_ts),
+                ),
+                status=bb_common.ENDED_MASK,
+                tags=[
+                    bb_common.StringPair(key="user_agent",
+                                         value="luci-scheduler"),
+                ],
+            ),
+            step_name=f"search {builder_name} builds",
+        )
+        log_lines.append(f"considered {builder_name} builds ({len(builds)}):")
+        for b in builds:
+          status_name = bb_common.Status.Name(b.status)
+          log_lines.append(f"  - build {b.id}: {status_name} "
+                           f"(https://ci.chromium.org/b/{b.id})")
+          pres.links[f"{builder_name} {b.id} ({status_name})"] = (
+              f"https://ci.chromium.org/b/{b.id}")
+        if not builds:
+          missing_builders.append(builder_name)
+        failed = [b for b in builds if b.status != bb_common.SUCCESS]
+        if failed:
+          failed_builds_by_builder[builder_name] = failed
+
       pres.logs["soak gate summary"] = log_lines
 
-      # Require at least one completed staging soak run and that all succeeded.
-      if not builds:
+      # Require at least one completed staging soak run per builder and that
+      # all succeeded.
+      if missing_builders:
+        missing_str = ", ".join(missing_builders)
         raise api.step.StepFailure(
-            "No completed staging-qualbot-pipeline builds found since "
+            f"No completed builds found for [{missing_str}] since "
             "staging ref update.")
-      failed_builds = [b for b in builds if b.status != bb_common.SUCCESS]
-      if failed_builds:
-        failed_ids = ", ".join(str(b.id) for b in failed_builds)
+      if failed_builds_by_builder:
+        details = "; ".join(
+            f"{b_name} ({', '.join(str(b.id) for b in failed)})"
+            for b_name, failed in failed_builds_by_builder.items())
         raise api.step.StepFailure(
-            "Staging health gate failed: non-passing "
-            f"staging-qualbot-pipeline builds ({failed_ids}).")
+            f"Staging health gate failed: non-passing builds for {details}.")
 
     # Point target_ref ('prod') to the verified staging CIPD instance.
     if not dry_run:
@@ -192,7 +211,11 @@ def GenTests(api: RecipeTestApi):
           )),
       api.buildbucket.simulated_search_results(
           [api.buildbucket.ci_build_message(status="SUCCESS")],
-          step_name="promote prod cipd ref.buildbucket.search",
+          step_name="promote prod cipd ref.search staging-qualbot-pipeline builds",
+      ),
+      api.buildbucket.simulated_search_results(
+          [api.buildbucket.ci_build_message(status="SUCCESS")],
+          step_name="promote prod cipd ref.search staging-qualbot-pipeline-e2e builds",
       ),
       api.post_check(
           post_process.StepCommandContains,
@@ -214,7 +237,11 @@ def GenTests(api: RecipeTestApi):
           )),
       api.buildbucket.simulated_search_results(
           [api.buildbucket.ci_build_message(status="SUCCESS")],
-          step_name="promote prod cipd ref.buildbucket.search",
+          step_name="promote prod cipd ref.search staging-qualbot-pipeline builds",
+      ),
+      api.buildbucket.simulated_search_results(
+          [api.buildbucket.ci_build_message(status="SUCCESS")],
+          step_name="promote prod cipd ref.search staging-qualbot-pipeline-e2e builds",
       ),
       api.post_check(
           post_process.StepCommandContains,
@@ -231,8 +258,12 @@ def GenTests(api: RecipeTestApi):
               stage=QualbotAutoreleaserProperties.STAGE_PROD,
           )),
       api.buildbucket.simulated_search_results(
+          [api.buildbucket.ci_build_message(status="SUCCESS")],
+          step_name="promote prod cipd ref.search staging-qualbot-pipeline builds",
+      ),
+      api.buildbucket.simulated_search_results(
           [],
-          step_name="promote prod cipd ref.buildbucket.search",
+          step_name="promote prod cipd ref.search staging-qualbot-pipeline-e2e builds",
       ),
       api.post_check(
           post_process.DoesNotRun,
@@ -249,11 +280,15 @@ def GenTests(api: RecipeTestApi):
               stage=QualbotAutoreleaserProperties.STAGE_PROD,
           )),
       api.buildbucket.simulated_search_results(
+          [api.buildbucket.ci_build_message(status="SUCCESS")],
+          step_name="promote prod cipd ref.search staging-qualbot-pipeline builds",
+      ),
+      api.buildbucket.simulated_search_results(
           [
               api.buildbucket.ci_build_message(status="SUCCESS"),
               api.buildbucket.ci_build_message(status="FAILURE"),
           ],
-          step_name="promote prod cipd ref.buildbucket.search",
+          step_name="promote prod cipd ref.search staging-qualbot-pipeline-e2e builds",
       ),
       api.post_check(
           post_process.DoesNotRun,
@@ -272,7 +307,11 @@ def GenTests(api: RecipeTestApi):
           )),
       api.post_check(
           post_process.DoesNotRun,
-          "promote prod cipd ref.buildbucket.search",
+          "promote prod cipd ref.search staging-qualbot-pipeline builds",
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          "promote prod cipd ref.search staging-qualbot-pipeline-e2e builds",
       ),
       api.post_check(
           post_process.StepCommandContains,
