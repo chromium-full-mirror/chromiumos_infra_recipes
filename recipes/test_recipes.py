@@ -268,21 +268,21 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
       considered += 1
       with api.step.nest(
           'analyze and launch {}'.format(builder)) as builder_pres:
-        # Get a led result from led to extract the builder definition.
-        # Then, chain on calls to launch the builder (if it is relevant).
+        # Check the last successful build's recipe, and if it is relevant, get
+        # a led result from led to extract the builder definition and launch it.
         # Mark this as a dry_run so that builders with side effects (for
         # example, annealing pushes a manifest_ref) can avoid them.
         last_successful_build = _get_last_successful_build(
             api, builder, bucket=verifier.bucket)
-        led_result = api.led('get-build', '-real-build',
-                             last_successful_build.id)
-
-        buildbucket = led_result.result.buildbucket
-        build = buildbucket.bbagent_args.build
-        recipe = build.input.properties['recipe']
+        recipe: str = last_successful_build.input.properties['recipe']
 
         if (verifier.always_launch or
             api.recipe_analyze.is_recipe_affected(affected_files, recipe)):
+          led_result = api.led('get-build', '-real-build',
+                               last_successful_build.id)
+
+          buildbucket = led_result.result.buildbucket
+          build = buildbucket.bbagent_args.build
 
           # Pass the output gitiles commit to the re-run.
           if not build.input.gitiles_commit.project and last_successful_build.output.HasField(
@@ -568,19 +568,21 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       dim.key = 'bot_size'
       dim.value = 'small' if recipe_name == 'release_triggerer' else 'large'
 
-    ret = api.buildbucket.simulated_search_results(
-        builds=[
-            build_pb2.Build(
-                id=fake_id,
-                builder={'builder': builder},
-                output=build_pb2.Build.Output(
-                    gitiles_commit=common_pb2.GitilesCommit(
-                        host='chromium-review.googlesource.com',
-                        id='123',
-                    ),
-                ),
+    search_build = build_pb2.Build(
+        id=fake_id,
+        builder={'builder': builder},
+        output=build_pb2.Build.Output(
+            gitiles_commit=common_pb2.GitilesCommit(
+                host='chromium-review.googlesource.com',
+                id='123',
             ),
-        ], step_name=launch_step_name(builder, 'buildbucket.search'))
+        ),
+    )
+    search_build.input.properties['recipe'] = recipe_name
+
+    ret = api.buildbucket.simulated_search_results(
+        builds=[search_build],
+        step_name=launch_step_name(builder, 'buildbucket.search'))
     ret += api.led.mock_edit(_mock_edit, cmd_filter=['edit', '-d'])
     return ret + api.led.mock_get_build(fake_build, fake_id)
 
@@ -739,6 +741,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.post_process(
           post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-chromite-snapshot.led get-build'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
           'analyze and launch builders.analyze and launch staging-chromite-snapshot.led launch'
       ),
       api.post_process(post_process.StatusSuccess),
@@ -781,6 +787,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(
           post_process.MustRun,
           'analyze and launch builders.analyze and launch staging-release-triggerer.led launch'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-chromite-snapshot.led get-build'
       ),
       api.post_process(
           post_process.DoesNotRun,
@@ -829,6 +839,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.post_process(
           post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-chromite-snapshot.led get-build'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
           'analyze and launch builders.analyze and launch staging-chromite-snapshot.led launch'
       ),
       api.post_process(post_process.StatusSuccess),
@@ -872,6 +886,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(
           post_process.MustRun,
           'analyze and launch builders.analyze and launch staging-release-triggerer.led launch'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'analyze and launch builders.analyze and launch staging-chromite-snapshot.led get-build'
       ),
       api.post_process(
           post_process.DoesNotRun,
