@@ -161,15 +161,6 @@ def run_qualbot(api: RecipeApi, properties: QualbotProperties):
     except json_format.ParseError:
       pass
 
-    for launched_test in qualbot_response.get("launched_tests", []):
-      link_name = ""
-      if launched_test.get("test_effort_id"):
-        link_name += f"{launched_test.get('test_effort_id')}:"
-      if launched_test.get("test_effort_name"):
-        link_name += launched_test.get("test_effort_name")
-      if link_name and launched_test.get("test_url"):
-        presentation.links[link_name] = launched_test.get("test_url")
-
     if retcode != 0:
       raise api.step.StepFailure(f"Run Qualbot Failed (return code {retcode})")
 
@@ -248,41 +239,6 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_process(post_process.DropExpectation),
       status="FAILURE",
-  )
-
-  def check_link(check, steps, link_name, expected_link):
-    check(steps["Run Qualbot"].links[link_name] == expected_link)
-
-  yield api.build_menu.test(
-      "success-with-response",
-      api.step_data(
-          "Run Qualbot.call auto_qual_main",
-          mock_sub_build(),
-      ),
-      api.step_data(
-          "Run Qualbot.read qualbot output",
-          api.file.read_json({
-              "launched_tests": [{
-                  "test_effort_id":
-                      "4388",
-                  "test_effort_name":
-                      "fatcat-ruby-AP-16650.58.0-EC-16667.2.46-RO/RW",
-                  "test_url":
-                      "https://android-build.corp.google.com/abtd/run/L81200030126644839",
-                  "location":
-                      "LOCATION_INTERNAL",
-              }]
-          }),
-      ),
-      api.post_check(
-          check_link,
-          "4388:fatcat-ruby-AP-16650.58.0-EC-16667.2.46-RO/RW",
-          "https://android-build.corp.google.com/abtd/run/L81200030126644839",
-      ),
-      api.post_check(
-          post_process.StepSuccess,
-          "Run Qualbot.call auto_qual_main",
-      ),
   )
 
   yield api.build_menu.test(

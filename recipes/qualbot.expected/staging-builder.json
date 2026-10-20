@@ -2879,7 +2879,6 @@
     "cmd": [],
     "name": "Run Qualbot",
     "~followup_annotations": [
-      "@@@STEP_LINK@9999:@fake@@@",
       "@@@SET_BUILD_PROPERTY@qualbot_response@{\"launchedTests\": [{\"testEffortId\": \"9999\", \"testUrl\": \"fake\"}]}@@@"
     ]
   },
