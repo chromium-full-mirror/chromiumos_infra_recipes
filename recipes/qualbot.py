@@ -67,6 +67,8 @@ def RunSteps(api: RecipeApi, properties: QualbotProperties):
           raise api.step.StepFailure(
               "Missing git_revision tag on CIPD package "
               f"{DEFAULT_CIPD_PACKAGE}@{properties.target_ref}")
+        api.buildbucket.add_tags_to_current_build(
+            api.buildbucket.tags(git_revision=target_revision))
         repo_dir = api.src_state.workspace_path.joinpath(
             "infra", "fw_qual_automation")
         with api.context(cwd=repo_dir):
@@ -210,6 +212,11 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           "cipd describe chromiumos/infra/cros_test_runner/fw_qual_automation",
           ["-version", "staging"],
+      ),
+      api.post_check(
+          post_process.PropertyEquals,
+          "$recipe_engine/buildbucket/runtime-tags",
+          {"git_revision": ["deadbeef1234567890"]},
       ),
       api.post_check(
           post_process.StepCommandContains,
