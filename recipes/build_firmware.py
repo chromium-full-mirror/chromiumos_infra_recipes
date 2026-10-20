@@ -23,6 +23,7 @@ from google.protobuf import struct_pb2
 
 import PB.chromiumos.common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
 from PB.chromite.api.firmware import FirmwareArtifactInfo
@@ -203,10 +204,17 @@ def RunSteps(api, properties):
         builds = api.buildbucket.schedule(requests)
 
         # Wait for them and collect outputs
+        margin = 30 * 60 if properties.code_coverage else 5 * 60
+        collect_timeout = (
+            max(
+                60,
+                int(api.context.deadline.soft_deadline - api.time.time()) -
+                margin,
+            ) if api.context.deadline.soft_deadline else 3600 * 4)
         completed_builds = api.buildbucket.collect_builds(
             [b.id for b in builds],
             step_name='collect shard builds',
-            timeout=3600 * 2,
+            timeout=collect_timeout,
         )
 
         failed_ids = []
@@ -1737,4 +1745,38 @@ def GenTests(api):
           "shard_index": 0,
       },
       status="FAILURE",
+  )
+
+  yield test(
+      "dynamic-shard-fanout-deadline",
+      api.time.seed(1000),
+      api.time.step(0),
+      api.context.luci_context(
+          deadline=sections_pb2.Deadline(soft_deadline=1000 + 3600 * 5),
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          "configure builder.cros_infra_config.gitiles-fetch-ref",
+      ),
+      api.buildbucket.simulated_collect_output(
+          [b1, b2],
+          step_name="schedule and wait for shards.collect shard builds",
+      ),
+      api.post_check(
+          lambda check,
+          steps: check(steps[
+              "schedule and wait for shards.collect shard builds.wait"].timeout
+                       == 3600 * 5 - 5 * 60),
+      ),
+      api.post_process(post_process.DropExpectation),
+      cq=True,
+      dry_run=True,
+      builder="fw-ec-cq",
+      input_properties={
+          "firmware_location": 2,
+          "code_coverage": False,
+          "chromiumos_sdk_pin_file": sdk_pin_path,
+          "shard_count": 2,
+          "shard_index": 0,
+      },
   )
