@@ -242,8 +242,9 @@ class FirmwareBuilder():
       # uprev older branches until such time as they have a long-term answer.
       # This is not true for other chromite commands.
       self._ensure_chromite_main()
-      push = not bool(self.m.cv.active or self._is_staging or
-                      self.m.src_state.gerrit_changes)
+      push = bool(self.properties.bump_version) and not bool(
+          self.m.cv.active or self._is_staging or
+          self.m.src_state.gerrit_changes)
       drop_file = self.m.path.mkstemp()
       manifest = 0 if not self._config else self._config.general.manifest
 

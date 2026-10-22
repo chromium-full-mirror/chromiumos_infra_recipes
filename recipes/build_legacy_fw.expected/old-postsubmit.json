@@ -2605,6 +2605,7 @@
       "commit",
       "--drop_file",
       "[CLEANUP]/tmp_tmp_3",
+      "--dryrun",
       "--all",
       "--boards=target",
       "--buildroot",
@@ -2656,35 +2657,6 @@
       }
     },
     "name": "uprev packages.read uprevved packages",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/tmp_tmp_2/chromite/bin/cros_mark_as_stable",
-      "push",
-      "--all",
-      "--boards=target",
-      "--buildroot",
-      "[CLEANUP]/chromiumos_workspace",
-      "--overlay-type",
-      "both"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "uprev packages.call cros_mark_as_stable push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
