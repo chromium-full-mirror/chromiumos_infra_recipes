@@ -32,6 +32,7 @@ from PB.chromiumos.builder_config import BuilderConfig, BuilderConfigs
 from PB.chromiumos.build_report import BuildReport
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 from recipe_engine import post_process
+from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
 
@@ -149,12 +150,33 @@ def _extract_coverage_artifacts(completed_builds):
   return results
 
 
+def _get_commit(
+    api: recipe_api.RecipeApi,
+    properties: BuildFirmwareProperties,
+) -> bb_common_pb2.GitilesCommit:
+  """Return the GitilesCommit to configure the builder with.
+
+  Release branch builders set `gitiles_commit` (with `ref` and no `id`) as a
+  static builder property in `cr-buildbucket.cfg` to specify which manifest
+  branch to check out. Default to `src_state.gitiles_commit` (from Buildbucket),
+  but if `properties.gitiles_commit` is set and `src_state.gitiles_commit` is
+  missing an `id` or has a different `ref`, use `properties.gitiles_commit`.
+  """
+  if not properties.HasField('gitiles_commit'):
+    return api.src_state.gitiles_commit
+  if not api.src_state.gitiles_commit.id:
+    return properties.gitiles_commit
+  if api.src_state.gitiles_commit.ref != properties.gitiles_commit.ref:
+    return properties.gitiles_commit
+  # `src_state.gitiles_commit` has a pinned commit `id` on the same `ref`,
+  # whereas `properties.gitiles_commit` from builder config only sets `ref`.
+  return api.src_state.gitiles_commit
+
+
 def RunSteps(api, properties):
   with api.mutable_output.wrap():
     start_time = api.time.utcnow()
-    commit = api.src_state.gitiles_commit
-    if properties.gitiles_commit:
-      commit = properties.gitiles_commit
+    commit = _get_commit(api, properties)
     shard_count = properties.shard_count
     shard_index = properties.shard_index
     if shard_count > 1 and properties.bump_version:
@@ -186,6 +208,10 @@ def RunSteps(api, properties):
           props.update(api.cros_infra_config.props_for_child_build)
           props.update(
               MessageToDict(properties, preserving_proto_field_name=True))
+          # Do not forward `properties.gitiles_commit` (which only has a branch
+          # ref without a commit id); child shards receive the resolved commit
+          # id via `gitiles_commit` on the Buildbucket schedule request below.
+          props.pop('gitiles_commit', None)
 
           props['shard_index'] = i
 
@@ -1803,5 +1829,64 @@ def GenTests(api):
           "chromiumos_sdk_pin_file": sdk_pin_path,
           "shard_count": 2,
           "shard_index": 0,
+      },
+  )
+
+  yield test(
+      "dynamic-shard-fanout-gitiles-commit-prop",
+      api.post_check(
+          post_process.MustRun,
+          "schedule and wait for shards.configure builder.cros_infra_config.gitiles-fetch-ref",
+      ),
+      api.buildbucket.simulated_collect_output(
+          [b1, b2],
+          step_name="schedule and wait for shards.collect shard builds",
+      ),
+      api.post_check(
+          lambda check,
+          steps: check('"gitiles_commit"' not in steps[
+              "schedule and wait for shards.buildbucket.schedule"].stdin),
+      ),
+      api.post_process(post_process.DropExpectation),
+      builder="fw-ec-postsubmit",
+      revision=None,
+      input_properties={
+          "firmware_location": 2,
+          "code_coverage": True,
+          "chromiumos_sdk_pin_file": sdk_pin_path,
+          "gitiles_commit": {
+              "host": "chrome-internal.googlesource.com",
+              "project": "chromeos/manifest-internal",
+              "ref": "refs/heads/main",
+          },
+          "shard_count": 2,
+          "shard_index": 0,
+      },
+  )
+
+  yield test(
+      "dynamic-shard-worker-gitiles-commit-prop",
+      api.post_check(
+          post_process.DoesNotRun,
+          "configure builder.gitiles-fetch-ref",
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          "configure builder.cros_infra_config.gitiles-fetch-ref",
+      ),
+      api.post_process(post_process.DropExpectation),
+      builder="fw-ec-postsubmit",
+      git_repo="https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      input_properties={
+          "firmware_location": 2,
+          "code_coverage": True,
+          "chromiumos_sdk_pin_file": sdk_pin_path,
+          "gitiles_commit": {
+              "host": "chrome-internal.googlesource.com",
+              "project": "chromeos/manifest-internal",
+              "ref": "refs/heads/main",
+          },
+          "shard_count": 2,
+          "shard_index": 1,
       },
   )
