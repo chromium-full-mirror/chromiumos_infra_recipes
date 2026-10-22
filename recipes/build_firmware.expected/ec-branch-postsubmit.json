@@ -6706,6 +6706,7 @@
       "@@@STEP_LOG_LINE@debug@metadata_by_name[rex/firmware_from_source.tar.bz2]=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@metadata_by_name[tokens.bin]=@@@",
       "@@@STEP_LOG_END@debug@@@"
     ]
   },
@@ -6808,6 +6809,12 @@
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"board\": [@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@          \"rex\"@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        ],@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"EC\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"file_name\": \"tokens.bin\",@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"token_info\": {@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"EC\"@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    }@@@",
@@ -7074,7 +7081,7 @@
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'firmware-image-archive/firmware-R126-15886.2.B/1234.56.0', 'files': ['firmware_metadata.jsonpb']}]@@@",
       "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=None@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TOKEN_DATABASE:[{'gs_location': 'firmware-image-archive/firmware-R126-15886.2.B/1234.56.0', 'files': ['tokens.bin']}]@@@",
-      "@@@STEP_LOG_LINE@debug@tokens.bin was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=None@@@",
+      "@@@STEP_LOG_LINE@debug@tokens.bin was published to firmware-image-archive/firmware-R126-15886.2.B/1234.56.0 metadata=@@@",
       "@@@STEP_LOG_END@debug@@@",
       "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['brox.EC.tar.bz2', 'brox.EC_elf.tar.bz2', 'brox/firmware_from_source.tar.bz2', 'karis.EC.tar.bz2', 'karis.EC_elf.tar.bz2', 'rex/firmware_from_source.tar.bz2', 'screebo.EC.tar.bz2', 'screebo.EC_elf.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin']}, published={})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"

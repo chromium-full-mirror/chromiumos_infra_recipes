@@ -422,9 +422,10 @@ def RunSteps(api, properties):
                 'JSONPB',
             )
             for obj in metadata.objects:
-              info = getattr(
-                  obj,
-                  obj.WhichOneof('firmware_object_info') or 'tarball_info')
+              which = obj.WhichOneof('firmware_object_info')
+              info = (
+                  obj.config_info
+                  if which == 'config_info' else obj.tarball_info)
               step.logs[
                   'debug'] += f'metadata_by_name[{obj.file_name}]={info}\n'
               metadata_by_name[obj.file_name] = info
@@ -735,6 +736,9 @@ def GenTests(api):
           file_name='rex/firmware_from_source.tar.bz2',
           tarball_info=FirmwareArtifactInfo.TarballInfo(type='EC',
                                                         board=['rex'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='tokens.bin',
+          token_info=FirmwareArtifactInfo.TokenDatabaseInfo(type='EC')),
   ])
 
   # An EC tarball can be shared by several boards, as bloonchipper is by nine.

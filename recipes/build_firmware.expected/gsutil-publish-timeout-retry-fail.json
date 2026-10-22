@@ -6706,6 +6706,7 @@
       "@@@STEP_LOG_LINE@debug@metadata_by_name[rex/firmware_from_source.tar.bz2]=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"rex\"@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
+      "@@@STEP_LOG_LINE@debug@metadata_by_name[tokens.bin]=@@@",
       "@@@STEP_LOG_END@debug@@@"
     ]
   },
@@ -6808,6 +6809,12 @@
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"board\": [@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@          \"rex\"@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        ],@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"EC\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"file_name\": \"tokens.bin\",@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"token_info\": {@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"EC\"@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    }@@@",
