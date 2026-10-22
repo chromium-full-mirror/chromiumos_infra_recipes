@@ -201,7 +201,7 @@ def RunSteps(api, properties):
                   led_inherit_parent=True,
               ))
 
-        builds = api.buildbucket.schedule(requests)
+        builds = api.buildbucket.schedule(requests, include_sub_invs=False)
 
         # Wait for them and collect outputs
         margin = 30 * 60 if properties.code_coverage else 5 * 60
@@ -216,6 +216,19 @@ def RunSteps(api, properties):
             step_name='collect shard builds',
             timeout=collect_timeout,
         )
+        sub_invs = api.resultdb.invocation_ids([
+            b.infra.resultdb.invocation
+            for b in completed_builds.values()
+            if b.infra.resultdb.invocation
+        ])
+        if api.resultdb.enabled and sub_invs:
+          try:
+            api.resultdb.include_invocations(
+                sub_invs,
+                step_name='include sub resultdb invocations',
+            )
+          except StepFailure:
+            api.step.active_result.presentation.status = api.step.WARNING
 
         failed_ids = []
         for b in completed_builds.values():
@@ -1765,6 +1778,14 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           [b1, b2],
           step_name="schedule and wait for shards.collect shard builds",
+      ),
+      api.step_data(
+          "schedule and wait for shards.include sub resultdb invocations",
+          retcode=123,
+      ),
+      api.post_check(
+          post_process.StepWarning,
+          "schedule and wait for shards.include sub resultdb invocations",
       ),
       api.post_check(
           lambda check,

@@ -1209,7 +1209,7 @@
       }
     },
     "name": "schedule and wait for shards.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"fw-ec-cq\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"DRY_RUN\"}, \"$recipe_engine/cv\": {\"active\": true, \"run_mode\": \"DRY_RUN\"}, \"chromiumos_sdk_pin_file\": \"src/platform/foobar/sdk-version\", \"code_coverage\": true, \"firmware_location\": \"PLATFORM_ZEPHYR\", \"shard_count\": 2.0, \"shard_index\": 1.0}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"fw-ec-cq\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"DRY_RUN\"}, \"$recipe_engine/cv\": {\"active\": true, \"run_mode\": \"DRY_RUN\"}, \"chromiumos_sdk_pin_file\": \"src/platform/foobar/sdk-version\", \"code_coverage\": true, \"firmware_location\": \"PLATFORM_ZEPHYR\", \"shard_count\": 2.0, \"shard_index\": 2.0}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"fw-ec-cq\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"DRY_RUN\"}, \"$recipe_engine/cv\": {\"active\": true, \"run_mode\": \"DRY_RUN\"}, \"chromiumos_sdk_pin_file\": \"src/platform/foobar/sdk-version\", \"code_coverage\": true, \"firmware_location\": \"PLATFORM_ZEPHYR\", \"shard_count\": 2.0, \"shard_index\": 1.0}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"resultdb\": {\"isExportRootOverride\": true}, \"tags\": [{\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"fw-ec-cq\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"DRY_RUN\"}, \"$recipe_engine/cv\": {\"active\": true, \"run_mode\": \"DRY_RUN\"}, \"chromiumos_sdk_pin_file\": \"src/platform/foobar/sdk-version\", \"code_coverage\": true, \"firmware_location\": \"PLATFORM_ZEPHYR\", \"shard_count\": 2.0, \"shard_index\": 2.0}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"resultdb\": {\"isExportRootOverride\": true}, \"tags\": [{\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1373,6 +1373,9 @@
       "@@@STEP_LOG_LINE@request@          \"shard_index\": 1.0@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"isExportRootOverride\": true@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"cq_experimental\",@@@",
@@ -1433,6 +1436,9 @@
       "@@@STEP_LOG_LINE@request@          \"shard_index\": 2.0@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"isExportRootOverride\": true@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"cq_experimental\",@@@",
@@ -1574,6 +1580,42 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@130@https://cr-buildbucket.appspot.com/build/130@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "UpdateIncludedInvocations",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "schedule and wait for shards.include sub resultdb invocations",
+    "stdin": "{\"addInvocations\": [\"invocations/build:130\"], \"includingInvocation\": \"invocations/build:8945511751514863184\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"addInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build:130\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  ],@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
     ]
   },
   {
