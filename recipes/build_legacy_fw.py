@@ -827,8 +827,7 @@ class FirmwareBuilder():
           with self.m.build_reporting.status_reporting(
           ) if not self.m.cv.active else nullcontext():
             with self.m.build_reporting.step_reporting(
-                BuildReport.StepDetails.STEP_OVERALL,
-                raise_on_failed_publish=True
+                BuildReport.StepDetails.STEP_OVERALL
             ) if not self.m.cv.active else nullcontext():
               branch = self.m.src_state.gitiles_commit.ref
               if branch.startswith('refs/heads/'):
