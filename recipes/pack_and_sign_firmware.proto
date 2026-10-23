@@ -6,6 +6,9 @@ syntax = "proto3";
 
 package recipes.chromeos.pack_and_sign_firmware;
 
-import "go.chromium.org/luci/buildbucket/proto/common.proto";
+message PackAndSignFirmwareProperties {
+  reserved 1;
 
-message PackAndSignFirmwareProperties { reserved 1; }
+  // The bucket in which input artifacts must reside if MP keys are being used.
+  string verify_bucket = 2;
+}
