@@ -28,19 +28,22 @@ class KeysetUtilsApi(recipe_api.RecipeApi):
       release_keys_path: str,
       docker_image: str,
       is_staging: bool,
+      work_dir: recipe_api.Path | str,
       build_target: str = "",
       is_mp: bool | None = None,
   ) -> tuple[signing.CreateKeysHsmRequest, str | None]:
     """Prepares a CreateKeysHsmRequest for SigningService.
 
-    Sets mandatory runtime fields (docker_image, release_keys_checkout, dry_run)
-    and calls calc_keyset_version to validate or deduce keyset_name.
+    Sets mandatory runtime fields (docker_image, release_keys_checkout,
+    work_dir, dry_run) and calls calc_keyset_version to validate or deduce
+    keyset_name.
 
     Args:
       request: CreateKeysHsmRequest properties passed from build input.
       release_keys_path: Path to the local release-keys repository checkout.
       docker_image: Docker image name and tag for signing operations.
       is_staging: True if running in a staging build environment.
+      work_dir: Working directory path for intermediate artifacts.
       build_target: Optional build target name when keyset_name is unset.
       is_mp: Optional boolean indicating whether target keyset is MP.
 
@@ -49,6 +52,7 @@ class KeysetUtilsApi(recipe_api.RecipeApi):
     """
     request.docker_image = docker_image
     request.release_keys_checkout = str(release_keys_path)
+    request.work_dir = str(work_dir)
     # Default to dry run in staging.
     if not request.HasField("dry_run"):
       request.dry_run = is_staging

@@ -88,6 +88,7 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
     )
 
     is_staging = api.build_menu.is_staging
+    work_dir = api.path.mkdtemp(prefix="hsm_keygen_work_")
     create_keys_hsm_request, error_msg = api.keyset_utils.create_hsm_request(
         properties.create_keys_hsm_request,
         release_keys_path,
@@ -95,6 +96,7 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
         is_staging,
         build_target=properties.build_target,
         is_mp=properties.is_mp if properties.HasField("is_mp") else None,
+        work_dir=work_dir,
     )
     if error_msg:
       return result_pb2.RawResult(
@@ -104,7 +106,7 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
 
     api.cros_build_api.SigningService.CreateKeysHsm(create_keys_hsm_request)
 
-    # TODO(b/505067933): Notify quorum members that there is a new quorum operation.
+    # TODO(b/505067933): Stage and upload quorum inbox artifacts from work_dir to GCS.
 
     with api.step.nest("commit keyset to release-keys"), api.context(
         cwd=release_keys_path):

@@ -30,6 +30,7 @@ def RunSteps(api: recipe_api.RecipeApi):
       api.path.start_dir / "release-keys",
       "signing:latest",
       api.properties.get("is_staging", False),
+      api.path.start_dir / "work",
       build_target=api.properties.get("build_target", ""),
       is_mp=api.properties.get("is_mp"),
   )
