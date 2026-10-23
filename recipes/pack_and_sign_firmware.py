@@ -19,6 +19,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.recipes.chromeos.pack_and_sign_firmware import PackAndSignFirmwareProperties
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 
@@ -55,6 +56,8 @@ DEPS = [
     'signing_utils',
     'src_state',
 ]
+
+PROPERTIES = PackAndSignFirmwareProperties
 
 TEST_SIGNING_CONFIG = '''build_target_signing_configs {
       build_target: "kukui"
@@ -246,7 +249,19 @@ def get_keyset_is_mp(response: SignImageResponse) -> bool:
   return only_artifact.keyset_is_mp
 
 
-def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
+def _get_keyset_is_mp_from_config(api: RecipeApi) -> bool:
+  # TODO(b/576257698): This is less than ideal and should be removed when we
+  # have appropriate bcid checks.
+  config = api.signing.get_config()
+  keyset = config.keyset
+  for signing_config in config.signing_configs:
+    if signing_config.image_type == common_pb2.IMAGE_TYPE_SHELLBALL:
+      keyset = signing_config.keyset or keyset
+  return "MPKeys" in keyset and "PreMPKeys" not in keyset
+
+
+def RunSteps(api: RecipeApi,
+             properties: PackAndSignFirmwareProperties) -> result_pb2.RawResult:
   with api.mutable_output.wrap():
     with api.cros_source.checkout_overlays_context():
       api.bcid_reporter.report_stage('start')
@@ -283,6 +298,12 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
         api.cipd.ensure(cipd_path, fw_path / 'cipd_manifest.txt',
                         'ensure cipd packages for packing firmware')
 
+        # set up signing config test data
+        if api._test_data.enabled:  # pylint: disable=protected-access
+          api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
+              'signing_config', TEST_SIGNING_CONFIG)
+        keyset_is_mp = _get_keyset_is_mp_from_config(api)
+
         # Call pack_firmware with cipd bins in PATH.
         with api.context(env={
             'PATH': api.path.pathsep.join([str(cipd_path / 'bin'), '%(PATH)s'])
@@ -307,6 +328,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
               '--textproto',
               '--download',
           ]
+          if keyset_is_mp:
+            pack_fw_cmd.extend(["--verify_bucket", properties.verify_bucket])
           api.step('call pack_firmware', pack_fw_cmd)
 
       # Zip EC component manifests.
@@ -325,9 +348,6 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
       api.bcid_reporter.report_stage('upload')
 
       # Sign shellball.
-      if api._test_data.enabled:  # pylint: disable=protected-access
-        api.signing.test_api.signing_config_test_data = api._test_data.get(  # pylint: disable=protected-access
-            'signing_config', TEST_SIGNING_CONFIG)
       api.cros_release.validate_sign_types()
       with api.step.nest('sign firmware shellball') as pres:
         infra_config = api.cros_infra_config.config
@@ -429,8 +449,17 @@ def GenTests(api: RecipeTestApi):
               '$chromeos/signing':
                   MessageToDict(
                       SigningProperties(local_signing=True,
-                                        gs_upload_bucket='signed-firmware'))
+                                        gs_upload_bucket='signed-firmware')),
+              'verify_bucket':
+                  'firmare-image-archive'
           }),
+      api.recipe_test_data(signing_config="""build_target_signing_configs {
+  build_target: "kukui"
+  signing_configs  {
+      image_type: IMAGE_TYPE_SHELLBALL
+      keyset: "KukuiPreMPKeys"
+    }
+}"""),
       api.cros_build_api.set_api_return(
           'sign firmware shellball.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response)),
@@ -449,6 +478,8 @@ def GenTests(api: RecipeTestApi):
           'signed-firmware bucket.upload unsigned artifacts for CHANNEL_AGNOSTIC'
       ),
       api.post_check(post_process.MustRun, 'pack firmware'),
+      api.post_check(post_process.StepCommandDoesNotContain,
+                     'pack firmware.call pack_firmware', ['--verify_bucket']),
       api.post_check(
           post_process.StepCommandContains,
           'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
@@ -515,6 +546,13 @@ def GenTests(api: RecipeTestApi):
               )),
           step_name='configure builder.cros_infra_config',
       ),
+      api.recipe_test_data(signing_config="""build_target_signing_configs {
+  build_target: "kukui"
+  signing_configs  {
+      image_type: IMAGE_TYPE_SHELLBALL
+      keyset: "KukuiMPKeys"
+    }
+}"""),
       api.properties(
           **{
               '$chromeos/cros_release': {
@@ -523,7 +561,9 @@ def GenTests(api: RecipeTestApi):
               '$chromeos/signing':
                   MessageToDict(
                       SigningProperties(local_signing=True,
-                                        gs_upload_bucket='signed-firmware'))
+                                        gs_upload_bucket='signed-firmware')),
+              'verify_bucket':
+                  'firmare-image-archive'
           }),
       api.cros_build_api.set_api_return(
           'sign firmware shellball.sign artifacts.call BAPI',
@@ -532,6 +572,9 @@ def GenTests(api: RecipeTestApi):
           'get latest prebuilt version for kukui.gsutil reading LATEST-SHELLBALL version',
           stdout=api.raw_io.output('3.0')),
       api.post_check(post_process.MustRun, 'pack firmware'),
+      api.post_check(post_process.StepCommandContains,
+                     'pack firmware.call pack_firmware',
+                     ['--verify_bucket', 'firmare-image-archive']),
       api.post_check(
           post_process.StepCommandContains,
           'upload to cipd.create android/desktop/firmware/kukui/ap/mp-signed', [
