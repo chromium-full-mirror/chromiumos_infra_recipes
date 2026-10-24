@@ -232,11 +232,7 @@ class FirmwareBuilder():
     self._suite_scheduling = (
         self.properties.set_suite_scheduling and not dry_run)
 
-  def _uprev(self):
-    # TODO(b/181786185): Once we have a good "push the uprevs" method, we should
-    # switch to calling cros_source.uprev_packages, and pushing them, for
-    # branches that are new enough.
-
+  def _uprev(self) -> None:
     with self.m.step.nest('uprev packages') as pres:
       # The build team supports using the tip-of-tree cros_mark_as_stable to
       # uprev older branches until such time as they have a long-term answer.
@@ -262,14 +258,33 @@ class FirmwareBuilder():
         cmd.append('--dryrun')
       cmd += uprev_args
       self.m.step('call cros_mark_as_stable commit', cmd)
-      pres.logs['packages'] = self.m.file.read_raw(
+      packages = self.m.file.read_raw(
           'read uprevved packages', drop_file,
           test_data='sys-boot/depthcharge sys-apps/coreboot-utils')
+      pres.logs['packages'] = packages
 
-      if push:
-        cmd = [self._tot_chromite / 'bin/cros_mark_as_stable', 'push'
-              ] + uprev_args
-        self.m.step('call cros_mark_as_stable push', cmd)
+      if push and packages.strip():
+        with self.m.depot_tools.on_path():
+          uprev_projects = self.m.step(
+              'find uprevved projects',
+              [
+                  self.m.repo.repo_path,
+                  'forall',
+                  '-c',
+                  'if [ -n "$(git rev-list -n1 @{u}..stabilizing_branch -- '
+                  '2>/dev/null)" ]; then echo "${REPO_PATH}"; fi',
+              ],
+              stdout=self.m.raw_io.output_text(add_output_log=True),
+              step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
+                  'src/third_party/chromiumos-overlay\n'),
+          ).stdout.strip().splitlines()
+        for project in self.m.repo.project_infos(projects=uprev_projects):
+          with self.m.step.nest(f'push {project.path}'), self.m.context(
+              cwd=self.m.src_state.workspace_path / project.path):
+            ref = f'refs/heads/{project.branch_name}'
+            self.m.git.fetch(project.remote, [ref])
+            self.m.git.rebase(branch='FETCH_HEAD')
+            self.m.git.push(project.remote, f'HEAD:{ref}')
 
   def _ensure_chromite_main(self):
     if self._tot_chromite:

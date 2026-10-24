@@ -4492,16 +4492,20 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/cros_mark_as_stable",
-      "push",
-      "--all",
-      "--boards=kukui:kukui",
-      "--buildroot",
-      "[CLEANUP]/chromiumos_workspace",
-      "--overlay-type",
-      "both"
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "if [ -n \"$(git rev-list -n1 @{u}..stabilizing_branch -- 2>/dev/null)\" ]; then echo \"${REPO_PATH}\"; fi"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "luci_context": {
       "realm": {
         "name": "chromeos:firmware"
@@ -4513,9 +4517,129 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "uprev packages.call cros_mark_as_stable push",
+    "name": "uprev packages.find uprevved projects",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/third_party/chromiumos-overlay@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "src/third_party/chromiumos-overlay",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.repo forall (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/third_party/chromiumos-overlay|src/src/third_party/chromiumos-overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.push src/src/third_party/chromiumos-overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "refs/heads/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.push src/src/third_party/chromiumos-overlay.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.push src/src/third_party/chromiumos-overlay.git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/heads/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.push src/src/third_party/chromiumos-overlay.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
