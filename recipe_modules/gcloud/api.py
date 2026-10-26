@@ -1024,6 +1024,18 @@ class GcloudApi(recipe_api.RecipeApi):
     # Otherwise this is a no-cache flow, and thus the image doesn't matter.
     return None
 
+  def _recreate_disk_on_failure(self, image: Optional[str] = None,
+                                disk_type: Optional[str] = None,
+                                size: Optional[str] = None) -> None:
+    """Delete a potentially stuck disk and recreate it."""
+    try:
+      self.delete_disk(disk=self._disk, zone=self._zone)
+    except self.m.step.StepFailure:
+      pass
+    self._wrap_in_disk_exists_swallow(
+        lambda: self.create_disk(disk=self._disk, zone=self._zone, image=image,
+                                 disk_type=disk_type, size=size))
+
   def _setup_empty_cache_disk(self, disk_type=None):
     """Set up a brand new disk for use as a cache disk.
 
@@ -1051,8 +1063,7 @@ class GcloudApi(recipe_api.RecipeApi):
       self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
           disk=self._disk, zone=self._zone, disk_type=disk_type, size='200GB'))
     except self.m.step.StepFailure:
-      self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
-          disk=self._disk, zone=self._zone, disk_type=disk_type, size='200GB'))
+      self._recreate_disk_on_failure(disk_type=disk_type, size='200GB')
     # Attach disk.
     self.attach_disk(name=self._short_name, instance=self.infra_host,
                      disk=self._disk, zone=self._zone)
@@ -1131,9 +1142,7 @@ class GcloudApi(recipe_api.RecipeApi):
                 disk=self._disk, zone=self._zone, image=snapshot,
                 disk_type=disk_type))
           except self.m.step.StepFailure:
-            self._wrap_in_disk_exists_swallow(
-                lambda: self.create_disk(disk=self._disk, zone=self._zone,
-                                         image=snapshot, disk_type=disk_type))
+            self._recreate_disk_on_failure(image=snapshot, disk_type=disk_type)
         return snapshot or None
 
   def _setup_new_cache_mount_outside_path(self, recipe_mount_path):
@@ -1257,8 +1266,13 @@ class GcloudApi(recipe_api.RecipeApi):
             recovery_snapshot=recovery_snapshot)
 
         if self.cache_action is not SourceCacheAction.DONT_MOUNT_ANY_CACHE:
-          self.attach_disk(name=self._short_name, instance=self.infra_host,
-                           disk=self._disk, zone=self._zone)
+          try:
+            self.attach_disk(name=self._short_name, instance=self.infra_host,
+                             disk=self._disk, zone=self._zone)
+          except self.m.step.StepFailure:
+            self._recreate_disk_on_failure(image=snapshot, disk_type=disk_type)
+            self.attach_disk(name=self._short_name, instance=self.infra_host,
+                             disk=self._disk, zone=self._zone)
 
       if not self._cache_mounted or self._dont_reuse_mounted_cache or mount_existing:
         self.mount_disk(

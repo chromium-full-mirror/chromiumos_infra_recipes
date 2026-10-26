@@ -169,6 +169,42 @@ def GenTests(api):
       api.step_data(
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           retcode=3),
+      api.step_data(
+          'source cache.setup source cache disk.create disk from snapshot image.delete disk',
+          retcode=1),
+  )
+
+  yield api.test(
+      'attach-disk-failure-recreates-disk',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.step_data(
+          'source cache.check GCE attached disks',
+          stdout=api.json.output({'disks': []}),
+      ),
+      api.step_data(
+          'source cache.check GCE attached disks (2)',
+          stdout=api.json.output({'disks': []}),
+      ),
+      api.step_data(
+          'source cache.check GCE attached disks (3)',
+          stdout=api.json.output({'disks': []}),
+      ),
+      api.step_data('source cache.attach disk', retcode=1),
+      api.step_data('source cache.attach disk (2)', retcode=1),
+      api.step_data('source cache.attach disk (3)', retcode=1),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.delete disk',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.create disk from image',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.check GCE attached disks (4)',
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
