@@ -151,7 +151,8 @@
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 20:07:04.208732 Bump CHROMEOS_BRANCH number after creating branch firmware-15885.B@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 20:07:04.208788 Bump CHROMEOS_BUILD number for source branch main after creating branch firmware-15885.B@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2024/06/03 20:07:04.208796 completed successfully@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stderr]@@@"
     ]
   },
   {

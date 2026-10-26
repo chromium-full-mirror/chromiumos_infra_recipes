@@ -40,10 +40,14 @@ class CrosBranchApi(recipe_api.RecipeApi):
         'branch_util', cmd + branch_args, step_name=step_name or
         f'{cmd[0]} branch',
         stdout=self.m.raw_io.output_text(name='branch_util stdout',
+                                         add_output_log=True),
+        stderr=self.m.raw_io.output_text(name='branch_util stderr',
                                          add_output_log=True), **kwargs)
 
     res = re.search(BRANCH_UTIL_REGEX, step_data.stdout)
     if not res:
+      if cmd[0] == 'create':
+        step_data.presentation.status = self.m.step.FAILURE
       return None
     return res.group('branch')
 
