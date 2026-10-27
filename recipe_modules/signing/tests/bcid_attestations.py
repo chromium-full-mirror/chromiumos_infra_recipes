@@ -20,6 +20,7 @@ from RECIPE_MODULES.chromeos.cros_artifacts.api import ARTIFACTS_BY_IMAGE_TYPE
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -351,3 +352,71 @@ def GenTests(api: RecipeTestApi):
                        bcid_failed_unsigned),
       api.post_process(post_process.DropExpectation), build_target='kukui',
       builder='kukui-release-main', status='SUCCESS')
+
+  yield api.build_menu.test(
+      'cq-skips-bcid-verification',
+      api.cv(run_mode=api.cv.FULL_RUN),
+      api.properties(attestation_eligible=True),
+      api.properties(
+          **{
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(
+                          local_signing=True,
+                          gs_upload_bucket='chromeos-releases',
+                          bcid_enforcement={
+                              'unsigned_provenance_verification_fatal': True
+                          })),
+          }),
+      api.cros_build_api.set_api_return('sign artifacts.call BAPI',
+                                        'ImageService/SignImage',
+                                        MessageToJson(sample_response)),
+      api.post_check(
+          post_process.DoesNotRun,
+          'sign artifacts.verify provenance.verifying provenance for recovery_image.tar.xz.bcid_verifier: verify provenance'
+      ),
+      api.post_check(
+          post_process.StepTextEquals,
+          'sign artifacts.verify provenance',
+          'skipping bcid verification in CQ or led',
+      ),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='kukui-release-main',
+      status='SUCCESS',
+  )
+
+  yield api.build_menu.test(
+      'led-skips-bcid-verification',
+      api.properties(attestation_eligible=True),
+      api.properties(
+          **{
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(
+                          local_signing=True,
+                          gs_upload_bucket='chromeos-releases',
+                          bcid_enforcement={
+                              'unsigned_provenance_verification_fatal': True
+                          })),
+              '$recipe_engine/led': {
+                  'shadowed_bucket': 'staging',
+              },
+          }),
+      api.cros_build_api.set_api_return('sign artifacts.call BAPI',
+                                        'ImageService/SignImage',
+                                        MessageToJson(sample_response)),
+      api.post_check(
+          post_process.DoesNotRun,
+          'sign artifacts.verify provenance.verifying provenance for recovery_image.tar.xz.bcid_verifier: verify provenance'
+      ),
+      api.post_check(
+          post_process.StepTextEquals,
+          'sign artifacts.verify provenance',
+          'skipping bcid verification in CQ or led',
+      ),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='kukui-release-main',
+      status='SUCCESS',
+  )

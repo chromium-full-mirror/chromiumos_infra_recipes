@@ -616,7 +616,11 @@ class SigningApi(recipe_api.RecipeApi):
     if not attestation_eligible:
       return failed_verifications
 
-    with self.m.step.nest('verify provenance'):
+    with self.m.step.nest('verify provenance') as pres:
+      if self.m.cv.active or self.m.led.launched_by_led:
+        pres.step_text = 'skipping bcid verification in CQ or led'
+        return failed_verifications
+
       for artifact_local_path, artifact_remote_path in artifacts:
         artifact_name = self.m.path.basename(artifact_local_path)
         artifact_dir = self.m.path.dirname(artifact_local_path)

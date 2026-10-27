@@ -11,6 +11,7 @@ from .test_api import SigningTestApi as TEST_API
 DEPS = [
     'recipe_engine/bcid_reporter',
     'recipe_engine/bcid_verifier',
+    'recipe_engine/cv',
     'depot_tools/gitiles',
     'depot_tools/gsutil',
     'recipe_engine/file',
