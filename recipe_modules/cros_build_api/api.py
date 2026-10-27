@@ -359,10 +359,9 @@ class CrosBuildApiApi(RecipeApi):
           # See b/293887716 for more details about how this can occur. If the
           # checkout doesn't contain the commit we're looking for, fetch from the
           # remote and try again.
-          if (e.result.stdout and
-              'fatal: reference is not a tree:' in e.result.stdout) or (
-                  e.result.stderr and
-                  'fatal: reference is not a tree:' in e.result.stderr):
+          output = (e.result.stdout or '') + (e.result.stderr or '')
+          if ('fatal: reference is not a tree:' in output or
+              'fatal: unable to read tree' in output):
             with self.m.step.nest('fast-forwarding git checkout'):
               self.m.git.fetch()
               self.m.git.checkout(commit.strip())

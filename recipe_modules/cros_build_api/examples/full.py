@@ -97,6 +97,27 @@ def GenTests(api):
   )
 
   yield api.test(
+      'reset-chromite-unable-to-read-tree',
+      api.buildbucket.ci_build(builder='atlas-cq'),
+      api.step_data(
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.read chromite version',
+          api.file.read_text('deadbeef')),
+      api.step_data(
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.git checkout',
+          stderr=api.raw_io.output_text(
+              'fatal: unable to read tree (deadbeef)'), retcode=1),
+      api.post_check(
+          MustRun,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.fast-forwarding git checkout.git fetch'
+      ),
+      api.post_check(
+          StepCommandContains,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.fast-forwarding git checkout.git checkout',
+          ['deadbeef']),
+      api.post_process(DropExpectation),
+  )
+
+  yield api.test(
       'reset-chromite-other-err', api.buildbucket.ci_build(builder='atlas-cq'),
       api.step_data(
           'call chromite.api.BinhostService/PrepareBinhostsUploads.read chromite version',
