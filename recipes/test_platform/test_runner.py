@@ -26,6 +26,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as resultdb_common_pb2
+from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
   import CrosToolRunnerEnvProperties
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
@@ -2107,6 +2108,7 @@ def raise_on_trv2_result(api, res):  # pragma: nocover
     * api (RecipeScriptApi): Ubiquitous recipe api.
     * res - The step result.
   """
+  warnings = []
   if 'compressed_result' in res.step.sub_build.output.properties:
     compressed_result = res.step.sub_build.output.properties[
         'compressed_result']
@@ -2118,6 +2120,8 @@ def raise_on_trv2_result(api, res):  # pragma: nocover
         if s.verdict != Result.Prejob.Step.VERDICT_PASS:
           raise api.step.StepFailure('prejob %s failed: %s' %
                                      (s.name, s.human_readable_summary))
+        if s.human_readable_summary:
+          warnings.append(s.human_readable_summary)
 
     # Collect test failures by verdict for better step failure text
     failed_tests = {}
@@ -2133,11 +2137,14 @@ def raise_on_trv2_result(api, res):  # pragma: nocover
 
     # TODO(cdelagarza): Format test failures grouped by verdicts.
     if failed_tests:
-      raise api.step.StepFailure('test failed')
+      msg = '\n'.join(['test failed'] + warnings) if warnings else 'test failed'
+      raise api.step.StepFailure(msg)
 
   if 'errorSummaryMarkdown' in res.step.sub_build.output.properties:
     error_summary = res.step.sub_build.output.properties['errorSummaryMarkdown']
     if error_summary:
+      if warnings and '\n'.join(warnings) not in error_summary:
+        error_summary = '\n'.join([error_summary] + warnings)
       raise api.step.StepFailure(error_summary)
 
   # some child processes report this field a touch differently.
@@ -2145,8 +2152,18 @@ def raise_on_trv2_result(api, res):  # pragma: nocover
     error_summary = res.step.sub_build.output.properties[
         'error_summary_markdown']
     if error_summary:
+      if warnings and '\n'.join(warnings) not in error_summary:
+        error_summary = '\n'.join([error_summary] + warnings)
       raise api.step.StepFailure(error_summary)
 
+  if res.step.sub_build.summary_markdown and (
+      res.step.sub_build.summary_markdown not in '\n'.join(warnings)):
+    warnings.append(res.step.sub_build.summary_markdown)
+
+  if warnings:
+    return RawResult(status=common_pb2.SUCCESS,
+                     summary_markdown='\n'.join(warnings))
+  return None
 
 
 def run_and_upload(api, properties):
@@ -2157,7 +2174,7 @@ def run_and_upload(api, properties):
     properties: a TestRunnerProperties instance
 
   Returns:
-    None
+    Optional[RawResult]
   """
   api.easy.log_parent_step()
   # Set max_threads to 1 for whole test_runner build. Details: b/270152591.
@@ -2168,8 +2185,7 @@ def run_and_upload(api, properties):
       properties.cft_test_request.run_via_trv2):  # pragma: nocover
     # Use cros_test_runner binary rather than the normal test_runner workflow.
     result = api.cros_test_runner.execute_luciexe()
-    raise_on_trv2_result(api, result)
-    return
+    return raise_on_trv2_result(api, result)
   if properties.cft_is_enabled:
     result = execution_steps_with_ctr(api, properties)
     summarize_results_from_ctr_results(api, result)
@@ -2192,6 +2208,7 @@ def run_and_upload(api, properties):
       if result.prejob_failed():
         raise api.step.StepFailure('prejob failed')
       raise api.step.StepFailure('prejob or test failed')
+  return None
 
 
 def RunSteps(api, properties):
@@ -2202,7 +2219,7 @@ def RunSteps(api, properties):
     properties: a TestRunnerProperties instance
 
   Returns:
-    None
+    Optional[RawResult]
   """
   # NOTE: these produce a list of strings
   board = api.cros_tags.get_values('label-board')
@@ -2219,7 +2236,7 @@ def RunSteps(api, properties):
             'Temporary failure: skipping brox R128 runs due to testing issues.')
 
   try:
-    run_and_upload(api, properties)
+    return run_and_upload(api, properties)
   finally:
     pass
 
