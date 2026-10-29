@@ -23,6 +23,7 @@ DEPS = [
     "recipe_engine/path",
     "recipe_engine/properties",
     "recipe_engine/step",
+    "depot_tools/gsutil",
     "build_menu",
     "cros_build_api",
     "cros_try",
@@ -106,7 +107,26 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
 
     api.cros_build_api.SigningService.CreateKeysHsm(create_keys_hsm_request)
 
-    # TODO(b/505067933): Stage and upload quorum inbox artifacts from work_dir to GCS.
+    inbox_uri = None
+    if properties.quorum_artifacts_to_stage and properties.quorum_inbox_bucket:
+      keyset_work_dir = work_dir / create_keys_hsm_request.keyset_name
+      quorum_inbox = api.path.mkdtemp(prefix="quorum_inbox_")
+      api.keyset_utils.stage_quorum_inbox(
+          keyset_work_dir,
+          quorum_inbox,
+          list(properties.quorum_artifacts_to_stage),
+      )
+
+      build_id = api.buildbucket.build.id or 0
+      dest_path = f"quorum_inbox/{create_keys_hsm_request.keyset_name}/{build_id}"
+      api.gsutil.upload(
+          source=quorum_inbox,
+          bucket=properties.quorum_inbox_bucket,
+          dest=dest_path,
+          args=["-r"],
+          name="upload to quorum inbox",
+      )
+      inbox_uri = f"gs://{properties.quorum_inbox_bucket}/{dest_path}"
 
     with api.step.nest("commit keyset to release-keys"), api.context(
         cwd=release_keys_path):
@@ -145,12 +165,17 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
       )
       api.easy.set_properties_step(
           keyset_commit=api.gerrit.parse_gerrit_change_url(change))
+      if inbox_uri:
+        api.easy.set_properties_step(quorum_inbox_uri=inbox_uri)
 
       if is_staging:
         api.gerrit.abandon_change(change)
+    summary_markdown = f"Keyset created: {create_keys_hsm_request.keyset_name}"
+    if inbox_uri:
+      summary_markdown += f"\n\nStaged quorum inbox: `{inbox_uri}`"
     return result_pb2.RawResult(
         status=common_pb2.SUCCESS,
-        summary_markdown=f"Keyset created: {create_keys_hsm_request.keyset_name}",
+        summary_markdown=summary_markdown,
     )
 
 
@@ -164,6 +189,14 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           "create HSM keys.call chromite.api.SigningService/CreateKeysHsm"),
+      api.post_check(
+          post_process.DoesNotRun,
+          "create HSM keys.stage quorum inbox",
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          "create HSM keys.gsutil upload to quorum inbox",
+      ),
       api.post_check(
           post_process.MustRun,
           "create HSM keys.commit keyset to release-keys.regenerate generated files"
@@ -183,13 +216,38 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           HSMManagerProperties(
               create_keys_hsm_request=CreateKeysHsmRequest(
-                  keyset_name="FooPreMPKeys"), bug=12345)),
+                  keyset_name="FooPreMPKeys"),
+              bug=12345,
+              quorum_artifacts_to_stage=["artifact_a.bin", "artifact_b.json"],
+              quorum_inbox_bucket="test-quorum-bucket",
+          )),
+      api.step_data(
+          "create HSM keys.stage quorum inbox.discover quorum inbox artifacts",
+          api.file.listdir(["artifact_a.bin", "artifact_b.json", "other.txt"]),
+      ),
       api.post_check(
           post_process.MustRun,
           "create HSM keys.call chromite.api.SigningService/CreateKeysHsm"),
       api.post_check(
           post_process.MustRun,
+          "create HSM keys.stage quorum inbox",
+      ),
+      api.post_check(
+          post_process.MustRun,
+          "create HSM keys.gsutil upload to quorum inbox",
+      ),
+      api.post_check(
+          post_process.PropertyEquals,
+          "quorum_inbox_uri",
+          "gs://test-quorum-bucket/quorum_inbox/FooPreMPKeys/0",
+      ),
+      api.post_check(
+          post_process.MustRun,
           "create HSM keys.commit keyset to release-keys.abandon CL 1"),
+      api.post_check(
+          post_process.SummaryMarkdownRE,
+          r".*Staged quorum inbox: `gs://test-quorum-bucket/quorum_inbox/FooPreMPKeys/.*`",
+      ),
       api.post_process(post_process.DropExpectation),
   )
 

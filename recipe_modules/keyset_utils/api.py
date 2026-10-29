@@ -6,9 +6,9 @@
 
 import re
 from typing import Any
-
 from PB.chromite.api import signing
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 KEYSET_DIR_REGEX = re.compile(
     r"^([a-zA-Z0-9]+?)(MPKeys|PreMPKeys)(?:-v(\d+))?$",
@@ -162,3 +162,62 @@ class KeysetUtilsApi(recipe_api.RecipeApi):
     ver_suffix = "" if next_ver == 1 else f"-v{next_ver}"
     key_type = "MPKeys" if is_mp else "PreMPKeys"
     return f"{target[0].upper()}{target[1:]}{key_type}{ver_suffix}"
+
+  def stage_quorum_inbox(
+      self,
+      work_keyset_dir: recipe_api.Path,
+      inbox_dir: recipe_api.Path,
+      artifacts_to_stage: list[str],
+  ) -> list[recipe_api.Path]:
+    """Stages quorum ceremony artifacts into a local directory.
+
+    Args:
+      work_keyset_dir: Directory containing intermediate keyset artifacts.
+      inbox_dir: Destination directory to stage quorum inbox artifacts.
+      artifacts_to_stage: Artifact file names to stage.
+
+    Returns:
+      List of destination Paths copied into inbox_dir.
+    """
+    with self.m.step.nest("stage quorum inbox") as pres:
+      if not artifacts_to_stage:
+        raise StepFailure(
+            "Quorum inbox staging failed: no artifacts specified to stage.")
+
+      self.m.file.ensure_directory("ensure quorum inbox directory", inbox_dir)
+      workdir_paths = self.m.file.listdir(
+          "discover quorum inbox artifacts",
+          work_keyset_dir,
+      )
+      artifact_filenames = {self.m.path.basename(p) for p in workdir_paths}
+      pres.logs["found_artifacts"] = sorted(artifact_filenames)
+
+      to_stage = [a for a in artifacts_to_stage if a in artifact_filenames]
+      missing_artifacts = [
+          a for a in artifacts_to_stage if a not in artifact_filenames
+      ]
+
+      missing_artifact_str = ""
+      if missing_artifacts:
+        missing_artifact_str = f"\nmissing {len(missing_artifacts)} artifact(s)"
+        pres.logs["missing_artifacts"] = [
+            self.m.path.basename(a) for a in missing_artifacts
+        ]
+
+      if not to_stage:
+        raise StepFailure(
+            "Quorum inbox staging failed: none of the specified artifacts were found."
+        )
+
+      staged_paths = []
+      for artifact in to_stage:
+        dest_path = inbox_dir / artifact
+        self.m.file.copy(f"stage {artifact}", work_keyset_dir / artifact,
+                         dest_path)
+        staged_paths.append(dest_path)
+
+      pres.step_text = f"staged {len(staged_paths)} artifact(s){missing_artifact_str}"
+      pres.logs["staged_artifacts"] = [
+          self.m.path.basename(p) for p in staged_paths
+      ]
+      return staged_paths
