@@ -4679,10 +4679,159 @@
   },
   {
     "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
+      "[CLEANUP]/tmp_tmp_3/latest_historical.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.gsutil download latest historical db",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/tmp_tmp_3/latest_historical.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.Compute file hash (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/VERSION-PIN",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.read current VERSION-PIN",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@2026.01.01.000000@@@",
+      "@@@STEP_LOG_END@VERSION-PIN@@@"
+    ]
+  },
+  {
+    "cmd": [
       "gcloud",
       "storage",
       "cp",
-      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/version/historical.deadbeef-staging.bin",
+      "gs://chromeos-throw-away-bucket/distfiles/chromeos-ec-token-2026.01.01.000000.bin",
+      "[CLEANUP]/tmp_tmp_4/pinned.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.download current pinned token database",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/tmp_tmp_4/pinned.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.Compute file hash (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: oldhash@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
       "gs://chromeos-throw-away-bucket/distfiles/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4708,7 +4857,7 @@
       "gcloud",
       "storage",
       "cp",
-      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/version/historical.deadbeef-staging.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
       "gs://chromeos-throw-away-bucket/distfiles/chromeos-ec-token-2012.05.14.125342_alpha.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4973,7 +5122,7 @@
       "https://android.googlesource.com/platform/vendor/google/firmware/desktop/ec-prebuilts",
       "."
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5001,9 +5150,9 @@
       "/path/to/tmp/json",
       "copy",
       "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
-      "[CLEANUP]/tmp_tmp_3/chromeos-ec-token-historical.bin"
+      "[CLEANUP]/tmp_tmp_5/chromeos-ec-token-historical.bin"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5028,7 +5177,7 @@
       "status",
       "--porcelain"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5049,11 +5198,72 @@
   },
   {
     "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-throw-away-bucket/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
+      "[CLEANUP]/tmp_tmp_6/latest_historical.bin"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_5",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.gsutil download latest historical db",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/tmp_tmp_6/latest_historical.bin"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_5",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.upload ec-token prebuilts.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "add",
-      "[CLEANUP]/tmp_tmp_3/chromeos-ec-token-historical.bin"
+      "[CLEANUP]/tmp_tmp_5/chromeos-ec-token-historical.bin"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5083,7 +5293,7 @@
       "ec-token: Update prebuilts\n\nGenerated by https://cr-buildbucket.appspot.com/build/8945511751514863184.\n\nFlag: NONE prebuilt update\n",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5115,7 +5325,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5147,7 +5357,7 @@
       "git",
       "branch"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5171,7 +5381,7 @@
       "git",
       "remote"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5197,7 +5407,7 @@
       "main",
       "/main"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5229,7 +5439,7 @@
       "--target-branch",
       "refs/heads/main"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -5263,7 +5473,7 @@
       "issue",
       "-r"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -5298,7 +5508,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -5344,7 +5554,7 @@
       "--json_file",
       "/path/to/tmp/json"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_5",
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
