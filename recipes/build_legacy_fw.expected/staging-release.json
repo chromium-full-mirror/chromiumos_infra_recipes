@@ -5498,7 +5498,7 @@
       "cp",
       "-n",
       "-r",
-      "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2",
+      "[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2",
       "gs://chromeos-throw-away-bucket/canary-channel/target/15236.0.0/ChromeOS-firmware-R109-15236.0.0-target.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

@@ -642,20 +642,18 @@ class FirmwareBuilder():
     metadata.bcs_version_info.version_string = str(self._bcs_version)
     target = sysroot.build_target.name
 
+    tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
     # After _BUILD_VERSION_BUILD_DIR_MOVED, everything here is done outside of
     # the chroot.
     if self.m.cros_version.version.build >= _BUILD_VERSION_BUILD_DIR_MOVED:
-      tmppath = outpath
-      tmpdir = outpath
+      tmpdir = tmppath
     # After _BUILD_VERSION_TMP_DIR_MOVED, we still created the artifact inside
     # the chroot because  chroot/build hasn't yet been migrated to out/build
     # (though chroot/tmp has been migrated to out/tmp).
     elif self.m.cros_version.version.build >= _BUILD_VERSION_TMP_DIR_MOVED:
-      tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
       tmpdir = self.m.cros_sdk._out_path.joinpath(  # pylint: disable=protected-access
           'tmp', self.m.path.basename(tmppath))
     else:
-      tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
       tmpdir = self._chroot.joinpath('tmp', self.m.path.basename(tmppath))
 
     tarball = self._build_firmware_archive(sysroot, tmpdir)
@@ -790,8 +788,8 @@ class FirmwareBuilder():
                 build_target.name, self.m.cros_version.version.legacy_version,
                 common_pb2.IMAGE_TYPE_FIRMWARE))
 
-        artifact_path = self.m.path.join(artifact_dir,
-                                         'firmware_from_source.tar.bz2')
+        artifact_path = self.m.path.join(artifact_dir, build_target.name,
+                                         _FIRMWARE_TARBALL_NAME)
         if self.m.path.isfile(artifact_path):
           self.m.gsutil([
               'cp',
@@ -1156,7 +1154,7 @@ def GenTests(api):
   yield test(
       'staging-release',
       api.path.exists(api.path.cleanup_dir /
-                      'artifacts_tmp_1/firmware_from_source.tar.bz2'),
+                      'artifacts_tmp_1/target/firmware_from_source.tar.bz2'),
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.StepTextEquals, 'bump version',

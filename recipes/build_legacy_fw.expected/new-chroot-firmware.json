@@ -3597,7 +3597,7 @@
       "ensure-directory",
       "--mode",
       "0o777",
-      "[CLEANUP]/artifacts_tmp_1"
+      "[CLEANUP]/firmware-bundle_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3711,7 +3711,7 @@
     "cmd": [
       "tar",
       "cvjf",
-      "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2",
+      "[CLEANUP]/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
       "-C",
       "[CACHE]/cros_chroot/out/build/target/firmware",
       "--null",
@@ -3792,7 +3792,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2",
+      "[CLEANUP]/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
       "[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
