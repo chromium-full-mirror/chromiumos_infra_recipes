@@ -113,10 +113,15 @@ Configured via `TestDagwoodFirmwareProperties` in
 
 Before running this recipe against a Satlab bot:
 
-1.  **Deploy the `ec-builder:latest` Docker image** onto the Satlab host
-    (see `src/platform/ec/docker/README.md` for building `ec-builder`):
+1.  **Deploy and Persist the `ec-builder:latest` Docker image** onto the Satlab host
+    (see `src/platform/ec/docker/README.md`):
     ```bash
+    # Using the deployment script:
+    ./src/platform/ec/docker/deploy_satlab.py <satlab-host>
+
+    # Or manually loading and configuring reboot persistence:
     docker save ec-builder:latest | gzip -1 | ssh <satlab-host> /usr/local/bin/docker load
+    ssh <satlab-host> docker create --name ec-builder-keepalive --label "skip.while.pruning.docker.system=yes" ec-builder:latest
     ```
 2.  **Verify `/usr/local/ec-workspace`** exists on the Satlab host (or allow
     `ec-builder` to populate it on first run).
