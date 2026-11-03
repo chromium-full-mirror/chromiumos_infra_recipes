@@ -234,5 +234,6 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
     # TODO: b/278066948 - When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
     StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
-    StagingReCheck('chromeos', 'staging', r'staging-brancher', num_builds=3),
+    StagingReCheck('chromeos', 'staging-mpa', r'staging-brancher',
+                   num_builds=3),
 )
