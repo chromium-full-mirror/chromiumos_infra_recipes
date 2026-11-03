@@ -4879,7 +4879,7 @@
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"avbEnabled\": true,@@@",
-      "@@@STEP_LOG_LINE@request@  \"toolchain\": \"host/gnu\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"toolchain\": \"host/llvm\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -4894,7 +4894,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"firmwareLocation\": 2,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"avbEnabled\": true,\n  \"toolchain\": \"host/gnu\"\n}",
+      "{\n  \"firmwareLocation\": 2,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"avbEnabled\": true,\n  \"toolchain\": \"host/llvm\"\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5095,7 +5095,7 @@
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
       "@@@STEP_LOG_LINE@published event@    \"avbEnabled\": true,@@@",
-      "@@@STEP_LOG_LINE@published event@    \"toolchain\": \"host/gnu\"@@@",
+      "@@@STEP_LOG_LINE@published event@    \"toolchain\": \"host/llvm\"@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"testAllFirmwareResponse\": {}@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
@@ -5107,7 +5107,7 @@
     "name": "test firmware.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYI1YDE/QQiDAjWgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIjdGVzdCBmaXJtd2FyZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTKA0UIAhI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQoATIIaG9zdC9nbnXSAwA=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI1YDE/QQiDAjWgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIjdGVzdCBmaXJtd2FyZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTKA0YIAhI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQoATIJaG9zdC9sbHZt0gMA',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -5139,7 +5139,7 @@
       }
     },
     "name": "test firmware.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI1YDE/QQiDAjWgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIjdGVzdCBmaXJtd2FyZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTKA0UIAhI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQoATIIaG9zdC9nbnXSAwA=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI1YDE/QQiDAjWgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIjdGVzdCBmaXJtd2FyZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTKA0YIAhI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQoATIJaG9zdC9sbHZt0gMA\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

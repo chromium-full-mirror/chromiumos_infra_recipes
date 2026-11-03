@@ -378,43 +378,46 @@ def RunSteps(api, properties):
         use_env['USE'] = (f'%(USE)s shard_index_{properties.shard_index} '
                           f'shard_count_{properties.shard_count}')
 
+      skip_build = (not properties.code_coverage and
+                    properties.toolchain == 'host/gnu')
       try:
         with api.context(env=use_env):
-          try:
-            response = service.BuildAllFirmware(
-                BuildAllFirmwareRequest(
-                    firmware_location=location,
-                    chroot=chroot,
-                    code_coverage=properties.code_coverage,
-                    firmware_targets=firmware_targets,
-                    avb_enabled=properties.avb_enabled,
-                ),
-                name="build firmware",
-            )
-          except StepFailure as e:
-            _upload_artifacts(ignore_failure=True)
-            raise e
+          if not skip_build:
+            try:
+              response = service.BuildAllFirmware(
+                  BuildAllFirmwareRequest(
+                      firmware_location=location,
+                      chroot=chroot,
+                      code_coverage=properties.code_coverage,
+                      firmware_targets=firmware_targets,
+                      avb_enabled=properties.avb_enabled,
+                  ),
+                  name='build firmware',
+              )
+            except StepFailure as e:
+              _upload_artifacts(ignore_failure=True)
+              raise e
 
-          binary_sizes = {}
-          if response.metrics and response.metrics.value:
-            for fw_metric in response.metrics.value:
-              region_prefix = ''
-              if fw_metric.platform_name:
-                region_prefix += fw_metric.platform_name + '_'
-              if fw_metric.target_name:
-                region_prefix += fw_metric.target_name + '_'
-              for fw_section in fw_metric.fw_section:
-                if fw_section.track_on_gerrit:
-                  if fw_section.used:
-                    binary_sizes[region_prefix +
-                                 fw_section.region] = fw_section.used
-                  if fw_section.total:
-                    binary_sizes[region_prefix + fw_section.region +
-                                 '.budget'] = fw_section.total
+            binary_sizes = {}
+            if response.metrics and response.metrics.value:
+              for fw_metric in response.metrics.value:
+                region_prefix = ''
+                if fw_metric.platform_name:
+                  region_prefix += fw_metric.platform_name + '_'
+                if fw_metric.target_name:
+                  region_prefix += fw_metric.target_name + '_'
+                for fw_section in fw_metric.fw_section:
+                  if fw_section.track_on_gerrit:
+                    if fw_section.used:
+                      binary_sizes[region_prefix +
+                                   fw_section.region] = fw_section.used
+                    if fw_section.total:
+                      binary_sizes[region_prefix + fw_section.region +
+                                   '.budget'] = fw_section.total
 
-          if binary_sizes:
-            api.easy.set_properties_step(binary_sizes=binary_sizes,
-                                         step_name='output binary sizes')
+            if binary_sizes:
+              api.easy.set_properties_step(binary_sizes=binary_sizes,
+                                           step_name='output binary sizes')
           snapshot_sha = api.src_state.gitiles_commit.id
           api.easy.set_properties_step(got_revision=snapshot_sha,
                                        step_name='output got_revision')
@@ -429,222 +432,229 @@ def RunSteps(api, properties):
                                        toolchain=properties.toolchain),
                 name='test firmware')
           except StepFailure as e:
-            _upload_artifacts(ignore_failure=True)
+            if not skip_build:
+              _upload_artifacts(ignore_failure=True)
             UploadTestResults(api, location, build.builder.builder)
             raise e
 
-        uploaded_artifacts, artifact_dir = _upload_artifacts()
+        if not skip_build:
+          uploaded_artifacts, artifact_dir = _upload_artifacts()
       finally:
         if properties.shard_count > 1:
           api.cros_sdk.set_use_flags(config.build.use_flags)
-      published = collections.defaultdict(list)
-      if uploaded_artifacts and uploaded_artifacts.published:
-        published.update(uploaded_artifacts.published)
+      if not skip_build:
+        published = collections.defaultdict(list)
+        if uploaded_artifacts and uploaded_artifacts.published:
+          published.update(uploaded_artifacts.published)
 
-      # Read metadata jsonpb
-      metadata_by_name = {}
-      with api.step.nest('reading metadata') as step:
-        step.logs['debug'] = ''
-        for metadata_path in uploaded_artifacts.files_by_artifact.get(
-            'FIRMWARE_TARBALL_INFO', []):
-          if metadata_path.startswith('configs/'):
-            continue
-          # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
-          metadata_path = api.path.abspath(
-              api.path.join(artifact_dir, metadata_path))
-          if api.path.exists(metadata_path):
-            step.logs['debug'] += f'Reading proto from {metadata_path}\n'
-            metadata = api.file.read_proto(
-                'read fw metadata',
-                metadata_path,
-                FirmwareArtifactInfo,
-                'JSONPB',
-            )
-            for obj in metadata.objects:
-              which = obj.WhichOneof('firmware_object_info')
-              info = (
-                  obj.config_info
-                  if which == 'config_info' else obj.tarball_info)
-              step.logs[
-                  'debug'] += f'metadata_by_name[{obj.file_name}]={info}\n'
-              metadata_by_name[obj.file_name] = info
-          else:
-            step.logs['debug'] += f'{metadata_path} does not exist\n'
-
-      # Publish files by board. Artifact types FIRMWARE_TARBALL,
-      # FIRMWARE_TARBALL_INFO, and FIRMWARE_TOKEN_DATABASE get written to
-      # gs://firmware-image-archive/{board}/{build.builder.builder}/{version}/artifact.
-      # If the file has no boards, omit the board dir.
-
-      if not api.cv.active:
-        with api.step.nest('publish artifacts by board') as step:
-          # Go through all the files, and group by board.
-          artifacts_by_board = collections.defaultdict(
-              lambda: collections.defaultdict(list))
-          for artifact_type in uploaded_artifacts.files_by_artifact.keys():
-            if artifact_type not in (
-                'FIRMWARE_TARBALL',
-                'FIRMWARE_TARBALL_INFO',
-                'FIRMWARE_TOKEN_DATABASE',
-            ):
-              continue
-            for artifact_name in uploaded_artifacts.files_by_artifact[
-                artifact_type]:
-              if artifact_name.startswith('configs/'):
-                continue
-              file_metadata = metadata_by_name.get(artifact_name)
-              if file_metadata and file_metadata.board:
-                for board in file_metadata.board:
-                  artifacts_by_board[board][artifact_type].append(artifact_name)
-              else:
-                artifacts_by_board[None][artifact_type].append(artifact_name)
-
-          version = api.cros_version.version
-          publish_builder_name = build.builder.builder
-          if publish_builder_name.endswith('-branch'):
-            publish_builder_name = publish_builder_name[:-len('-branch')]
-          gsutil_timeout_seconds = 15 * 60
-          publish_bucket = "firmware-image-archive"
-          if api.build_menu.is_staging:
-            publish_bucket = 'staging-chromeos-image-archive'
-          for (board, artifacts) in artifacts_by_board.items():
-            if board:
-              publish_loc = f'{publish_bucket}/{board}/{publish_builder_name}/{version.platform_version}'
-            else:
-              publish_loc = f'{publish_bucket}/{publish_builder_name}/{version.platform_version}'
-            if board:
-              link_name = f'gs publish dir: {board}'
-            else:
-              link_name = 'gs publish dir: NO BOARD'
-            link_value = (
-                'https://console.cloud.google.com/storage/browser/%s' %
-                publish_loc)
-            upload_uri = 'gs://%s/%s' % (uploaded_artifacts.gs_bucket,
-                                         uploaded_artifacts.gs_path)
-            step.links[link_name] = link_value
-            for (aname, files) in artifacts.items():
-              files = [x for x in files if x != '.']
-              if files:
-                publish_uri = 'gs://' + publish_loc
-                if not publish_uri.endswith('/'):
-                  publish_uri += '/'
-                dir_to_files = collections.defaultdict(list)
-                for path in files:
-                  path_dir = os.path.dirname(path)
-                  if path_dir:
-                    path_dir += '/'
-                  dir_to_files[path_dir].append(path)
-                for publish_loc_suffix, files_in_group in dir_to_files.items():
-                  cmd = ['cp', '-r']
-                  cmd += [
-                      '%s/%s' % (upload_uri, path) for path in files_in_group
-                  ]
-                  cmd.append(publish_uri + publish_loc_suffix)
-                  max_retries = 3
-                  for retries in range(max_retries):
-                    try:
-                      api.gsutil(cmd, multithreaded=True,
-                                 timeout=gsutil_timeout_seconds)
-                      break
-                    except StepFailure as ex:
-                      if ex.had_timeout and retries < max_retries - 1:
-                        continue
-                      raise
-                published[aname].append({
-                    'gs_location': publish_loc,
-                    'files': files
-                })
-
-      with api.failures.ignore_exceptions():
-        if api.cros_infra_config.config.artifacts.attestation_eligible:
-          api.bcid_reporter.report_stage('upload-complete')
-
-      # Invoke signing if applies.
-      if _invoke_signing_for_current_build(build.builder.builder,
-                                           uploaded_artifacts, properties):
-        requests = []
-        sign_image_props = MessageToDict(properties.sign_image_properties,
-                                         preserving_proto_field_name=True)
-        bucket = 'staging' if api.build_menu.is_staging else 'release'
-        builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
-
-        # Legacy signing requests:
-        with api.step.nest('schedule legacy signing build') as pres:
-          pres.step_text = '\n'.join([
-              f'builder_name={build.builder.builder}',
-              f'signing_allowed_builder_names={properties.signing_allowed_builder_names}',
-              f'sign_image_properties={properties.sign_image_properties}',
-              f'uploaded_artifacts={uploaded_artifacts}',
-          ])
-          for artifact_name in uploaded_artifacts.files_by_artifact[
-              'FIRMWARE_TARBALL']:
-            archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
-                                         uploaded_artifacts.gs_path,
-                                         artifact_name)
-            sign_image_props['archive'] = archive
-            requests.append(
-                api.buildbucket.schedule_request(bucket=bucket, builder=builder,
-                                                 properties=sign_image_props))
-
-          api.buildbucket.schedule(requests)
-
-      # Publish tar files to pubsub.
-      if not api.cv.active:
-        with api.step.nest('sending pub/sub notifications') as step:
+        # Read metadata jsonpb
+        metadata_by_name = {}
+        with api.step.nest('reading metadata') as step:
           step.logs['debug'] = ''
-          api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FIRMWARE,
-                                             None)
-          branch = api.src_state.gitiles_commit.ref
-          if branch.startswith('refs/heads/'):
-            branch = branch[len('refs/heads/'):]
-          bcs_version = api.cros_version.version
-          step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
-          step.logs[
-              'debug'] += 'Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO\n'
-          if published:
-            for atype, dests in published.items():
-              step.logs['debug'] += f'published: {atype}:{dests}\n'
-              for loc in dests:
-                for file in loc['files']:
-                  metadata = metadata_by_name.get(file)
-                  step.logs[
-                      'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
-                  if metadata:
-                    for board in metadata.board:
-                      if metadata.type == FirmwareArtifactInfo.TarballInfo.FirmwareType.EC and branch == 'snapshot':
-                        step.logs[
-                            'debug'] += f'SKIPPING Pub/sub {file} for {board}\n'
-                        continue
-                      step.logs['debug'] += f'Pub/sub {file} for {board}\n'
-                      api.build_reporting.reset_build_report(board)
-                      build_report = api.build_reporting.merged_build_report
-                      step_info = build_report.steps.info[
-                          api.build_reporting.step_as_str(
-                              BuildReport.StepDetails.STEP_OVERALL)]
-                      step_info.order = 1
-                      step_info.status = BuildReport.StepDetails.STATUS_SUCCESS
-                      step_info.runtime.begin.FromDatetime(start_time)
-                      step_info.runtime.end.FromDatetime(api.time.utcnow())
-                      build_report.status.value = BuildReport.BuildStatus.SUCCESS
-                      build_config = build_report.config
-                      build_config.branch.name = branch
-                      new_ver = build_config.versions.add()
-                      new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_MILESTONE
-                      new_ver.value = str(bcs_version.milestone)
-                      new_ver = build_config.versions.add()
-                      new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_PLATFORM
-                      new_ver.value = bcs_version.platform_version
-                      gs_bucket, gs_path = loc['gs_location'].split('/', 1)
-                      api.build_reporting.publish_build_artifacts(
-                          UploadedArtifacts(gs_bucket, gs_path,
-                                            {atype: [file]}), artifact_dir,
-                          force_publish=metadata.publish_to_goldeneye)
+          for metadata_path in uploaded_artifacts.files_by_artifact.get(
+              'FIRMWARE_TARBALL_INFO', []):
+            if metadata_path.startswith('configs/'):
+              continue
+            # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
+            metadata_path = api.path.abspath(
+                api.path.join(artifact_dir, metadata_path))
+            if api.path.exists(metadata_path):
+              step.logs['debug'] += f'Reading proto from {metadata_path}\n'
+              metadata = api.file.read_proto(
+                  'read fw metadata',
+                  metadata_path,
+                  FirmwareArtifactInfo,
+                  'JSONPB',
+              )
+              for obj in metadata.objects:
+                which = obj.WhichOneof('firmware_object_info')
+                info = (
+                    obj.config_info
+                    if which == 'config_info' else obj.tarball_info)
+                step.logs[
+                    'debug'] += f'metadata_by_name[{obj.file_name}]={info}\n'
+                metadata_by_name[obj.file_name] = info
+            else:
+              step.logs['debug'] += f'{metadata_path} does not exist\n'
 
+        # Publish files by board. Artifact types FIRMWARE_TARBALL,
+        # FIRMWARE_TARBALL_INFO, and FIRMWARE_TOKEN_DATABASE get written to
+        # gs://firmware-image-archive/{board}/{build.builder.builder}/{version}/artifact.
+        # If the file has no boards, omit the board dir.
 
-      # CQ runs should not write to the database.
-      if not api.cv.active:
-        api.firmware_config.publish(uploaded_artifacts, artifact_dir,
-                                    metadata_by_name, start_time)
+        if not api.cv.active:
+          with api.step.nest('publish artifacts by board') as step:
+            # Go through all the files, and group by board.
+            artifacts_by_board = collections.defaultdict(
+                lambda: collections.defaultdict(list))
+            for artifact_type in uploaded_artifacts.files_by_artifact.keys():
+              if artifact_type not in (
+                  'FIRMWARE_TARBALL',
+                  'FIRMWARE_TARBALL_INFO',
+                  'FIRMWARE_TOKEN_DATABASE',
+              ):
+                continue
+              for artifact_name in uploaded_artifacts.files_by_artifact[
+                  artifact_type]:
+                if artifact_name.startswith('configs/'):
+                  continue
+                file_metadata = metadata_by_name.get(artifact_name)
+                if file_metadata and file_metadata.board:
+                  for board in file_metadata.board:
+                    artifacts_by_board[board][artifact_type].append(
+                        artifact_name)
+                else:
+                  artifacts_by_board[None][artifact_type].append(artifact_name)
+
+            version = api.cros_version.version
+            publish_builder_name = build.builder.builder
+            if publish_builder_name.endswith('-branch'):
+              publish_builder_name = publish_builder_name[:-len('-branch')]
+            for mid in ('-gcc-', '-llvm-'):
+              publish_builder_name = publish_builder_name.replace(mid, '-')
+            gsutil_timeout_seconds = 15 * 60
+            publish_bucket = 'firmware-image-archive'
+            if api.build_menu.is_staging:
+              publish_bucket = 'staging-chromeos-image-archive'
+            for (board, artifacts) in artifacts_by_board.items():
+              if board:
+                publish_loc = f'{publish_bucket}/{board}/{publish_builder_name}/{version.platform_version}'
+              else:
+                publish_loc = f'{publish_bucket}/{publish_builder_name}/{version.platform_version}'
+              if board:
+                link_name = f'gs publish dir: {board}'
+              else:
+                link_name = 'gs publish dir: NO BOARD'
+              link_value = (
+                  'https://console.cloud.google.com/storage/browser/%s' %
+                  publish_loc)
+              upload_uri = 'gs://%s/%s' % (uploaded_artifacts.gs_bucket,
+                                           uploaded_artifacts.gs_path)
+              step.links[link_name] = link_value
+              for (aname, files) in artifacts.items():
+                files = [x for x in files if x != '.']
+                if files:
+                  publish_uri = 'gs://' + publish_loc
+                  if not publish_uri.endswith('/'):
+                    publish_uri += '/'
+                  dir_to_files = collections.defaultdict(list)
+                  for path in files:
+                    path_dir = os.path.dirname(path)
+                    if path_dir:
+                      path_dir += '/'
+                    dir_to_files[path_dir].append(path)
+                  for publish_loc_suffix, files_in_group in dir_to_files.items(
+                  ):
+                    cmd = ['cp', '-r']
+                    cmd += [
+                        '%s/%s' % (upload_uri, path) for path in files_in_group
+                    ]
+                    cmd.append(publish_uri + publish_loc_suffix)
+                    max_retries = 3
+                    for retries in range(max_retries):
+                      try:
+                        api.gsutil(cmd, multithreaded=True,
+                                   timeout=gsutil_timeout_seconds)
+                        break
+                      except StepFailure as ex:
+                        if ex.had_timeout and retries < max_retries - 1:
+                          continue
+                        raise
+                  published[aname].append({
+                      'gs_location': publish_loc,
+                      'files': files
+                  })
+
+        with api.failures.ignore_exceptions():
+          if api.cros_infra_config.config.artifacts.attestation_eligible:
+            api.bcid_reporter.report_stage('upload-complete')
+
+        # Invoke signing if applies.
+        if _invoke_signing_for_current_build(build.builder.builder,
+                                             uploaded_artifacts, properties):
+          requests = []
+          sign_image_props = MessageToDict(properties.sign_image_properties,
+                                           preserving_proto_field_name=True)
+          bucket = 'staging' if api.build_menu.is_staging else 'release'
+          builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
+
+          # Legacy signing requests:
+          with api.step.nest('schedule legacy signing build') as pres:
+            pres.step_text = '\n'.join([
+                f'builder_name={build.builder.builder}',
+                f'signing_allowed_builder_names={properties.signing_allowed_builder_names}',
+                f'sign_image_properties={properties.sign_image_properties}',
+                f'uploaded_artifacts={uploaded_artifacts}',
+            ])
+            for artifact_name in uploaded_artifacts.files_by_artifact[
+                'FIRMWARE_TARBALL']:
+              archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
+                                           uploaded_artifacts.gs_path,
+                                           artifact_name)
+              sign_image_props['archive'] = archive
+              requests.append(
+                  api.buildbucket.schedule_request(bucket=bucket,
+                                                   builder=builder,
+                                                   properties=sign_image_props))
+
+            api.buildbucket.schedule(requests)
+
+        # Publish tar files to pubsub.
+        if not api.cv.active:
+          with api.step.nest('sending pub/sub notifications') as step:
+            step.logs['debug'] = ''
+            api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FIRMWARE,
+                                               None)
+            branch = api.src_state.gitiles_commit.ref
+            if branch.startswith('refs/heads/'):
+              branch = branch[len('refs/heads/'):]
+            bcs_version = api.cros_version.version
+            step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
+            step.logs[
+                'debug'] += 'Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO\n'
+            if published:
+              for atype, dests in published.items():
+                step.logs['debug'] += f'published: {atype}:{dests}\n'
+                for loc in dests:
+                  for file in loc['files']:
+                    metadata = metadata_by_name.get(file)
+                    step.logs[
+                        'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
+                    if metadata:
+                      for board in metadata.board:
+                        if metadata.type == FirmwareArtifactInfo.TarballInfo.FirmwareType.EC and branch == 'snapshot':
+                          step.logs[
+                              'debug'] += f'SKIPPING Pub/sub {file} for {board}\n'
+                          continue
+                        step.logs['debug'] += f'Pub/sub {file} for {board}\n'
+                        api.build_reporting.reset_build_report(board)
+                        build_report = api.build_reporting.merged_build_report
+                        step_info = build_report.steps.info[
+                            api.build_reporting.step_as_str(
+                                BuildReport.StepDetails.STEP_OVERALL)]
+                        step_info.order = 1
+                        step_info.status = BuildReport.StepDetails.STATUS_SUCCESS
+                        step_info.runtime.begin.FromDatetime(start_time)
+                        step_info.runtime.end.FromDatetime(api.time.utcnow())
+                        build_report.status.value = BuildReport.BuildStatus.SUCCESS
+                        build_config = build_report.config
+                        build_config.branch.name = branch
+                        new_ver = build_config.versions.add()
+                        new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_MILESTONE
+                        new_ver.value = str(bcs_version.milestone)
+                        new_ver = build_config.versions.add()
+                        new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_PLATFORM
+                        new_ver.value = bcs_version.platform_version
+                        gs_bucket, gs_path = loc['gs_location'].split('/', 1)
+                        api.build_reporting.publish_build_artifacts(
+                            UploadedArtifacts(gs_bucket, gs_path,
+                                              {atype: [file]}), artifact_dir,
+                            force_publish=metadata.publish_to_goldeneye)
+
+        # CQ runs should not write to the database.
+        if not api.cv.active:
+          api.firmware_config.publish(uploaded_artifacts, artifact_dir,
+                                      metadata_by_name, start_time)
 
       UploadTestResults(api, location, build.builder.builder)
 
@@ -983,11 +993,27 @@ def GenTests(api):
           'bump_version': False,
           'set_suite_scheduling': True,
           'avb_enabled': True,
+          'toolchain': 'host/llvm',
+      })
+
+  yield test(
+      'firmware-zephyr-gcc-cq',
+      api.post_check(post_process.DoesNotRun, 'build firmware'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'test firmware'),
+      api.post_check(post_process.MustRun, 'Upload EC Firmware test results'),
+      api.post_process(post_process.DropExpectation), cq=True, dry_run=True,
+      builder='firmware-zephyr-cq', input_properties={
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'bump_version': False,
+          'set_suite_scheduling': True,
+          'avb_enabled': True,
           'toolchain': 'host/gnu',
       })
 
   def zephyr_postsubmit(name, *args, metadata=ZEPHYR_METADATA, **kwargs):
     """A zephyr postsubmit build that uploads the EC tarballs and configs."""
+    kwargs.setdefault('builder', 'firmware-zephyr-postsubmit')
     return test(
         name,
         api.cros_build_api.set_api_return(
@@ -999,13 +1025,55 @@ def GenTests(api):
         api.path.files_exist(api.path.cleanup_dir /
                              'artifacts_tmp_1/firmware_metadata.jsonpb'),
         api.step_data('reading metadata.read fw metadata',
-                      api.file.read_proto(metadata)), *args,
-        builder='firmware-zephyr-postsubmit', input_properties={
-            'firmware_location': common_pb2.PLATFORM_ZEPHYR,
-            'bump_version': False,
-            'set_suite_scheduling': True,
-            'avb_enabled': False,
-        }, **kwargs)
+                      api.file.read_proto(metadata)), *args, input_properties={
+                          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+                          'bump_version': False,
+                          'set_suite_scheduling': True,
+                          'avb_enabled': False,
+                          'toolchain': 'host/llvm',
+                      }, **kwargs)
+
+  yield zephyr_postsubmit(
+      'firmware-zephyr-llvm-postsubmit',
+      api.cros_infra_config.override_builder_configs_test_data(
+          json_format.ParseDict(
+              {
+                  'builderConfigs': [{
+                      'artifacts': {
+                          'artifactsGsBucket': 'chromeos-image-archive',
+                          'artifactsInfo': {
+                              'firmware': {
+                                  'outputArtifacts': [{
+                                      'artifactTypes': [
+                                          'FIRMWARE_TARBALL',
+                                          'FIRMWARE_TARBALL_INFO',
+                                          'FIRMWARE_TOKEN_DATABASE',
+                                      ],
+                                  }],
+                              },
+                          },
+                      },
+                      'general': {
+                          'firmwareLocation': 'PLATFORM_ZEPHYR',
+                      },
+                      'id': {
+                          'bucket': 'postsubmit',
+                          'name': 'firmware-zephyr-llvm-postsubmit',
+                          'type': 'POSTSUBMIT',
+                      },
+                  }],
+              }, BuilderConfigs()),
+          step_name='checking attestation eligibility'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'publish artifacts by board.gsutil cp',
+          [
+              'gs://firmware-image-archive/brox/firmware-zephyr-postsubmit/1234.56.0/'
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+      builder='firmware-zephyr-llvm-postsubmit',
+  )
 
   yield zephyr_postsubmit(
       'firmware-zephyr-postsubmit',
