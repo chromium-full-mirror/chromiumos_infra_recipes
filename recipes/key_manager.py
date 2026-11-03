@@ -257,7 +257,7 @@ def get_gerrit_change(api: RecipeApi, release_keys_path: str,
   invoker = api.cros_try.get_invoker()
 
   return api.gerrit.create_change(
-      str(release_keys_path),
+      "chromeos/platform/release-keys",
       project_path=release_keys_path,
       non_repo_checkout=True,
       reviewers=reviewers,
@@ -324,7 +324,7 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(
           post_process.StepCommandContains,
-          "create PreMP keys.commit keyset to release-keys.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload",
+          "create PreMP keys.commit keyset to release-keys.create gerrit change for chromeos/platform/release-keys.git_cl upload",
           [
               "--reviewers",
               "croskeymanagers@google.com",
@@ -475,7 +475,7 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(
           post_process.StepCommandContains,
-          "create accessory keys.commit keyset to release-keys.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload",
+          "create accessory keys.commit keyset to release-keys.create gerrit change for chromeos/platform/release-keys.git_cl upload",
           [
               "--reviewers",
               "croskeymanagers@google.com",
@@ -534,7 +534,7 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(
           post_process.StepCommandContains,
-          "create accessory keys.commit keyset to release-keys.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload",
+          "create accessory keys.commit keyset to release-keys.create gerrit change for chromeos/platform/release-keys.git_cl upload",
           [
               "--reviewers",
               "croskeymanagers@google.com",
