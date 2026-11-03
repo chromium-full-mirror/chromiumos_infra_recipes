@@ -170,6 +170,14 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
 
       if is_staging:
         api.gerrit.abandon_change(change)
+
+    if inbox_uri:
+      api.keyset_utils.prepare_quorum_notification(
+          keyset_name=create_keys_hsm_request.keyset_name,
+          inbox_uri=inbox_uri,
+          is_staging=is_staging,
+      )
+
     summary_markdown = f"Keyset created: {create_keys_hsm_request.keyset_name}"
     if inbox_uri:
       summary_markdown += f"\n\nStaged quorum inbox: `{inbox_uri}`"
@@ -196,6 +204,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.DoesNotRun,
           "create HSM keys.gsutil upload to quorum inbox",
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          "create HSM keys.prepare quorum notification",
       ),
       api.post_check(
           post_process.MustRun,
@@ -244,6 +256,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           "create HSM keys.commit keyset to release-keys.abandon CL 1"),
+      api.post_check(
+          post_process.MustRun,
+          "create HSM keys.prepare quorum notification",
+      ),
       api.post_check(
           post_process.SummaryMarkdownRE,
           r".*Staged quorum inbox: `gs://test-quorum-bucket/quorum_inbox/FooPreMPKeys/.*`",

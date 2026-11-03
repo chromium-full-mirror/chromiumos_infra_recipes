@@ -221,3 +221,33 @@ class KeysetUtilsApi(recipe_api.RecipeApi):
           self.m.path.basename(p) for p in staged_paths
       ]
       return staged_paths
+
+  def prepare_quorum_notification(
+      self,
+      keyset_name: str,
+      inbox_uri: str,
+      is_staging: bool,
+  ) -> None:
+    """Prepares and emits notification email properties for quorum members.
+
+    Args:
+      keyset_name: Name of the keyset for which artifacts were generated.
+      inbox_uri: URI of the quorum inbox artifacts.
+      is_staging: True if running in a staging build environment.
+    """
+    with self.m.step.nest("prepare quorum notification") as pres:
+      prefix = "[STAGING] " if is_staging else ""
+      subject = f"{prefix}Quorum artifacts staged for {keyset_name}"
+      body = (
+          f"Quorum artifacts for `{keyset_name}` are ready for approval.\n\n"
+          f"Quorum Inbox: {inbox_uri}")
+
+      pres.logs["subject"] = subject
+      pres.logs["body"] = body
+      pres.step_text = f"{prefix}Prepared quorum notification for {keyset_name}"
+      self.m.easy.set_properties_step(
+          "set quorum notification properties",
+          subject=subject,
+          body=body,
+          inbox_uri=inbox_uri,
+      )
