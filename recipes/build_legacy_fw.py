@@ -28,6 +28,7 @@ from recipe_engine import recipe_api
 
 DEPS = [
     'recipe_engine/bcid_reporter',
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/cv',
     'recipe_engine/file',
@@ -677,17 +678,15 @@ class FirmwareBuilder():
       ret['FIRMWARE_TARBALL_INFO'].append(metadata_name)
     return ret
 
-  def _push_to_firmware_bucket(self, build_target: Dict[str, str],
-                               branch: str) -> None:
+  def _push_to_firmware_bucket(self, build_target: Dict[str, str]) -> None:
     """Push images to firmware bucket.
 
-    This function uses branch name and build target to create
+    This function uses builder name and build target to create
     per device AP & EC tarballs and uploads it to firmware-image-archive
     bucket.
 
     Args:
        build_target: Name of the build target
-       branch: Branch name for the firmware branch
     """
     with self.m.step.nest('push per device FW') as presentation:
       self._ensure_chromite_main()
@@ -703,6 +702,8 @@ class FirmwareBuilder():
 
       bucket = ('gs://chromeos-throw-away-bucket'
                 if staging else 'gs://firmware-image-archive')
+      builder_name = self.m.buildbucket.build.builder.builder
+      builder_name = builder_name.removesuffix('-branch')
 
       temp_path = self.m.path.mkdtemp(prefix='firmware-bucket')
       temp_path_name = self.m.path.basename(temp_path)
@@ -718,15 +719,15 @@ class FirmwareBuilder():
           ])
 
       presentation.links[
-          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{bucket.removeprefix("gs://")}/{board}/{branch}/{self._bcs_version.platform_version}'
+          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{bucket.removeprefix("gs://")}/{board}/{builder_name}/{self._bcs_version.platform_version}'
 
       version_suffix = f'.{self._bcs_version.platform_version}.tar.bz2'
 
       with self.m.deferrals.raise_exceptions_at_end():
         for source in tar_list:
           file_name = self.m.path.basename(source)
-          dest_path = f'{bucket}/{board}/{branch}/{self._bcs_version.platform_version}/{file_name}'
-          dest_dir = f'{bucket}/{board}/{branch}/{self._bcs_version.platform_version}'
+          dest_path = f'{bucket}/{board}/{builder_name}/{self._bcs_version.platform_version}/{file_name}'
+          dest_dir = f'{bucket}/{board}/{builder_name}/{self._bcs_version.platform_version}'
 
           device_target = file_name
           if file_name.endswith(version_suffix):
@@ -872,7 +873,7 @@ class FirmwareBuilder():
               all_uploaded.append(bt_uploaded)
               self._push_image(bt, artifact_dir)
               try:
-                self._push_to_firmware_bucket(bt, branch)
+                self._push_to_firmware_bucket(bt)
               except Exception as e:  # pylint: disable=broad-exception-caught
                 step_failures.append(e)
 

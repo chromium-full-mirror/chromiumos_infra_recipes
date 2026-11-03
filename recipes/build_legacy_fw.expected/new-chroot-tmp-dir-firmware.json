@@ -4341,7 +4341,7 @@
     "cmd": [],
     "name": "push per device FW",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/target/firmware-board-9999.B/15460.22.0@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0@@@"
     ]
   },
   {
@@ -4778,7 +4778,7 @@
     "name": "push per device FW.adl_ish_lite.EC.15236.0.0.tar.bz2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@destination: gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0@@@"
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0@@@"
     ]
   },
   {
@@ -4786,7 +4786,7 @@
       "gcloud",
       "storage",
       "ls",
-      "gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0/adl_ish_lite.EC.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0/adl_ish_lite.EC.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4821,7 +4821,7 @@
       "cp",
       "--if-generation-match=0",
       "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/adl_ish_lite.EC.15236.0.0.tar.bz2",
-      "gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0/adl_ish_lite.EC.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0/adl_ish_lite.EC.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4854,7 +4854,7 @@
     "name": "push per device FW.adlrvp_n.15236.0.0.tar.bz2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@destination: gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0@@@"
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0@@@"
     ]
   },
   {
@@ -4862,7 +4862,7 @@
       "gcloud",
       "storage",
       "ls",
-      "gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0/adlrvp_n.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0/adlrvp_n.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4897,7 +4897,7 @@
       "cp",
       "--if-generation-match=0",
       "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/adlrvp_n.15236.0.0.tar.bz2",
-      "gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0/adlrvp_n.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0/adlrvp_n.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4930,7 +4930,7 @@
     "name": "push per device FW.anraggar.EC_elf.15236.0.0.tar.bz2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@destination: gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0@@@"
+      "@@@STEP_TEXT@destination: gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0@@@"
     ]
   },
   {
@@ -4938,7 +4938,7 @@
       "gcloud",
       "storage",
       "ls",
-      "gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0/anraggar.EC_elf.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0/anraggar.EC_elf.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4973,7 +4973,7 @@
       "cp",
       "--if-generation-match=0",
       "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/anraggar.EC_elf.15236.0.0.tar.bz2",
-      "gs://firmware-image-archive/target/firmware-board-9999.B/15460.22.0/anraggar.EC_elf.15236.0.0.tar.bz2"
+      "gs://firmware-image-archive/target/fw-atlas-postsubmit/15460.22.0/anraggar.EC_elf.15236.0.0.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
