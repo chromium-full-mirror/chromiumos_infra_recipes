@@ -12,7 +12,6 @@ to ResultSink / ResultDB.
 """
 
 import argparse
-import glob
 import html
 import http.client
 import io
@@ -38,6 +37,16 @@ def parse_args():
                       help="Specific scenario/suite (can be repeated)")
   parser.add_argument("--extra-args", action="append", default=[],
                       help="Extra arguments for dagwood (can be repeated)")
+  parser.add_argument(
+      "--skip-update",
+      action="store_true",
+      help="Skip git pull (--update) on container startup",
+  )
+  parser.add_argument(
+      "--skip-dagwood-firmware-update",
+      action="store_true",
+      help="Skip building and flashing Dagwood fixture firmware via DFU",
+  )
 
   # --output-json is automatically populated by the recipe engine.
   parser.add_argument("--output-json", default="",
@@ -79,36 +88,43 @@ def construct_test_cmd(args):
   for extra in args.extra_args:
     cmd_parts.append(extra)
 
-  # dagwood helper script must be run from the EC directory.
-  user_cmd = f"cd /workspace/src/platform/ec && {' '.join(cmd_parts)}"
+  steps = []
+  if not args.skip_dagwood_firmware_update:
+    steps.append("cd /workspace/src/platform/dagwood && "
+                 "./build_from_chroot.py -f --flasher dfu")
 
-  return user_cmd
+  # dagwood helper script must be run from the EC directory.
+  steps.append(f"cd /workspace/src/platform/ec && {' '.join(cmd_parts)}")
+
+  return " && ".join(steps)
 
 
 def run_docker_container(args, ctx):
   conn = http.client.HTTPSConnection(args.host, args.port, context=ctx)
 
-  # Connect the satlab persistent storage to the container's working directory.
+  # Connect the satlab persistent storage to the container's working directory,
+  # bind-mount /dev so USB and ttyACM device nodes remain accessible, and mount
+  # /run/udev (with HostConfig.NetworkMode="host") so libusb/libudev receives
+  # kernel/udev netlink hotplug events when Dagwood re-enumerates across DFU
+  # firmware updates.
   binds = [
       "/usr/local/ec-workspace:/workspace",
+      "/dev:/dev",
+      "/run/udev:/run/udev:ro",
   ]
 
-  # Bind USB devices into the container for querying the dagwood board
-  # type and executing raw USB control transfers directly against the dagwood
-  # firmware.
-  binds.append("/dev/bus/usb:/dev/bus/usb")
-
-  # Bind all dagwood and ST-Link TTYs into the container.
-  for dev_node in sorted(glob.glob("/dev/ttyACM*")):
-    binds.append(f"{dev_node}:{dev_node}")
-
   shell_cmd = construct_test_cmd(args)
+  container_cmd = ["bash", "-c", shell_cmd]
+  if not args.skip_update:
+    container_cmd.insert(0, "--update")
+
   payload = {
       "Image": "ec-builder:latest",
-      "Cmd": ["bash", "-c", shell_cmd],
+      "Cmd": container_cmd,
       "Tty": False,
       "HostConfig": {
           "Privileged": True,
+          "NetworkMode": "host",
           "Binds": binds,
       },
   }

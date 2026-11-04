@@ -41,6 +41,12 @@ def RunSteps(api: RecipeApi, properties: TestDagwoodFirmwareProperties):
     for arg in properties.extra_args:
       cmd.append(f'--extra-args={arg}')
 
+    if properties.skip_update:
+      cmd.append('--skip-update')
+
+    if properties.skip_dagwood_firmware_update:
+      cmd.append('--skip-dagwood-firmware-update')
+
     cmd.extend(['--output-json', api.json.output()])
 
     base_variant = {'build_target': ','.join(platforms)}
@@ -93,6 +99,20 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'default_options',
       api.properties(TestDagwoodFirmwareProperties()),
+      api.buildbucket.ci_build(project='chromeos', bucket='firmware',
+                               builder='ec-dagwood-nightly'),
+      api.post_process(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'skip_updates',
+      api.properties(
+          TestDagwoodFirmwareProperties(
+              platform=['it8xxx2/it82002aw'],
+              skip_update=True,
+              skip_dagwood_firmware_update=True,
+          )),
       api.buildbucket.ci_build(project='chromeos', bucket='firmware',
                                builder='ec-dagwood-nightly'),
       api.post_process(post_process.StatusSuccess),

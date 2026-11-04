@@ -19,4 +19,11 @@ message TestDagwoodFirmwareProperties {
 
   // Extra arguments to pass to ./dagwood (e.g. ["--sram"]).
   repeated string extra_args = 4;
+
+  // Skip updating git repositories (--update) on container startup.
+  bool skip_update = 5;
+
+  // Skip building and updating the Dagwood fixture firmware over USB DFU
+  // prior to running EC AIC tests.
+  bool skip_dagwood_firmware_update = 6;
 }

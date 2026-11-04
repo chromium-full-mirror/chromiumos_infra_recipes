@@ -51,15 +51,18 @@ Satlab host's Docker daemon (`192.168.231.1:2376`).
         > permissions. Avoid placing the workspace directly under
         > `/mnt/stateful_partition/...`, which is mounted `noexec` and prevents
         > executing `./dagwood`, `.venv` binaries, and toolchain compilers.
-    *   `/dev/bus/usb:/dev/bus/usb`: Grants direct USB access for querying the
-        Dagwood board and sending vendor USB control transfers (MECC slot power,
-        EC reset, and UART mux selection).
-    *   `/dev/ttyACM*:/dev/ttyACM*`: Forwards all active CDC-ACM serial ports
-        (Dagwood shell console, EC UART console bridge, EC bootloader/flash
-        UART bridge, and ST-Link).
-3.  **Test Execution & Log Streaming**:
-    The container runs `./dagwood` from `/workspace/src/platform/ec`:
+    *   `/dev:/dev` and `/run/udev:/run/udev:ro` (with `NetworkMode: "host"`):
+        Makes all host device nodes (including `/dev/bus/usb/*` and
+        `/dev/ttyACM*`) and `udev` netlink hotplug events visible inside the
+        container so `libusb` detects when the Dagwood fixture disconnects and
+        re-enumerates across USB DFU firmware updates.
+3.  **Repository Sync, Dagwood Fixture Update & Test Execution**:
+    By default, the container entrypoint runs with `--update` to pull the latest
+    `src/platform/ec` and `src/platform/dagwood` commits, checks and updates the
+    Dagwood fixture firmware over USB DFU if `DW_VERSION` changed, and then runs
+    `./dagwood` from `/workspace/src/platform/ec`:
     ```bash
+    cd /workspace/src/platform/dagwood && ./build_from_chroot.py -f --flasher dfu && \
     cd /workspace/src/platform/ec && ./dagwood -p <platform> [-T <test_path>...] [-s <test_scenario>...] [<extra_args>...]
     ```
     `runner.py` attaches to `/containers/{id}/logs?stdout=1&stderr=1&follow=1`,
@@ -95,6 +98,8 @@ Configured via `TestDagwoodFirmwareProperties` in
 | `test_path` | `repeated string` | Test directories relative to `src/platform/ec` passed via `-T` (e.g., `"zephyr/test/ec-aic"`). If both `test_path` and `test_scenario` are empty, all available tests for the platform are run. | `[]` |
 | `test_scenario` | `repeated string` | Specific Twister test scenarios/suites passed via `-s` (e.g., `"aic.i2c"`). | `[]` |
 | `extra_args` | `repeated string` | Additional arguments forwarded to `./dagwood` (e.g., `"--sram"`, `"-b"`). | `[]` |
+| `skip_update` | `bool` | Skip updating git repositories (`--update`) on container startup. | `false` |
+| `skip_dagwood_firmware_update` | `bool` | Skip building and updating the Dagwood fixture firmware via USB DFU prior to running EC AIC tests. | `false` |
 
 ### Example JSON Properties
 
