@@ -109,14 +109,15 @@ def build_to_cipd_version(
 
   return recipes_version
 
-
 def get_builder_link(builder: str) -> str:
-  if not builder.startswith('chromeos/staging/'):
+  parts = builder.split('/')
+  if len(parts) != 3 or not all(parts):
     raise ValueError(
-        f"expected builder to start with 'chromeos/staging', got {builder}")
-
-  builder_name = builder.replace('chromeos/staging/', '', 1)
-  return f'https://ci.chromium.org/p/chromeos/builders/staging/{builder_name}'
+        f"expected builder of format 'project/bucket/builder', got {builder}")
+  project, bucket, builder_name = parts
+  if not 'staging' in bucket:
+    raise ValueError(f"expected staging bucket', got {bucket}")
+  return f'https://ci.chromium.org/p/{project}/builders/{bucket}/{builder_name}'
 
 
 @lru_cache(maxsize=None)

@@ -170,6 +170,10 @@ class GetBuilderLinkTest(unittest.TestCase):
     self.assertEqual(
         bb.get_builder_link('chromeos/staging/staging-Annealing'),
         'https://ci.chromium.org/p/chromeos/builders/staging/staging-Annealing')
+    self.assertEqual(
+        bb.get_builder_link('chromeos/staging-mpa/staging-brancher'),
+        'https://ci.chromium.org/p/chromeos/builders/staging-mpa/staging-brancher'
+    )
 
   def test_fail(self):
     with self.assertRaises(ValueError):
@@ -346,8 +350,8 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
     def is_older_than_mock(change_hash):
       return lambda other_hash: int(other_hash) >= int(change_hash)
 
-    for i, _ in enumerate(changes):
-      changes[i].is_older_than = is_older_than_mock(changes[i].hash)
+    for change in changes:
+      change.is_older_than = is_older_than_mock(change.hash)
 
     all_builds = bb.Builds()
     all_builds.initialize_with_test_data({
@@ -480,10 +484,9 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
     def is_older_than_mock(change_hash):
       return lambda other_hash: int(other_hash) >= int(change_hash)
 
-    for i, _ in enumerate(changes):
-      changes[i].is_older_than = is_older_than_mock(changes[i].hash)
-      changes[i].get_cipd_instance = mock.MagicMock(
-          return_value=changes[i].hash)
+    for change in changes:
+      change.is_older_than = is_older_than_mock(change.hash)
+      change.get_cipd_instance = mock.MagicMock(return_value=change.hash)
 
     # Some changes affect recipes.
     def get_affected_recipes(changes: List[git.Commit], *_) -> List[str]:
