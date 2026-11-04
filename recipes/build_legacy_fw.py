@@ -36,6 +36,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/time',
     'depot_tools/depot_tools',
     'depot_tools/gsutil',
     'build_menu',
@@ -49,6 +50,7 @@ DEPS = [
     'deferrals',
     'easy',
     'failures',
+    'firmware_config',
     'gcloud',
     'git',
     'metadata_json',
@@ -135,6 +137,7 @@ class FirmwareBuilder():
     # TODO(b/188555398): Make this False once the root-cause is identified.
     self._debug = True
     self._uploaded_per_device_fw_paths = {}
+    self._target_configs = []
 
   def sdk_call(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
@@ -419,8 +422,8 @@ class FirmwareBuilder():
       ])
       self.sdk_call('install packages', cmd=cmd, infra_step=False)
 
-  def _build_per_device_firmware_archive(self, sysroot: Sysroot,
-                                         out_path: Path) -> None:
+  def _build_per_device_firmware_archive(self, sysroot: Sysroot, out_path: Path,
+                                         dest_dir: str) -> None:
     """Build per device AP & EC tarballs
 
     This function iterates through the build directory and
@@ -433,6 +436,7 @@ class FirmwareBuilder():
     Args:
       sysroot: System root directory.
       out_path: Output path to store the created tarballs.
+      dest_dir: GCS destination directory for uploaded tarballs.
 
     """
     with self.m.step.nest('create per device firmware archives'):
@@ -457,6 +461,9 @@ class FirmwareBuilder():
       files_list = self.m.file.listdir(
           'list files', firmware_dir, recursive=True, test_data=[
               'image-brya.bin',
+              'brya/coreboot.config',
+              'brya/depthcharge/depthcharge.config',
+              'brya/libpayload/libpayload/libpayload.config',
               'brya/ec.bin',
               'brya/ec.RO.elf',
               'brya/ec.RW.elf',
@@ -473,24 +480,28 @@ class FirmwareBuilder():
               'build/reef/firmware/npcx_monitor.bin',
               'build/reef/firmware/component_manifest.json',
           ])
+      files_set = set(files_list)
+      platform = sysroot.build_target.name
 
       ap_regex = re.compile(r'/image-([^\W]+)\.bin')
       build_version = str(self._bcs_version.platform_version)
 
       for file in files_list:
         output_name = ''
+        ap_target = ''
         relative_file_path = Path(self.m.path.relpath(file, build_path))
         # Regular expression to check if required AP Image file is present
         res = ap_regex.search(str(file))
         if res and res.group(1):
-          output_name = f'{res.group(1)}.{build_version}.tar.bz2'
+          ap_target = res.group(1)
+          output_name = f'{ap_target}.{build_version}.tar.bz2'
 
         # For older pre-unibuild boards, the artifact structure is different.
         # we need to look for image.bin under build/poppy/firmware.
         # We can grab the name of directory since the format is fixed.
         if relative_file_path.name == 'image.bin':
-          board_name = relative_file_path.parts[-3]
-          output_name = f'{board_name}.{build_version}.tar.bz2'
+          ap_target = relative_file_path.parts[-3]
+          output_name = f'{ap_target}.{build_version}.tar.bz2'
 
         if relative_file_path.name == 'ec.bin':
           # Compressed file must follow the naming convention
@@ -521,10 +532,59 @@ class FirmwareBuilder():
 
             self.m.step('create EC elf tarball', cmd=create_tarball_cmd)
 
+          configs = {}
+          if file.parent / 'ec.config' in files_set:
+            configs['ec'] = str(file.parent / 'ec.config')
+          components_path = (
+              str(file.parent / 'component_manifest.json') if file.parent /
+              'component_manifest.json' in files_set else None)
+          if configs or components_path:
+            self._target_configs.append({
+                'platform': platform,
+                'target': board_name,
+                'uri': f'{dest_dir}/{output_name}',
+                'configs': configs,
+                'components_path': components_path,
+            })
+
         # In case File is not AP or EC firmware, skip the compression
         # and go to next file.
         if not output_name:
           continue
+
+        if ap_target:
+          ap_candidates = {
+              'coreboot': [
+                  file.parent / f'image-{ap_target}.coreboot.config',
+                  firmware_dir / ap_target / 'coreboot.config',
+              ],
+              'depthcharge': [
+                  file.parent / f'image-{ap_target}.depthcharge.config',
+                  firmware_dir / ap_target / 'depthcharge/depthcharge.config',
+                  firmware_dir / platform / 'depthcharge/depthcharge.config',
+              ],
+              'libpayload': [
+                  file.parent / f'image-{ap_target}.libpayload.config',
+                  (firmware_dir / ap_target /
+                   'libpayload/libpayload/libpayload.config'),
+                  (firmware_dir / platform /
+                   'libpayload/libpayload/libpayload.config'),
+              ],
+          }
+          configs = {}
+          for kind, paths in ap_candidates.items():
+            for path in paths:
+              if path in files_set:
+                configs[kind] = str(path)
+                break
+          if configs:
+            self._target_configs.append({
+                'platform': platform,
+                'target': ap_target,
+                'uri': f'{dest_dir}/{output_name}',
+                'configs': configs,
+                'components_path': None,
+            })
 
         tarball_full_path = out_path / output_name
 
@@ -704,12 +764,13 @@ class FirmwareBuilder():
                 if staging else 'gs://firmware-image-archive')
       builder_name = self.m.buildbucket.build.builder.builder
       builder_name = builder_name.removesuffix('-branch')
+      dest_dir = f'{bucket}/{board}/{builder_name}/{self._bcs_version.platform_version}'
 
       temp_path = self.m.path.mkdtemp(prefix='firmware-bucket')
       temp_path_name = self.m.path.basename(temp_path)
       temp_dir = self._chroot / 'tmp' / temp_path_name / board
 
-      self._build_per_device_firmware_archive(sysroot, temp_dir)
+      self._build_per_device_firmware_archive(sysroot, temp_dir, dest_dir)
 
       tar_list = self.m.file.listdir(
           'list files', temp_dir, recursive=True, test_data=[
@@ -719,15 +780,14 @@ class FirmwareBuilder():
           ])
 
       presentation.links[
-          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{bucket.removeprefix("gs://")}/{board}/{builder_name}/{self._bcs_version.platform_version}'
+          "gs upload dir"] = f'https://console.cloud.google.com/storage/browser/{dest_dir.removeprefix("gs://")}'
 
       version_suffix = f'.{self._bcs_version.platform_version}.tar.bz2'
 
       with self.m.deferrals.raise_exceptions_at_end():
         for source in tar_list:
           file_name = self.m.path.basename(source)
-          dest_path = f'{bucket}/{board}/{builder_name}/{self._bcs_version.platform_version}/{file_name}'
-          dest_dir = f'{bucket}/{board}/{builder_name}/{self._bcs_version.platform_version}'
+          dest_path = f'{dest_dir}/{file_name}'
 
           device_target = file_name
           if file_name.endswith(version_suffix):
@@ -814,6 +874,7 @@ class FirmwareBuilder():
       yield
 
   def run(self):
+    start_time = self.m.time.utcnow()
     with self.m.failures.ignore_exceptions():
       with self.m.step.nest('checking attestation eligibility') as pres:
         # Config determines whether to report artifacts.
@@ -876,6 +937,10 @@ class FirmwareBuilder():
                 self._push_to_firmware_bucket(bt)
               except Exception as e:  # pylint: disable=broad-exception-caught
                 step_failures.append(e)
+
+      if not self.m.cv.active:
+        self.m.firmware_config.publish_targets(self._target_configs, start_time,
+                                               self._bcs_version)
 
     with self.m.failures.ignore_exceptions():
       if self.m.cros_infra_config.config.artifacts.attestation_eligible:
@@ -998,6 +1063,23 @@ def GenTests(api):
                      'build target.install packages', ['--withdebugsymbols']),
       api.post_check(post_process.MustRun,
                      'upload image to GS (formerly "push image")'),
+      api.post_check(post_process.MustRun, 'publish target configs.write rows'),
+      api.post_check(
+          post_process.LogContains,
+          'publish target configs',
+          'input',
+          [
+              '"database": "build_metadata"',
+              '"platform": "target"',
+              '"target": "brya"',
+              '"coreboot": "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/brya/coreboot.config"',
+              '"depthcharge": "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/brya/depthcharge/depthcharge.config"',
+              '"libpayload": "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/brya/libpayload/libpayload/libpayload.config"',
+              '"target": "reef"',
+              '"ec": "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/build/reef/firmware/ec.config"',
+              '"components_path": "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/build/reef/firmware/component_manifest.json"',
+          ],
+      ),
       api.post_check(post_process.StepCommandDoesNotContain,
                      'upload artifacts.create firmware archive.create tarball',
                      [
@@ -1243,6 +1325,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'bump version'),
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
       api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
+      api.post_check(post_process.DoesNotRun, 'publish target configs'),
       suite_scheduling(False), cq=True)
 
   yield test(

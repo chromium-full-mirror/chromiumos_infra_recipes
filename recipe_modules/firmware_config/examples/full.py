@@ -53,6 +53,8 @@ def RunSteps(api):
       metadata_by_name,
       api.time.utcnow(),
   )
+  if not files_by_artifact:
+    api.firmware_config.publish_targets([], api.time.utcnow())
 
 
 def GenTests(api):

@@ -5213,7 +5213,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:26Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -5228,7 +5228,7 @@
     "name": "kukui.build status pubsub update (2).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIgkaBwoFa3VrdWkqJxIlCgxTVEVQX09WRVJBTEwSFQgBEMgBGg4KDAjEgMT9BBCAyrXuAUAC',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIgkaBwoFa3VrdWkqIRIfCgxTVEVQX09WRVJBTEwSDwgBEMgBGggKBgjGgMT9BEAC',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -5262,7 +5262,7 @@
       }
     },
     "name": "kukui.build status pubsub update (2).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIgkaBwoFa3VrdWkqJxIlCgxTVEVQX09WRVJBTEwSFQgBEMgBGg4KDAjEgMT9BBCAyrXuAUAC\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIgkaBwoFa3VrdWkqIRIfCgxTVEVQX09WRVJBTEwSDwgBEMgBGggKBgjGgMT9BEAC\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5296,7 +5296,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:26Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -5311,7 +5311,7 @@
     "name": "kukui.build status pubsub update (3).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIiIKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gFAAw==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIiIKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpKiESHwoMU1RFUF9PVkVSQUxMEg8IARDIARoICgYIxoDE/QRAAw==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -5345,7 +5345,7 @@
       }
     },
     "name": "kukui.build status pubsub update (3).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIiIKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gFAAw==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIiIKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpKiESHwoMU1RFUF9PVkVSQUxMEg8IARDIARoICgYIxoDE/QRAAw==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5398,7 +5398,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:26Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -5413,7 +5413,7 @@
     "name": "kukui.build status pubsub update (4).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gFABA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IARDIARoICgYIxoDE/QRABA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -5447,7 +5447,7 @@
       }
     },
     "name": "kukui.build status pubsub update (4).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gFABA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IARDIARoICgYIxoDE/QRABA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6285,7 +6285,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:26Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -6310,7 +6310,7 @@
     "name": "kukui.publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gE6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAU=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IARDIARoICgYIxoDE/QQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAU=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -6344,7 +6344,7 @@
       }
     },
     "name": "kukui.publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gE6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAU=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IARDIARoICgYIxoDE/QQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAU=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -7950,7 +7950,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010806.0
+        "soft_deadline": 1337010807.5
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -7991,7 +7991,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010806.0
+        "soft_deadline": 1337010807.5
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -8029,7 +8029,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010806.0
+        "soft_deadline": 1337010807.5
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -8064,7 +8064,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010806.0
+        "soft_deadline": 1337010807.5
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -8106,7 +8106,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010806.0
+        "soft_deadline": 1337010807.5
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -8148,7 +8148,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010806.0
+        "soft_deadline": 1337010807.5
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -8204,7 +8204,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010806.0
+        "soft_deadline": 1337010807.5
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -8442,7 +8442,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:26Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -8509,7 +8509,7 @@
     "name": "kukui.build status pubsub update (5).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IARDIARoICgYIxoDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -8543,7 +8543,7 @@
       }
     },
     "name": "kukui.build status pubsub update (5).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IARDIARoICgYIxoDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -8649,9 +8649,12 @@
     "name": "kukui.push per device FW.create per device firmware archives.list files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/coreboot.config@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/depthcharge/depthcharge.config@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/ec.RO.elf@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/ec.RW.elf@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/libpayload/libpayload/libpayload.config@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/poppy/firmware/image.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/component_manifest.json@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/ec.RO.elf@@@",
@@ -9253,8 +9256,8 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\",@@@",
-      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:30.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:26Z\",@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:32Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -9321,7 +9324,7 @@
     "name": "kukui.build status pubsub update (6).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKjQSMgoMU1RFUF9PVkVSQUxMEiIIARBkGhwKDAjEgMT9BBCAyrXuARIMCMqAxP0EEIDKte4BMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAc=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKigSJgoMU1RFUF9PVkVSQUxMEhYIARBkGhAKBgjGgMT9BBIGCMyAxP0EMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAc=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -9355,7 +9358,7 @@
       }
     },
     "name": "kukui.build status pubsub update (6).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKjQSMgoMU1RFUF9PVkVSQUxMEiIIARBkGhwKDAjEgMT9BBCAyrXuARIMCMqAxP0EEIDKte4BMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAc=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKigSJgoMU1RFUF9PVkVSQUxMEhYIARBkGhAKBgjGgMT9BBIGCMyAxP0EMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAc=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9408,8 +9411,8 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\",@@@",
-      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:30.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:26Z\",@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:32Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -9476,7 +9479,7 @@
     "name": "kukui.build status pubsub update (7).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqNBIyCgxTVEVQX09WRVJBTEwSIggBEGQaHAoMCMSAxP0EEIDKte4BEgwIyoDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ACA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqKBImCgxTVEVQX09WRVJBTEwSFggBEGQaEAoGCMaAxP0EEgYIzIDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ACA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -9510,7 +9513,7 @@
       }
     },
     "name": "kukui.build status pubsub update (7).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqNBIyCgxTVEVQX09WRVJBTEwSIggBEGQaHAoMCMSAxP0EEIDKte4BEgwIyoDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ACA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqKBImCgxTVEVQX09WRVJBTEwSFggBEGQaEAoGCMaAxP0EEgYIzIDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ACA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9742,7 +9745,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:32Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:33.500Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -9757,7 +9760,7 @@
     "name": "kukui (2).build status pubsub update (2).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIgkaBwoFa3VrdWkqIRIfCgxTVEVQX09WRVJBTEwSDwgCEMgBGggKBgjMgMT9BEAK',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIgkaBwoFa3VrdWkqJxIlCgxTVEVQX09WRVJBTEwSFQgCEMgBGg4KDAjNgMT9BBCAyrXuAUAK',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -9791,7 +9794,7 @@
       }
     },
     "name": "kukui (2).build status pubsub update (2).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIgkaBwoFa3VrdWkqIRIfCgxTVEVQX09WRVJBTEwSDwgCEMgBGggKBgjMgMT9BEAK\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIgkaBwoFa3VrdWkqJxIlCgxTVEVQX09WRVJBTEwSFQgCEMgBGg4KDAjNgMT9BBCAyrXuAUAK\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9825,7 +9828,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:32Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:33.500Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -9840,7 +9843,7 @@
     "name": "kukui (2).build status pubsub update (3).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIiIKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QRACw==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIiIKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIzYDE/QQQgMq17gFACw==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -9874,7 +9877,7 @@
       }
     },
     "name": "kukui (2).build status pubsub update (3).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIiIKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QRACw==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIiIKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIzYDE/QQQgMq17gFACw==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9927,7 +9930,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:32Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:33.500Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -9942,7 +9945,7 @@
     "name": "kukui (2).build status pubsub update (4).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QRADA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIzYDE/QQQgMq17gFADA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -9976,7 +9979,7 @@
       }
     },
     "name": "kukui (2).build status pubsub update (4).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QRADA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIzYDE/QQQgMq17gFADA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -10814,7 +10817,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:32Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:33.500Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -10839,7 +10842,7 @@
     "name": "kukui (2).publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA0=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIzYDE/QQQgMq17gE6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA0=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -10873,7 +10876,7 @@
       }
     },
     "name": "kukui (2).publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA0=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIzYDE/QQQgMq17gE6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA0=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -12479,7 +12482,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010813.5
+        "soft_deadline": 1337010815.0
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -12520,7 +12523,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010813.5
+        "soft_deadline": 1337010815.0
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -12558,7 +12561,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010813.5
+        "soft_deadline": 1337010815.0
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -12593,7 +12596,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010813.5
+        "soft_deadline": 1337010815.0
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -12635,7 +12638,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010813.5
+        "soft_deadline": 1337010815.0
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -12677,7 +12680,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010813.5
+        "soft_deadline": 1337010815.0
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -12733,7 +12736,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 1337010813.5
+        "soft_deadline": 1337010815.0
       },
       "realm": {
         "name": "chromeos:firmware"
@@ -12971,7 +12974,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:32Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:33.500Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -13038,7 +13041,7 @@
     "name": "kukui (2).build status pubsub update (5).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADg==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIzYDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADg==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -13072,7 +13075,7 @@
       }
     },
     "name": "kukui (2).build status pubsub update (5).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKiESHwoMU1RFUF9PVkVSQUxMEg8IAhDIARoICgYIzIDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIzYDE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -13178,9 +13181,12 @@
     "name": "kukui (2).push per device FW.create per device firmware archives.list files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/coreboot.config@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/depthcharge/depthcharge.config@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/ec.RO.elf@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/ec.RW.elf@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/libpayload/libpayload/libpayload.config@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/poppy/firmware/image.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/component_manifest.json@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/ec.RO.elf@@@",
@@ -13584,8 +13590,8 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:32Z\",@@@",
-      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:38Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:33.500Z\",@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:39.500Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -13652,7 +13658,7 @@
     "name": "kukui (2).build status pubsub update (6).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKigSJgoMU1RFUF9PVkVSQUxMEhYIAhBkGhAKBgjMgMT9BBIGCNKAxP0EMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA8=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKjQSMgoMU1RFUF9PVkVSQUxMEiIIAhBkGhwKDAjNgMT9BBCAyrXuARIMCNOAxP0EEIDKte4BMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA8=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -13686,7 +13692,7 @@
       }
     },
     "name": "kukui (2).build status pubsub update (6).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKigSJgoMU1RFUF9PVkVSQUxMEhYIAhBkGhAKBgjMgMT9BBIGCNKAxP0EMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA8=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoDCMgBIkYKFwoVZmlybXdhcmUtYm9hcmQtOTk5OS5CGgcKBWt1a3VpMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKjQSMgoMU1RFUF9PVkVSQUxMEiIIAhBkGhwKDAjNgMT9BBCAyrXuARIMCNOAxP0EEIDKte4BMq0BCh9jYW5hcnktY2hhbm5lbC90YXJnZXQvMTUyMzYuMC4wEAYaBWt1a3VpIAYoBDIHZGV2a2V5c0I8CjhjaHJvbWVvc18wMDAwMC4wLjBfa3VrdWlfcmVjb3ZlcnlfY2FuYXJ5LWNoYW5uZWxfZGV2a2V5cyhvSg0IARIJMTUyMzYuMC4wSgcIAhIDMTA5SgYIAxICMTFKBggEEgIyMkoGCAUSAjMzSgYIBhICNDQ6fQgDEm0Ka2dzOi8vZmlybXdhcmUtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLS9rdWt1aS9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQA8=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -13739,8 +13745,8 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
       "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:32Z\",@@@",
-      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:38Z\"@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:33.500Z\",@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:39.500Z\"@@@",
       "@@@STEP_LOG_LINE@message@        }@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
@@ -13807,7 +13813,7 @@
     "name": "kukui (2).build status pubsub update (7).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqKBImCgxTVEVQX09WRVJBTEwSFggCEGQaEAoGCMyAxP0EEgYI0oDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9AEA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqNBIyCgxTVEVQX09WRVJBTEwSIggCEGQaHAoMCM2AxP0EEIDKte4BEgwI04DE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9AEA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -13841,13 +13847,145 @@
       }
     },
     "name": "kukui (2).build status pubsub update (7).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqKBImCgxTVEVQX09WRVJBTEwSFggCEGQaEAoGCMyAxP0EEgYI0oDE/QQyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9AEA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQAhoCCGQiRgoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaBwoFa3VrdWkyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqNBIyCgxTVEVQX09WRVJBTEwSIggCEGQaHAoMCM2AxP0EEIDKte4BEgwI04DE/QQQgMq17gEyrQEKH2NhbmFyeS1jaGFubmVsL3RhcmdldC8xNTIzNi4wLjAQBhoFa3VrdWkgBigEMgdkZXZrZXlzQjwKOGNocm9tZW9zXzAwMDAwLjAuMF9rdWt1aV9yZWNvdmVyeV9jYW5hcnktY2hhbm5lbF9kZXZrZXlzKG9KDQgBEgkxNTIzNi4wLjBKBwgCEgMxMDlKBggDEgIxMUoGCAQSAjIySgYIBRICMzNKBggGEgI0NDp9CAMSbQprZ3M6Ly9maXJtd2FyZS1pbWFnZS1hcmNoaXZlL2Zpcm13YXJlLXRpNTAtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtL2t1a3VpL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9AEA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish target configs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@input@{@@@",
+      "@@@STEP_LOG_LINE@input@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@input@    \"branch\": \"firmware-board-9999.B\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"bucket\": \"firmware\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"builder\": \"firmware-ti50-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"commit\": \"firmware-board-9999.B-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"id\": 0,@@@",
+      "@@@STEP_LOG_LINE@input@    \"milestone\": 109,@@@",
+      "@@@STEP_LOG_LINE@input@    \"number\": 0,@@@",
+      "@@@STEP_LOG_LINE@input@    \"platform_version\": \"15236.0.0\",@@@",
+      "@@@STEP_LOG_LINE@input@    \"start_time\": \"2012-05-14T12:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@input@  },@@@",
+      "@@@STEP_LOG_LINE@input@  \"database\": \"build_metadata\",@@@",
+      "@@@STEP_LOG_LINE@input@  \"targets\": [@@@",
+      "@@@STEP_LOG_LINE@input@    {@@@",
+      "@@@STEP_LOG_LINE@input@      \"components_path\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/component_manifest.json\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"configs\": {@@@",
+      "@@@STEP_LOG_LINE@input@        \"ec\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/ec.config\"@@@",
+      "@@@STEP_LOG_LINE@input@      },@@@",
+      "@@@STEP_LOG_LINE@input@      \"platform\": \"kukui\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"target\": \"reef\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"uri\": \"gs://firmware-image-archive/kukui/firmware-ti50-postsubmit/15236.0.0/reef.EC.15236.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@input@    },@@@",
+      "@@@STEP_LOG_LINE@input@    {@@@",
+      "@@@STEP_LOG_LINE@input@      \"components_path\": null,@@@",
+      "@@@STEP_LOG_LINE@input@      \"configs\": {@@@",
+      "@@@STEP_LOG_LINE@input@        \"coreboot\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/coreboot.config\",@@@",
+      "@@@STEP_LOG_LINE@input@        \"depthcharge\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/depthcharge/depthcharge.config\",@@@",
+      "@@@STEP_LOG_LINE@input@        \"libpayload\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/libpayload/libpayload/libpayload.config\"@@@",
+      "@@@STEP_LOG_LINE@input@      },@@@",
+      "@@@STEP_LOG_LINE@input@      \"platform\": \"kukui\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"target\": \"brya\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"uri\": \"gs://firmware-image-archive/kukui/firmware-ti50-postsubmit/15236.0.0/brya.15236.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@input@    },@@@",
+      "@@@STEP_LOG_LINE@input@    {@@@",
+      "@@@STEP_LOG_LINE@input@      \"components_path\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/component_manifest.json\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"configs\": {@@@",
+      "@@@STEP_LOG_LINE@input@        \"ec\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/ec.config\"@@@",
+      "@@@STEP_LOG_LINE@input@      },@@@",
+      "@@@STEP_LOG_LINE@input@      \"platform\": \"kukui\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"target\": \"reef\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"uri\": \"gs://firmware-image-archive/kukui/firmware-ti50-postsubmit/15236.0.0/reef.EC.15236.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@input@    },@@@",
+      "@@@STEP_LOG_LINE@input@    {@@@",
+      "@@@STEP_LOG_LINE@input@      \"components_path\": null,@@@",
+      "@@@STEP_LOG_LINE@input@      \"configs\": {@@@",
+      "@@@STEP_LOG_LINE@input@        \"coreboot\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/coreboot.config\",@@@",
+      "@@@STEP_LOG_LINE@input@        \"depthcharge\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/depthcharge/depthcharge.config\",@@@",
+      "@@@STEP_LOG_LINE@input@        \"libpayload\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/libpayload/libpayload/libpayload.config\"@@@",
+      "@@@STEP_LOG_LINE@input@      },@@@",
+      "@@@STEP_LOG_LINE@input@      \"platform\": \"kukui\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"target\": \"brya\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"uri\": \"gs://firmware-image-archive/kukui/firmware-ti50-postsubmit/15236.0.0/brya.15236.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@input@    }@@@",
+      "@@@STEP_LOG_LINE@input@  ]@@@",
+      "@@@STEP_LOG_LINE@input@}@@@",
+      "@@@STEP_LOG_END@input@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/spanner.data",
+      "-lifetime",
+      "3m"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish target configs.get access token for default account",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_MODULE[chromeos::firmware_config]/resources/publish_target_configs.py",
+      "--token-file",
+      "extra.secret.token.should.not.be.logged",
+      "--input-json",
+      "{\"build\": {\"branch\": \"firmware-board-9999.B\", \"bucket\": \"firmware\", \"builder\": \"firmware-ti50-postsubmit\", \"commit\": \"firmware-board-9999.B-HEAD-SHA\", \"id\": 0, \"milestone\": 109, \"number\": 0, \"platform_version\": \"15236.0.0\", \"start_time\": \"2012-05-14T12:53:23Z\"}, \"database\": \"build_metadata\", \"targets\": [{\"components_path\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/component_manifest.json\", \"configs\": {\"ec\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/ec.config\"}, \"platform\": \"kukui\", \"target\": \"reef\", \"uri\": \"gs://firmware-image-archive/kukui/firmware-ti50-postsubmit/15236.0.0/reef.EC.15236.0.0.tar.bz2\"}, {\"components_path\": null, \"configs\": {\"coreboot\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/coreboot.config\", \"depthcharge\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/depthcharge/depthcharge.config\", \"libpayload\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/libpayload/libpayload/libpayload.config\"}, \"platform\": \"kukui\", \"target\": \"brya\", \"uri\": \"gs://firmware-image-archive/kukui/firmware-ti50-postsubmit/15236.0.0/brya.15236.0.0.tar.bz2\"}, {\"components_path\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/component_manifest.json\", \"configs\": {\"ec\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/build/reef/firmware/ec.config\"}, \"platform\": \"kukui\", \"target\": \"reef\", \"uri\": \"gs://firmware-image-archive/kukui/firmware-ti50-postsubmit/15236.0.0/reef.EC.15236.0.0.tar.bz2\"}, {\"components_path\": null, \"configs\": {\"coreboot\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/coreboot.config\", \"depthcharge\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/depthcharge/depthcharge.config\", \"libpayload\": \"[CLEANUP]/chromiumos_workspace/chroot/build/kukui/firmware/brya/libpayload/libpayload/libpayload.config\"}, \"platform\": \"kukui\", \"target\": \"brya\", \"uri\": \"gs://firmware-image-archive/kukui/firmware-ti50-postsubmit/15236.0.0/brya.15236.0.0.tar.bz2\"}]}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish target configs.write rows",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -13995,7 +14133,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"kukui\": {}\n    },\n    \"boards\": [\n        \"kukui\",\n        \"kukui\"\n    ],\n    \"bot-config\": \"firmware-ti50-postsubmit\",\n    \"branch\": \"firmware-board-9999.B\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 0,\n    \"builder-name\": \"firmware-ti50-postsubmit\",\n    \"builder_type\": \"firmware\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:39\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"full\": \"R109-15236.0.0\",\n        \"milestone\": 109,\n        \"platform\": \"15236.0.0\",\n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"kukui\": {}\n    },\n    \"boards\": [\n        \"kukui\",\n        \"kukui\"\n    ],\n    \"bot-config\": \"firmware-ti50-postsubmit\",\n    \"branch\": \"firmware-board-9999.B\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 0,\n    \"builder-name\": \"firmware-ti50-postsubmit\",\n    \"builder_type\": \"firmware\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:41\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"full\": \"R109-15236.0.0\",\n        \"milestone\": 109,\n        \"platform\": \"15236.0.0\",\n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -14057,7 +14195,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:39\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:41\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null,@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",

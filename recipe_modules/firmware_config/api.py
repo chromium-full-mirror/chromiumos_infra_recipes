@@ -102,10 +102,27 @@ class FirmwareConfigApi(recipe_api.RecipeApi):
         'configs': dict(sorted(entry.configs.items())),
         'components_path': entry.components_path,
     } for (board, target), entry in sorted(grouped.items())]
+    self.publish_targets(targets, start_time)
+
+  def publish_targets(
+      self,
+      targets: list[dict[str, Any]],
+      start_time: datetime.datetime,
+      version: Any = None,
+  ) -> None:
+    """Publishes pre-collected target config entries to Cloud Spanner.
+
+    Args:
+      targets: List of target metadata dicts for publish_target_configs.py.
+      start_time: UTC timestamp when the build started.
+      version: Optional VersionInfo to record instead of cros_version.version.
+    """
+    if not targets:
+      return
 
     build = self.m.buildbucket.build
     commit = self.m.src_state.gitiles_commit
-    version = self.m.cros_version.version
+    version = version or self.m.cros_version.version
     data = {
         'database': ('build_metadata_staging' if
                      self.m.cros_infra_config.is_staging else 'build_metadata'),
