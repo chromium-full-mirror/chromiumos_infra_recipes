@@ -1,4 +1,5 @@
--- Schema of the firmware build metadata databases (b/571108483).
+-- Schema of the firmware build metadata databases (b/571108483, b/571108918,
+-- b/549841408).
 --
 -- Both `build_metadata` and `build_metadata_staging` in the `firmware-metadata`
 -- instance of the `firmware-bigquery` project use it. To apply it to a new
@@ -7,8 +8,12 @@
 --     --instance=firmware-metadata --project=firmware-bigquery \
 --     --ddl-file=schema.sql
 --
--- publish_target_configs.py writes it. One config set holds the resolved Kconfig
--- symbols of a target and is stored once, however many builds produce it.
+-- publish_target_configs.py writes Builds, BuildTargets, ConfigSets and
+-- ConfigSymbols. One config set holds the resolved Kconfig symbols of a target
+-- and is stored once, however many builds produce it.
+-- FirmwareRegressions and FoundInstances store tracked firmware regressions and
+-- their resolved bad firmware version ranges (auto_qual.FirmwareRegression,
+-- FoundInstance and BadFirmwareRecord).
 
 -- One row per build that published configs. Branch and ManifestCommitId are the
 -- branch and the commit of the manifest that the build synced, which pins the
@@ -76,3 +81,73 @@ SELECT
 FROM BuildTargets AS t
 JOIN Builds AS b ON b.BuildId = t.BuildId
 JOIN ConfigSymbols AS s ON s.ConfigHash = t.ConfigHash;
+
+-- One row per tracked firmware regression (auto_qual.FirmwareRegression in
+-- chromiumos/infra/proto/src/auto_qual/firmware_regression.proto). Criteria
+-- holds the RegressionCriteria proto (start and fix ConditionExpression trees)
+-- as proto3 JSON, and SpecHash is its hex sha256.
+CREATE TABLE FirmwareRegressions (
+  RegressionId INT64 NOT NULL,
+  PrimaryIssueId INT64 NOT NULL,
+  RelatedIssueIds ARRAY<INT64>,
+  ImpactSummary STRING(MAX) NOT NULL,
+  Enforcement STRING(32) NOT NULL,
+  Owner STRING(128),
+  Criteria JSON NOT NULL,
+  SpecHash STRING(64),
+  ValidationStatus STRING(32),
+  ValidationErrors ARRAY<STRING(MAX)>,
+  AnalyzerVersion STRING(64),
+  LastAnalyzedTime TIMESTAMP,
+  BranchCursors JSON,
+  WrittenAt TIMESTAMP NOT NULL OPTIONS (allow_commit_timestamp = true)
+) PRIMARY KEY (RegressionId);
+
+CREATE INDEX FirmwareRegressionsByIssue
+  ON FirmwareRegressions(PrimaryIssueId);
+
+-- One row per contiguous affected firmware version range on a target and branch
+-- (auto_qual.FoundInstance), populated by the regression analyzer or directly
+-- for version-range blocks. Empty Platform, Target, Kind or Branch strings act
+-- as wildcards matching any value. NULL LastMajor/LastMinor/LastPatch means
+-- affected through ToT on Branch. StartChanges, FixChanges and AffectedReleases
+-- hold the repeated ChangeRef and AffectedRelease messages as proto3 JSON
+-- arrays.
+CREATE TABLE FoundInstances (
+  RegressionId INT64 NOT NULL,
+  Branch STRING(256) NOT NULL,
+  Platform STRING(128) NOT NULL,
+  Target STRING(128) NOT NULL,
+  Kind STRING(32) NOT NULL,
+  FirstMajor INT64 NOT NULL,
+  FirstMinor INT64 NOT NULL,
+  FirstPatch INT64 NOT NULL,
+  LastMajor INT64,
+  LastMinor INT64,
+  LastPatch INT64,
+  StartChanges JSON,
+  FixChanges JSON,
+  AffectedReleases JSON,
+  WrittenAt TIMESTAMP NOT NULL OPTIONS (allow_commit_timestamp = true)
+) PRIMARY KEY (
+  RegressionId, Branch, Platform, Target, Kind,
+  FirstMajor, FirstMinor, FirstPatch
+), INTERLEAVE IN PARENT FirmwareRegressions ON DELETE CASCADE;
+
+-- Lookup by target for downstream tools (firmware-filter, cros-fw-provision,
+-- CQ firmware pinning checks, auto-qual).
+CREATE INDEX FoundInstancesByTarget
+  ON FoundInstances(Platform, Target, Kind, Branch)
+  STORING (LastMajor, LastMinor, LastPatch);
+
+-- Flattened view of affected firmware version ranges paired with their bug and
+-- enforcement metadata (auto_qual.BadFirmwareRecord), consumed at runtime by
+-- firmware-filter, cros-fw-provision, and CQ firmware pinning checks.
+CREATE VIEW BadFirmwareRecords SQL SECURITY INVOKER AS
+SELECT
+  f.RegressionId, r.PrimaryIssueId, r.ImpactSummary, r.Enforcement,
+  f.Platform, f.Target, f.Kind, f.Branch,
+  f.FirstMajor, f.FirstMinor, f.FirstPatch,
+  f.LastMajor, f.LastMinor, f.LastPatch
+FROM FoundInstances AS f
+JOIN FirmwareRegressions AS r ON r.RegressionId = f.RegressionId;
