@@ -83,6 +83,7 @@ def RunSteps(api, properties):
       api.build_menu.setup_workspace(),
   ):
     api.build_menu.setup_chroot()
+    api.cros_sdk.run("set ccache limit", ["ccache", "-M", "50G"])
 
     if not properties.gob_host:
       raise StepFailure("gob_host property must be specified in builder config")
