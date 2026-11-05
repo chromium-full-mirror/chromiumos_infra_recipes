@@ -94,18 +94,18 @@ class RemoteexecApi(recipe_api.RecipeApi):
         return None
 
       with self.m.context(cwd=self.m.path.abs_to_path(log_dir)):
-        # destination gs_path is based on date, build_target & bot_id name.
+        # Destination GCS directory is based on date, tool, bot_id/build_target,
+        # and build_id.
         today = self.m.time.utcnow()
-        gs_path_base = self.m.path.join(
-            today.strftime('%Y/%m/%d'),
-            self.m.properties.get('bot_id', build_target_name),
-        )
+        date_prefix = today.strftime('%Y/%m/%d')
+        bot_or_target = self.m.properties.get('bot_id', build_target_name)
         builder_id = self.m.buildbucket.build.builder
-        gs_bucket = ('staging-chromeos-reclient-logs'
+        build_id = str(self.m.buildbucket.build.id)
+        gs_bucket = ('staging-chromeos-build-logs'
                      if is_staging or builder_id.bucket == 'release.shadow' else
-                     'chromeos-reclient-logs')
+                     'chromeos-build-logs')
         presentation.logs['gs_bucket'] = gs_bucket
-        presentation.logs['gs_path'] = gs_path_base
+        presentation.logs['gs_path'] = date_prefix
         num_logs_uploaded = 0
         metadata = {
             'x-goog-meta-builderinfo':
@@ -125,16 +125,34 @@ class RemoteexecApi(recipe_api.RecipeApi):
                 )
         }
 
+        log_files = install_pkg_response.remoteexec_artifacts.log_files
+        # Route ninja_log files to siso/ if any Siso logs are present in the
+        # build artifacts, since ninja_log filenames lack a tool prefix.
+        has_siso_logs = any(
+            self._is_siso_log(
+                dirname=self.m.path.basename(self.m.path.dirname(log_file)),
+                basename=self.m.path.basename(log_file),
+            ) for log_file in log_files)
         uploaded_files = []
-        for log_file in install_pkg_response.remoteexec_artifacts.log_files:
+        for log_file in log_files:
           basename = self.m.path.basename(log_file)
           dirname = self.m.path.basename(self.m.path.dirname(log_file))
-          gs_path = self.m.path.join(gs_path_base, dirname, basename)
+          if (self._is_siso_log(dirname, basename) or
+              (basename.startswith('ninja_log') and has_siso_logs)):
+            tool = 'siso'
+          else:
+            tool = 'reclient'
+          gs_path_parts = [date_prefix, tool, bot_or_target, build_id]
+          if dirname:
+            gs_path_parts.append(dirname)
+          # End destination with '/' so gsutil cp skips storage.objects.list
+          # (allowing builder service accounts to use objectCreators only).
+          gs_dir = self.m.path.join(*gs_path_parts) + '/'
           link_name = 'gsutil.upload'
           upload_result = self.m.gsutil.upload(
               log_file,
               gs_bucket,
-              gs_path,
+              gs_dir,
               metadata=metadata,
               link_name=link_name,
           )
@@ -145,3 +163,9 @@ class RemoteexecApi(recipe_api.RecipeApi):
 
         presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
         return uploaded_files
+
+  @staticmethod
+  def _is_siso_log(dirname: str, basename: str) -> bool:
+    """Returns whether a log file is a Siso log based on its path."""
+    return (dirname.startswith('siso-') or basename.startswith(
+        ('siso', '.siso')))

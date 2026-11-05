@@ -19,9 +19,34 @@ DEPS = [
 
 
 def RunSteps(api):
-  remoteexec_artifacts = RemoteexecArtifacts(log_files=['/tmp/TEST.log'])
+  reclient_only = api.properties.get('reclient_only', False)
+  if reclient_only:
+    remoteexec_artifacts = RemoteexecArtifacts(log_files=[
+        'reclient-sys-boot_coreboot-0.0.1/reproxy.rrpl.gz',
+        'ninja_log.user.host.20261029-120000.123.gz',
+    ])
+    expected_files = [
+        'reproxy.rrpl.gz',
+        'ninja_log.user.host.20261029-120000.123.gz',
+    ]
+  else:
+    remoteexec_artifacts = RemoteexecArtifacts(log_files=[
+        'reclient-sys-boot_coreboot-0.0.1/reproxy.rrpl.gz',
+        'siso-chromeos-base_chromeos-chrome-9999/siso_output.gz',
+        'reclient-chromeos-base_chromeos-chrome-9999/siso_metrics.json.gz',
+        'reclient-chromeos-base_chromeos-chrome-9999/.siso_config.gz',
+        'ninja_log.user.host.20261029-120000.123.gz',
+    ])
+    expected_files = [
+        'reproxy.rrpl.gz',
+        'siso_output.gz',
+        'siso_metrics.json.gz',
+        '.siso_config.gz',
+        'ninja_log.user.host.20261029-120000.123.gz',
+    ]
   build_target_name = 'mock-amd64-generic'
   log_dir = str(api.path.mkdtemp(prefix='logs-'))
+  is_staging = api.properties.get('is_staging', False)
 
   # Test the case of missing arguments of install_pkg_response and log_dir.
   api.assertions.assertIsNone(
@@ -63,8 +88,9 @@ def RunSteps(api):
                 remoteexec_artifacts=remoteexec_artifacts),
             log_dir=log_dir,
             build_target_name=build_target_name,
+            is_staging=is_staging,
         ),
-        ['TEST.log'],
+        expected_files,
     )
 
 
@@ -73,6 +99,30 @@ def GenTests(api):
       'basic',
       api.properties(
           **{
+              '$chromeos/remoteexec':
+                  RemoteexecProperties(
+                      enable_logs_upload=True,
+                      reclient_version='release',
+                      reproxy_cfg_file='reproxy_release.cfg',
+                  )
+          }))
+
+  yield api.test(
+      'staging',
+      api.properties(
+          is_staging=True, **{
+              '$chromeos/remoteexec':
+                  RemoteexecProperties(
+                      enable_logs_upload=True,
+                      reclient_version='release',
+                      reproxy_cfg_file='reproxy_release.cfg',
+                  )
+          }))
+
+  yield api.test(
+      'reclient_only',
+      api.properties(
+          reclient_only=True, **{
               '$chromeos/remoteexec':
                   RemoteexecProperties(
                       enable_logs_upload=True,

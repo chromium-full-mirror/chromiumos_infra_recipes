@@ -1,0 +1,179 @@
+[
+  {
+    "cmd": [],
+    "name": "process_remoteexec_artifacts",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@@@@",
+      "@@@STEP_LOG_END@remoteexec_artifacts@@@",
+      "@@@STEP_LOG_LINE@log_dir@@@@",
+      "@@@STEP_LOG_END@log_dir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_remoteexec_artifacts (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"reclient-sys-boot_coreboot-0.0.1/reproxy.rrpl.gz\"@@@",
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"siso-chromeos-base_chromeos-chrome-9999/siso_output.gz\"@@@",
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"reclient-chromeos-base_chromeos-chrome-9999/siso_metrics.json.gz\"@@@",
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"reclient-chromeos-base_chromeos-chrome-9999/.siso_config.gz\"@@@",
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"ninja_log.user.host.20261029-120000.123.gz\"@@@",
+      "@@@STEP_LOG_END@remoteexec_artifacts@@@",
+      "@@@STEP_LOG_LINE@log_dir@@@@",
+      "@@@STEP_LOG_END@log_dir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_remoteexec_artifacts (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@@@@",
+      "@@@STEP_LOG_END@remoteexec_artifacts@@@",
+      "@@@STEP_LOG_LINE@log_dir@[CLEANUP]/logs-_tmp_1@@@",
+      "@@@STEP_LOG_END@log_dir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_remoteexec_artifacts (4)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"reclient-sys-boot_coreboot-0.0.1/reproxy.rrpl.gz\"@@@",
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"siso-chromeos-base_chromeos-chrome-9999/siso_output.gz\"@@@",
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"reclient-chromeos-base_chromeos-chrome-9999/siso_metrics.json.gz\"@@@",
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"reclient-chromeos-base_chromeos-chrome-9999/.siso_config.gz\"@@@",
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"ninja_log.user.host.20261029-120000.123.gz\"@@@",
+      "@@@STEP_LOG_END@remoteexec_artifacts@@@",
+      "@@@STEP_LOG_LINE@log_dir@[CLEANUP]/logs-_tmp_1@@@",
+      "@@@STEP_LOG_END@log_dir@@@",
+      "@@@STEP_LOG_LINE@gs_bucket@staging-chromeos-build-logs@@@",
+      "@@@STEP_LOG_END@gs_bucket@@@",
+      "@@@STEP_LOG_LINE@gs_path@2012/05/14@@@",
+      "@@@STEP_LOG_END@gs_path@@@",
+      "@@@STEP_LOG_LINE@num_logs_uploaded@5@@@",
+      "@@@STEP_LOG_END@num_logs_uploaded@@@",
+      "@@@STEP_LINK@reproxy.rrpl.gz@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/reclient/mock-amd64-generic/0/reclient-sys-boot_coreboot-0.0.1/reproxy.rrpl.gz@@@",
+      "@@@STEP_LINK@siso_output.gz@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/siso-chromeos-base_chromeos-chrome-9999/siso_output.gz@@@",
+      "@@@STEP_LINK@siso_metrics.json.gz@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/siso_metrics.json.gz@@@",
+      "@@@STEP_LINK@.siso_config.gz@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/.siso_config.gz@@@",
+      "@@@STEP_LINK@ninja_log.user.host.20261029-120000.123.gz@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/ninja_log.user.host.20261029-120000.123.gz@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-h",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"mock-amd64-generic\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
+      "cp",
+      "reclient-sys-boot_coreboot-0.0.1/reproxy.rrpl.gz",
+      "gs://staging-chromeos-build-logs/2012/05/14/reclient/mock-amd64-generic/0/reclient-sys-boot_coreboot-0.0.1/"
+    ],
+    "cwd": "[CLEANUP]/logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_remoteexec_artifacts (4).gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/reclient/mock-amd64-generic/0/reclient-sys-boot_coreboot-0.0.1/reproxy.rrpl.gz@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"process_remoteexec_artifacts (4)|gsutil upload\": \"gs://staging-chromeos-build-logs/2012/05/14/reclient/mock-amd64-generic/0/reclient-sys-boot_coreboot-0.0.1/\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-h",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"mock-amd64-generic\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
+      "cp",
+      "siso-chromeos-base_chromeos-chrome-9999/siso_output.gz",
+      "gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/siso-chromeos-base_chromeos-chrome-9999/"
+    ],
+    "cwd": "[CLEANUP]/logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_remoteexec_artifacts (4).gsutil upload (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/siso-chromeos-base_chromeos-chrome-9999/siso_output.gz@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"process_remoteexec_artifacts (4)|gsutil upload\": \"gs://staging-chromeos-build-logs/2012/05/14/reclient/mock-amd64-generic/0/reclient-sys-boot_coreboot-0.0.1/\", \"process_remoteexec_artifacts (4)|gsutil upload (2)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/siso-chromeos-base_chromeos-chrome-9999/\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-h",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"mock-amd64-generic\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
+      "cp",
+      "reclient-chromeos-base_chromeos-chrome-9999/siso_metrics.json.gz",
+      "gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/"
+    ],
+    "cwd": "[CLEANUP]/logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_remoteexec_artifacts (4).gsutil upload (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/siso_metrics.json.gz@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"process_remoteexec_artifacts (4)|gsutil upload\": \"gs://staging-chromeos-build-logs/2012/05/14/reclient/mock-amd64-generic/0/reclient-sys-boot_coreboot-0.0.1/\", \"process_remoteexec_artifacts (4)|gsutil upload (2)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/siso-chromeos-base_chromeos-chrome-9999/\", \"process_remoteexec_artifacts (4)|gsutil upload (3)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-h",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"mock-amd64-generic\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
+      "cp",
+      "reclient-chromeos-base_chromeos-chrome-9999/.siso_config.gz",
+      "gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/"
+    ],
+    "cwd": "[CLEANUP]/logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_remoteexec_artifacts (4).gsutil upload (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/.siso_config.gz@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"process_remoteexec_artifacts (4)|gsutil upload\": \"gs://staging-chromeos-build-logs/2012/05/14/reclient/mock-amd64-generic/0/reclient-sys-boot_coreboot-0.0.1/\", \"process_remoteexec_artifacts (4)|gsutil upload (2)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/siso-chromeos-base_chromeos-chrome-9999/\", \"process_remoteexec_artifacts (4)|gsutil upload (3)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/\", \"process_remoteexec_artifacts (4)|gsutil upload (4)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-h",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"mock-amd64-generic\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
+      "cp",
+      "ninja_log.user.host.20261029-120000.123.gz",
+      "gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/"
+    ],
+    "cwd": "[CLEANUP]/logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_remoteexec_artifacts (4).gsutil upload (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/ninja_log.user.host.20261029-120000.123.gz@@@",
+      "@@@SET_BUILD_PROPERTY@gsutil_urls@{\"process_remoteexec_artifacts (4)|gsutil upload\": \"gs://staging-chromeos-build-logs/2012/05/14/reclient/mock-amd64-generic/0/reclient-sys-boot_coreboot-0.0.1/\", \"process_remoteexec_artifacts (4)|gsutil upload (2)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/siso-chromeos-base_chromeos-chrome-9999/\", \"process_remoteexec_artifacts (4)|gsutil upload (3)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/\", \"process_remoteexec_artifacts (4)|gsutil upload (4)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/reclient-chromeos-base_chromeos-chrome-9999/\", \"process_remoteexec_artifacts (4)|gsutil upload (5)\": \"gs://staging-chromeos-build-logs/2012/05/14/siso/mock-amd64-generic/0/\"}@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
