@@ -13,16 +13,21 @@ cros_build_api calls. You are on your own if you attempt to use this recipe on
 a branch, and that branch should be as short-lived as possible.
 """
 
+import base64
 import collections
+import json
 import re
 import os
+from typing import Any, Mapping
 
+from google.protobuf import json_format
 from google.protobuf.json_format import MessageToDict
 
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
+from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig, SigningConfig
 from PB.recipes.chromeos.build_gsc_firmware import BuildGscFirmwareProperties
@@ -261,14 +266,14 @@ def RunSteps(api, properties):
                     properties.pao_signing_config.key, artifact_name)
 
       # Publish tar files to pubsub.
-      if not api.cv.active:
+      branch = api.src_state.gitiles_commit.ref.removeprefix('refs/heads/')
+      if (not api.cv.active and
+          not build.builder.builder.endswith('-postsubmit') and
+          branch not in ('snapshot', 'staging-snapshot', 'main')):
         with api.step.nest('sending pub/sub notifications') as step:
           step.logs['debug'] = ''
           api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FIRMWARE,
                                              None)
-          branch = api.src_state.gitiles_commit.ref
-          if branch.startswith('refs/heads/'):
-            branch = branch[len('refs/heads/'):]
           bcs_version = api.cros_version.version
           step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
           step.logs[
@@ -500,6 +505,84 @@ def GenTests(api):
   }
 }'''
 
+  ti50_branch_configs = json_format.ParseDict(
+      {
+          'builderConfigs': [{
+              'artifacts': {
+                  'artifactsGsBucket': 'chromeos-releases',
+                  'artifactsInfo': {
+                      'firmware': {
+                          'outputArtifacts': [{
+                              'artifactTypes': [
+                                  'FIRMWARE_TARBALL',
+                                  'FIRMWARE_TARBALL_INFO',
+                              ],
+                              'gsLocations': [
+                                  'chromeos-releases/{builder_name}/{legacy_version}/{target}',
+                              ],
+                          }],
+                      },
+                  },
+              },
+              'general': {
+                  'firmwareLocation': 'PLATFORM_TI50',
+              },
+              'id': {
+                  'bucket': 'firmware',
+                  'name': 'firmware-ti50-mp-16604.B-branch',
+                  'type': 'POSTSUBMIT',
+              },
+          }],
+      }, BuilderConfigs())
+
+  def check_publish_message(
+      check: Any,
+      steps: Mapping[str, Any],
+      step_name: str,
+      *,
+      project_id: str,
+      branch: str,
+      board: str,
+      milestone: str,
+      platform_version: str,
+      gcs_uri: str,
+  ) -> None:
+    """Verifies a publish-message step and its decoded BuildReport payload.
+
+    Args:
+      check: Recipe test post_check assertion callable.
+      steps: Ordered mapping of executed steps.
+      step_name: Full step name of the publish-message invocation.
+      project_id: Expected Cloud Pub/Sub project ID.
+      branch: Expected BuildReport branch name.
+      board: Expected BuildReport target board name.
+      milestone: Expected VERSION_KIND_MILESTONE string.
+      platform_version: Expected VERSION_KIND_PLATFORM string.
+      gcs_uri: Expected FIRMWARE_IMAGE_ARCHIVE GCS URI.
+    """
+    step = steps[step_name]
+    check(step.cmd == ['[START_DIR]/cipd/support/publish-message'])
+    req = json.loads(step.stdin)
+    check(req['project_id'] == project_id)
+    check(req['topic_id'] == 'chromeos-builds-all')
+    check(req['endpoint'] == 'us-central1-pubsub.googleapis.com:443')
+    check(bool(req['ordering_key']))
+    report = BuildReport.FromString(base64.b64decode(req['data']))
+    check(report.type == BuildReport.BUILD_TYPE_FIRMWARE)
+    check(report.status.value == BuildReport.BuildStatus.SUCCESS)
+    check(report.config.branch.name == branch)
+    check(report.config.target.name == board)
+    versions = {v.kind: v.value for v in report.config.versions}
+    check(
+        versions == {
+            BuildReport.BuildConfig.VERSION_KIND_MILESTONE: milestone,
+            BuildReport.BuildConfig.VERSION_KIND_PLATFORM: platform_version,
+        })
+    check(len(report.artifacts) == 1)
+    check(report.artifacts[0].type ==
+          BuildReport.BuildArtifact.FIRMWARE_IMAGE_ARCHIVE)
+    check(report.artifacts[0].uri.gcs == gcs_uri)
+
   def get_signing_image_props_for_test(is_staging=False):
     """
     Get SignImageProperties for test.
@@ -564,16 +647,7 @@ def GenTests(api):
           TI50_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data(
-          'sending pub/sub notifications.read fw metadata',
-          api.file.read_proto(
-              FirmwareArtifactInfo(objects=[
-                  FirmwareArtifactInfo.ObjectInfo(
-                      file_name='dt-ti50.tar.bz2',
-                      tarball_info=FirmwareArtifactInfo.TarballInfo(
-                          board=['betty'], publish_to_goldeneye=True,
-                          type='GSC')),
-              ]))),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
       api.post_check(
           post_process.LogContains,
           'signing PAOs in artifact.call chromite.api.SigningService/SignTi50Paos',
@@ -639,6 +713,7 @@ def GenTests(api):
 
   yield test(
       'create test containers',
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
       api.post_check(
           post_process.MustRun,
           'Create test containers.create test service containers.upload container metadata.gsutil upload'
@@ -711,25 +786,91 @@ def GenTests(api):
           CR50_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
+      builder='firmware-cr50-postsubmit', input_properties={
+          'firmware_location': common_pb2.PLATFORM_CR50,
+          'chromiumos_sdk_pin_file': sdk_pin_path,
+          'set_suite_scheduling': True,
+          'pao_signing_config': {
+              "project": "chromeos",
+              "keyring": "ring",
+              "key": "pao-key"
+          },
+      })
+
+  yield test(
+      'firmware-ti50-branch',
+      api.cros_infra_config.override_builder_configs_test_data(
+          ti50_branch_configs, step_name='checking attestation eligibility'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          TI50_ARTIFACTS),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data(
           'sending pub/sub notifications.read fw metadata',
           api.file.read_proto(
               FirmwareArtifactInfo(objects=[
                   FirmwareArtifactInfo.ObjectInfo(
-                      file_name='cr50.tar.bz2',
+                      file_name='dt-ti50.tar.bz2',
                       tarball_info=FirmwareArtifactInfo.TarballInfo(
                           board=['betty'], publish_to_goldeneye=True,
                           type='GSC')),
-              ]))), builder='firmware-cr50-postsubmit', input_properties={
-                  'firmware_location': common_pb2.PLATFORM_CR50,
-                  'chromiumos_sdk_pin_file': sdk_pin_path,
-                  'set_suite_scheduling': True,
-                  'pao_signing_config': {
-                      "project": "chromeos",
-                      "keyring": "ring",
-                      "key": "pao-key"
-                  },
-              })
+              ]))),
+      api.post_check(
+          check_publish_message,
+          'sending pub/sub notifications.publish artifacts to pubsub.'
+          'build status pubsub update.publish message.publish-message',
+          project_id='chromeos-build-reporting',
+          branch='firmware-ti50-mp-16604.B',
+          board='betty',
+          milestone='99',
+          platform_version='1234.56.0',
+          gcs_uri=('gs://chromeos-releases/'
+                   'firmware-ti50-mp-16604.B-branch/'
+                   'R99-1234.56.0/dt-ti50.tar.bz2'),
+      ),
+      api.post_process(post_process.DropExpectation),
+      builder='firmware-ti50-mp-16604.B-branch',
+      bucket='firmware',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_TI50,
+          'gitiles_commit': {
+              'host': 'chrome-internal.googlesource.com',
+              'project': 'chromeos/manifest-internal',
+              'ref': 'refs/heads/firmware-ti50-mp-16604.B',
+          },
+          'set_suite_scheduling': True,
+      },
+  )
+
+  yield test(
+      'firmware-ti50-branch-missing-metadata',
+      api.cros_infra_config.override_builder_configs_test_data(
+          ti50_branch_configs, step_name='checking attestation eligibility'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          TI50_ARTIFACTS),
+      api.post_check(post_process.LogContains, 'sending pub/sub notifications',
+                     'debug', ['firmware_metadata.jsonpb does not exist']),
+      api.post_process(post_process.DropExpectation),
+      builder='firmware-ti50-mp-16604.B-branch',
+      bucket='firmware',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_TI50,
+          'gitiles_commit': {
+              'host': 'chrome-internal.googlesource.com',
+              'project': 'chromeos/manifest-internal',
+              'ref': 'refs/heads/firmware-ti50-mp-16604.B',
+          },
+      },
+  )
 
   yield test(
       'create tast artifacts missing tar files',
