@@ -600,14 +600,14 @@ def RunSteps(api, properties):
             api.buildbucket.schedule(requests)
 
         # Publish tar files to pubsub.
-        if not api.cv.active:
+        branch = api.src_state.gitiles_commit.ref.removeprefix('refs/heads/')
+        if (not api.cv.active and
+            not build.builder.builder.endswith('-postsubmit') and
+            branch not in ('snapshot', 'staging-snapshot', 'main')):
           with api.step.nest('sending pub/sub notifications') as step:
             step.logs['debug'] = ''
             api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FIRMWARE,
                                                None)
-            branch = api.src_state.gitiles_commit.ref
-            if branch.startswith('refs/heads/'):
-              branch = branch[len('refs/heads/'):]
             bcs_version = api.cros_version.version
             step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
             step.logs[
@@ -622,10 +622,6 @@ def RunSteps(api, properties):
                         'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
                     if metadata:
                       for board in metadata.board:
-                        if metadata.type == FirmwareArtifactInfo.TarballInfo.FirmwareType.EC and branch == 'snapshot':
-                          step.logs[
-                              'debug'] += f'SKIPPING Pub/sub {file} for {board}\n'
-                          continue
                         step.logs['debug'] += f'Pub/sub {file} for {board}\n'
                         api.build_reporting.reset_build_report(board)
                         build_report = api.build_reporting.merged_build_report
@@ -1077,10 +1073,7 @@ def GenTests(api):
 
   yield zephyr_postsubmit(
       'firmware-zephyr-postsubmit',
-      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
-      api.post_check(
-          post_process.DoesNotRun,
-          'sending pub/sub notifications.publish artifacts to pubsub'),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
       # Exported RO/RW/singleimage configs and components are published per board.
       # karis is shared by rex and fatcat, so it has a row for each.
       api
@@ -1123,6 +1116,7 @@ def GenTests(api):
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data('reading metadata.read fw metadata',
                     api.file.read_proto(AP_METADATA)),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
       # Exported coreboot, depthcharge, and libpayload configs are published.
       api
       .post_check(post_process.LogContains, 'publish target configs', 'input', [
@@ -1555,6 +1549,7 @@ def GenTests(api):
 
   yield test(
       'create test containers',
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
       api.post_check(
           post_process.MustRun,
           'Create test containers.create test service containers.upload container metadata.gsutil upload'
