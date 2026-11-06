@@ -12,6 +12,8 @@ to ResultSink / ResultDB.
 """
 
 import argparse
+from datetime import datetime
+from datetime import timezone
 import html
 import http.client
 import io
@@ -214,10 +216,15 @@ def run_docker_container(args, ctx):
   return cid, exit_code, twister_bytes
 
 
-def report_results_to_resultdb(twister_bytes):
+def report_results_to_resultdb(twister_bytes, start_time=None):
   if not twister_bytes:
     print("[*] No twister data to report to ResultDB.")
     return {"passed": 0, "failed": 0, "skipped": 0, "total": 0}
+
+  if not start_time:
+    start_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+  bot_id = os.environ.get("SWARMING_BOT_ID", "")
 
   try:
     twister_data = json.loads(twister_bytes.decode("utf-8"))
@@ -302,22 +309,39 @@ def report_results_to_resultdb(twister_bytes):
       if reason:
         summary = f"<b>Reason:</b> {html.escape(reason)}<br>" + summary
 
+      tags = [
+          {
+              "key": "platform",
+              "value": platform
+          },
+          {
+              "key": "board",
+              "value": "dagwood"
+          },
+          {
+              "key": "model",
+              "value": platform
+          },
+          {
+              "key": "suite",
+              "value": suite_name
+          },
+          {
+              "key": "queued_time",
+              "value": start_time
+          },
+      ]
+      if bot_id:
+        tags.append({"key": "hostname", "value": bot_id})
+
       tr = {
           "testId": f"chromeos.ec.{safe_platform}.{tc_name}",
           "resultId": f"tc-{len(test_results)}",
           "status": rdb_status,
           "expected": expected,
+          "startTime": start_time,
           "duration": "%.9fs" % dur,
-          "tags": [
-              {
-                  "key": "platform",
-                  "value": platform
-              },
-              {
-                  "key": "suite",
-                  "value": suite_name
-              },
-          ],
+          "tags": tags,
           "testMetadata": {
               "name": tc_name,
               "bugComponent": {
@@ -399,9 +423,10 @@ def main():
   stats = {"passed": 0, "failed": 0, "skipped": 0, "total": 0}
 
   if ctx:
+    start_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     _cid, exit_code, twister_bytes = run_docker_container(args, ctx)
     if twister_bytes:
-      stats = report_results_to_resultdb(twister_bytes)
+      stats = report_results_to_resultdb(twister_bytes, start_time=start_time)
       if stats.get("failed", 0) > 0 and exit_code == 0:
         exit_code = 1
   else:
