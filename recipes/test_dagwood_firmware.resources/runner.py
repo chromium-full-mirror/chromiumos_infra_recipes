@@ -330,6 +330,22 @@ def report_results_to_resultdb(twister_bytes, start_time=None):
               "key": "queued_time",
               "value": start_time
           },
+          {
+              "key": "job_name",
+              "value": "ec-dagwood-nightly"
+          },
+          {
+              "key": "buildbucket_builder",
+              "value": "ec-dagwood-nightly"
+          },
+          {
+              "key": "image",
+              "value": f"dagwood-release/{platform}"
+          },
+          {
+              "key": "account_id",
+              "value": "1"
+          },
       ]
       if bot_id:
         tags.append({"key": "hostname", "value": bot_id})
