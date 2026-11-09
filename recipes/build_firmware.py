@@ -82,6 +82,11 @@ _MILESTONE_BRANCH_RE = re.compile(r'^firmware-R\d+-\d+(?:\.\d+)*\.B$')
 
 PROPERTIES = BuildFirmwareProperties
 
+_COVERAGE_BUILDER_DIRS = {
+    common_pb2.PLATFORM_ZEPHYR: ('src', 'platform', 'ec', 'zephyr'),
+    common_pb2.PLATFORM_AP: ('src', 'platform', 'rules_cros_firmware', 'ap'),
+}
+
 def UploadTestResults(api, location, builder_name):
   if location == common_pb2.PLATFORM_ZEPHYR:
     cros_src_path = api.cros_source.workspace_path
@@ -368,10 +373,10 @@ def RunSteps(api, properties):
           if legacy_coord else contextlib.nullcontext(config)) as config:
 
         location = properties.firmware_location or config.general.firmware_location
-        if properties.code_coverage and location != common_pb2.PLATFORM_ZEPHYR:
+        if properties.code_coverage and location not in _COVERAGE_BUILDER_DIRS:
           raise api.step.StepFailure(
-              'firmware_builder: coverage is only supported for PLATFORM_ZEPHYR'
-          )
+              'firmware_builder: coverage is only supported for '
+              'PLATFORM_ZEPHYR and PLATFORM_AP')
 
         requests = []
         builder = api.buildbucket.build.builder.builder
@@ -446,9 +451,10 @@ def RunSteps(api, properties):
           with api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
             chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
 
+            fw_rel = _COVERAGE_BUILDER_DIRS[location]
             with api.step.nest('download shard coverage'):
               shards_dir = api.src_state.workspace_path.joinpath(
-                  'src', 'platform', 'ec', 'zephyr', 'shards')
+                  *fw_rel, 'shards')
               api.file.ensure_directory('create shards dir', shards_dir)
               for gs_bucket, gs_path, build_id in _extract_coverage_artifacts(
                   completed_builds):
@@ -463,11 +469,12 @@ def RunSteps(api, properties):
                 version=config.general.sdk_cache_version,
                 sdk_version=chromiumos_sdk_version,
             )
+            chroot_fw_dir = '/mnt/host/source/' + '/'.join(fw_rel)
             cmd = [
-                '/mnt/host/source/src/platform/ec/zephyr/firmware_builder.py',
+                f'{chroot_fw_dir}/firmware_builder.py',
                 'merge-shards',
                 '--merge-dir',
-                '/mnt/host/source/src/platform/ec/zephyr/shards',
+                f'{chroot_fw_dir}/shards',
             ]
             api.cros_sdk.run(
                 'merge coverage shards',
@@ -2488,4 +2495,47 @@ def GenTests(api):
       ),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       status='INFRA_FAILURE',
+  )
+
+  yield test(
+      'dynamic-shard-fanout-ap',
+      api.post_check(
+          post_process.DoesNotRun,
+          'configure builder.cros_infra_config.gitiles-fetch-ref',
+      ),
+      api.buildbucket.simulated_collect_output(
+          [b1, b2],
+          step_name='schedule and wait for shards.collect shard builds',
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'schedule and wait for shards.download shard coverage.'
+          'create shards dir',
+          [
+              '[CLEANUP]/chromiumos_workspace/'
+              'src/platform/rules_cros_firmware/ap/shards',
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'schedule and wait for shards.merge coverage shards',
+          [
+              '/mnt/host/source/src/platform/rules_cros_firmware/ap/'
+              'firmware_builder.py',
+              'merge-shards',
+              '--merge-dir',
+              '/mnt/host/source/src/platform/rules_cros_firmware/ap/shards',
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+      cq=True,
+      dry_run=True,
+      builder='fw-ec-cq',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_AP,
+          'code_coverage': True,
+          'chromiumos_sdk_pin_file': sdk_pin_path,
+          'shard_count': 2,
+          'shard_index': 0,
+      },
   )

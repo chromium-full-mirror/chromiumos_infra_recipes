@@ -1303,7 +1303,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "firmware_builder: coverage is only supported for PLATFORM_ZEPHYR"
+      "humanReason": "firmware_builder: coverage is only supported for PLATFORM_ZEPHYR and PLATFORM_AP"
     },
     "name": "$result"
   }
