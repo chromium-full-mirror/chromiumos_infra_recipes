@@ -16,13 +16,26 @@ DEPS = [
 
 def RunSteps(api):
   api.assertions.assertEqual(api.siso.use_siso, True)
+  api.assertions.assertEqual(
+      api.siso.rbe_instance,
+      'projects/chromeos-bot/instances/cros-rbe-nonrelease',
+  )
+  api.assertions.assertEqual(api.siso.action_salt, 'test-salt')
 
 
 def GenTests(api):
   yield api.test(
       'basic',
-      api.properties(**{'$chromeos/siso': SisoProperties(
-          use_siso=True,
-      )}),
+      api.properties(
+          **{
+              '$chromeos/siso':
+                  SisoProperties(
+                      use_siso=True,
+                      rbe_instance=(
+                          'projects/chromeos-bot/instances/cros-rbe-nonrelease'
+                      ),
+                      action_salt='test-salt',
+                  ),
+          }),
       api.post_process(post_process.DropExpectation),
   )

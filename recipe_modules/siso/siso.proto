@@ -9,4 +9,12 @@ package recipe_modules.chromeos.siso;
 message SisoProperties {
   // Whether to use siso.
   bool use_siso = 1;
+  // Optional RBE instance resource name (e.g.
+  // "projects/chromeos-bot/instances/cros-rbe-nonrelease").
+  // If empty, downstream consumers fall back to their default RBE instance.
+  string rbe_instance = 2;
+  // Optional action salt string used to isolate or invalidate the RBE action
+  // cache.
+  // If empty, downstream consumers fall back to their default action salt.
+  string action_salt = 3;
 }

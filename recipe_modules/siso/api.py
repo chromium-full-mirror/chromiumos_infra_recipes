@@ -13,7 +13,17 @@ class SisoApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._use_siso = properties.use_siso
+    self._rbe_instance = properties.rbe_instance
+    self._action_salt = properties.action_salt
 
   @property
-  def use_siso(self):
+  def use_siso(self) -> bool:
     return self._use_siso
+
+  @property
+  def rbe_instance(self) -> str:
+    return self._rbe_instance
+
+  @property
+  def action_salt(self) -> str:
+    return self._action_salt
