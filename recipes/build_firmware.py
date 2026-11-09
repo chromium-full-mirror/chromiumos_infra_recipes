@@ -16,6 +16,7 @@ a branch, and that branch should be as short-lived as possible.
 import collections
 import os
 from pathlib import Path
+import re
 
 from google.protobuf import json_format
 from google.protobuf.json_format import MessageToDict
@@ -70,6 +71,9 @@ DEPS = [
     'test_util',
 ]
 
+
+# Matches milestone firmware branches such as firmware-R158-16868.3.B.
+_MILESTONE_BRANCH_RE = re.compile(r'^firmware-R\d+-\d+(?:\.\d+)*\.B$')
 
 PROPERTIES = BuildFirmwareProperties
 
@@ -603,7 +607,8 @@ def RunSteps(api, properties):
         branch = api.src_state.gitiles_commit.ref.removeprefix('refs/heads/')
         if (not api.cv.active and
             not build.builder.builder.endswith('-postsubmit') and
-            branch not in ('snapshot', 'staging-snapshot', 'main')):
+            branch not in ('snapshot', 'staging-snapshot', 'main') and
+            not _MILESTONE_BRANCH_RE.match(branch)):
           with api.step.nest('sending pub/sub notifications') as step:
             step.logs['debug'] = ''
             api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FIRMWARE,
@@ -785,6 +790,61 @@ def GenTests(api):
           file_name='tokens.bin',
           token_info=FirmwareArtifactInfo.TokenDatabaseInfo(type='EC')),
   ])
+  BROX_ZEPHYR_METADATA = FirmwareArtifactInfo(objects=[
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='brox.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='EC', board=['brox'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='brox.EC_elf.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='EC', board=['brox'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='brox/firmware_from_source.tar.bz2',
+          tarball_info=FirmwareArtifactInfo.TarballInfo(type='EC',
+                                                        board=['brox'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='tokens.bin',
+          token_info=FirmwareArtifactInfo.TokenDatabaseInfo(type='EC')),
+  ])
+  BROX_ZEPHYR_ARTIFACTS = api.json.dumps({
+      'artifacts': {
+          'artifacts': [
+              {
+                  'artifactType':
+                      BuilderConfig.Artifacts.FIRMWARE_TARBALL_INFO,
+                  'location':
+                      common_pb2.PLATFORM_ZEPHYR,
+                  'paths': [{
+                      'location':
+                          common_pb2.Path.OUTSIDE,
+                      'path':
+                          '[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb',
+                  }],
+              },
+              {
+                  'artifactType':
+                      BuilderConfig.Artifacts.FIRMWARE_TARBALL,
+                  'location':
+                      common_pb2.PLATFORM_ZEPHYR,
+                  'paths': [{
+                      'location': common_pb2.Path.OUTSIDE,
+                      'path': f'[CLEANUP]/artifacts_tmp_1/{obj.file_name}',
+                  }
+                            for obj in BROX_ZEPHYR_METADATA.objects
+                            if obj.HasField('tarball_info')],
+              },
+              {
+                  'artifactType':
+                      BuilderConfig.Artifacts.FIRMWARE_TOKEN_DATABASE,
+                  'location':
+                      common_pb2.PLATFORM_ZEPHYR,
+                  'paths': [{
+                      'location': common_pb2.Path.OUTSIDE,
+                      'path': '[CLEANUP]/artifacts_tmp_1/tokens.bin',
+                  }],
+              },
+          ],
+      },
+  })
 
   # An EC tarball can be shared by several boards, as bloonchipper is by nine.
   ZEPHYR_SHARED_METADATA = FirmwareArtifactInfo()
@@ -1151,45 +1211,7 @@ def GenTests(api):
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data('reading metadata.read fw metadata',
                     api.file.read_proto(ZEPHYR_METADATA)),
-      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (2).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/brox/firmware_from_source.tar.bz2'
-          ]),
-      api.post_check(
-          post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/rex/firmware_from_source.tar.bz2'
-          ]),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
       builder='firmware-R126-15885.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -1235,7 +1257,7 @@ def GenTests(api):
       },
       "id": {
         "bucket": "firmware",
-        "name": "firmware-R126-15886.2.B-branch",
+        "name": "firmware-brox-16080.B-branch",
         "type": "POSTSUBMIT"
       }
     }
@@ -1246,11 +1268,11 @@ def GenTests(api):
           '{}'),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          ZEPHYR_ARTIFACTS),
+          BROX_ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data('reading metadata.read fw metadata',
-                    api.file.read_proto(ZEPHYR_METADATA)),
+                    api.file.read_proto(BROX_ZEPHYR_METADATA)),
       # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
       api.post_check(
           post_process.LogDoesNotContain,
@@ -1265,32 +1287,12 @@ def GenTests(api):
           'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
           'message', [
               'artifacts',
-              'gs://firmware-image-archive/brox/firmware-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2'
+              'gs://firmware-image-archive/brox/firmware-brox-16080.B/1234.56.0/brox/firmware_from_source.tar.bz2'
           ]),
       api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogContains,
-          'sending pub/sub notifications.publish artifacts to pubsub (6).build status pubsub update',
-          'message', [
-              'artifacts',
-              'gs://firmware-image-archive/rex/firmware-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
-          ]),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (7).build status pubsub update',
-          'message', ['artifacts']),
-      api.post_check(
-          post_process.LogDoesNotContain,
-          'sending pub/sub notifications.publish artifacts to pubsub (8).build status pubsub update',
-          'message', ['artifacts']),
-      builder='firmware-R126-15886.2.B-branch',
+          post_process.DoesNotRun,
+          'sending pub/sub notifications.publish artifacts to pubsub (4)'),
+      builder='firmware-brox-16080.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
           'attestation_eligible': True,
@@ -1299,7 +1301,7 @@ def GenTests(api):
           'gitiles_commit': {
               'host': 'chrome-internal.googlesource.com',
               'project': 'chromeos/manifest-internal',
-              'ref': 'refs/heads/firmware-R126-15886.2.B',
+              'ref': 'refs/heads/firmware-brox-16080.B',
           },
           'set_suite_scheduling': True,
       },
@@ -1430,6 +1432,7 @@ def GenTests(api):
                   (Path(__file__).parent.resolve() /
                    'firmware_test_r148_zephyr_metadata.jsonpb').read_text(),
                   FirmwareArtifactInfo(), ignore_unknown_fields=True))),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
       version='R148-16640.2.39',
       builder='firmware-ec-R148-16640.2.B-branch',
       input_properties={
