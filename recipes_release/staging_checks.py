@@ -192,7 +192,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
         test_firmware_exemption,
     ]),
     # build_legacy_fw recipe
-    StagingReCheck('chromeos', 'staging',
+    StagingReCheck('chromeos', 'staging-mpa',
                    'staging-firmware-skywalker-16378.B-branch',
                    [image_builder_exemption], num_builds=1),
     StagingReCheck('chromeos', 'staging', 'staging-recipes_autoreleaser_infra',
