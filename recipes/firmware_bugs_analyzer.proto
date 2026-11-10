@@ -1,0 +1,23 @@
+// Copyright 2026 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.firmware_bugs_analyzer;
+
+message FirmwareBugsAnalyzerProperties {
+  // CIPD ref or version tag of chromiumos/infra/fw-bugs/${platform}.
+  // Defaults to "latest" when unset.
+  string cipd_ref = 1;
+
+  // Target the staging Spanner database (build_metadata_staging) instead of
+  // production (build_metadata).
+  bool staging = 2;
+
+  // Optional single regression ID to analyze instead of all pending/stale rows.
+  int64 regression_id = 3;
+
+  // Re-analyze even when SpecHash and BranchCursors are already up to date.
+  bool force = 4;
+}
