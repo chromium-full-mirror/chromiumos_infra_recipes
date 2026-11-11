@@ -340,7 +340,7 @@ def report_results_to_resultdb(twister_bytes, start_time=None):
           },
           {
               "key": "image",
-              "value": f"dagwood-release/{platform}"
+              "value": f"dagwood-release-main/{safe_platform}"
           },
           {
               "key": "account_id",
