@@ -1,0 +1,132 @@
+[
+  {
+    "cmd": [],
+    "name": "Ensure kron"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/kron",
+      "-ensure-file",
+      "chromiumos/infra/kron/${platform} ",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "Ensure kron.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"40-chars-fake-of-the-package-instance_id\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/kron/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Execute",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@run_id: test123@@@",
+      "@@@SET_BUILD_PROPERTY@kron-run@\"test123\"@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/kron/kron",
+      "run",
+      "-new-builds",
+      "-run-id",
+      "test123",
+      "-prod"
+    ],
+    "cwd": "[START_DIR]/cipd/kron",
+    "infra_step": true,
+    "name": "Execute.launch NEW_BUILD tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/kron/kron",
+      "run",
+      "-timed-events",
+      "-run-id",
+      "test123",
+      "-prod"
+    ],
+    "cwd": "[START_DIR]/cipd/kron",
+    "infra_step": true,
+    "name": "Execute.launch TIMED_EVENT tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/kron/kron",
+      "run",
+      "-new-builds-3d",
+      "-run-id",
+      "test123",
+      "-prod"
+    ],
+    "cwd": "[START_DIR]/cipd/kron",
+    "infra_step": true,
+    "name": "Execute.launch NEW_BUILD_3D tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/kron/kron",
+      "run",
+      "-multidut",
+      "-run-id",
+      "test123",
+      "-prod"
+    ],
+    "cwd": "[START_DIR]/cipd/kron",
+    "infra_step": true,
+    "name": "Execute.launch MULTI_DUT tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/kron/kron",
+      "run",
+      "-new-builds-3d-board-based",
+      "-run-id",
+      "test123",
+      "-prod"
+    ],
+    "cwd": "[START_DIR]/cipd/kron",
+    "infra_step": true,
+    "name": "Execute.launch NEW_BUILD_3D_BOARD_BASED tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "kron subcommand(s) failed: launch MULTI_DUT tasks"
+    },
+    "name": "$result"
+  }
+]

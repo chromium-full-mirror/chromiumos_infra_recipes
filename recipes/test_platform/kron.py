@@ -6,6 +6,7 @@
 import uuid
 
 from PB.recipes.chromeos.test_platform.kron import KronProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/cipd',
@@ -56,69 +57,68 @@ def RunSteps(api, properties):
     step_presentation.properties['kron-run'] = run_uuid
 
     cmd_path = cipd_dir / 'kron'
-    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
-      try:
-        nb_command = [cmd_path, 'run', '-new-builds', '-run-id', run_uuid]
+    subcommands = (
+        ('launch NEW_BUILD tasks', '-new-builds'),
+        ('launch TIMED_EVENT tasks', '-timed-events'),
+        ('launch NEW_BUILD_3D tasks', '-new-builds-3d'),
+        ('launch MULTI_DUT tasks', '-multidut'),
+        ('launch NEW_BUILD_3D_BOARD_BASED tasks', '-new-builds-3d-board-based'),
+    )
+    failed_subcommands = []
+    with api.context(cwd=cipd_dir, infra_steps=True):
+      for step_name, flag in subcommands:
+        command = [cmd_path, 'run', flag, '-run-id', run_uuid]
 
         if not api.cros_infra_config.is_staging:
-          nb_command.append('-prod')
+          command.append('-prod')
 
-        api.step('launch NEW_BUILD tasks', nb_command)
-      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
-        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
-        presentation.status = api.step.WARNING
-
-    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
-      try:
-        te_command = [cmd_path, 'run', '-timed-events', '-run-id', run_uuid]
-
-        if not api.cros_infra_config.is_staging:
-          te_command.append('-prod')
-
-        api.step('launch TIMED_EVENT tasks', te_command)
-      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
-        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
-        presentation.status = api.step.WARNING
-
-    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
-      try:
-        nb_3d_command = [cmd_path, 'run', '-new-builds-3d', '-run-id', run_uuid]
-
-        if not api.cros_infra_config.is_staging:
-          nb_3d_command.append('-prod')
-
-        api.step('launch NEW_BUILD_3D tasks', nb_3d_command)
-      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
-        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
-        presentation.status = api.step.WARNING
-
-    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
-      try:
-        md_command = [cmd_path, 'run', '-multidut', '-run-id', run_uuid]
-
-        if not api.cros_infra_config.is_staging:
-          md_command.append('-prod')
-
-        api.step('launch MULTI_DUT tasks', md_command)
-      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
-        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
-        presentation.status = api.step.WARNING
-
-    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
-      try:
-        nb_3d_bb_command = [
-            cmd_path, 'run', '-new-builds-3d-board-based', '-run-id', run_uuid
-        ]
-
-        if not api.cros_infra_config.is_staging:
-          nb_3d_bb_command.append('-prod')
-
-        api.step('launch NEW_BUILD_3D_BOARD_BASED tasks', nb_3d_bb_command)
-      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
-        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
-        presentation.status = api.step.WARNING
+        try:
+          api.step(step_name, command)
+        except api.step.StepFailure:
+          failed_subcommands.append(step_name)
+    if failed_subcommands:
+      raise api.step.InfraFailure(
+          f"kron subcommand(s) failed: {', '.join(failed_subcommands)}")
 
 
 def GenTests(api):
-  yield api.test('basic',
-                 api.properties(KronProperties(is_recipe_test=True)))
+  yield api.test(
+      'basic',
+      api.properties(KronProperties(is_recipe_test=True)),
+  )
+
+  yield api.test(
+      'subcommand_failure',
+      api.properties(KronProperties(is_recipe_test=True)),
+      api.step_data('Execute.launch MULTI_DUT tasks', retcode=1),
+      api.post_process(
+          post_process.StepException,
+          'Execute.launch MULTI_DUT tasks',
+      ),
+      api.post_process(post_process.StepException, 'Execute'),
+      api.post_process(
+          post_process.MustRun,
+          'Execute.launch NEW_BUILD_3D_BOARD_BASED tasks',
+      ),
+      status='INFRA_FAILURE',
+  )
+
+  yield api.test(
+      'subcommand_cancelled',
+      api.properties(KronProperties(is_recipe_test=True)),
+      api.step_data(
+          'Execute.launch MULTI_DUT tasks',
+          cancel=True,
+          global_shutdown_event='after',
+      ),
+      api.post_process(
+          post_process.StepCanceled,
+          'Execute.launch MULTI_DUT tasks',
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'Execute.launch NEW_BUILD_3D_BOARD_BASED tasks',
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='CANCELED',
+  )
