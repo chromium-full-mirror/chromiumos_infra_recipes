@@ -14,15 +14,18 @@ a branch, and that branch should be as short-lived as possible.
 """
 
 import collections
+import contextlib
 import os
 from pathlib import Path
 import re
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from google.protobuf import json_format
 from google.protobuf.json_format import MessageToDict
 from google.protobuf import struct_pb2
 
 import PB.chromiumos.common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from PB.recipe_engine import result as result_pb2
@@ -32,8 +35,10 @@ from PB.chromite.api.firmware import TestAllFirmwareRequest
 from PB.chromiumos.builder_config import BuilderConfig, BuilderConfigs
 from PB.chromiumos.build_report import BuildReport
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
+from recipe_engine import config_types
 from recipe_engine import post_process
 from recipe_engine import recipe_api
+from recipe_engine import recipe_test_api
 from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
 
@@ -154,6 +159,162 @@ def _extract_coverage_artifacts(completed_builds):
   return results
 
 
+def _extract_shard_bundle_entries(
+    completed_builds: Mapping[int, build_pb2.Build],
+) -> Tuple[List[Dict[str, Any]], List[str], Dict[str, Any]]:
+  """Extracts per-shard GCS artifact manifests and binary size metrics.
+
+  Args:
+    completed_builds: Mapping of Buildbucket build ID to completed child shard
+      `Build` protos returned by `api.buildbucket.collect_builds`.
+
+  Returns:
+    A 3-tuple `(entries, missing_ids, binary_sizes)` where `entries` holds
+    per-shard artifact descriptors (`build_id`, `gs_bucket`, `gs_path`, and
+    non-empty `files_by_artifact`), `missing_ids` lists string build IDs whose
+    shard outputs lacked usable artifacts, and `binary_sizes` merges integer or
+    float binary size metrics across shards.
+  """
+  entries: List[Dict[str, Any]] = []
+  missing_ids: List[str] = []
+  binary_sizes: Dict[str, Any] = {}
+  for build_msg in sorted(completed_builds.values(), key=lambda msg: msg.id):
+    props = MessageToDict(build_msg.output.properties)
+    sizes = props.get('binary_sizes')
+    if isinstance(sizes, dict):
+      for metric_name, metric_val in sizes.items():
+        if isinstance(metric_val, float) and metric_val.is_integer():
+          binary_sizes[metric_name] = int(metric_val)
+        else:
+          binary_sizes[metric_name] = metric_val
+    artifacts = props.get('artifacts') or {}
+    gs_bucket = artifacts.get('gs_bucket')
+    gs_path = artifacts.get('gs_path')
+    raw_fba = artifacts.get('files_by_artifact')
+    cleaned_fba: Dict[str, List[str]] = {}
+    if isinstance(raw_fba, dict):
+      for artifact_type, rel_paths in raw_fba.items():
+        if not isinstance(rel_paths, list):
+          continue
+        filtered_paths = [rel_path for rel_path in rel_paths if rel_path != '.']
+        if filtered_paths:
+          cleaned_fba[artifact_type] = filtered_paths
+    if not (gs_bucket and gs_path and cleaned_fba):
+      missing_ids.append(str(build_msg.id))
+      continue
+    entries.append({
+        'build_id': build_msg.id,
+        'gs_bucket': gs_bucket,
+        'gs_path': gs_path,
+        'files_by_artifact': cleaned_fba,
+    })
+  return entries, missing_ids, binary_sizes
+
+
+def _merge_and_upload_shard_bundles(
+    api: recipe_api.RecipeApi,
+    config: BuilderConfig,
+    shard_entries: Sequence[Mapping[str, Any]],
+    binary_sizes: Mapping[str, Any],
+    firmware_targets: Sequence[FirmwareTarget],
+) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
+  """Downloads worker-shard bundles, merges them, and uploads on shard 0.
+
+  Args:
+    api: Recipe API object.
+    config: Builder configuration for the shard 0 orchestrator build.
+    shard_entries: Per-shard artifact descriptors returned by
+      `_extract_shard_bundle_entries`.
+    binary_sizes: Merged binary size metrics across worker shards.
+    firmware_targets: Target firmware build targets to pass to
+      `api.build_menu.upload_artifacts`.
+
+  Returns:
+    Tuple `(uploaded_artifacts, artifact_dir)` returned by
+    `api.build_menu.upload_artifacts`.
+  """
+  shards_root = api.path.mkdtemp(prefix='firmware_shards_')
+  merge_specs: List[Dict[str, Any]] = []
+  merged_files: Dict[str, List[str]] = collections.defaultdict(list)
+  seen_by_type: Dict[str, set] = collections.defaultdict(set)
+  gsutil_timeout_seconds = 15 * 60
+  max_retries = 3
+  with api.step.nest('download shard artifacts'):
+    for entry in shard_entries:
+      build_id = entry['build_id']
+      shard_dir = shards_root / f'shard_{build_id}'
+      api.file.ensure_directory(f'mkdir shard {build_id}', shard_dir)
+      src_uri = f"gs://{entry['gs_bucket']}/{entry['gs_path']}"
+      for retries in range(max_retries):
+        try:
+          api.gsutil(
+              [
+                  'rsync',
+                  '-r',
+                  '-x',
+                  r'(^metadata/|.*\.attestation$)',
+                  src_uri,
+                  shard_dir,
+              ],
+              name=f'download shard {build_id}',
+              multithreaded=True,
+              timeout=gsutil_timeout_seconds,
+          )
+          break
+        except StepFailure as ex:
+          if ex.had_timeout and retries < max_retries - 1:
+            continue
+          raise
+      merge_specs.append({
+          'build_id': build_id,
+          'shard_dir': str(shard_dir),
+          'files_by_artifact': entry['files_by_artifact'],
+      })
+      for atype, rel_paths in entry['files_by_artifact'].items():
+        for rel_path in rel_paths:
+          if rel_path not in seen_by_type[atype]:
+            seen_by_type[atype].add(rel_path)
+            merged_files[atype].append(rel_path)
+
+  def _merge_shard_bundles(
+      chroot: common_pb2.Chroot,
+      sysroot: common_pb2.ArtifactsByService.Sysroot,
+      artifacts_info: common_pb2.ArtifactsByService,
+      outpath: config_types.Path,
+      test_data: Any,
+      build_targets: Optional[Sequence[FirmwareTarget]],
+  ) -> Dict[str, List[str]]:
+    del chroot, sysroot, artifacts_info, test_data, build_targets
+    spec = {'output_dir': str(outpath), 'shards': merge_specs}
+    api.step(
+        'merge firmware shard bundles',
+        [
+            'vpython3',
+            '-u',
+            api.resource('merge_firmware_shards.py'),
+            '--input-json',
+            api.json.input(spec),
+        ],
+    )
+    for rel_paths in merged_files.values():
+      for rel_path in rel_paths:
+        api.path.mock_add_file(
+            api.path.abspath(api.path.join(outpath, rel_path)))
+    return dict(merged_files)
+
+  if binary_sizes:
+    api.easy.set_properties_step(binary_sizes=binary_sizes,
+                                 step_name='output binary sizes')
+  return api.build_menu.upload_artifacts(
+      config=config,
+      private_bundle_func=_merge_shard_bundles,
+      report_to_spike=config.artifacts.attestation_eligible,
+      use_file_paths=True,
+      build_targets=firmware_targets,
+      upload_coverage=False,
+  )
+
+
 def _get_commit(
     api: recipe_api.RecipeApi,
     properties: BuildFirmwareProperties,
@@ -178,11 +339,18 @@ def _get_commit(
 
 
 def RunSteps(api, properties):
-  with api.mutable_output.wrap():
+  with api.mutable_output.wrap(), contextlib.ExitStack() as stack:
     start_time = api.time.utcnow()
     commit = _get_commit(api, properties)
     shard_count = properties.shard_count
     shard_index = properties.shard_index
+    skip_build = (not properties.code_coverage and
+                  properties.toolchain == 'host/gnu')
+    is_worker_shard = shard_count > 1 and bool(shard_index)
+    is_merge_coordinator = False
+    config = None
+    shard_entries: List[Dict[str, Any]] = []
+    shard_binary_sizes: Dict[str, Any] = {}
     if shard_count > 1 and properties.bump_version:
       step_result = api.step('guard bump_version', cmd=None)
       step_result.presentation.status = api.step.FAILURE
@@ -191,8 +359,13 @@ def RunSteps(api, properties):
           'bump_version is not supported with shard_count > 1')
 
     if shard_count > 1 and not shard_index:
-      with api.step.nest('schedule and wait for shards') as pres, \
-           api.build_menu.configure_builder(commit=commit, disable_sdk=True) as config:
+      legacy_coord = properties.code_coverage or api.cv.active or skip_build
+      if not legacy_coord:
+        config = stack.enter_context(
+            api.build_menu.configure_builder(commit=commit, disable_sdk=True))
+      with api.step.nest('schedule and wait for shards') as pres, (
+          api.build_menu.configure_builder(commit=commit, disable_sdk=True)
+          if legacy_coord else contextlib.nullcontext(config)) as config:
 
         location = properties.firmware_location or config.general.firmware_location
         if properties.code_coverage and location != common_pb2.PLATFORM_ZEPHYR:
@@ -234,7 +407,10 @@ def RunSteps(api, properties):
         builds = api.buildbucket.schedule(requests, include_sub_invs=False)
 
         # Wait for them and collect outputs
-        margin = 30 * 60 if properties.code_coverage else 5 * 60
+        needs_merge = (
+            properties.code_coverage or
+            (not legacy_coord and location == common_pb2.PLATFORM_ZEPHYR))
+        margin = 30 * 60 if needs_merge else 5 * 60
         collect_timeout = (
             max(
                 60,
@@ -316,51 +492,77 @@ def RunSteps(api, properties):
           raise api.step.StepFailure(f"shards failed: {','.join(failed_ids)}")
 
         pres.step_text = 'All shards succeeded.'
-      return result_pb2.RawResult(status=bb_common_pb2.SUCCESS)
+        if not legacy_coord and location == common_pb2.PLATFORM_ZEPHYR:
+          shard_entries, missing_ids, shard_binary_sizes = (
+              _extract_shard_bundle_entries(completed_builds))
+          if missing_ids:
+            pres.step_text = f'{len(missing_ids)} shards missing artifacts.'
+            pres.status = api.step.FAILURE
+            raise api.step.StepFailure(
+                f"shards missing artifacts: {','.join(missing_ids)}")
+          is_merge_coordinator = True
+      if not is_merge_coordinator:
+        return result_pb2.RawResult(status=bb_common_pb2.SUCCESS)
 
     with api.failures.ignore_exceptions():
       with api.step.nest('checking attestation eligibility') as pres:
         # Config determines whether to report artifacts.
-        if api.cros_infra_config.config.artifacts.attestation_eligible:
+        if (api.cros_infra_config.config.artifacts.attestation_eligible and
+            not is_worker_shard):
           api.bcid_reporter.report_stage('start')
           pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
         else:
           pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
-    with api.build_menu.configure_builder(commit=commit) \
-      as config, api.build_menu.setup_workspace():
+    with (contextlib.nullcontext(config) if is_merge_coordinator else
+          api.build_menu.configure_builder(commit=commit)) as config, \
+        api.build_menu.setup_workspace():
       is_staging = api.cros_infra_config.is_staging
       if properties.bump_version:
         api.cros_version.bump_version(dry_run=is_staging)
         api.cros_release.create_buildspec(
             dry_run=is_staging, gs_location=properties.buildspec_gs_path)
-      chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
-      api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
-      api.cros_sdk.run('set ccache limit', ['ccache', '-M', '50G'])
-      if properties.shard_count > 1:
-        use_flags = list(config.build.use_flags) + [
-            common_pb2.UseFlag(flag=f'shard_index_{properties.shard_index}'),
-            common_pb2.UseFlag(flag=f'shard_count_{properties.shard_count}'),
-        ]
-        api.cros_sdk.set_use_flags(use_flags)
+      if not is_merge_coordinator:
+        chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
+        api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
+        api.cros_sdk.run('set ccache limit', ['ccache', '-M', '50G'])
+        if is_worker_shard:
+          use_flags = list(config.build.use_flags) + [
+              common_pb2.UseFlag(flag=f'shard_index_{properties.shard_index}'),
+              common_pb2.UseFlag(flag=f'shard_count_{properties.shard_count}'),
+          ]
+          api.cros_sdk.set_use_flags(use_flags)
 
       service = api.cros_build_api.FirmwareService
       chroot = api.cros_sdk.chroot
       location = properties.firmware_location or config.general.firmware_location
 
       with api.failures.ignore_exceptions():
-        if api.cros_infra_config.config.artifacts.attestation_eligible:
+        if (api.cros_infra_config.config.artifacts.attestation_eligible and
+            not is_worker_shard):
           api.bcid_reporter.report_stage('compile')
       firmware_targets = [
           FirmwareTarget(name=bt.name) for bt in properties.build_targets
       ]
       build = api.buildbucket.build
 
-      def _upload_artifacts(ignore_failure: bool = False):
+      def _upload_artifacts(
+          ignore_failure: bool = False,
+      ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
+        artifacts_info = None
+        if is_worker_shard:
+          artifacts_info = common_pb2.ArtifactsByService()
+          artifacts_info.CopyFrom(config.artifacts.artifacts_info)
+          for _, service_info in artifacts_info.ListFields():
+            for output_artifact in getattr(service_info, 'output_artifacts',
+                                           ()):
+              output_artifact.ClearField('gs_locations')
         try:
           return api.build_menu.upload_artifacts(
               config=config,
-              report_to_spike=api.cros_infra_config.config.artifacts
-              .attestation_eligible,
+              artifacts_info=artifacts_info,
+              report_to_spike=(
+                  api.cros_infra_config.config.artifacts.attestation_eligible
+                  and not is_worker_shard),
               use_file_paths=True,
               build_targets=firmware_targets,
               upload_coverage=(properties.shard_count <= 1),
@@ -378,15 +580,13 @@ def RunSteps(api, properties):
       # Inject shard arguments through the USE environment variable,
       # which safely propagates through the cros_sdk chroot boundary natively.
       use_env = {}
-      if properties.shard_count > 1:
+      if is_worker_shard:
         use_env['USE'] = (f'%(USE)s shard_index_{properties.shard_index} '
                           f'shard_count_{properties.shard_count}')
 
-      skip_build = (not properties.code_coverage and
-                    properties.toolchain == 'host/gnu')
       try:
         with api.context(env=use_env):
-          if not skip_build:
+          if not skip_build and not is_merge_coordinator:
             try:
               response = service.BuildAllFirmware(
                   BuildAllFirmwareRequest(
@@ -426,67 +626,72 @@ def RunSteps(api, properties):
           api.easy.set_properties_step(got_revision=snapshot_sha,
                                        step_name='output got_revision')
 
-          try:
-            service.TestAllFirmware(
-                TestAllFirmwareRequest(firmware_location=location,
-                                       chroot=chroot,
-                                       code_coverage=properties.code_coverage,
-                                       firmware_targets=firmware_targets,
-                                       avb_enabled=properties.avb_enabled,
-                                       toolchain=properties.toolchain),
-                name='test firmware')
-          except StepFailure as e:
-            if not skip_build:
-              _upload_artifacts(ignore_failure=True)
-            UploadTestResults(api, location, build.builder.builder)
-            raise e
+          if not is_merge_coordinator:
+            try:
+              service.TestAllFirmware(
+                  TestAllFirmwareRequest(firmware_location=location,
+                                         chroot=chroot,
+                                         code_coverage=properties.code_coverage,
+                                         firmware_targets=firmware_targets,
+                                         avb_enabled=properties.avb_enabled,
+                                         toolchain=properties.toolchain),
+                  name='test firmware')
+            except StepFailure as e:
+              if not skip_build:
+                _upload_artifacts(ignore_failure=True)
+              UploadTestResults(api, location, build.builder.builder)
+              raise e
 
-        if not skip_build:
+        if is_merge_coordinator:
+          uploaded_artifacts, artifact_dir = _merge_and_upload_shard_bundles(
+              api, config, shard_entries, shard_binary_sizes, firmware_targets)
+        elif not skip_build:
           uploaded_artifacts, artifact_dir = _upload_artifacts()
       finally:
-        if properties.shard_count > 1:
+        if is_worker_shard:
           api.cros_sdk.set_use_flags(config.build.use_flags)
-      if not skip_build:
+      if not skip_build and not is_worker_shard:
         published = collections.defaultdict(list)
         if uploaded_artifacts and uploaded_artifacts.published:
           published.update(uploaded_artifacts.published)
 
         # Read metadata jsonpb
         metadata_by_name = {}
-        with api.step.nest('reading metadata') as step:
-          step.logs['debug'] = ''
-          for metadata_path in uploaded_artifacts.files_by_artifact.get(
-              'FIRMWARE_TARBALL_INFO', []):
-            if metadata_path.startswith('configs/'):
-              continue
-            # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
-            metadata_path = api.path.abspath(
-                api.path.join(artifact_dir, metadata_path))
-            if api.path.exists(metadata_path):
-              step.logs['debug'] += f'Reading proto from {metadata_path}\n'
-              metadata = api.file.read_proto(
-                  'read fw metadata',
-                  metadata_path,
-                  FirmwareArtifactInfo,
-                  'JSONPB',
-              )
-              for obj in metadata.objects:
-                which = obj.WhichOneof('firmware_object_info')
-                info = (
-                    obj.config_info
-                    if which == 'config_info' else obj.tarball_info)
-                step.logs[
-                    'debug'] += f'metadata_by_name[{obj.file_name}]={info}\n'
-                metadata_by_name[obj.file_name] = info
-            else:
-              step.logs['debug'] += f'{metadata_path} does not exist\n'
+        if uploaded_artifacts:
+          with api.step.nest('reading metadata') as step:
+            step.logs['debug'] = ''
+            for metadata_path in uploaded_artifacts.files_by_artifact.get(
+                'FIRMWARE_TARBALL_INFO', []):
+              if metadata_path.startswith('configs/'):
+                continue
+              # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
+              metadata_path = api.path.abspath(
+                  api.path.join(artifact_dir, metadata_path))
+              if api.path.exists(metadata_path):
+                step.logs['debug'] += f'Reading proto from {metadata_path}\n'
+                metadata = api.file.read_proto(
+                    'read fw metadata',
+                    metadata_path,
+                    FirmwareArtifactInfo,
+                    'JSONPB',
+                )
+                for obj in metadata.objects:
+                  which = obj.WhichOneof('firmware_object_info')
+                  info = (
+                      obj.config_info
+                      if which == 'config_info' else obj.tarball_info)
+                  step.logs[
+                      'debug'] += f'metadata_by_name[{obj.file_name}]={info}\n'
+                  metadata_by_name[obj.file_name] = info
+              else:
+                step.logs['debug'] += f'{metadata_path} does not exist\n'
 
         # Publish files by board. Artifact types FIRMWARE_TARBALL,
         # FIRMWARE_TARBALL_INFO, and FIRMWARE_TOKEN_DATABASE get written to
         # gs://firmware-image-archive/{board}/{build.builder.builder}/{version}/artifact.
         # If the file has no boards, omit the board dir.
 
-        if not api.cv.active:
+        if not api.cv.active and uploaded_artifacts:
           with api.step.nest('publish artifacts by board') as step:
             # Go through all the files, and group by board.
             artifacts_by_board = collections.defaultdict(
@@ -653,17 +858,18 @@ def RunSteps(api, properties):
                             force_publish=metadata.publish_to_goldeneye)
 
         # CQ runs should not write to the database.
-        if not api.cv.active:
+        if not api.cv.active and uploaded_artifacts:
           api.firmware_config.publish(uploaded_artifacts, artifact_dir,
                                       metadata_by_name, start_time)
 
-      UploadTestResults(api, location, build.builder.builder)
+      if not is_merge_coordinator:
+        UploadTestResults(api, location, build.builder.builder)
 
       CreateContainers(api, config)
 
       api.easy.set_properties_step(
           suite_scheduling=str(properties.set_suite_scheduling and
-                               not is_staging))
+                               not is_staging and not is_worker_shard))
 
 
 def _read_chromiumos_sdk_pin(api, properties):
@@ -1955,4 +2161,331 @@ def GenTests(api):
           "shard_count": 2,
           "shard_index": 1,
       },
+  )
+
+  branch_commit = {
+      'host': 'chrome-internal.googlesource.com',
+      'project': 'chromeos/manifest-internal',
+      'ref': 'refs/heads/firmware-R157-16852.2.B',
+  }
+
+  def _shard_child(
+      build_id: int,
+      tarballs: Sequence[str],
+      configs: Sequence[str],
+      sizes: Optional[Mapping[str, Any]] = None,
+  ) -> build_pb2.Build:
+    msg = api.buildbucket.ci_build_message(build_id=build_id, status='SUCCESS')
+    fba = {
+        'FIRMWARE_TARBALL': list(tarballs),
+        'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb', *configs],
+        'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'],
+    }
+    art = {
+        'gs_bucket': 'chromeos-image-archive',
+        'gs_path': f'firmware-zephyr-postsubmit/R99-1234.56.0-{build_id}',
+        'files_by_artifact': fba,
+    }
+    msg.output.properties.update({'artifacts': art, **(sizes or {})})
+    return msg
+
+  def _shard_test(
+      name: str,
+      *args: Any,
+      shard_index: int = 0,
+      shard_count: int = 2,
+      loc: int = common_pb2.PLATFORM_ZEPHYR,
+      extra: Optional[Mapping[str, Any]] = None,
+      **kwargs: Any,
+  ) -> recipe_test_api.TestData:
+    props = {
+        'firmware_location': loc,
+        'shard_count': shard_count,
+        'shard_index': shard_index,
+        **(extra or {}),
+    }
+    kwargs.setdefault('builder', 'firmware-zephyr-postsubmit')
+    return test(
+        name,
+        *args,
+        api.post_process(post_process.DropExpectation),
+        input_properties=props,
+        **kwargs,
+    )
+
+  collect_step = 'schedule and wait for shards.collect shard builds'
+  branch_props = {
+      'set_suite_scheduling': True,
+      'gitiles_commit': branch_commit,
+  }
+  int_repo = (
+      'https://chrome-internal.googlesource.com/chromeos/manifest-internal')
+  s201 = _shard_child(
+      201,
+      ['brox.EC.tar.bz2', 'brox/firmware_from_source.tar.bz2'],
+      ['configs/brox/ec-ro.config', 'configs/brox/ec-rw.config'],
+      {'binary_sizes': {
+          'brox_RO': 1024,
+          'brox_pct': 12.5,
+      }},
+  )
+  s202 = _shard_child(
+      202,
+      ['karis.EC.tar.bz2', 'rex/firmware_from_source.tar.bz2'],
+      ['configs/karis/ec-ro.config'],
+      {'binary_sizes': {
+          'karis_RO': 2048
+      }},
+  )
+  s203 = _shard_child(
+      203,
+      ['screebo.EC.tar.bz2', 'rex/firmware_from_source.tar.bz2'],
+      ['configs/screebo/ec.config'],
+  )
+  s204 = _shard_child(204, ['brox.EC_elf.tar.bz2'], [])
+
+  yield _shard_test(
+      'ec-branch-postsubmit-shard-worker',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service',
+          'ArtifactsService/Get',
+          '{}',
+      ),
+      api.cros_build_api.set_api_return(
+          'upload artifacts',
+          'FirmwareService/BundleFirmwareArtifacts',
+          ZEPHYR_CONFIG_ARTIFACTS,
+      ),
+      api.post_check(post_process.MustRun, 'build firmware'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.post_check(post_process.MustRun, 'Upload EC Firmware test results'),
+      api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
+      api.post_check(post_process.DoesNotRun, 'reading metadata'),
+      api.post_check(post_process.DoesNotRun, 'publish artifacts by board'),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
+      api.post_check(post_process.DoesNotRun, 'publish target configs'),
+      api.post_check(post_process.PropertyEquals, 'suite_scheduling', 'False'),
+      shard_count=4,
+      shard_index=1,
+      extra=branch_props,
+      git_repo=int_repo,
+  )
+
+  expected_merged_fba = {
+      'FIRMWARE_TARBALL': [
+          'brox.EC.tar.bz2',
+          'brox/firmware_from_source.tar.bz2',
+          'karis.EC.tar.bz2',
+          'rex/firmware_from_source.tar.bz2',
+          'screebo.EC.tar.bz2',
+          'brox.EC_elf.tar.bz2',
+      ],
+      'FIRMWARE_TARBALL_INFO': [
+          'firmware_metadata.jsonpb',
+          'configs/brox/ec-ro.config',
+          'configs/brox/ec-rw.config',
+          'configs/karis/ec-ro.config',
+          'configs/screebo/ec.config',
+      ],
+      'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'],
+  }
+
+  yield _shard_test(
+      'ec-branch-postsubmit-shard-coordinator',
+      api.time.seed(1000),
+      api.time.step(0),
+      api.context.luci_context(
+          deadline=sections_pb2.Deadline(soft_deadline=1000 + 3600 * 5),
+      ),
+      api.buildbucket.simulated_collect_output([s201, s202, s203, s204],
+                                               step_name=collect_step),
+      api.step_data(
+          'download shard artifacts.gsutil download shard 201',
+          times_out_after=16 * 60,
+      ),
+      api.step_data(
+          'reading metadata.read fw metadata',
+          api.file.read_proto(ZEPHYR_SHARED_METADATA),
+      ),
+      api.post_check(
+          lambda check,
+          steps: check(steps[
+              'schedule and wait for shards.collect shard builds.wait'].timeout
+                       == 3600 * 5 - 30 * 60),
+      ),
+      api.post_check(
+          lambda check,
+          steps: check('shard_index_0' not in steps['output got_revision'].env.
+                       get('USE', '')),
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'download shard artifacts.gsutil download shard 201 (2)',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'download shard artifacts.gsutil download shard 204',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'upload artifacts.merge firmware shard bundles',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'upload artifacts.set artifact_link property',
+      ),
+      api.post_check(
+          post_process.PropertyMatchesCallable,
+          'artifacts',
+          lambda check,
+          val: check(val['files_by_artifact'] == expected_merged_fba),
+      ),
+      api.post_check(post_process.MustRun, 'snoop: report_stage'),
+      api.post_check(post_process.MustRun, 'publish artifacts by board'),
+      api.post_check(post_process.DoesNotRun, 'sending pub/sub notifications'),
+      api.post_check(
+          post_process.LogContains,
+          'publish target configs',
+          'input',
+          ['"target": "brox"', '"target": "karis"', '"target": "screebo"'],
+      ),
+      api.post_check(post_process.DoesNotRun, 'build firmware'),
+      api.post_check(post_process.DoesNotRun, 'test firmware'),
+      api.post_check(post_process.DoesNotRun,
+                     'Upload EC Firmware test results'),
+      api.post_check(post_process.PropertyEquals, 'suite_scheduling', 'True'),
+      api.post_check(
+          post_process.PropertyEquals,
+          'binary_sizes',
+          {
+              'brox_RO': 1024,
+              'brox_pct': 12.5,
+              'karis_RO': 2048,
+          },
+      ),
+      shard_count=4,
+      shard_index=0,
+      extra=branch_props,
+      git_repo=int_repo,
+  )
+
+  brox_branch_configs = json_format.ParseDict(
+      {
+          'builderConfigs': [{
+              'artifacts': {
+                  'artifactsGsBucket': 'chromeos-image-archive',
+                  'artifactsInfo': {
+                      'firmware': {
+                          'outputArtifacts': [{
+                              'artifactTypes': [
+                                  'FIRMWARE_TARBALL',
+                                  'FIRMWARE_TARBALL_INFO',
+                                  'FIRMWARE_TOKEN_DATABASE',
+                              ],
+                          }],
+                      },
+                  },
+              },
+              'general': {
+                  'firmwareLocation': 'PLATFORM_ZEPHYR'
+              },
+              'id': {
+                  'bucket': 'firmware',
+                  'name': 'firmware-brox-16080.B-branch',
+                  'type': 'POSTSUBMIT',
+              },
+          }],
+      },
+      BuilderConfigs(),
+  )
+
+  yield _shard_test(
+      'firmware-brox-branch-shard-coordinator',
+      api.cros_infra_config.override_builder_configs_test_data(
+          brox_branch_configs, step_name='configure builder.cros_infra_config'),
+      api.buildbucket.simulated_collect_output([s201, s204],
+                                               step_name=collect_step),
+      api.step_data(
+          'reading metadata.read fw metadata',
+          api.file.read_proto(BROX_ZEPHYR_METADATA),
+      ),
+      api.post_check(post_process.MustRun, 'publish artifacts by board'),
+      api.post_check(
+          post_process.MustRun,
+          'sending pub/sub notifications.publish artifacts to pubsub',
+      ),
+      builder='firmware-brox-16080.B-branch',
+      shard_count=2,
+      shard_index=0,
+      extra={
+          'set_suite_scheduling': True,
+          'gitiles_commit': {
+              'host': 'chrome-internal.googlesource.com',
+              'project': 'chromeos/manifest-internal',
+              'ref': 'refs/heads/firmware-brox-16080.B',
+          },
+      },
+      git_repo=int_repo,
+  )
+
+  yield _shard_test(
+      'renode-postsubmit-shard-coordinator',
+      api.buildbucket.simulated_collect_output([b1, b2],
+                                               step_name=collect_step),
+      api.post_check(post_process.DoesNotRun, 'setup workspace'),
+      api.post_check(post_process.DoesNotRun, 'download shard artifacts'),
+      api.post_check(post_process.DoesNotRun, 'publish artifacts by board'),
+      loc=common_pb2.PLATFORM_RENODE,
+  )
+
+  yield _shard_test(
+      'ec-branch-postsubmit-shard-coordinator-shard-failure',
+      api.buildbucket.simulated_collect_output([s201, b_fail],
+                                               step_name=collect_step),
+      api.post_check(post_process.DoesNotRun, 'setup workspace'),
+      api.post_check(post_process.DoesNotRun, 'publish artifacts by board'),
+      status='FAILURE',
+  )
+
+  b_dot = api.buildbucket.ci_build_message(build_id=131, status='SUCCESS')
+  b_dot.output.properties.update({
+      'artifacts': {
+          'gs_bucket': 'chromeos-image-archive',
+          'gs_path': 'firmware-zephyr-postsubmit/R99-1234.56.0-131',
+          'files_by_artifact': {
+              'FIRMWARE_TARBALL': ['.'],
+              'BAD_TYPE': 'ignored',
+          },
+      }
+  })
+
+  yield _shard_test(
+      'ec-branch-postsubmit-shard-coordinator-missing-artifacts',
+      api.buildbucket.simulated_collect_output([s201, b_miss, b_dot],
+                                               step_name=collect_step),
+      api.post_check(
+          post_process.SummaryMarkdownRE,
+          '.*shards missing artifacts: 130,131.*',
+      ),
+      api.post_check(post_process.DoesNotRun, 'setup workspace'),
+      api.post_check(post_process.DoesNotRun, 'publish artifacts by board'),
+      status='FAILURE',
+  )
+
+  yield _shard_test(
+      'ec-branch-postsubmit-shard-coordinator-download-failure',
+      api.buildbucket.simulated_collect_output([s201, s204],
+                                               step_name=collect_step),
+      api.step_data(
+          'download shard artifacts.gsutil download shard 201',
+          retcode=1,
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'download shard artifacts.gsutil download shard 201 (2)',
+      ),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      status='INFRA_FAILURE',
   )

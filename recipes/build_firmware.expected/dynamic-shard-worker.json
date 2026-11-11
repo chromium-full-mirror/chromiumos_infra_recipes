@@ -5789,14 +5789,6 @@
   },
   {
     "cmd": [],
-    "name": "reading metadata",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
-      "@@@STEP_LOG_END@debug@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "Upload EC Firmware test results"
   },
   {
