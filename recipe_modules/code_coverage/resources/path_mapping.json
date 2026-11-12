@@ -43,5 +43,20 @@
     "path_pattern": ".*/platform/ec/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
     "absolute_path": "src/platform/ec",
     "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/vboot_reference/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/platform/vboot_reference",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/depthcharge/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/platform/depthcharge",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/coreboot/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/third_party/coreboot",
+    "relative_path": ""
   }
 ]

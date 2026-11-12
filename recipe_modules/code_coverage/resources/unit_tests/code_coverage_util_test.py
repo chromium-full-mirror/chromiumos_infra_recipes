@@ -54,6 +54,75 @@ class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
                                                     self.path_mappings)
         self.assertEqual(mapped, (expected_abs, expected_rel))
 
+  def testCleanLcovApFirmwarePaths(self):
+    test_lcov = (
+        'TN:\n'
+        'SF:/mnt/host/source/src/third_party/coreboot/src/lib/bootblock.c\n'
+        'DA:10,1\n'
+        'SF:src/third_party/coreboot/payloads/libpayload/libc/string.c\n'
+        'DA:5,1\n'
+        'SF:/mnt/host/source/src/platform/depthcharge/src/vboot/main.c\n'
+        'DA:15,1\n'
+        'SF:/build/brya/tmp/portage/sys-boot/depthcharge-0.0.1-r1/work/'
+        'depthcharge-0.0.1/src/vboot/main.c\n'
+        'DA:20,1\n'
+        'SF:src/platform/depthcharge/src/drivers/storage/storage.c\n'
+        'DA:30,1\n'
+        'SF:/mnt/host/source/src/platform/vboot_reference/firmware/lib/crc8.c\n'
+        'DA:40,1\n'
+        'SF:src/platform/vboot_reference/futility/futility.c\n'
+        'DA:50,1\n'
+        'SF:/usr/include/stdio.h\n'
+        'DA:60,1\n'
+        'end_of_record\n')
+    expected_abs = (
+        'TN:\n'
+        'SF:src/third_party/coreboot/src/lib/bootblock.c\n'
+        'DA:10,1\n'
+        'SF:src/third_party/coreboot/payloads/libpayload/libc/string.c\n'
+        'DA:5,1\n'
+        'SF:src/platform/depthcharge/src/vboot/main.c\n'
+        'DA:15,1\n'
+        'SF:src/platform/depthcharge/src/vboot/main.c\n'
+        'DA:20,1\n'
+        'SF:src/platform/depthcharge/src/drivers/storage/storage.c\n'
+        'DA:30,1\n'
+        'SF:src/platform/vboot_reference/firmware/lib/crc8.c\n'
+        'DA:40,1\n'
+        'SF:src/platform/vboot_reference/futility/futility.c\n'
+        'DA:50,1\n'
+        'SF:/tmp/unknown_file\n'
+        'DA:60,1\n'
+        'end_of_record\n')
+    expected_rel = ('TN:\n'
+                    'SF:src/lib/bootblock.c\n'
+                    'DA:10,1\n'
+                    'SF:payloads/libpayload/libc/string.c\n'
+                    'DA:5,1\n'
+                    'SF:src/vboot/main.c\n'
+                    'DA:15,1\n'
+                    'SF:src/vboot/main.c\n'
+                    'DA:20,1\n'
+                    'SF:src/drivers/storage/storage.c\n'
+                    'DA:30,1\n'
+                    'SF:firmware/lib/crc8.c\n'
+                    'DA:40,1\n'
+                    'SF:futility/futility.c\n'
+                    'DA:50,1\n'
+                    'SF:/tmp/unknown_file\n'
+                    'DA:60,1\n'
+                    'end_of_record\n')
+    with self.subTest(to_absolute_path=True):
+      self.assertEqual(
+          code_coverage_util.clean_file_names_in_lcov_coverage(
+              test_lcov, self.path_mappings, to_absolute_path=True),
+          expected_abs)
+    with self.subTest(to_absolute_path=False):
+      self.assertEqual(
+          code_coverage_util.clean_file_names_in_lcov_coverage(
+              test_lcov, self.path_mappings, to_absolute_path=False),
+          expected_rel)
+
 
 class CreateLlvmCoverageJsonTest(unittest.TestCase):
 
