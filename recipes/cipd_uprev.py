@@ -4,7 +4,7 @@
 
 """Recipe for upreving cipd packages."""
 
-from typing import Generator
+from typing import Generator, Optional
 
 from PB.recipes.chromeos import cipd_uprev
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -36,14 +36,17 @@ _CI_RELEASE_VERSION_TAG = 'ci_release_version'
 
 
 def validate(api: RecipeApi, instruction: cipd_uprev.Instruction,
-             override_version=None) -> None:
-  """Validate instructions for uprevving a specific package.
+             override_version: Optional[str] = None) -> None:
+  """Validates instructions for uprevving a specific package.
 
   Args:
-    * instruction (cipd_uprev.Instruction): A complete set of args for
-      `cipd set-ref`.
+    api: Recipe API handle.
+    instruction: A complete set of args for `cipd set-ref`.
+    override_version: Optional version override to use instead of
+      `instruction.version`.
+
   Raises:
-    A ValueError if validation fails.
+    StepFailure: If validation fails.
   """
   with api.step.nest('validate package instructions'):
     if not instruction.ref:
@@ -86,19 +89,26 @@ def get_current_instance(
                                       id=instance_id)
 
 
-def uprev_package(api: RecipeApi, instruction: cipd_uprev.Instruction,
-                  package_tags=None,
-                  override_version=None) -> cipd_uprev.PackageInstance:
-  """Change CIPD ref of a package according to the instructions.
+def uprev_package(
+    api: RecipeApi,
+    instruction: cipd_uprev.Instruction,
+    package_tags: Optional[dict[str, str]] = None,
+    override_version: Optional[str] = None,
+) -> cipd_uprev.PackageInstance:
+  """Changes the CIPD ref of a package according to the instructions.
 
   Args:
-    * instruction (cipd_uprev.Instruction): A complete set of args for
-      `cipd set-ref`.
-    * package_tags: Tags to add to the package.
+    api: Recipe API handle.
+    instruction: A complete set of args for `cipd set-ref`.
+    package_tags: Optional tags to add to the package.
+    override_version: Optional version override to use instead of
+      `instruction.version`.
+
   Returns:
-    cipd_uprev.PackageInstance
+    The updated `cipd_uprev.PackageInstance`.
+
   Raises:
-    A StepFailure if the CIPD tool call fails.
+    StepFailure: If setting CIPD tags fails.
   """
   package_tags = package_tags or {}
   version = override_version or instruction.version
@@ -129,9 +139,10 @@ def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
   try:
     release_tag_time = api.time.utcnow().isoformat()
     with api.deferrals.raise_exceptions_at_end():
+      override_version = properties.rollback_to or properties.staging_label
       for instruction in properties.config.instructions:
         with api.step.nest('package %s' % instruction.package_name):
-          validate(api, instruction, properties.rollback_to)
+          validate(api, instruction, override_version)
           properties.response.old_versions.extend(
               [get_current_instance(api, instruction)])
           package_tags = {}
@@ -145,16 +156,18 @@ def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
                 release_tag_time)
           with api.deferrals.defer_exceptions():
             package = uprev_package(api, instruction, package_tags,
-                                    properties.rollback_to)
+                                    override_version)
             properties.response.new_versions.extend([package])
       for luci_instruction in properties.config.luci_instructions:
         args = list(luci_instruction.args)
-        if properties.rollback_to:
-          args.append('-from-tag')
-          args.append(properties.rollback_to)
+        if override_version:
+          if '-from-tag' in args:
+            args[args.index('-from-tag') + 1] = override_version
+          else:
+            args.extend(['-from-tag', override_version])
         step_result = api.golucibin.execute_luciexe(
-            luci_instruction.package_name, properties.rollback_to or
-            luci_instruction.ref, args)
+            luci_instruction.package_name, luci_instruction.ref or
+            override_version, args)
         if step_result and step_result.step and step_result.step.sub_build and step_result.step.sub_build.output:
           sub_props = step_result.step.sub_build.output.properties
           if "$container_uprev" in sub_props:
@@ -428,6 +441,74 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           [
               '--', 'uprev', '-target', 'firmware-filter,cros-fw-provision',
               '-prod', '-from-tag', 'staging', '-to-tag', 'prod'
+          ],
+      ),
+  )
+
+  # Simulate bb add chromeos/infra/firmware-uprev-prod -p staging_label="fw_provisioning_release_version:ctp_2026-11-11T00:00:36.815784"
+  yield api.test(
+      'firmware-uprev-prod-with-staging-label',
+      api.properties(
+          cipd_uprev.Properties(
+              staging_label=('fw_provisioning_release_version:'
+                             'ctp_2026-11-11T00:00:36.815784'),
+              config=cipd_uprev.Config(
+                  instructions=[
+                      cipd_uprev.Instruction(
+                          package_name=('chromiumos/infra/ctpv2-filters/'
+                                        'firmware-filter/linux-amd64'),
+                          ref='prod', version='staging'),
+                      cipd_uprev.Instruction(
+                          package_name=('chromiumos/infra/cft/provision/'
+                                        'cros-fw-provision/linux-amd64'),
+                          ref='prod', version='staging'),
+                  ],
+                  luci_instructions=[
+                      cipd_uprev.LuciExeInstruction(
+                          package_name='container_uprev', ref='fw_staging',
+                          args=[
+                              'uprev', '-target',
+                              'firmware-filter,cros-fw-provision', '-prod',
+                              '-from-tag', 'staging', '-to-tag', 'prod'
+                          ]),
+                  ],
+              ))),
+      api.golucibin.set_execute_luciexe_response('', 'container_uprev'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'package chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64.'
+          'apply the "prod" ref of the '
+          '"chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64" '
+          'package to '
+          '"fw_provisioning_release_version:ctp_2026-11-11T00:00:36.815784".'
+          'cipd set-ref '
+          'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+          [
+              'set-ref',
+              'chromiumos/infra/ctpv2-filters/firmware-filter/linux-amd64',
+              '-version',
+              'fw_provisioning_release_version:ctp_2026-11-11T00:00:36.815784',
+              '-ref', 'prod'
+          ],
+      ),
+      api.post_check(post_process.DoesNotRunRE, r'.*cipd set-tag.*'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'ensure container_uprev (fw_staging).ensure_installed',
+          [
+              'ensure',
+              '-root',
+              '[START_DIR]/cipd/fw_staging',
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'container_uprev sub-build',
+          [
+              '--', 'uprev', '-target', 'firmware-filter,cros-fw-provision',
+              '-prod', '-from-tag',
+              'fw_provisioning_release_version:ctp_2026-11-11T00:00:36.815784',
+              '-to-tag', 'prod'
           ],
       ),
   )

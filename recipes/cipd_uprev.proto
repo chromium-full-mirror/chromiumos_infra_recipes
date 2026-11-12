@@ -17,6 +17,11 @@ message Properties {
   // This overrides the versions in the config, to make it easier for the
   // caller. I.e. bb add firmware-uprev-rollback -p rollback_to=VERSION
   string rollback_to = 3;
+
+  // Optional CIPD/container version to promote instead of the default version
+  // in the config. Set by the caller.
+  // I.e. bb add chromeos/infra/firmware-uprev-prod -p staging_label=VERSION
+  string staging_label = 4;
 }
 
 // Config contains the complete instructions of how to perform the uprev.
