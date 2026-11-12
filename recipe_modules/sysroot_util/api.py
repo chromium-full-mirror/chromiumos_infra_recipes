@@ -351,13 +351,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         # Attempt to upload artifacts on failure for debugging.
         if response:
           if self.m.remoteexec.enable_logs_upload:
-            with self.m.step.nest('process reclient artifacts'):
-              self.m.remoteexec.process_artifacts(
-                  response,
-                  install_pkg_request.remoteexec_config.log_dir.dir,
-                  self.sysroot.build_target.name,
-                  self.m.cros_infra_config.is_staging,
-              )
+            self.m.remoteexec.process_artifacts(
+                response,
+                install_pkg_request.remoteexec_config.log_dir.dir,
+                self.sysroot.build_target.name,
+                self.m.cros_infra_config.is_staging,
+            )
 
           pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
                                                        response)

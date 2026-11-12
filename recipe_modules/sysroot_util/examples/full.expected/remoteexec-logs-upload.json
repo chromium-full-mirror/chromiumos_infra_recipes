@@ -1944,16 +1944,9 @@
   },
   {
     "cmd": [],
-    "name": "install packages.process reclient artifacts",
+    "name": "install packages.process_remoteexec_artifacts",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "install packages.process reclient artifacts.process_remoteexec_artifacts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@remoteexec_artifacts@@@@",
       "@@@STEP_LOG_END@remoteexec_artifacts@@@",
       "@@@STEP_LOG_LINE@log_dir@[CLEANUP]/remoteexec-logs-_tmp_2@@@",
