@@ -56,11 +56,21 @@ Satlab host's Docker daemon (`192.168.231.1:2376`).
         `/dev/ttyACM*`) and `udev` netlink hotplug events visible inside the
         container so `libusb` detects when the Dagwood fixture disconnects and
         re-enumerates across USB DFU firmware updates.
-3.  **Repository Sync, Dagwood Fixture Update & Test Execution**:
-    By default, the container entrypoint runs with `--update` to pull the latest
-    `src/platform/ec` and `src/platform/dagwood` commits, checks and updates the
-    Dagwood fixture firmware over USB DFU if `DW_VERSION` changed, and then runs
-    `./dagwood` from `/workspace/src/platform/ec`:
+3.  **Manifest Snapshot Resolution, Repository Sync & Test Execution**:
+    Unless `--skip-update` is passed, `runner.py` resolves the
+    `chromiumos/manifest` `refs/heads/snapshot` commit (or `--manifest-commit`),
+    reports it to Buildbucket to populate the **Commit:** field on the LUCI
+    Build Overview page, and syncs the `/workspace` repositories to their
+    revisions in `snapshot.xml`:
+    *   `src/platform/ec`
+    *   `src/platform/dagwood`
+    *   `src/third_party/zephyrproject`
+    *   `src/third_party/pigweed`
+    *   `src/third_party/u-boot`
+    *   `src/third_party/chromiumos-overlay`
+
+    Inside the container, it then updates the Dagwood fixture firmware over USB
+    DFU if `DW_VERSION` changed and runs `./dagwood`:
     ```bash
     cd /workspace/src/platform/dagwood && ./build_from_chroot.py -f --flasher dfu && \
     cd /workspace/src/platform/ec && ./dagwood -p <platform> [-T <test_path>...] [-s <test_scenario>...] [<extra_args>...]

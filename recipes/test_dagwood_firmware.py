@@ -4,6 +4,7 @@
 
 """Recipe that executes ChromeOS EC hardware tests on Dagwood test fixtures."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.test_dagwood_firmware import TestDagwoodFirmwareProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -47,6 +48,9 @@ def RunSteps(api: RecipeApi, properties: TestDagwoodFirmwareProperties):
     if properties.skip_dagwood_firmware_update:
       cmd.append('--skip-dagwood-firmware-update')
 
+    if api.buildbucket.gitiles_commit.id:
+      cmd.extend(['--manifest-commit', api.buildbucket.gitiles_commit.id])
+
     cmd.extend(['--output-json', api.json.output()])
 
     base_variant = {'build_target': ','.join(platforms)}
@@ -63,6 +67,13 @@ def RunSteps(api: RecipeApi, properties: TestDagwoodFirmwareProperties):
               'skipped': 0,
               'total': 12,
               'exit_code': 0,
+              'manifest_commit': {
+                  'host': 'chromium.googlesource.com',
+                  'project': 'chromiumos/manifest',
+                  'ref': 'refs/heads/snapshot',
+                  'id': '23c64253d5512a17eeca761cc6e7317c2d443e35',
+                  'position': 88722,
+              },
           }),
       )
       summary = step_res.json.output or {}
@@ -74,7 +85,30 @@ def RunSteps(api: RecipeApi, properties: TestDagwoodFirmwareProperties):
         b_id = api.buildbucket.build.id
         pres.links['Milo Test Results (All)'] = (
             f"https://ci.chromium.org/ui/b/{b_id}/test-results?q=ExactID%3A*")
+      mc = summary.get('manifest_commit')
+      if mc and mc.get('id'):
+        api.buildbucket.set_output_gitiles_commit(
+            common_pb2.GitilesCommit(
+                host=mc.get('host', 'chromium.googlesource.com'),
+                project=mc.get('project', 'chromiumos/manifest'),
+                ref=mc.get('ref', 'refs/heads/snapshot'),
+                id=mc['id'],
+                position=mc.get('position', 0),
+            ))
     except StepFailure as e:
+      step_res = api.step.active_result
+      summary = (step_res.json.output
+                 if step_res and step_res.json else None) or {}
+      mc = summary.get('manifest_commit')
+      if mc and mc.get('id'):
+        api.buildbucket.set_output_gitiles_commit(
+            common_pb2.GitilesCommit(
+                host=mc.get('host', 'chromium.googlesource.com'),
+                project=mc.get('project', 'chromiumos/manifest'),
+                ref=mc.get('ref', 'refs/heads/snapshot'),
+                id=mc['id'],
+                position=mc.get('position', 0),
+            ))
       pres.status = api.step.FAILURE
       pres.step_text = f"Dagwood test run failed: {e}"
       raise
@@ -137,6 +171,13 @@ def GenTests(api: RecipeTestApi):
               'skipped': 0,
               'total': 12,
               'exit_code': 1,
+              'manifest_commit': {
+                  'host': 'chromium.googlesource.com',
+                  'project': 'chromiumos/manifest',
+                  'ref': 'refs/heads/snapshot',
+                  'id': '23c64253d5512a17eeca761cc6e7317c2d443e35',
+                  'position': 88722,
+              },
           }),
           retcode=1,
       ),

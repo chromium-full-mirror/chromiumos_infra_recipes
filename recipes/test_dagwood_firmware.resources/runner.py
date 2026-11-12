@@ -12,6 +12,7 @@ to ResultSink / ResultDB.
 """
 
 import argparse
+import base64
 from datetime import datetime
 from datetime import timezone
 import html
@@ -19,14 +20,35 @@ import http.client
 import io
 import json
 import os
+import re
 import ssl
 import struct
 import sys
 import tarfile
 import urllib.error
 import urllib.request
+import xml.etree.ElementTree as ET
 
 EC_BUG_COMPONENT_ID = 167114
+MANIFEST_HOST = "chromium.googlesource.com"
+MANIFEST_PROJECT = "chromiumos/manifest"
+MANIFEST_SNAPSHOT_REF = "refs/heads/snapshot"
+
+# Maps snapshot.xml <project path="..."> attributes to container paths.
+SNAPSHOT_REPO_MAP = {
+    "src/platform/ec":
+        "/workspace/src/platform/ec",
+    "src/platform/dagwood":
+        "/workspace/src/platform/dagwood",
+    "src/third_party/zephyrproject":
+        "/workspace/src/third_party/zephyrproject",
+    "src/third_party/pigweed":
+        "/workspace/src/third_party/pigweed",
+    "src/third_party/u-boot/files":
+        "/workspace/src/third_party/u-boot",
+    "src/third_party/chromiumos-overlay":
+        ("/workspace/src/third_party/chromiumos-overlay"),
+}
 
 
 def parse_args():
@@ -49,6 +71,11 @@ def parse_args():
       action="store_true",
       help="Skip building and flashing Dagwood fixture firmware via DFU",
   )
+  parser.add_argument(
+      "--manifest-commit",
+      default="",
+      help="Optional chromiumos/manifest commit SHA or ref to sync to",
+  )
 
   # --output-json is automatically populated by the recipe engine.
   parser.add_argument("--output-json", default="",
@@ -61,6 +88,61 @@ def parse_args():
   parser.add_argument("--port", type=int, default=2376,
                       help="Satlab host Docker port")
   return parser.parse_args()
+
+
+def fetch_manifest_snapshot(commit_or_ref=MANIFEST_SNAPSHOT_REF):
+  """Fetches the ChromeOS manifest snapshot commit and parses snapshot.xml.
+
+  Returns:
+    (manifest_commit_dict, repo_revisions_dict) or (None, {}) on failure.
+  """
+  ref = commit_or_ref or MANIFEST_SNAPSHOT_REF
+  base_url = f"https://{MANIFEST_HOST}/{MANIFEST_PROJECT}/+/{ref}"
+  try:
+    with urllib.request.urlopen(f"{base_url}?format=JSON", timeout=30) as resp:
+      raw = resp.read().decode("utf-8")
+    commit_data = json.loads(raw.lstrip(")]}'\n"))
+    commit_id = commit_data["commit"]
+    msg = commit_data.get("message", "")
+    m = re.search(
+        r"^Cr-Commit-Position:\s*refs/heads/\S+@\{#(\d+)\}",
+        msg,
+        re.M,
+    )
+    position = int(m.group(1)) if m else 0
+
+    xml_url = (f"https://{MANIFEST_HOST}/{MANIFEST_PROJECT}/+/"
+               f"{commit_id}/snapshot.xml?format=TEXT")
+    with urllib.request.urlopen(xml_url, timeout=30) as resp:
+      xml_bytes = base64.b64decode(resp.read())
+    root = ET.fromstring(xml_bytes)
+
+    repo_revisions = {}
+    for proj in root.findall("project"):
+      path = proj.attrib.get("path")
+      rev = proj.attrib.get("revision")
+      if path in SNAPSHOT_REPO_MAP and rev:
+        repo_revisions[SNAPSHOT_REPO_MAP[path]] = rev
+
+    manifest_commit = {
+        "host": MANIFEST_HOST,
+        "project": MANIFEST_PROJECT,
+        "ref": MANIFEST_SNAPSHOT_REF,
+        "id": commit_id,
+    }
+    if position:
+      manifest_commit["position"] = position
+
+    print(f"[*] Resolved manifest snapshot: {commit_id} "
+          f"({len(repo_revisions)} workspace repos)")
+    return manifest_commit, repo_revisions
+  # pylint: disable=broad-exception-caught
+  except Exception as e:
+    print(
+        f"[!] Warning: Failed to fetch manifest snapshot ({ref}): {e}",
+        file=sys.stderr,
+    )
+    return None, {}
 
 
 def get_docker_ssl_context():
@@ -77,7 +159,7 @@ def get_docker_ssl_context():
   return None
 
 
-def construct_test_cmd(args):
+def construct_test_cmd(args, repo_revisions=None):
   # Build the dagwood helper script command line.
   cmd_parts = ["./dagwood"]
   platforms = args.platform if args.platform else ["realtek/rts5912"]
@@ -91,6 +173,21 @@ def construct_test_cmd(args):
     cmd_parts.append(extra)
 
   steps = []
+  if repo_revisions and not args.skip_update:
+    sync_cmds = []
+    for repo_dir, rev in sorted(repo_revisions.items()):
+      sync_cmds.append(
+          f'(if [ -d "{repo_dir}/.git" ]; then '
+          f'cur="$(git -C "{repo_dir}" rev-parse HEAD 2>/dev/null || true)"; '
+          f'if [ "$cur" != "{rev}" ]; then '
+          f'echo "[*] Syncing {repo_dir} to {rev}..."; '
+          f'git -C "{repo_dir}" fetch --depth=1 --quiet origin "{rev}" && '
+          f'git -C "{repo_dir}" reset --hard --quiet "{rev}"; '
+          f'else echo "[*] {repo_dir} already at {rev}"; fi; '
+          f'fi) &')
+    sync_cmds.append("wait")
+    steps.append(" ".join(sync_cmds))
+
   if not args.skip_dagwood_firmware_update:
     steps.append("cd /workspace/src/platform/dagwood && "
                  "./build_from_chroot.py -f --flasher dfu")
@@ -101,7 +198,7 @@ def construct_test_cmd(args):
   return " && ".join(steps)
 
 
-def run_docker_container(args, ctx):
+def run_docker_container(args, ctx, repo_revisions=None):
   conn = http.client.HTTPSConnection(args.host, args.port, context=ctx)
 
   # Connect the satlab persistent storage to the container's working directory,
@@ -115,9 +212,9 @@ def run_docker_container(args, ctx):
       "/run/udev:/run/udev:ro",
   ]
 
-  shell_cmd = construct_test_cmd(args)
+  shell_cmd = construct_test_cmd(args, repo_revisions=repo_revisions)
   container_cmd = ["bash", "-c", shell_cmd]
-  if not args.skip_update:
+  if not args.skip_update and not repo_revisions:
     container_cmd.insert(0, "--update")
 
   payload = {
@@ -437,10 +534,17 @@ def main():
 
   exit_code = 0
   stats = {"passed": 0, "failed": 0, "skipped": 0, "total": 0}
+  manifest_commit = None
+  repo_revisions = {}
+
+  if not args.skip_update:
+    manifest_commit, repo_revisions = fetch_manifest_snapshot(
+        args.manifest_commit or MANIFEST_SNAPSHOT_REF)
 
   if ctx:
     start_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-    _cid, exit_code, twister_bytes = run_docker_container(args, ctx)
+    _cid, exit_code, twister_bytes = run_docker_container(
+        args, ctx, repo_revisions=repo_revisions)
     if twister_bytes:
       stats = report_results_to_resultdb(twister_bytes, start_time=start_time)
       if stats.get("failed", 0) > 0 and exit_code == 0:
@@ -449,6 +553,8 @@ def main():
     print("[!] Simulating test execution (no Docker TLS certs).")
     stats = {"passed": 1, "failed": 0, "skipped": 0, "total": 1}
 
+  if manifest_commit:
+    stats["manifest_commit"] = manifest_commit
   stats["exit_code"] = exit_code
 
   if args.output_json:
