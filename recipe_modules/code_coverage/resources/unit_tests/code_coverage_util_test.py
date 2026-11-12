@@ -3,7 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import csv
+"""Unit tests for code_coverage_util."""
+
 import json
 import os
 from pathlib import Path
@@ -41,22 +42,17 @@ class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
       self.path_mappings = json.load(constant_file)
 
   def testCleanFileName(self):
-    # expected tuples of (artifact, absolute_path, relative_path)
-    expectations = []
-    with open(
-        os.path.join(__THIS_DIR__, 'path_mapping_test_data.csv'), newline='',
-        encoding='utf-8') as f:
-      reader = csv.reader(f)
-      expectations = [(row[0], row[1], row[2]) for row in reader if len(row) > 0
-                     ]
-
-    # real tuples of (artifact, absolute_path, relative_path)
-    real_outputs = []
-    for row in expectations:
-      mapped = code_coverage_util.clean_file_name(row[0], self.path_mappings)
-      if mapped:
-        real_outputs.append((row[0], mapped[0], mapped[1]))
-    self.assertEqual(expectations, real_outputs)
+    samples = [
+        ('/mnt/host/source/src/platform/ec/zephyr/app/main.c',
+         'src/platform/ec/zephyr/app/main.c', 'zephyr/app/main.c'),
+        ('/mnt/host/source/src/third_party/zephyr/main/subsys/test.c',
+         'src/third_party/zephyr/main/subsys/test.c', 'subsys/test.c'),
+    ]
+    for artifact, expected_abs, expected_rel in samples:
+      with self.subTest(artifact=artifact):
+        mapped = code_coverage_util.clean_file_name(artifact,
+                                                    self.path_mappings)
+        self.assertEqual(mapped, (expected_abs, expected_rel))
 
 
 class CreateLlvmCoverageJsonTest(unittest.TestCase):
