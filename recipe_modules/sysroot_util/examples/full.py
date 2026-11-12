@@ -292,8 +292,20 @@ def GenTests(api):
                              builder_name='amd64-generic-snapshot-remoteexec')))
 
   yield api.test(
-      'with-siso', test_build(),
-      api.properties(**{'$chromeos/siso': SisoProperties(use_siso=True)}))
+      'with-siso',
+      test_build(),
+      api.properties(
+          **{
+              '$chromeos/siso':
+                  SisoProperties(
+                      use_siso=True,
+                      rbe_instance=(
+                          'projects/chromeos-bot/instances/cros-rbe-nonrelease'
+                      ),
+                      action_salt='25721e95-79db-4ce7-9cc1-d39d1f4ae660',
+                  ),
+          }),
+  )
 
   yield api.test(
       'failed-image-test',

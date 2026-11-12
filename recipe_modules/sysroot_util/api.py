@@ -252,7 +252,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
         siso_config = None
         if self.m.siso.use_siso:
-          siso_config = common_pb2.SisoConfig(use_siso=self.m.siso.use_siso)
+          siso_config = common_pb2.SisoConfig(
+              use_siso=self.m.siso.use_siso,
+              rbe_instance=self.m.siso.rbe_instance,
+              action_salt=self.m.siso.action_salt,
+          )
 
         return InstallPackagesRequest(
             chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
