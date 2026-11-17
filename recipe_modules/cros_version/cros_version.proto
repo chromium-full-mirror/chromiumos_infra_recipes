@@ -6,6 +6,14 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_version;
 
+enum VersionComponent {
+  UNSPECIFIED = 0;
+  MILESTONE = 1;
+  BUILD = 2;
+  BRANCH = 3;
+  PATCH = 4;
+}
+
 message CrosVersionProperties {
   // If true, will drop the "-{snapshot}" suffix from version.
   // TODO(crbug/1122854): Delete this once release builders can name
@@ -13,4 +21,8 @@ message CrosVersionProperties {
   bool remove_snapshot_from_version = 1;
 
   reserved 2 to 3;
+
+  // Component of the ChromeOS version to bump.
+  // If unspecified, use --bump_from_branch_name.
+  VersionComponent bump_component = 4;
 }

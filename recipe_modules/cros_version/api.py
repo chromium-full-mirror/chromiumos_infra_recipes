@@ -7,6 +7,7 @@
 import datetime
 import re
 
+from PB.recipe_modules.chromeos.cros_version.cros_version import VersionComponent
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.chromeos.cros_version.version import Version
 from RECIPE_MODULES.chromeos.gerrit.api import Label
@@ -35,10 +36,12 @@ class CrosVersionApi(RecipeApi):
   """A module for steps that manipulate CrOS versions."""
 
   Version = Version
+  VersionComponent = VersionComponent
 
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._remove_snapshot_from_version = properties.remove_snapshot_from_version
+    self._bump_component = properties.bump_component
     self._properties = properties
     self._version = None
 
@@ -130,7 +133,8 @@ class CrosVersionApi(RecipeApi):
       and pushes the change to the chromiumos-overlay repo.
 
       Which component is bumped depends on the branch the invoking recipe
-      is running for (main/tot --> build, release-* --> branch).
+      is running for (main/tot --> build, release-* --> branch), or
+      a specific component if _bump_component is set.
 
       Args:
         dry_run (bool): Whether the git push is --dry-run.
@@ -153,9 +157,20 @@ class CrosVersionApi(RecipeApi):
             'bump-version',
             '--chromiumos_overlay_repo',
             overlay_path,
-            '--bump_from_branch_name',
-            self.m.cros_source.manifest_push,
         ]
+        if self._bump_component == VersionComponent.UNSPECIFIED:
+          cmd.extend([
+              '--bump_from_branch_name',
+              self.m.cros_source.manifest_push,
+          ])
+        else:
+          component_flag = {
+              VersionComponent.MILESTONE: '--bump_milestone_component',
+              VersionComponent.BUILD: '--bump_build_component',
+              VersionComponent.BRANCH: '--bump_branch_component',
+              VersionComponent.PATCH: '--bump_patch_component',
+          }
+          cmd.append(component_flag[self._bump_component])
         self.m.gobin.call('version_bumper', cmd)
 
         # Update the version in output properties.

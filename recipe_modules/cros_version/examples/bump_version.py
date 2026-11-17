@@ -3,6 +3,8 @@
 # found in the LICENSE file.
 
 """Test that we can bump the version."""
+from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProperties
+from PB.recipe_modules.chromeos.cros_version.cros_version import VersionComponent
 from recipe_engine import post_process
 
 DEPS = [
@@ -77,3 +79,28 @@ def GenTests(api):
           'bump version.commit chromeos/config/chromeos_version.sh.reset to remote branch'
       ),
   )
+
+  for component_name, component in [
+      ('milestone', VersionComponent.MILESTONE),
+      ('build', VersionComponent.BUILD),
+      ('branch', VersionComponent.BRANCH),
+      ('patch', VersionComponent.PATCH),
+  ]:
+    yield api.test(
+        'bump-component-' + component_name,
+        api.properties(
+            **{
+                '$chromeos/cros_version':
+                    CrosVersionProperties(bump_component=component)
+            }),
+        api.post_check(
+            post_process.StepCommandContains,
+            'bump version.run version_bumper',
+            ['--bump_' + component_name + '_component'],
+        ),
+        api.post_check(
+            post_process.StepCommandDoesNotContain,
+            'bump version.run version_bumper',
+            ['--bump_from_branch_name'],
+        ),
+    )
