@@ -22,11 +22,13 @@ from PB.recipes.chromeos.keyset_manager import KeysetManagerProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi, TestData
+from RECIPE_MODULES.chromeos.signing.api import STAGING_KEYSET
 
 DEPS = [
     "recipe_engine/buildbucket",
     "recipe_engine/context",
     "recipe_engine/file",
+    "recipe_engine/led",
     "recipe_engine/path",
     "recipe_engine/properties",
     "recipe_engine/step",
@@ -93,8 +95,10 @@ def RunSteps(api: RecipeApi,
         single_branch=True,
     )
 
-  dry_run = properties.dry_run or api.build_menu.is_staging
+  is_staging_or_led = api.build_menu.is_staging or api.led.launched_by_led
+  dry_run = properties.dry_run or is_staging_or_led
   executed_op = None
+  target_keyset = "" if properties.update_all else properties.keyset
 
   if operation.HasField("kernel_version_bump"):
     executed_op = "KernelVersionBump"
@@ -111,7 +115,7 @@ def RunSteps(api: RecipeApi,
         cmd = ["vpython3", script_path] + script_args
         api.step("run increment_kernel_version.py", cmd)
   else:
-    with api.step.nest("keyset manager docker operations"):
+    with api.step.nest("keyset manager docker operations") as pres:
       api.step(
           "docker auth",
           [
@@ -131,11 +135,21 @@ def RunSteps(api: RecipeApi,
           ],
       )
 
+      if is_staging_or_led:
+        target_keyset = STAGING_KEYSET
+        pres.logs["override keyset"] = (
+            f"Now using: {STAGING_KEYSET} because this is a staging or led"
+            " build.")
+
+      # We force dry_run=False in the BAPI request to ensure the docker
+      # container persists changes so this builder can create a CL.
+      # This builder is then responsible for abandoning said CL in staging,
+      # led, or dry_run mode.
       request = KeysetManagerRequest(
-          dry_run=dry_run,
+          dry_run=False,
           release_keys_checkout=str(release_keys_path),
           bug=properties.bug,
-          keyset="" if properties.update_all else properties.keyset,
+          keyset=target_keyset,
       )
       request.docker_image = api.signing.signing_docker_image
       request.operations.append(operation)
@@ -150,7 +164,7 @@ def RunSteps(api: RecipeApi,
           raise StepFailure(
               f"Keyset operation {result.op_name} failed: {result.error_message}"
           )
-        if properties.keyset and result.modified_files:
+        if target_keyset and result.modified_files:
           regen_keyset = result.modified_files[0].split("/")[0]
 
       if response.status != KeysetManagerResponse.STATUS_SUCCESS:
@@ -172,8 +186,8 @@ def RunSteps(api: RecipeApi,
       )
 
     # 4. Commit changes
-    target_desc = (f"for {properties.keyset}"
-                   if properties.keyset else "for all boards")
+    target_desc = (f"for {target_keyset}"
+                   if target_keyset else "for all boards")
     subject = f"firmware: Update keysets ({executed_op}) {target_desc}"
 
     commit_lines = [
@@ -206,11 +220,11 @@ def RunSteps(api: RecipeApi,
     reviewers = [
         "croskeymanagers@google.com",
         "chromeos-automated-release-platform@google.com",
-    ] if not api.build_menu.is_staging else []
+    ] if not dry_run else []
     invoker = api.cros_try.get_invoker()
 
     change = api.gerrit.create_change(
-        str(release_keys_path),
+        "chromeos/platform/release-keys",
         project_path=release_keys_path,
         non_repo_checkout=True,
         reviewers=reviewers,
@@ -250,17 +264,20 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "git commit"),
       api.post_check(
           post_process.MustRun,
-          "create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload"
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload"
       ),
       api.post_check(
           post_process.StepCommandContains,
-          "create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload",
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload",
           [
               "--reviewers", "croskeymanagers@google.com", "--reviewers",
               "chromeos-automated-release-platform@google.com"
           ],
       ),
-      api.post_check(post_process.SummaryMarkdownRE, r"Created CL"),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Created CL https://chromium-review.googlesource.com/c/chromeos/platform/release-keys/+/1",
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -282,9 +299,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "git commit"),
       api.post_check(
           post_process.MustRun,
-          "create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload"
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload"
       ),
-      api.post_check(post_process.SummaryMarkdownRE, r"Created CL"),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Created CL https://chromium-review.googlesource.com/c/chromeos/platform/release-keys/+/1",
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -299,10 +319,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "git commit"),
       api.post_check(
           post_process.MustRun,
-          "create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload"
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload"
+      ),
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload",
+          ["--reviewers"],
       ),
       api.post_check(post_process.MustRun, "abandon CL 1"),
-      api.post_check(post_process.SummaryMarkdownRE, r"Abandoned dry run CL"),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Abandoned dry run CL https://chromium-review.googlesource.com/c/chromeos/platform/release-keys/+/1",
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -324,15 +352,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "git commit"),
       api.post_check(
           post_process.MustRun,
-          "create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload"
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload"
       ),
       api.post_check(
           post_process.StepCommandDoesNotContain,
-          "create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload",
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload",
           ["--reviewers"],
       ),
       api.post_check(post_process.MustRun, "abandon CL 1"),
-      api.post_check(post_process.SummaryMarkdownRE, r"Abandoned dry run CL"),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Abandoned dry run CL https://chromium-review.googlesource.com/c/chromeos/platform/release-keys/+/1",
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -484,6 +515,170 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepCommandContains,
           "keyset manager docker operations.regenerate_keysets.sh",
           ["./keyset/public/scripts/regenerate_keysets.sh", "--all"],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "operations-dry-run",
+      api.properties(
+          KeysetManagerProperties(
+              bug=12345,
+              keyset="BryaMPKeys",
+              dry_run=True,
+              operations=minios_bump_op,
+          )),
+      api.git.use_mock(True),
+      api.git.get_working_dir_diff_files(
+          "M keyset/public/definitions/brya.json\n"),
+      api.post_check(
+          post_process.LogContains,
+          "keyset manager docker operations.call chromite.api.SigningService/KeysetManager",
+          "request",
+          ['"keyset": "BryaMPKeys"'],
+      ),
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          "keyset manager docker operations.call chromite.api.SigningService/KeysetManager.write input file",
+          ["dry_run"],
+      ),
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload",
+          ["--reviewers"],
+      ),
+      api.post_check(post_process.MustRun, "abandon CL 1"),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Abandoned dry run CL https://chromium-review.googlesource.com/c/chromeos/platform/release-keys/+/1",
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "operations-staging",
+      api.properties(
+          KeysetManagerProperties(
+              bug=12345,
+              update_all=True,
+              operations=minios_bump_op,
+          )),
+      api.buildbucket.build(
+          build_pb2.Build(
+              builder=builder_common_pb2.BuilderID(
+                  project="chromeos",
+                  bucket="staging",
+                  builder="staging-keyset-manager",
+              ))),
+      api.cros_build_api.set_api_return(
+          "keyset manager docker operations",
+          "SigningService/KeysetManager",
+          data='{"status": 1, "results": [{"status": 1, "op_name": "MiniOsVersionBump", "modified_files": ["DevPreMPKeys/kernel_data_key.vbpubk", "DevPreMPKeys/kernel.keyblock"]}]}',
+      ),
+      api.git.use_mock(True),
+      api.git.get_working_dir_diff_files(
+          "M keyset/public/DevPreMPKeys/kernel.keyblock\n"),
+      api.post_check(
+          post_process.LogContains,
+          "keyset manager docker operations",
+          "override keyset",
+          [STAGING_KEYSET],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "keyset manager docker operations.call chromite.api.SigningService/KeysetManager",
+          "request",
+          [f'"keyset": "{STAGING_KEYSET}"'],
+      ),
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          "keyset manager docker operations.call chromite.api.SigningService/KeysetManager.write input file",
+          ["dry_run"],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "keyset manager docker operations.regenerate_keysets.sh",
+          [
+              "./keyset/public/scripts/regenerate_keysets.sh",
+              f"../{STAGING_KEYSET}",
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "write commit message",
+          [
+              f"firmware: Update keysets (MiniOsVersionBump) for {STAGING_KEYSET}\n\n"
+              "Generated by keyset_manager recipe.\n"
+              "See https://cr-buildbucket.appspot.com/build/0 for job details.\n\n"
+              "Operation executed: MiniOsVersionBump\n\n"
+              "This CL was created as part of a dry run build, it is not meant to be submitted.\n\n"
+              "BUG=b:12345\n"
+              "TEST=CQ\n"
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload",
+          ["--reviewers"],
+      ),
+      api.post_check(post_process.MustRun, "abandon CL 1"),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Abandoned dry run CL https://chromium-review.googlesource.com/c/chromeos/platform/release-keys/+/1",
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "operations-led",
+      api.properties(
+          KeysetManagerProperties(
+              bug=12345,
+              keyset="BryaMPKeys",
+              operations=minios_bump_op,
+          )),
+      api.properties(**{
+          "$recipe_engine/led": {
+              "shadowed_bucket": "release",
+          },
+      }),
+      api.cros_build_api.set_api_return(
+          "keyset manager docker operations",
+          "SigningService/KeysetManager",
+          data='{"status": 1, "results": [{"status": 1, "op_name": "MiniOsVersionBump", "modified_files": ["DevPreMPKeys/kernel_data_key.vbpubk", "DevPreMPKeys/kernel.keyblock"]}]}',
+      ),
+      api.git.use_mock(True),
+      api.git.get_working_dir_diff_files(
+          "M keyset/public/DevPreMPKeys/kernel.keyblock\n"),
+      api.post_check(
+          post_process.LogContains,
+          "keyset manager docker operations",
+          "override keyset",
+          [STAGING_KEYSET],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "keyset manager docker operations.call chromite.api.SigningService/KeysetManager",
+          "request",
+          [f'"keyset": "{STAGING_KEYSET}"'],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "keyset manager docker operations.regenerate_keysets.sh",
+          [
+              "./keyset/public/scripts/regenerate_keysets.sh",
+              f"../{STAGING_KEYSET}",
+          ],
+      ),
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          "create gerrit change for chromeos/platform/release-keys.git_cl upload",
+          ["--reviewers"],
+      ),
+      api.post_check(post_process.MustRun, "abandon CL 1"),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Abandoned dry run CL https://chromium-review.googlesource.com/c/chromeos/platform/release-keys/+/1",
       ),
       api.post_process(post_process.DropExpectation),
   )
