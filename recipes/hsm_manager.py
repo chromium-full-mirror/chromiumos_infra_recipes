@@ -5,6 +5,7 @@
 """Recipe for performing various operations against the online HSMs."""
 
 from PB.chromite.api.signing import CreateKeysHsmRequest
+from PB.chromite.api.signing import FinalizeKeysHsmRequest
 from PB.recipes.chromeos.hsm_manager import HSMManagerProperties
 from PB.go.chromium.org.luci.buildbucket.proto import (
     builder_common as builder_common_pb2,)
@@ -42,8 +43,12 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
   if not properties.bug:
     raise StepFailure("`bug` is a required property.")
 
-  if not properties.HasField("create_keys_hsm_request"):
-    raise StepFailure("`create_keys_hsm_request` is a required property.")
+  has_create = properties.HasField("create_keys_hsm_request")
+  has_finalize = properties.HasField("finalize_keys_hsm_request")
+  if has_create == has_finalize:
+    raise StepFailure(
+        "Properties must include either `create_keys_hsm_request` or "
+        "`finalize_keys_hsm_request`.")
 
   with api.step.nest("set up dependencies"):
     api.git.clone(
@@ -69,7 +74,9 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
         single_branch=True,
     )
 
-  return create_hsm_keys(api, properties, release_keys_path)
+  if has_create:
+    return create_hsm_keys(api, properties, release_keys_path)
+  return finalize_hsm_keys(api, properties, release_keys_path)
 
 
 def create_hsm_keys(api: RecipeApi, properties: HSMManagerProperties,
@@ -194,7 +201,92 @@ def create_hsm_keys(api: RecipeApi, properties: HSMManagerProperties,
     )
 
 
+def finalize_hsm_keys(api: RecipeApi, properties: HSMManagerProperties,
+                      release_keys_path):
+  with api.step.nest("finalize HSM keys"):
+    if not properties.quorum_build_id:
+      raise StepFailure("`quorum_build_id` is a required property.")
+
+    quorum_build = api.buildbucket.get(
+        properties.quorum_build_id,
+        step_name="get quorum build",
+    )
+    docker_image = api.keyset_utils.get_docker_image(quorum_build)
+
+    api.step(
+        "docker auth",
+        [
+            "gcloud",
+            "auth",
+            "configure-docker",
+            "us-docker.pkg.dev",
+        ],
+    )
+    api.step(
+        "docker pull",
+        [
+            "docker",
+            "pull",
+            docker_image,
+        ],
+    )
+
+    is_staging = api.build_menu.is_staging
+    work_dir = api.path.mkdtemp(prefix="hsm_finalize_work_")
+    finalize_request = api.keyset_utils.finalize_hsm_request(
+        properties.finalize_keys_hsm_request,
+        release_keys_path,
+        docker_image,
+        is_staging,
+        work_dir=work_dir,
+    )
+
+    inbox_bucket, inbox_path = api.keyset_utils.get_quorum_inbox(
+        quorum_build,
+        finalize_request.keyset_name,
+        properties.quorum_inbox_bucket,
+    )
+    outbox_bucket, outbox_path = api.keyset_utils.get_quorum_outbox(
+        quorum_build,
+        finalize_request.keyset_name,
+        properties.quorum_inbox_bucket,
+    )
+    inbox_artifacts, outbox_artifacts = (
+        api.keyset_utils.download_quorum_artifacts(
+            work_dir=work_dir,
+            quorum_build=quorum_build,
+            keyset_name=finalize_request.keyset_name,
+            quorum_inbox_bucket=properties.quorum_inbox_bucket,
+        ))
+
+    api.cros_build_api.SigningService.FinalizeKeysHsm(finalize_request)
+
+    summary_lines = [
+        f"Keyset finalized: {finalize_request.keyset_name}",
+        "",
+        f"- Quorum inbox (`gs://{inbox_bucket}/{inbox_path}/`): "
+        f"{len(inbox_artifacts)} artifact(s)",
+        f"- Quorum outbox (`gs://{outbox_bucket}/{outbox_path}/`): "
+        f"{len(outbox_artifacts)} artifact(s)",
+    ]
+    return result_pb2.RawResult(
+        status=common_pb2.SUCCESS,
+        summary_markdown="\n".join(summary_lines),
+    )
+
+
 def GenTests(api: RecipeTestApi):
+  quorum_build = build_pb2.Build(
+      id=87654321,
+      status=common_pb2.SUCCESS,
+      output=build_pb2.Build.Output(
+          properties=api.buildbucket.dict_to_struct({
+              "signing_docker_image":
+                  "us-docker.pkg.dev/chromeos-release-bot/signing/"
+                  "signing:quorum-123",
+          })),
+  )
+
   yield api.test(
       "hsm-create-keys",
       api.properties(
@@ -297,8 +389,11 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           HSMManagerProperties(bug=123),
       ),
-      api.post_check(post_process.SummaryMarkdown,
-                     "`create_keys_hsm_request` is a required property."),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "Properties must include either `create_keys_hsm_request` or "
+          "`finalize_keys_hsm_request`.",
+      ),
       api.post_process(post_process.DropExpectation),
       status="FAILURE",
   )
@@ -331,6 +426,113 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.SummaryMarkdownRE,
           r".*Keyset `AtlasMPKeys-v2` already exists.*",
+      ),
+      api.post_process(post_process.DropExpectation),
+      status="FAILURE",
+  )
+
+  yield api.test(
+      "hsm-finalize-keys",
+      api.properties(
+          HSMManagerProperties(
+              finalize_keys_hsm_request=FinalizeKeysHsmRequest(
+                  keyset_name="FooPreMPKeys"),
+              bug=12345,
+              quorum_build_id=87654321,
+              quorum_inbox_bucket="test-quorum-bucket",
+          )),
+      api.buildbucket.simulated_get(
+          quorum_build,
+          step_name="finalize HSM keys.get quorum build",
+      ),
+      api.step_data(
+          "finalize HSM keys.download quorum artifacts."
+          "list quorum inbox artifacts",
+          api.file.listdir(["inbox1", "inbox2"]),
+      ),
+      api.step_data(
+          "finalize HSM keys.download quorum artifacts."
+          "list quorum outbox artifacts",
+          api.file.listdir(["out/box"]),
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          "finalize HSM keys.docker pull",
+          [
+              "docker",
+              "pull",
+              "us-docker.pkg.dev/chromeos-release-bot/signing/"
+              "signing:quorum-123",
+          ],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "finalize HSM keys.call chromite.api.SigningService/FinalizeKeysHsm",
+          "request",
+          [
+              "us-docker.pkg.dev/chromeos-release-bot/signing/"
+              "signing:quorum-123"
+          ],
+      ),
+      api.post_check(
+          post_process.SummaryMarkdownRE,
+          r"(?s)Keyset finalized: FooPreMPKeys.*2 artifact\(s\).*1 artifact\(s\)",
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "hsm-finalize-keys-fallback-docker-image",
+      api.properties(
+          HSMManagerProperties(
+              finalize_keys_hsm_request=FinalizeKeysHsmRequest(
+                  keyset_name="FooPreMPKeys", dry_run=True),
+              bug=12345,
+              quorum_build_id=87654321,
+          )),
+      api.buildbucket.simulated_get(
+          build_pb2.Build(
+              id=87654321,
+              status=common_pb2.SUCCESS,
+              output=build_pb2.Build.Output(
+                  properties=api.buildbucket.dict_to_struct({
+                      "quorum_inbox_uri":
+                          "gs://test-quorum-bucket/quorum_inbox/"
+                          "FooPreMPKeys/87654321",
+                  })),
+          ),
+          step_name="finalize HSM keys.get quorum build",
+      ),
+      api.post_check(
+          post_process.StepWarning,
+          "finalize HSM keys.get quorum build",
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "finalize HSM keys.get quorum build",
+          "warning",
+          ["falling back to"],
+      ),
+      api.post_check(
+          post_process.LogContains,
+          "finalize HSM keys.call chromite.api.SigningService/FinalizeKeysHsm",
+          "request",
+          ["us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:"],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      "hsm-finalize-missing-quorum-build-id",
+      api.properties(
+          HSMManagerProperties(
+              finalize_keys_hsm_request=FinalizeKeysHsmRequest(
+                  keyset_name="FooPreMPKeys"),
+              bug=12345,
+          )),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "`quorum_build_id` is a required property.",
       ),
       api.post_process(post_process.DropExpectation),
       status="FAILURE",

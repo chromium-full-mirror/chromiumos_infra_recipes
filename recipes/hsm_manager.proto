@@ -23,4 +23,9 @@ message HSMManagerProperties {
 
   // GCS bucket to upload staged quorum ceremony artifacts.
   string quorum_inbox_bucket = 6;
+
+  chromite.api.FinalizeKeysHsmRequest finalize_keys_hsm_request = 7;
+
+  // Buildbucket build ID which prepared the artifacts for quorum.
+  int64 quorum_build_id = 8;
 }
