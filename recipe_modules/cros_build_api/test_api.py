@@ -809,6 +809,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['SignTi50Paos'] = '{}'
     responses['SignViaOnlineHsm'] = '{}'
     responses['CreateKeysHsm'] = '{}'
+    responses['FinalizeKeysHsm'] = '{}'
     responses['KeysetManager'] = jsonify(
         status=1,
         results=[{

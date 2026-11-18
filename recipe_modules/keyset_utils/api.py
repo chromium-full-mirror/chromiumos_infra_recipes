@@ -74,6 +74,50 @@ class KeysetUtilsApi(recipe_api.RecipeApi):
       pres.logs["keyset_name"] = str(request.keyset_name)
     return request, None
 
+  def finalize_hsm_request(
+      self,
+      request: signing.FinalizeKeysHsmRequest,
+      release_keys_path: str,
+      docker_image: str,
+      is_staging: bool,
+      work_dir: recipe_api.Path | str,
+  ) -> signing.FinalizeKeysHsmRequest:
+    """Prepares a FinalizeKeysHsmRequest for SigningService.
+
+    Sets mandatory runtime fields (docker_image, release_keys_checkout,
+    work_dir, dry_run) and validates keyset_name.
+
+    Args:
+      request: FinalizeKeysHsmRequest properties passed from build input.
+      release_keys_path: Path to the local release-keys repository checkout.
+      docker_image: Docker image name and tag for signing operations.
+      is_staging: True if running in a staging build environment.
+      work_dir: Working directory path holding inbox/ and outbox/ artifacts.
+
+    Returns:
+      Configured FinalizeKeysHsmRequest message.
+    """
+    if not request.keyset_name:
+      raise StepFailure(
+          "`keyset_name` (in `finalize_keys_hsm_request`) must be specified.")
+
+    keyset_dir = self.m.path.join(release_keys_path, "keyset/public",
+                                  request.keyset_name)
+    if self.m.path.exists(keyset_dir):
+      raise StepFailure(f"Keyset `{request.keyset_name}` already exists in "
+                        "`release-keys/keyset/public`.")
+
+    request.docker_image = docker_image
+    request.release_keys_checkout = str(release_keys_path)
+    request.work_dir = str(work_dir)
+    # Default to dry run in staging.
+    if not request.HasField("dry_run"):
+      request.dry_run = is_staging
+
+    with self.m.step.nest("requested keyset") as pres:
+      pres.logs["keyset_name"] = str(request.keyset_name)
+    return request
+
   def calc_keyset_version(
       self,
       request: signing.CreateKeysHsmRequest,
