@@ -69,7 +69,13 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
         single_branch=True,
     )
 
+  return create_hsm_keys(api, properties, release_keys_path)
+
+
+def create_hsm_keys(api: RecipeApi, properties: HSMManagerProperties,
+                    release_keys_path):
   with api.step.nest("create HSM keys"):
+    docker_image = api.signing.signing_docker_image
     api.step(
         "docker auth",
         [
@@ -84,16 +90,17 @@ def RunSteps(api: RecipeApi, properties: HSMManagerProperties):
         [
             "docker",
             "pull",
-            api.signing.signing_docker_image,
+            docker_image,
         ],
     )
+    api.easy.set_properties_step(signing_docker_image=docker_image)
 
     is_staging = api.build_menu.is_staging
     work_dir = api.path.mkdtemp(prefix="hsm_keygen_work_")
     create_keys_hsm_request, error_msg = api.keyset_utils.create_hsm_request(
         properties.create_keys_hsm_request,
         release_keys_path,
-        api.signing.signing_docker_image,
+        docker_image,
         is_staging,
         build_target=properties.build_target,
         is_mp=properties.is_mp if properties.HasField("is_mp") else None,
@@ -194,6 +201,11 @@ def GenTests(api: RecipeTestApi):
           HSMManagerProperties(
               create_keys_hsm_request=CreateKeysHsmRequest(
                   keyset_name="FooPreMPKeys"), bug=12345)),
+      api.post_check(
+          post_process.PropertyEquals,
+          "signing_docker_image",
+          "us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:",
+      ),
       api.post_check(
           post_process.MustRun,
           "create HSM keys.call chromite.api.SigningService/CreateKeysHsm"),

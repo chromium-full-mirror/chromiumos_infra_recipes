@@ -5,8 +5,10 @@
 """Module providing helpers for keyset creation and operations."""
 
 DEPS = [
+    "depot_tools/gsutil",
     "recipe_engine/file",
     "recipe_engine/path",
     "recipe_engine/step",
     "easy",
+    "signing",
 ]

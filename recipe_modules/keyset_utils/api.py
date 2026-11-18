@@ -7,6 +7,7 @@
 import re
 from typing import Any
 from PB.chromite.api import signing
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
@@ -295,3 +296,115 @@ class KeysetUtilsApi(recipe_api.RecipeApi):
           body=body,
           inbox_uri=inbox_uri,
       )
+
+  def get_docker_image(self, build: build_pb2.Build) -> str:
+    """Returns docker_image from the build, falling back to latest."""
+    out_props = build.output.properties
+    docker_image = (
+        out_props["signing_docker_image"]
+        if "signing_docker_image" in out_props else "")
+    if not docker_image:
+      docker_image = self.m.signing.signing_docker_image
+      pres = self.m.step.active_result.presentation
+      pres.status = self.m.step.WARNING
+      pres.logs["warning"] = (
+          f"Build {build.id} has no `signing_docker_image` output "
+          f"property; falling back to `{docker_image}`.")
+    return docker_image
+
+  def _resolve_quorum_bucket(
+      self,
+      quorum_build: build_pb2.Build,
+      quorum_inbox_bucket: str = "",
+  ) -> str:
+    """Validates quorum_build.id and resolves the GCS quorum bucket."""
+    if not quorum_build.id:
+      raise StepFailure(
+          "Quorum artifact download failed: `quorum_build_id` is required.")
+    bucket = quorum_inbox_bucket
+    out_props = quorum_build.output.properties
+    if not bucket and "quorum_inbox_uri" in out_props:
+      bucket = out_props["quorum_inbox_uri"].removeprefix("gs://").split(
+          "/", 1)[0]
+    if not bucket:
+      raise StepFailure(
+          "Quorum artifact download failed: quorum bucket is required.")
+    return bucket
+
+  def get_quorum_inbox(
+      self,
+      quorum_build: build_pb2.Build,
+      keyset_name: str,
+      quorum_inbox_bucket: str = "",
+  ) -> tuple[str, str]:
+    """Returns (bucket, inbox_path) for Stage 1 quorum inbox artifacts."""
+    bucket = self._resolve_quorum_bucket(quorum_build, quorum_inbox_bucket)
+    return bucket, f"quorum_inbox/{keyset_name}/{quorum_build.id}"
+
+  def get_quorum_outbox(
+      self,
+      quorum_build: build_pb2.Build,
+      keyset_name: str,
+      quorum_inbox_bucket: str = "",
+  ) -> tuple[str, str]:
+    """Returns (bucket, outbox_path) for Stage 2 quorum outbox artifacts."""
+    bucket = self._resolve_quorum_bucket(quorum_build, quorum_inbox_bucket)
+    return bucket, f"quorum_outbox/{keyset_name}/{quorum_build.id}"
+
+  def download_quorum_artifacts(
+      self,
+      work_dir: recipe_api.Path,
+      quorum_build: build_pb2.Build,
+      keyset_name: str,
+      quorum_inbox_bucket: str = "",
+  ) -> tuple[list[str], list[str]]:
+    """Downloads quorum inbox and outbox artifacts from GCS into work_dir."""
+    with self.m.step.nest("download quorum artifacts") as pres:
+      inbox_bucket, inbox_path = self.get_quorum_inbox(quorum_build,
+                                                       keyset_name,
+                                                       quorum_inbox_bucket)
+      outbox_bucket, outbox_path = self.get_quorum_outbox(
+          quorum_build, keyset_name, quorum_inbox_bucket)
+
+      inbox_dir = work_dir / "inbox"
+      outbox_dir = work_dir / "outbox"
+      self.m.file.ensure_directory("ensure local quorum inbox dir", inbox_dir)
+      self.m.file.ensure_directory("ensure local quorum outbox dir", outbox_dir)
+
+      self.m.gsutil.download(
+          bucket=inbox_bucket,
+          source=f"{inbox_path}/*",
+          dest=inbox_dir,
+          args=["-r"],
+          name="download quorum inbox",
+      )
+      self.m.gsutil.download(
+          bucket=outbox_bucket,
+          source=f"{outbox_path}/*",
+          dest=outbox_dir,
+          args=["-r"],
+          name="download quorum outbox",
+      )
+
+      inbox_paths = self.m.file.listdir(
+          "list quorum inbox artifacts",
+          inbox_dir,
+          recursive=True,
+      )
+      outbox_paths = self.m.file.listdir(
+          "list quorum outbox artifacts",
+          outbox_dir,
+          recursive=True,
+      )
+      inbox_artifacts = sorted(
+          self.m.path.relpath(p, inbox_dir) for p in inbox_paths)
+      outbox_artifacts = sorted(
+          self.m.path.relpath(p, outbox_dir) for p in outbox_paths)
+
+      pres.logs["inbox_uri"] = f"gs://{inbox_bucket}/{inbox_path}/"
+      pres.logs["outbox_uri"] = f"gs://{outbox_bucket}/{outbox_path}/"
+      pres.logs["inbox_artifacts"] = inbox_artifacts
+      pres.logs["outbox_artifacts"] = outbox_artifacts
+      pres.step_text = (f"downloaded {len(inbox_artifacts)} inbox and "
+                        f"{len(outbox_artifacts)} outbox artifact(s)")
+      return inbox_artifacts, outbox_artifacts
