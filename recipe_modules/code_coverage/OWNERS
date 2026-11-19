@@ -1,0 +1,4 @@
+# Firmware LCOV coverage (upload_firmware_lcov) is used by the EC/Zephyr and
+# Google Security Chip firmware builders.
+include chromiumos/owners:v1:/firmware/OWNERS.cros_ec
+include chromiumos/owners:v1:/firmware/OWNERS.cros_gsc
