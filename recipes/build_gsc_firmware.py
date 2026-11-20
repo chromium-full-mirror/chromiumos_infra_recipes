@@ -177,7 +177,8 @@ def RunSteps(api, properties):
       uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
           config=config, report_to_spike=api.cros_infra_config.config.artifacts
           .attestation_eligible, use_file_paths=True,
-          build_targets=firmware_targets)
+          build_targets=firmware_targets,
+          upload_coverage=properties.code_coverage)
 
       with api.failures.ignore_exceptions():
         if api.cros_infra_config.config.artifacts.attestation_eligible:
@@ -505,6 +506,50 @@ def GenTests(api):
   }
 }'''
 
+  TI50_COV_ARTIFACTS = '''{
+  "artifacts": {
+    "artifacts": [
+      {
+        "artifactType": 33,
+        "location": 3,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/coverage.tbz2"
+          }
+        ]
+      }
+    ]
+  }
+}'''
+
+  ti50_cov_configs = json_format.ParseDict(
+      {
+          'builderConfigs': [{
+              'artifacts': {
+                  'artifactsGsBucket': 'chromeos-image-archive',
+                  'artifactsInfo': {
+                      'firmware': {
+                          'outputArtifacts': [{
+                              'artifactTypes': ['FIRMWARE_LCOV'],
+                          }],
+                      },
+                  },
+              },
+              'build': {
+                  'applyGerritChanges': True,
+              },
+              'general': {
+                  'firmwareLocation': 'PLATFORM_TI50',
+              },
+              'id': {
+                  'bucket': 'cq',
+                  'name': 'firmware-ti50-cov-cq',
+                  'type': 'CQ',
+              },
+          }],
+      }, BuilderConfigs())
+
   ti50_branch_configs = json_format.ParseDict(
       {
           'builderConfigs': [{
@@ -636,6 +681,36 @@ def GenTests(api):
           'firmware_location': 3,
           'chromiumos_sdk_pin_file': sdk_pin_path,
       })
+
+  yield test(
+      'firmware-ti50-cov-cq',
+      api.cros_infra_config.override_builder_configs_test_data(
+          ti50_cov_configs, step_name='checking attestation eligibility'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          TI50_COV_ARTIFACTS),
+      api.post_check(
+          post_process.MustRun,
+          'upload artifacts.upload code coverage data (firmware lcov).'
+          'upload incremental coverage to gerrit.'
+          'upload cleaned.file for 123456 (ps #7)',
+      ),
+      api.post_process(
+          post_process.Filter().include_re(
+              r'^upload artifacts\.upload code coverage data'
+              r' \(firmware lcov\)(\..*)?$'),
+      ),
+      cq=True,
+      builder='firmware-ti50-cov-cq',
+      input_properties={
+          '$chromeos/code_coverage': {
+              'coverage_env': 'prod',
+              'cq_builder': True,
+          },
+          'code_coverage': True,
+          'firmware_location': common_pb2.PLATFORM_TI50,
+      },
+  )
 
   yield test(
       'firmware-ti50-postsubmit',

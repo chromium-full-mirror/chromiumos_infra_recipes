@@ -58,5 +58,45 @@
     "path_pattern": ".*/coreboot/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
     "absolute_path": "src/third_party/coreboot",
     "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/ti50/ports/tpm2_server/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/platform/ti50/ports/tpm2_server",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/ti50/common/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/platform/ti50/common",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/platform/pinweaver/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/platform/pinweaver",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/platform/gsc-utils/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/platform/gsc-utils",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/tock/libtock-rs/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/third_party/tock/libtock-rs",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/tock/libtock-c/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/third_party/tock/libtock-c",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/tock/tock/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/third_party/tock/tock",
+    "relative_path": ""
+  },
+  {
+    "path_pattern": ".*/third_party/ms-tpm/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "absolute_path": "src/third_party/ms-tpm-20-ref",
+    "relative_path": ""
   }
 ]
