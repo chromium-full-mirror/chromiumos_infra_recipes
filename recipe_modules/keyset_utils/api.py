@@ -8,6 +8,7 @@ import re
 from typing import Any
 from PB.chromite.api import signing
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
@@ -312,43 +313,79 @@ class KeysetUtilsApi(recipe_api.RecipeApi):
           f"property; falling back to `{docker_image}`.")
     return docker_image
 
-  def _resolve_quorum_bucket(
+  def _resolve_quorum_bucket(self, quorum_build: build_pb2.Build) -> str:
+    """Returns the GCS quorum bucket from the pre-quorum build."""
+    in_props = quorum_build.input.properties
+    inbox_bucket = (
+        str(in_props["quorum_inbox_bucket"])
+        if "quorum_inbox_bucket" in in_props else "")
+    if not inbox_bucket:
+      raise StepFailure(f"Pre-quorum build {quorum_build.id} is missing "
+                        "`quorum_inbox_bucket` input property.")
+    return inbox_bucket
+
+  def validate_quorum_build(
       self,
       quorum_build: build_pb2.Build,
+      is_staging: bool = False,
       quorum_inbox_bucket: str = "",
-  ) -> str:
-    """Validates quorum_build.id and resolves the GCS quorum bucket."""
-    if not quorum_build.id:
-      raise StepFailure(
-          "Quorum artifact download failed: `quorum_build_id` is required.")
-    bucket = quorum_inbox_bucket
-    out_props = quorum_build.output.properties
-    if not bucket and "quorum_inbox_uri" in out_props:
-      bucket = out_props["quorum_inbox_uri"].removeprefix("gs://").split(
-          "/", 1)[0]
-    if not bucket:
-      raise StepFailure(
-          "Quorum artifact download failed: quorum bucket is required.")
-    return bucket
+  ) -> None:
+    """Validates pre-quorum build status and bucket.
+
+    In prod, mismatches for build of GSC bucket raise StepFailure. In staging, emit a warning.
+    """
+    current_bucket = self.m.buildbucket.build.builder.bucket
+    with self.m.step.nest("validate quorum build") as pres:
+      if not quorum_build.id:
+        raise StepFailure(
+            "Quorum build validation failed: `quorum_build_id` is required.")
+      if quorum_build.status != common_pb2.SUCCESS:
+        status_name = common_pb2.Status.Name(quorum_build.status)
+        raise StepFailure(
+            f"Pre-quorum build {quorum_build.id} has status {status_name}; "
+            "expected SUCCESS.")
+
+      quorum_bucket = quorum_build.builder.bucket
+      gcs_bucket = self._resolve_quorum_bucket(quorum_build)
+      pres.logs["current_bucket"] = current_bucket
+      pres.logs["quorum_bucket"] = quorum_bucket
+      pres.logs["gcs_bucket"] = gcs_bucket
+
+      mismatches = []
+      if not current_bucket or quorum_bucket != current_bucket:
+        mismatches.append(f"Pre-quorum build {quorum_build.id} is from bucket "
+                          f"`{quorum_bucket}`, expected `{current_bucket}`.")
+      if quorum_inbox_bucket and quorum_inbox_bucket != gcs_bucket:
+        mismatches.append(
+            f"Quorum bucket `{quorum_inbox_bucket}` does not match "
+            f"pre-quorum build bucket `{gcs_bucket}`.")
+
+      if mismatches:
+        msg = "\n".join(mismatches)
+        if not is_staging:
+          raise StepFailure(msg)
+        pres.status = self.m.step.WARNING
+        pres.logs["warning"] = msg
+        pres.step_text = "bucket mismatch warning"
+      else:
+        pres.step_text = f"validated bucket `{quorum_bucket}`"
 
   def get_quorum_inbox(
       self,
       quorum_build: build_pb2.Build,
       keyset_name: str,
-      quorum_inbox_bucket: str = "",
   ) -> tuple[str, str]:
     """Returns (bucket, inbox_path) for Stage 1 quorum inbox artifacts."""
-    bucket = self._resolve_quorum_bucket(quorum_build, quorum_inbox_bucket)
+    bucket = self._resolve_quorum_bucket(quorum_build)
     return bucket, f"quorum_inbox/{keyset_name}/{quorum_build.id}"
 
   def get_quorum_outbox(
       self,
       quorum_build: build_pb2.Build,
       keyset_name: str,
-      quorum_inbox_bucket: str = "",
   ) -> tuple[str, str]:
     """Returns (bucket, outbox_path) for Stage 2 quorum outbox artifacts."""
-    bucket = self._resolve_quorum_bucket(quorum_build, quorum_inbox_bucket)
+    bucket = self._resolve_quorum_bucket(quorum_build)
     return bucket, f"quorum_outbox/{keyset_name}/{quorum_build.id}"
 
   def download_quorum_artifacts(
@@ -356,15 +393,13 @@ class KeysetUtilsApi(recipe_api.RecipeApi):
       work_dir: recipe_api.Path,
       quorum_build: build_pb2.Build,
       keyset_name: str,
-      quorum_inbox_bucket: str = "",
   ) -> tuple[list[str], list[str]]:
     """Downloads quorum inbox and outbox artifacts from GCS into work_dir."""
     with self.m.step.nest("download quorum artifacts") as pres:
       inbox_bucket, inbox_path = self.get_quorum_inbox(quorum_build,
-                                                       keyset_name,
-                                                       quorum_inbox_bucket)
+                                                       keyset_name)
       outbox_bucket, outbox_path = self.get_quorum_outbox(
-          quorum_build, keyset_name, quorum_inbox_bucket)
+          quorum_build, keyset_name)
 
       inbox_dir = work_dir / "inbox"
       outbox_dir = work_dir / "outbox"
