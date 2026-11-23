@@ -33,17 +33,17 @@ def RunSteps(api, properties):
       api.gcloud.setup_cache_disk(cache_name='chromiumos', disk_size='600GB',
                                   disallow_previously_mounted=True)
   regexp_prefix = r'chromiumos' if properties.chromiumos_bot_prefix else r'chromeos'
+  expected_zone = properties.expected_zone or 'us-central1-b'
 
   # Multiple disks
   mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos',
                                            disk_size='600GB')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
-  api.assertions.assertEqual(api.gcloud.host_zone, 'us-central1-b')
+  api.assertions.assertEqual(api.gcloud.host_zone, expected_zone)
   api.assertions.assertEqual(api.gcloud.disk_short_name, 'cros')
   if api.build_menu.is_staging:
     api.assertions.assertRegexpMatches(
-        api.gcloud.gce_disk,
-        regexp_prefix + r'-\w*-\w*-us-central1-b-x16-0-\w*-cros')
+        api.gcloud.gce_disk, regexp_prefix + r'-\w*-\w*-[\w-]*x16-0-\w*-cros')
     api.assertions.assertEqual(
         api.gcloud.snapshot_version_file,
         'staging-chromiumos-main-cache-snapshot-version.txt')
@@ -58,8 +58,7 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(api.gcloud.branch, 'release-r90-13816-b')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
   api.assertions.assertRegexpMatches(
-      api.gcloud.gce_disk,
-      regexp_prefix + r'-\w*-\w*-us-central1-b-x16-0-.*-crosr90')
+      api.gcloud.gce_disk, regexp_prefix + r'-\w*-\w*-[\w-]*x16-0-.*-crosr90')
   api.gcloud.unmount_disk(name='cros-r90', mount_path=mount_path)
   api.gcloud.setup_cache_disk(cache_name='chromiumos',
                               branch='release-R90-13816.B', recipe_mount=True)
@@ -68,8 +67,8 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(api.gcloud.branch, 'stabilize-rust-13836-b')
   api.assertions.assertRegexpMatches(
       api.gcloud.gce_disk,
-      regexp_prefix + r'-\w*-\w*-us-central1-b-x16-0-.*-crosstabilize')
-  api.gcloud.delete_disk(disk=api.gcloud.gce_disk, zone='us-central1-b')
+      regexp_prefix + r'-\w*-\w*-[\w-]*x16-0-.*-crosstabilize')
+  api.gcloud.delete_disk(disk=api.gcloud.gce_disk, zone=expected_zone)
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
   api.gcloud.setup_cache_disk(cache_name='chromiumos', branch='main',
                               recipe_mount=True)
@@ -400,4 +399,66 @@ def GenTests(api):
       ),
       api.post_process(post_process.DropExpectation),
       status='SUCCESS',
+  )
+
+  zone_build = api.buildbucket.ci_build_message()
+  zone_build.infra.swarming.bot_dimensions.extend([
+      common_pb2.StringPair(key='zone', value='us'),
+      common_pb2.StringPair(key='zone', value='us-central'),
+      common_pb2.StringPair(key='zone', value='us-central1'),
+      common_pb2.StringPair(key='zone', value='us-central1-c'),
+  ])
+  yield api.test(
+      'zone-overrides-hostname-zone',
+      api.buildbucket.build(zone_build),
+      api.properties(expected_zone='us-central1-c'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-a-x16-0-nvcj'),
+      api.step_data((
+          'source cache.setup source cache disk.create disk from snapshot image'
+          '.check whether disk exists: '
+          'chromeos-ci-infra-us-central1-a-x16-0-nvcj-cros'), retcode=404),
+      api.step_data(
+          'source cache.check GCE attached disks',
+          stdout=api.json.output({'disks': []}),
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.setup source cache disk.create disk from snapshot image'
+          '.create disk from image',
+          ['--zone=us-central1-c'],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.attach disk',
+          ['--zone=us-central1-c'],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.set disk to autodelete',
+          ['--zone=us-central1-c'],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.resize GCE disk',
+          ['--zone=us-central1-c'],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'zoneless-host-uses-swarming-zone',
+      api.buildbucket.build(zone_build),
+      api.properties(expected_zone='us-central1-c'),
+      api.gcloud.infra_host('chromeos-ci-infra-x16-0-nvcj'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.set disk to autodelete',
+          ['--zone=us-central1-c'],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.resize GCE disk',
+          ['--zone=us-central1-c'],
+      ),
+      api.post_process(post_process.DropExpectation),
   )

@@ -27,6 +27,9 @@ _SWARMING_HOST_REGEXP = (r'^(chromeos|chromiumos)-'
                          r'(?P<role>\w*)-'
                          r'(?P<zone>\w*-\w*-\w*)-'
                          r'(?P<suffix>.*)')
+# Swarming may use partial or non-GCP values for zone. Match only full GCP
+# zones like 'us-central1-b'.
+_GCP_ZONE_REGEXP = re.compile(r'^[a-z]+-[a-z]+\d+-[a-z0-9]+$')
 
 _DEFAULT_TEST_BOT_ID = 'chromeos-ci-infra-us-central1-b-x16-0-nvcj'
 
@@ -975,8 +978,23 @@ class GcloudApi(recipe_api.RecipeApi):
       return 'hyperdisk-balanced'
     return 'pd-ssd'
 
+  def _get_swarming_zone(self) -> str:
+    """Read GCP zone dimension from Swarming / Buildbucket if found."""
+    bot_dims = getattr(self.m.buildbucket, 'swarming_bot_dimensions',
+                       None) or []
+
+    for dimension in bot_dims:
+      if dimension.key == 'zone' and _GCP_ZONE_REGEXP.match(dimension.value):
+        return dimension.value
+
+    return ''
+
   def _swarming_information(self):
-    """Set Swarming variables based on hostname."""
+    """Set Swarming variables from bot dimensions or hostname."""
+    zone = self._get_swarming_zone()
+    if zone:
+      self._zone = zone
+      return
     m = re.search(_SWARMING_HOST_REGEXP, self.infra_host)
     if not m:
       raise self.m.step.StepFailure(

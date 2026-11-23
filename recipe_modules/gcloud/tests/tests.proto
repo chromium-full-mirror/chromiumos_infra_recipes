@@ -17,6 +17,9 @@ message TestInputProperties {
 
   // Whether to expect a chromiumos- bot prefix instead of chromeos-.
   bool chromiumos_bot_prefix = 2;
+
+  // Expected GCE zone if different from 'us-central1-b'.
+  string expected_zone = 3;
 }
 
 message TransactionallyUpdateRecoveryImageProperties {
